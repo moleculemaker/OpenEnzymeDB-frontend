@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "test": {
+    "openenzymedb": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": {
-              "base": "dist/test"
+              "base": "dist/openenzymedb"
             },
             "index": "src/index.html",
             "polyfills": [
@@ -112,13 +112,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "test:build:production"
+              "buildTarget": "openenzymedb:build:production"
             },
             "staging": {
-              "buildTarget": "test:build:staging"
+              "buildTarget": "openenzymedb:build:staging"
             },
             "development": {
-              "buildTarget": "test:build:development"
+              "buildTarget": "openenzymedb:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -126,7 +126,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "test:build"
+            "buildTarget": "openenzymedb:build"
           }
         },
         "test": {

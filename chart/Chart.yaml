@@ -1,6 +1,6 @@
 apiVersion: v2
-description: "Test Frontend"
-name: test-frontend
+description: "OpenEnzymeDB Frontend"
+name: openenzymedb-frontend
 version: 1.0.0
 dependencies:
 - name: common

@@ -10,9 +10,9 @@ networks:
 
 
 services:
-  test:
-    image: moleculemaker/test-frontend:localdev
-    container_name: test-frontend
+  openenzymedb:
+    image: moleculemaker/openenzymedb-frontend:localdev
+    container_name: openenzymedb-frontend
     build:
       context: .
       secrets:
