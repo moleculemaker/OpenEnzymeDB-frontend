@@ -23,9 +23,10 @@ $colors: map.merge($colors, (
 	button_disabled: #f2f5fc,
 	button_disabled_label: #6c757d,
 
-	clean_logo: #FFE81C,
-	clean_logo_gradient: linear-gradient(to right, #57AEFF, #BB64FF, #FF8125),
-	clean_logo_gradient_reverse: linear-gradient(to right, #FF8125, #BB64FF, #57AEFF),
+	clean_logo: #9592EE,
+
+	clean_logo_gradient: linear-gradient(90deg, #9592EE 0%, #00a0ddfc 50%, #B2FDEF 100%),
+	clean_logo_gradient_reverse: linear-gradient(to right, #B2FDEF 0%, rgba(0, 160, 221, 0.99) 50%, #9592EE 100%),
 
 	divider: #eee,
 
