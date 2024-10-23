@@ -31,3 +31,28 @@ extraDeploy:
       regex: "^https://openenzymedb.frontend.mmli1.ncsa.illinois.edu/(.*)"
       replacement: "https://openenzymedb.platform.moleculemaker.org/${1}"
       permanent: true
+
+- apiVersion: bitnami.com/v1alpha1
+  kind: SealedSecret
+  metadata:
+    creationTimestamp: null
+    name: oed-reviewer-secret
+    namespace: alphasynthesis
+  spec:
+    encryptedData:
+      password: AgAdGUPNDw0ZQuEXeDNft3I+BYPxVCuT7zysD+7GKbbj3iucHYy/40VBC0/BkftvJJbhMF1z+bH3jy5cIBqo59OUNtR+jRUV+zYH1gxF8Bfm8tsyayAh+cGcfzWeaDvYrYK2rQHvkysHDBpqOf/A2K6HaM3PEDJ6GdiiyYjISYwQajed11MXidGtkIlvlp6mecIcH1LMlm6G6UNIybUYZpCT35ThAoJ2Y2x5pgMb3FwRtzTZUTtNAyP9EehPyHnZ2vxZop9ZQz/aUGg07BXl438/b2LrC9dGDlOy1FZdbtcDZO62E0gVnyd2vYOGWit4sDly/9n+MFd5N6wr1RhTKjNRPqyglIfAh3J0RZ2QYyX8apFRv7yQF3hKwTWQ8FlJJ9e4ufmQ89GBp/Q3UuhDwQQD858yaA7mlvRGDDUMAgQQGFHjopZ+W9gDGoNmzAaC6bzAH7gOd0QK3dtHXKYBSNI6dkjFvWkAJtR8Uk4oDfnl9hHiHs3FQ54pVWfvxpe6gNfwYGrz2kh3Oef2ui7SRjEeKXLJG775WtOW8stRY+zT8/NDcknrjg0GfYWzukUG9mLbqZbFTZfCKzMFgClTz6TnfCmAhrup1mVMXDWueMDJitiD7jYddIBAgdtC2qunNt5JwZxR1yd1s2RBZ2J2tdC2A8aNVDA7+XhZIWxO2caKWY7UixKU8THiF7lKtwekQbvmqzsSFmnnFNyJkOtecXCv/ztAp1PIKrvmwU73Zxxo/w==
+      username: AgCTx66If7WrTL+BLjjK+zMZQ8qzvOqMyczHVOn7UZtuuNGurOLAcjNh2LrK2hk4BYxjGE+On86eTb8gTQzXm8bBvHU6fMmvE53vr5sEfZ17HXjg6S/KDTHVK0AxyySLHBjfSY1g0T4Ue775POLd+N5qpGFIemVT1l8dALEaSnCAXgBwFRJxHmCVlpffKbivaOvyg1u8/UnsDwqtJyMjc4ezeqi3Mh/ev5YNK0WWMtQw0fjs4H9e6gsQgs02DCW8FwGXZKIFgpBVOx4PnYYiix/eUp76PE6Bi8mGs3O2ghVXFUiPP5YpSXmCQYfnxNm6f4PQE4I7zxluRcUoVbc0FgxuD6Vy5yW2D9j6TjqODLoBRao4z78Eo5w5Xuc96YGXsPZwKFDagn33ZFKmbaBXSlUlPZPgb7xOnsrMqOHGeDnnXcSZZqwx3Z28SALAZXJiKvd8AKXzzt9Wzkx0sDsjW2cyF1N0UUmxLV/4NAT6Bf7lZzh4c5VUs28gwNQgix1gg2E0Bkbn0y3UlnEkPAWdH9LavqHBQm0io54GEqDdvE3xd7/HfwqD886ymdRgTJYvVU7QYdDP4ujtpiRO6XykKq6V71g82GWchhhkpJDeDG+GG+eFDdE01IDuJ8kmHCNDbowfUJts2Q1x1Lze6V3v4yzdTnA76gwAudTHCgoKEdUHCnau2b0aD+78tDFOr4bB7u+8eII160V9xW7PjlCL
+    template:
+      metadata:
+        creationTimestamp: null
+        name: oed-reviewer-secret
+        namespace: alphasynthesis
+      type: kubernetes.io/basic-auth
+
+- apiVersion: traefik.io/v1alpha1
+  kind: Middleware
+  metadata:
+    name: test-auth
+  spec:
+    basicAuth:
+      secret: oed-reviewer-secret
