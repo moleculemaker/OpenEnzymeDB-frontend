@@ -43,3 +43,5 @@ Thumbs.db
 chart/charts/
 
 .env
+chart/secret.yaml
+chart/sealed-secret.yaml
