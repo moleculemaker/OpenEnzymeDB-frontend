@@ -51,7 +51,7 @@ const initAppFn = (envService: EnvironmentService) => {
 bootstrapApplication(AppComponent, {
     providers: [
         importProvidersFrom(BrowserModule, AppRoutingModule, CardModule, ChipModule, ChartModule, FormsModule, MessagesModule, ButtonModule, InputTextareaModule, InputNumberModule, PanelModule, MultiSelectModule, ProgressBarModule, SelectButtonModule, SkeletonModule, ProgressSpinnerModule, StepsModule, SliderModule, DropdownModule, TableModule, InputTextModule, ListboxModule, OverlayPanelModule, SidebarModule, TabViewModule, TabMenuModule, RadioButtonModule, CheckboxModule, FileUploadModule, SplitButtonModule, PanelModule, MatomoModule.forRoot({
-            siteId: 8, //TODO: update site id
+            siteId: 9,
             trackerUrl: 'https://matomo.mmli1.ncsa.illinois.edu/'
         }), MatomoRouterModule, MenuModule, ApiModule.forRoot(() => new Configuration()), ReactiveFormsModule, DialogModule),
         EnvironmentService,
