@@ -1,0 +1,25 @@
+<div class="flex p-[5px] border border-[--surface-d] rounded-lg border-solid gap-2">
+    <button
+        type="button"
+        class="flex items-center btn-outline !bg-[--surface-b] !px-4 !py-0 !text-[--surface-700]"
+        (click)="searchMenu.toggle($event)"
+    >
+        <span class="font-semibold leading-lg">{{ 
+            selectedSearchOption
+            ? selectedSearchOption.label
+            : 'Select Search Type'
+        }}</span>
+        <i class="ml-2 pi pi-chevron-down"></i>
+    </button>
+    <p-menu
+        #searchMenu
+        [model]="searchOptions"
+        [popup]="true"
+    ></p-menu>
+    <input 
+        pInputText 
+        type="text" 
+        placeholder="(Select a search type using the menu to the left to get started)" 
+        class="grow border-none h-8"
+    />
+  </div>
