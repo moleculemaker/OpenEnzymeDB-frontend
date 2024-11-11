@@ -1,25 +1,103 @@
-<div class="flex p-[5px] border border-[--surface-d] rounded-lg border-solid gap-2">
-    <button
-        type="button"
-        class="flex items-center btn-outline !bg-[--surface-b] !px-4 !py-0 !text-[--surface-700]"
-        (click)="searchMenu.toggle($event)"
-    >
-        <span class="font-semibold leading-lg">{{ 
-            selectedSearchOption
-            ? selectedSearchOption.label
-            : 'Select Search Type'
-        }}</span>
-        <i class="ml-2 pi pi-chevron-down"></i>
-    </button>
-    <p-menu
-        #searchMenu
-        [model]="searchOptions"
-        [popup]="true"
-    ></p-menu>
-    <input 
-        pInputText 
-        type="text" 
-        placeholder="(Select a search type using the menu to the left to get started)" 
-        class="grow border-none h-8"
-    />
-  </div>
+<div class="flex flex-col gap-2">
+    @if (selectedSearchOption; as option) {
+        <div class="flex justify-between mt-2 text-sm mx-2">
+            <small class="font-semibold leading-xl">
+                {{ option.label }} {{ option.type === 'range' ? 'Range' : '' }}
+            </small>
+            <small class="leading-xl text-text-secondary">
+                Example:
+                <small class="font-semibold underline cursor-pointer">
+                    {{ option.example.label }}
+                </small>
+            </small>
+        </div>
+    }
+    <div class="flex p-[5px] border border-[--surface-d] rounded-lg border-solid gap-2">
+        <button type="button" class="flex items-center btn-outline !bg-[--surface-b] !px-4 !py-0 !text-[--surface-700]"
+            (click)="searchMenu.toggle($event)">
+            <span class="font-semibold leading-lg">{{
+                selectedSearchOption ? selectedSearchOption.label : "Select Search Type"
+                }}</span>
+            <i class="ml-2 pi pi-chevron-down"></i>
+        </button>
+        <p-menu #searchMenu [model]="searchOptions" [popup]="true"></p-menu>
+        <!-- TODO: refactor -->
+        @switch (selectedSearchOption?.key) {
+            @case ('compound') {
+                <app-marvinjs-input 
+                    placeholder="Enter a compound"
+                    class="grow h-8"
+                    [formControl]="selectedSearchOption!.formControl"
+                >
+                </app-marvinjs-input>
+            }
+            @case ('organism') {
+                <input 
+                    pInputText 
+                    type="text" 
+                    placeholder="Enter organism name"
+                    [formControl]="selectedSearchOption!.formControl"
+                    class="grow border-none h-8" />
+            }
+            @case ('ec_number') {
+                <input 
+                    pInputText 
+                    type="text" 
+                    placeholder="Enter EC number"
+                    [formControl]="selectedSearchOption!.formControl"
+                    class="grow border-none h-8" />
+            }
+            @case ('uniprot_id') {
+                <input 
+                    pInputText 
+                    type="text" 
+                    placeholder="Enter Uniprot ID"
+                    [formControl]="selectedSearchOption!.formControl"
+                    class="grow border-none h-8" />
+            }
+            @case ('ph') {
+                <input 
+                    pInputText 
+                    type="text" 
+                    placeholder="Enter pH range"
+                    [formControl]="selectedSearchOption!.formControl"
+                    class="grow border-none h-8" />
+            }
+            @case ('temperature') {
+                <input 
+                    pInputText 
+                    type="text" 
+                    placeholder="Enter temperature range (°C)"
+                    [formControl]="selectedSearchOption!.formControl"
+                    class="grow border-none h-8" />
+            }
+            @default {
+                <input pInputText type="text" placeholder="(Select a search type using the menu to the left to get started)"
+                    class="grow border-none h-8" />
+            }
+        }
+    </div>
+    @if (
+        selectedSearchOption &&
+        selectedSearchOption.key === 'compound' && 
+        selectedSearchOption.formControl.value
+    ) {
+        <div
+            class="relative mt-4 grow flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
+            [class.invalid]="selectedSearchOption!.formControl.errors && selectedSearchOption!.formControl.dirty"
+            
+        >
+            <div class="flex items-center justify-center">
+                <i class="absolute pi left-3 top-3"
+                    [class.pi-check-circle]="selectedSearchOption!.formControl.valid"
+                ></i>
+                <!-- <app-molecule-image 
+                    [height]="300" 
+                    [width]="300"
+                    [molecule]="validatedResponse.svg || ''"
+                > -->
+                <!-- </app-molecule-image> -->
+            </div>
+        </div>
+    }
+</div>
