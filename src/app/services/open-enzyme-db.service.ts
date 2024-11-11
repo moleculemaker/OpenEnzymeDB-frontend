@@ -6,10 +6,10 @@ import { EnvironmentService } from "./environment.service";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
 // import exampleStatus from '../../assets/example_status.json';
-// import example from '../../assets/example.json';
+import example from '../../assets/example.json';
 
 const exampleStatus: any = "WARNING: please provide your own example_status.json";
-const example: any = "WARNING: please provide your own example.json";
+// const example: any = "WARNING: please provide your own example.json";
 
 @Injectable({
   providedIn: "root",
