@@ -11,7 +11,7 @@ import { MarvinjsInputComponent } from '../marvinjs-input/marvinjs-input.compone
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 
 interface SearchOption {
-  key: string;
+  key: 'compound' | 'organism' | 'uniprot_id' | 'ec_number' | 'ph' | 'temperature';
   label: string;
   type: string;
   formControl: {
@@ -21,10 +21,11 @@ interface SearchOption {
   example: {
     label: string;
     value: string;
+    [key: string]: string | undefined;
   };
 }
 
-interface QueryValue {
+export interface QueryValue {
   selectedOption: string;
   value: any;
   [key: string]: any;
@@ -67,6 +68,7 @@ export class QueryInputComponent implements ControlValueAccessor {
       },
       example: {
         label: 'Ethanol (CCO)',
+        select: 'smiles',
         value: 'CCO'
       },
     },
@@ -136,12 +138,14 @@ export class QueryInputComponent implements ControlValueAccessor {
   private onTouched: () => void = () => {};
   disabled = false;
 
-  writeValue(value: QueryValue): void {
+  writeValue(value: QueryValue | null): void {
     if (value) {
       this.selectedSearchOption = this.searchOptionRecords[value.selectedOption];
       if (this.selectedSearchOption) {
         this.selectedSearchOption.formControl.value.setValue(value.value);
       }
+    } else {
+      this.selectedSearchOption = null;
     }
   }
 
@@ -155,6 +159,15 @@ export class QueryInputComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+  }
+
+  useExample(option: SearchOption['key'] = 'compound') {
+    this.selectedSearchOption = this.searchOptionRecords[option];
+    Object.entries(this.selectedSearchOption.formControl).forEach(([key, control]) => {
+      if (control) {
+        control.setValue(this.selectedSearchOption!.example[key]);
+      }
+    });
   }
 
   private emitValue(): void {
