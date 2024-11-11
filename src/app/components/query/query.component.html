@@ -78,7 +78,7 @@
                 <span class="grow">Experimental Data</span>
                 <div class="flex items-center gap-2">
                     <button
-                        class="btn-outline"
+                        class="btn-outline !flex items-center gap-2"
                         (click)="showFilter = !showFilter"
                     >
                         <i class="pi pi-filter"></i>
@@ -164,15 +164,38 @@
                                             </div>
                                             <div class="flex justify-between">
                                                 <div>Uniprot ID</div>
-                                                <div class="text-end">{{ row.uniprot_id }}</div>
+                                                <div>
+                                                    @for (id of row.uniprot_id; track id) {
+                                                        <ng-container *ngTemplateOutlet="externalLink; context: { 
+                                                            $implicit: {
+                                                                url: 'https://www.uniprot.org/uniprotkb/' + id + '/entry',
+                                                                label: id
+                                                            }
+                                                        }"></ng-container>
+                                                    }
+                                                </div>
                                             </div>
                                             <div class="flex justify-between">
                                                 <div>EC Number</div>
-                                                <div class="text-end">{{ row.ec_number }}</div>
+                                                <div class="text-end">
+                                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
+                                                        $implicit: {
+                                                            url: 'https://www.brenda-enzymes.org/enzyme.php?ecno=' + row.ec_number,
+                                                            label: row.ec_number
+                                                        }
+                                                    }"></ng-container>
+                                                </div>
                                             </div>
                                             <div class="flex justify-between">
                                                 <div>PubMed ID</div>
-                                                <div class="text-end">{{ row.pubmed_id }}</div>
+                                                <div class="text-end">
+                                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
+                                                        $implicit: {
+                                                            url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                                            label: row.pubmed_id
+                                                        }
+                                                    }"></ng-container>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="w-[1px] bg-[--surface-d]"></div>
@@ -200,3 +223,10 @@
         </p-panel>
     </div>
 </div>
+
+<ng-template #externalLink let-linkItem>
+    <a [href]="linkItem.url" target="_blank" class="flex items-center gap-1 text-[#0080FF] font-semibold">
+        <p>{{ linkItem.label }}</p>
+        <i class="pi pi-external-link"></i>
+    </a>
+</ng-template>

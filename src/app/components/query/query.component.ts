@@ -95,7 +95,7 @@ export class QueryComponent {
               smiles: row.SMILES,
             },
             organism: row.ORGANISM,
-            uniprot_id: row.UNIPROT,
+            uniprot_id: row.UNIPROT.split(','),
             ph: row.PH,
             temperature: row.Temperature,
             kcat: row['KCAT VALUE'],
@@ -119,7 +119,7 @@ export class QueryComponent {
                 return row.organism.toLowerCase() === searchValue.value.toLowerCase();
 
               case 'uniprot_id':
-                return row.uniprot_id.toLowerCase() === searchValue.value.toLowerCase();
+                return row.uniprot_id.some((id: string) => id.toLowerCase() === searchValue.value.toLowerCase());
 
               case 'ph':
                 return row.ph >= searchValue.value[0] 
