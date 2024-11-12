@@ -1,5 +1,5 @@
 import { Component, ViewChild } from "@angular/core";
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from "@angular/forms";
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
@@ -9,9 +9,23 @@ import { JobType } from "~/app/api/mmli-backend/v1";
 import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent, QueryValue } from "../query-input/query-input.component";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 import { MoleculeImageComponent } from "../molecule-image/molecule-image.component";
 import { map } from "rxjs/operators";
+import { ChipModule } from "primeng/chip";
+import { DialogModule } from "primeng/dialog";
+import { MultiSelectModule } from "primeng/multiselect";
+
+class FilterConfig {
+  constructor(
+    public category: string,
+    public label: string,
+    public options: any[],
+    public value: any[],
+    public placeholder: string,
+    public field: string,
+  ) {}
+}
 
 @Component({
   selector: 'app-query',
@@ -21,12 +35,16 @@ import { map } from "rxjs/operators";
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     CheckboxModule,
     ButtonModule,
     PanelModule,
     QueryInputComponent,
     TableModule, 
     MoleculeImageComponent,
+    MultiSelectModule,
+    ChipModule,
+    DialogModule,
   ],
   host: {
     class: "flex flex-col h-full"
@@ -34,7 +52,8 @@ import { map } from "rxjs/operators";
 })
 export class QueryComponent {
   @ViewChild(QueryInputComponent) queryInputComponent!: QueryInputComponent;
-  
+  @ViewChild(Table) resultsTable!: Table;
+
   form = new FormGroup({
     search: new FormControl<QueryValue | null>(
       null,
@@ -48,6 +67,106 @@ export class QueryComponent {
   } | null = null;
 
   showFilter = false;
+  filters: Record<string, FilterConfig> = {
+    reactions: {
+      category: 'parameter',
+      label: 'Reactions',
+      placeholder: 'Select reaction',
+      options: [],
+      field: 'reaction',
+      value: [],
+    },
+    compounds: {
+      category: 'parameter',
+      label: 'Compounds',
+      placeholder: 'Select compound',
+      field: 'compound.name',
+      options: [],
+      value: [],
+    },
+    uniprot_ids: {
+      category: 'parameter',
+      label: 'Uniprot IDs',
+      placeholder: 'Select uniprot ID',
+      field: 'uniprot_id',
+      options: [],
+      value: [],
+    },
+    ec_numbers: {
+      category: 'parameter',
+      label: 'EC Numbers',
+      placeholder: 'Select EC number',
+      field: 'ec_number',
+      options: [],
+      value: [],
+    },
+    enzyme_types: {
+      category: 'parameter',
+      label: 'Enzyme Types',
+      placeholder: 'Select enzyme type',
+      field: 'enzyme_type',
+      options: [],
+      value: [],
+    },
+    ph: {
+      category: 'parameter',
+      label: 'pH',
+      placeholder: 'Select pH range',
+      field: 'ph',
+      options: [],
+      value: [],
+    },
+    temperature: {
+      category: 'parameter',
+      label: 'Temperature (°C)',
+      placeholder: 'Select temperature range',
+      field: 'temperature',
+      options: [],
+      value: [],
+    },
+    kcat: {
+      category: 'enzyme',
+      label: 'kcat (s⁻¹)',
+      placeholder: 'Select kcat range',
+      field: 'kcat',
+      options: [],
+      value: [],
+    },
+    km: {
+      category: 'enzyme',
+      label: 'KM (M)',
+      placeholder: 'Select KM range',
+      field: 'km',
+      options: [],
+      value: [],
+    },
+    kcat_km: {
+      category: 'enzyme',
+      label: 'kcat/KM (M⁻¹s⁻¹)',
+      placeholder: 'Select kcat/KM range',
+      field: 'kcat_km',
+      options: [],
+      value: [],
+    },
+    pubmed_id: {
+      category: 'literature',
+      label: 'PubMed',
+      placeholder: 'Select PubMed ID',
+      field: 'pubmed_id',
+      options: [],
+      value: [],
+    },
+  }
+
+  readonly filterRecordsByCategory = Object.entries(this.filters)
+    .reduce((acc, [key, filter]) => {
+      if (!acc[filter.category]) {
+        acc[filter.category] = [filter];
+      } else {
+        acc[filter.category].push(filter);
+      }
+      return acc;
+    }, {} as Record<string, FilterConfig[]>);
  
   constructor(
     private service: OpenEnzymeDBService,
@@ -65,6 +184,10 @@ export class QueryComponent {
 
   clearAllFilters() {
 
+  }
+
+  applyFilters() {
+    
   }
 
   viewAllData() {
@@ -138,6 +261,21 @@ export class QueryComponent {
           })
     ))
     .subscribe((response) => {
+      function getField(obj: any, dotPath: string) {
+        // console.log('obj:', obj, 'dotPath:', dotPath);
+        return dotPath.split('.').reduce((obj, key) => obj[key], obj);
+      }
+
+      Object.entries(this.filters).forEach(([key, filter]) => {
+        const options = response.map((row: any) => getField(row, filter.field)).flat();
+        const optionsSet = new Set(options);
+        filter.options = Array.from(optionsSet).map((option: any) => ({
+          label: option,
+          value: option,
+        }));
+        console.log('filter:', key, optionsSet.size);
+      });
+
       this.result = {
         data: response,
         total: response.length,

@@ -94,15 +94,21 @@
             </ng-template>
 
             <div class="flex flex-col">
-                <div *ngIf="showFilter" id="container-filters" class="flex w-full gap-4 p-2 px-4 bg-gray-50">
-                    <!-- TODO: add current filters -->
+                <div *ngIf="showFilter" id="container-filters" class="flex flex-col gap-2 w-full gap-4 p-2 px-4 bg-white">
+                    <div class="font-semibold">Current Filters</div>
+                    <div class="flex gap-2">
+                        <span class="rounded-sm bg-[--surface-d] p-1 flex items-center gap-1">
+                            Filter 1
+                            <i class="pi pi-times-circle cursor-pointer"></i>
+                        </span>
+                    </div>
                 </div>
 
                 <hr *ngIf="showFilter" />
 
                 <div class="flex w-full">
                     <p-table
-                        id="container-table"
+                        #resultsTable
                         [value]="result.data"
 
                         [rows]="10"
@@ -137,7 +143,7 @@
                                         <button title="Expand" type="button" [pRowToggler]="row">
                                             <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                                         </button>
-                                        <span>{{ row.reaction }}</span>
+                                        <span>{{ row.reaction || 'template reaction string'}}</span>
                                     </div>
                                 </td>
                                 <td class="align-middle">{{ row.compound.name }}</td>
@@ -149,7 +155,14 @@
                                 <td class="align-middle">{{ row.kcat }}</td>
                                 <td class="align-middle">{{ row.km }}</td>
                                 <td class="align-middle">{{ row.kcat_km }}</td>
-                                <td class="align-middle">{{ row.pubmed_id }}</td>
+                                <td class="align-middle">
+                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
+                                        $implicit: {
+                                            url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                            label: row.pubmed_id
+                                        }
+                                    }"></ng-container>
+                                </td>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="rowexpansion" let-row>
@@ -230,3 +243,77 @@
         <i class="pi pi-external-link"></i>
     </a>
 </ng-template>
+
+<p-dialog [(visible)]="showFilter" styleClass="w-[800px] h-[800px]">
+    <ng-template pTemplate="header">
+        <div class="flex items-center gap-2 font-semibold">
+            <i class="px-2 pi pi-filter"></i>
+            Filter
+        </div>
+    </ng-template>
+    <div class="mx-4 h-full">
+        <div class="flex w-full h-full grow gap-4">
+            <div class="w-1/2 flex flex-col gap-4 p-3">
+                <div class="font-bold">Experimental Parameters</div>
+                @for (filter of filterRecordsByCategory['parameter']; track filter.label) {
+                    <div class="flex flex-col gap-2">
+                        <div>{{ filter.label }}</div>
+                        <p-multiSelect
+                            styleClass="w-full"
+                            [placeholder]="filter.placeholder"
+                            [options]="filter.options"
+                            [(ngModel)]="filter.value"
+                            [virtualScroll]="true"
+                            [virtualScrollItemSize]="48"
+                            (onChange)="resultsTable.filter(filter.value, filter.field, 'in')"
+                        ></p-multiSelect>
+                    </div>
+                }
+            </div>
+            <div class="w-1/2 border-l border-solid border-[--surface-d] p-3 pl-7 flex flex-col gap-4">
+                <div class="font-bold">Enzyme Kinetics</div>
+                @for (filter of filterRecordsByCategory['enzyme']; track filter.label) {
+                    <div class="flex flex-col gap-2">
+                        <div>{{ filter.label }}</div>
+                        <p-multiSelect
+                            styleClass="w-full"
+                            [placeholder]="filter.placeholder"
+                            [options]="filter.options"
+                            [(ngModel)]="filter.value"
+                            [virtualScroll]="true"
+                            [virtualScrollItemSize]="48"
+                            (onChange)="resultsTable.filter(filter.value, filter.field, 'in')"
+                        ></p-multiSelect>
+                    </div>
+                }
+                <hr class="-mx-7"/>
+                <div class="font-bold">Literature</div>
+                @for (filter of filterRecordsByCategory['literature']; track filter.label) {
+                    <div class="flex flex-col gap-2">
+                        <div>{{ filter.label }}</div>
+                        <p-multiSelect
+                            styleClass="w-full"
+                            [placeholder]="filter.placeholder"
+                            [options]="filter.options"
+                            [(ngModel)]="filter.value"
+                            [virtualScroll]="true"
+                            [virtualScrollItemSize]="48"
+                            (onChange)="resultsTable.filter(filter.value, filter.field, 'in')"
+                        ></p-multiSelect>
+                    </div>
+                }
+                <hr class="-mx-7"/>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <div class="flex items-center justify-between pt-4">
+            <p-button outlined class="bg-white" (onClick)="clearAllFilters(); showFilter = false">
+                Reset Filters
+            </p-button>
+            <p-button (onClick)="applyFilters(); showFilter = false">
+                Apply Filters
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
