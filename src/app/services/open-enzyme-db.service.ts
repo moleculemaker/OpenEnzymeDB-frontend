@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { Observable, map, of } from "rxjs";
+import { Observable, from, map, of } from "rxjs";
 
 import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService } from "../api/mmli-backend/v1";
 import { EnvironmentService } from "./environment.service";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
 // import exampleStatus from '../../assets/example_status.json';
-import example from '../../assets/example.json';
+const example = import('../../assets/example.json').then(res => res.default);
 
 const exampleStatus: any = "WARNING: please provide your own example_status.json";
 // const example: any = "WARNING: please provide your own example.json";
@@ -44,7 +44,7 @@ export class OpenEnzymeDBService {
 
   getResult(jobType: JobType, jobID: string): Observable<any> {
     if (this.frontendOnly) {
-      return of(example as any);
+      return from(example);
     }
     return this.filesService.getResultsBucketNameResultsJobIdGet(jobType, jobID);
   }
