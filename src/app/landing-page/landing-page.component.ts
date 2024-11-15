@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 
@@ -10,6 +11,8 @@ import { CardModule } from "primeng/card";
   imports: [
     CardModule,
     ButtonModule,
+    RouterLink,
+    RouterLinkActive,
   ],
 })
 export class LandingPageComponent {
