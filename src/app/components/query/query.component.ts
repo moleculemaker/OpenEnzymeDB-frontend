@@ -15,6 +15,8 @@ import { map } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
+import { KatexPipe } from "~/app/pipes/katex.pipe";
+import { SafePipe } from "../../pipes/safe.pipe";
 
 class FilterConfig {
   constructor(
@@ -40,12 +42,13 @@ class FilterConfig {
     ButtonModule,
     PanelModule,
     QueryInputComponent,
-    TableModule, 
+    TableModule,
     MoleculeImageComponent,
     MultiSelectModule,
     ChipModule,
     DialogModule,
-  ],
+    SafePipe
+],
   host: {
     class: "flex flex-col h-full"
   }
@@ -169,7 +172,7 @@ export class QueryComponent {
     }, {} as Record<string, FilterConfig[]>);
  
   constructor(
-    private service: OpenEnzymeDBService,
+    public service: OpenEnzymeDBService,
     private router: Router,
   ) { }
 

@@ -1,0 +1,67 @@
+[
+    {
+        "EC": "1.1.1.1",
+        "SUBSTRATE": "tert-butyl acetoacetate",
+        "ORGANISM": "Aeropyrum pernix",
+        "UNIPROT": "Q9Y9P9",
+        "EnzymeType": "wildtype",
+        "PH": 8.0,
+        "Temperature": 60.0,
+        "PubMedID": 16233615.0,
+        "KM VALUE": 0.694,
+        "UNIT": "mM",
+        "SMILES": "CC(=O)CC(=O)OC(C)(C)C"
+    },
+    {
+        "EC": "2.1.1.1",
+        "SUBSTRATE": "2-propanol",
+        "ORGANISM": "Aeropyrum pernix",
+        "UNIPROT": "Q9Y9P9",
+        "EnzymeType": "wildtype",
+        "PH": 8.0,
+        "Temperature": 60.0,
+        "PubMedID": 16233615.0,
+        "KM VALUE": 2.44,
+        "UNIT": "mM",
+        "SMILES": "CC(C)O"
+    },
+    {
+        "EC": "3.1.1.1",
+        "SUBSTRATE": "2-butanol",
+        "ORGANISM": "Aeropyrum pernix",
+        "UNIPROT": "Q9Y9P9",
+        "EnzymeType": "wildtype",
+        "PH": 8.0,
+        "Temperature": 60.0,
+        "PubMedID": 16233615.0,
+        "KM VALUE": 1.05,
+        "UNIT": "mM",
+        "SMILES": "CCC(C)O"
+    },
+    {
+        "EC": "4.1.1.1",
+        "SUBSTRATE": "2-Pentanone",
+        "ORGANISM": "Aeropyrum pernix",
+        "UNIPROT": "Q9Y9P9",
+        "EnzymeType": "wildtype",
+        "PH": 8.0,
+        "Temperature": 60.0,
+        "PubMedID": 16233615.0,
+        "KM VALUE": 5.15,
+        "UNIT": "mM",
+        "SMILES": "CCCC(C)=O"
+    },
+    {
+        "EC": "5.1.1.1",
+        "SUBSTRATE": "2-Pentanol",
+        "ORGANISM": "Aeropyrum pernix",
+        "UNIPROT": "Q9Y9P9",
+        "EnzymeType": "wildtype",
+        "PH": 8.0,
+        "Temperature": 60.0,
+        "PubMedID": 16233615.0,
+        "KM VALUE": 0.752,
+        "UNIT": "mM",
+        "SMILES": "CCCC(C)O"
+    }
+]

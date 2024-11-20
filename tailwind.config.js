@@ -24,6 +24,10 @@ module.exports = {
       "lg": "120%",
       "xl": "150%",
     },
+    screens: {
+      'md': '820px',
+      'xl': { max: `${maxContentWidth}px` },
+    },
     extend: {
       colors: {
         primary: "#224063",

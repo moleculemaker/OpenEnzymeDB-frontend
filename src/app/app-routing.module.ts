@@ -10,23 +10,15 @@ import { QueryComponent } from "src/app/components/query/query.component";
 
 
 const routes: Routes = [
+  { path: "", pathMatch: "full", redirectTo: "home" },
+  { path: "home", component: LandingPageComponent },
   {
     path: "",
     component: CenterLayoutComponent,
     children: [
-      { path: "", pathMatch: "full", redirectTo: "home" },
-      { path: "home", component: LandingPageComponent },
       { path: 'query', component: QueryComponent },
     ]
   },
-  // {
-  //   path: "",
-  //   pathMatch: "full",
-  //   component: MainLayoutComponent,
-  //   children: [
-  //     { path: "", component: LandingPageComponent },
-  //   ]
-  // },
   { path: "font-match", component: FontMatchComponent },
 ];
 

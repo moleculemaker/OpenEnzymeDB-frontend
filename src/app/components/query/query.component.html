@@ -123,29 +123,29 @@
                     >
                         <ng-template pTemplate="header">
                             <tr>
-                                <th class="align-middle">Reaction</th>
+                                <!-- <th class="align-middle">Reaction</th> -->
                                 <th class="align-middle">Compound</th>
                                 <th class="align-middle">Organism</th>
                                 <th class="align-middle">Uniprot ID</th>
                                 <th class="align-middle">EC Number</th>
                                 <th class="align-middle">pH</th>
                                 <th class="align-middle">Temp (°C)</th>
-                                <th class="align-middle">Kcat (s⁻¹)</th>
-                                <th class="align-middle">Km (mM)</th>
-                                <th class="align-middle">Kcat/Km (M⁻¹s⁻¹)</th>
+                                <th class="align-middle"><span class="italic">Kcat</span> (s⁻¹)</th>
+                                <th class="align-middle"><span class="italic">Km</span> (mM)</th>
+                                <th class="align-middle"><span class="italic">Kcat/Km</span> (M⁻¹s⁻¹)</th>
                                 <th class="align-middle">Literature</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-row let-expanded="expanded">
                             <tr>
-                                <td class="align-middle">
+                                <!-- <td class="align-middle">
                                     <div class="flex gap-2 items-center">
                                         <button title="Expand" type="button" [pRowToggler]="row">
                                             <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                                         </button>
                                         <span>{{ row.reaction || 'template reaction string'}}</span>
                                     </div>
-                                </td>
+                                </td> -->
                                 <td class="align-middle">{{ row.compound.name }}</td>
                                 <td class="align-middle">{{ row.organism }}</td>
                                 <td class="align-middle">{{ row.uniprot_id }}</td>
