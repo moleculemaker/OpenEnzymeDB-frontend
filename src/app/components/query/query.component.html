@@ -94,17 +94,24 @@
             </ng-template>
 
             <div class="flex flex-col">
-                <div *ngIf="showFilter" id="container-filters" class="flex flex-col gap-2 w-full gap-4 p-2 px-4 bg-white">
+                <div *ngIf="hasFilter" id="container-filters" class="flex flex-col gap-2 w-full gap-4 p-2 px-4 bg-white">
                     <div class="font-semibold">Current Filters</div>
                     <div class="flex gap-2">
-                        <span class="rounded-sm bg-[--surface-d] p-1 flex items-center gap-1">
-                            Filter 1
-                            <i class="pi pi-times-circle cursor-pointer"></i>
-                        </span>
+                        @for (filter of filterRecords; track filter.label) {
+                            @if (filter.hasFilter()) {
+                                <span class="rounded-sm bg-[--surface-d] p-1 flex items-center gap-1">
+                                    {{ filter.label }}: {{ filter.formattedValue }}
+                                    <i class="pi pi-times-circle cursor-pointer" (click)="
+                                        filter.value = filter.defaultValue;
+                                        applyFilters();
+                                    "></i>
+                                </span>
+                            }
+                        }
                     </div>
                 </div>
 
-                <hr *ngIf="showFilter" />
+                <hr *ngIf="hasFilter" />
 
                 <div class="flex w-full">
                     <p-table
@@ -146,7 +153,12 @@
                                         <span>{{ row.reaction || 'template reaction string'}}</span>
                                     </div>
                                 </td> -->
-                                <td class="align-middle">{{ row.compound.name }}</td>
+                                <td class="align-middle">
+                                    <button title="Expand" type="button" [pRowToggler]="row">
+                                        <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                                    </button>
+                                    {{ row.compound.name }}
+                                </td>
                                 <td class="align-middle">{{ row.organism }}</td>
                                 <td class="align-middle">{{ row.uniprot_id }}</td>
                                 <td class="align-middle">{{ row.ec_number }}</td>
@@ -258,15 +270,7 @@
                 @for (filter of filterRecordsByCategory['parameter']; track filter.label) {
                     <div class="flex flex-col gap-2">
                         <div>{{ filter.label }}</div>
-                        <p-multiSelect
-                            styleClass="w-full"
-                            [placeholder]="filter.placeholder"
-                            [options]="filter.options"
-                            [(ngModel)]="filter.value"
-                            [virtualScroll]="true"
-                            [virtualScrollItemSize]="48"
-                            (onChange)="resultsTable.filter(filter.value, filter.field, 'in')"
-                        ></p-multiSelect>
+                        <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                     </div>
                 }
             </div>
@@ -275,15 +279,7 @@
                 @for (filter of filterRecordsByCategory['enzyme']; track filter.label) {
                     <div class="flex flex-col gap-2">
                         <div>{{ filter.label }}</div>
-                        <p-multiSelect
-                            styleClass="w-full"
-                            [placeholder]="filter.placeholder"
-                            [options]="filter.options"
-                            [(ngModel)]="filter.value"
-                            [virtualScroll]="true"
-                            [virtualScrollItemSize]="48"
-                            (onChange)="resultsTable.filter(filter.value, filter.field, 'in')"
-                        ></p-multiSelect>
+                        <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                     </div>
                 }
                 <hr class="-mx-7"/>
@@ -291,15 +287,7 @@
                 @for (filter of filterRecordsByCategory['literature']; track filter.label) {
                     <div class="flex flex-col gap-2">
                         <div>{{ filter.label }}</div>
-                        <p-multiSelect
-                            styleClass="w-full"
-                            [placeholder]="filter.placeholder"
-                            [options]="filter.options"
-                            [(ngModel)]="filter.value"
-                            [virtualScroll]="true"
-                            [virtualScrollItemSize]="48"
-                            (onChange)="resultsTable.filter(filter.value, filter.field, 'in')"
-                        ></p-multiSelect>
+                        <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                     </div>
                 }
                 <hr class="-mx-7"/>
@@ -312,8 +300,40 @@
                 Reset Filters
             </p-button>
             <p-button (onClick)="applyFilters(); showFilter = false">
-                Apply Filters
+                Show {{ resultsTable.filteredValue?.length ?? this.result!.total }} Result{{ resultsTable.filteredValue?.length !== this.result!.total ? 's' : '' }}
             </p-button>
         </div>
     </ng-template>
 </p-dialog>
+
+
+<ng-template #filterTemplate let-filter>
+    @switch (filter.type) {
+        @case ('multiselect') {
+            <p-multiSelect
+                styleClass="w-full"
+                [placeholder]="filter.placeholder"
+                [options]="filter.options"
+                [(ngModel)]="filter.value"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="48"
+                (onChange)="searchTable($event, filter)"
+            ></p-multiSelect>
+        }
+        @case ('range') {
+            <input
+                pInputText
+                title="{{ filter.placeholder }}"
+                type="text" 
+                [placeholder]="filter.placeholder"
+                (blur)="searchTable($event, filter)"
+                [value]="filter.formattedValue"
+                class="w-full p-3 border border-[#ced4da] rounded-md"
+            />
+        }
+        @default {
+            <span>{{ filter.value }}</span>
+            <!-- <p-inputText styleClass="w-full" [placeholder]="filter.placeholder" [(ngModel)]="filter.value"></p-inputText> -->
+        }
+    }
+</ng-template>

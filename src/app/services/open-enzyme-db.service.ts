@@ -3,7 +3,6 @@ import { Observable, from, map, of } from "rxjs";
 
 import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService } from "../api/mmli-backend/v1";
 import { EnvironmentService } from "./environment.service";
-import katex from "katex";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
 // import exampleStatus from '../../assets/example_status.json';
@@ -24,18 +23,6 @@ export class OpenEnzymeDBService {
   readonly KCAT_DF$ = from(kcat) ;
   readonly KM_DF$ = from(km);
   readonly KCAT_KM_DF$ = from(kcat_km);
-
-  readonly KATEX_MATHML = {
-    kcatWithUnit: katex.renderToString('K_{cat} (s^{-1})', { output: 'mathml' }),
-    kmWithUnit: katex.renderToString('K_m (mM)', { output: 'mathml' }),
-    kcatKmWithUnit: katex.renderToString('K_{cat}/K_m (M^{-1}s^{-1})', { output: 'mathml' }),
-    kcatUnit: katex.renderToString('s^{-1}', { output: 'mathml' }),
-    kmUnit: katex.renderToString('mM', { output: 'mathml' }),
-    kcatKmUnit: katex.renderToString('M^{-1}s^{-1}', { output: 'mathml' }),
-    kcat: katex.renderToString('K_{cat}', { output: 'mathml' }),
-    km: katex.renderToString('K_m', { output: 'mathml' }),
-    kcatKm: katex.renderToString('K_{cat}/K_m', { output: 'mathml' }),
-  }
 
   constructor(
     private jobsService: JobsService,

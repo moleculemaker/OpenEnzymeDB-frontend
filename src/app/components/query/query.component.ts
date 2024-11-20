@@ -1,4 +1,4 @@
-import { Component, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
@@ -10,23 +10,154 @@ import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent, QueryValue } from "../query-input/query-input.component";
 import { Table, TableModule } from "primeng/table";
-import { MoleculeImageComponent } from "../molecule-image/molecule-image.component";
 import { map } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
-import { KatexPipe } from "~/app/pipes/katex.pipe";
-import { SafePipe } from "../../pipes/safe.pipe";
+import { FilterService } from "primeng/api";
+import { InputTextModule } from "primeng/inputtext";
 
-class FilterConfig {
-  constructor(
-    public category: string,
-    public label: string,
-    public options: any[],
-    public value: any[],
-    public placeholder: string,
-    public field: string,
-  ) {}
+interface FilterConfigParams {
+  category: string;
+  label: string;
+  placeholder: string;
+  field: string;
+  type?: 'range' | 'multiselect';
+  value?: any;
+  defaultValue?: any;
+  matchMode?: 'in' | 'range' | 'subset';
+}
+
+abstract class FilterConfig {
+  public category: string;
+  public label: string;
+  public placeholder: string;
+  public field: string;
+  public type: 'range' | 'multiselect';
+  public defaultValue: any;
+  public matchMode: 'in' | 'range' | 'subset';
+  public formattedValue: any;
+
+  #value: any;
+
+  constructor(params: FilterConfigParams) {
+    this.category = params.category;
+    this.label = params.label;
+    this.placeholder = params.placeholder;
+    this.field = params.field;
+    this.type = params.type ?? 'multiselect';
+    this.#value = params.value;
+    this.defaultValue = params.defaultValue ?? null;
+    this.matchMode = params.matchMode ?? 'in';
+  }
+
+  get value() {
+    return this.#value;
+  }
+
+  set value(value: any) {
+    const parsedValue = this.parseInput(value);
+    this.#value = parsedValue;
+    this.formattedValue = this.formatValue();
+  }
+
+  abstract hasFilter(): boolean;
+  abstract parseInput(value: any): any;
+  abstract formatValue(): any;
+}
+
+interface RangeFilterParams extends FilterConfigParams {
+  min: number;
+  max: number;
+  value?: [number, number];
+}
+
+class RangeFilterConfig extends FilterConfig {
+  public min: number;
+  public max: number;
+
+  constructor(params: RangeFilterParams) {
+    super({
+      ...params,
+      type: 'range',
+      value: params.value ?? [params.min, params.max],
+      defaultValue: [params.min, params.max],
+      matchMode: 'range'
+    });
+    this.min = params.min;
+    this.max = params.max;
+  }
+
+  hasFilter(): boolean {
+    return this.value[0] !== this.defaultValue[0] || this.value[1] !== this.defaultValue[1];
+  }
+
+  parseInput(input: string | [number, number]): [number, number] {
+    let min, max;
+    if (typeof input === 'string') {
+      const rangeRegex = /^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/;
+      const match = input.match(rangeRegex);
+      if (!match) {
+        return this.defaultValue;
+      }
+      min = parseFloat(match[1]);
+      max = parseFloat(match[2]);
+    } else {
+      [min, max] = input;
+    }
+
+    if (min > max) {
+      return this.defaultValue;
+    }
+
+    return [min, max];
+  }
+
+  formatValue(): string {
+    if (!this.value || !Array.isArray(this.value)) {
+      return '';
+    }
+    const [min, max] = this.value;
+    if (min === this.min && max === this.max) {
+      return '';
+    }
+    return `${min}-${max}`;
+  }
+}
+
+interface MultiselectFilterParams extends FilterConfigParams {
+  options?: any[];
+  value?: any[];
+  matchMode?: 'in' | 'subset';
+}
+
+class MultiselectFilterConfig extends FilterConfig {
+  public options: any[];
+
+  constructor(params: MultiselectFilterParams) {
+    super({
+      ...params,
+      type: 'multiselect',
+      value: params.value ?? [],
+      defaultValue: [],
+    });
+    this.options = params.options ?? [];
+  }
+
+  hasFilter(): boolean {
+    return this.value.length > 0;
+  }
+
+  parseInput(value: any[]): any[] {
+    return value;
+  }
+
+  formatValue(): string {
+    if (!this.value || !Array.isArray(this.value)) {
+      return '';
+    }
+    return this.value.join(', ');
+  }
 }
 
 @Component({
@@ -43,11 +174,10 @@ class FilterConfig {
     PanelModule,
     QueryInputComponent,
     TableModule,
-    MoleculeImageComponent,
     MultiSelectModule,
     ChipModule,
     DialogModule,
-    SafePipe
+    InputTextModule,
 ],
   host: {
     class: "flex flex-col h-full"
@@ -70,95 +200,97 @@ export class QueryComponent {
   } | null = null;
 
   showFilter = false;
+  hasFilter = false;
   filters: Record<string, FilterConfig> = {
-    reactions: {
-      category: 'parameter',
-      label: 'Reactions',
-      placeholder: 'Select reaction',
-      options: [],
-      field: 'reaction',
-      value: [],
-    },
-    compounds: {
+    // reactions: new MultiselectFilterConfig(
+    //   'parameter',
+    //   'Reactions',
+    //   'Select reaction',
+    //   'reaction',
+    //   [],
+    //   [],
+    // ),
+    compounds: new MultiselectFilterConfig({
       category: 'parameter',
       label: 'Compounds',
       placeholder: 'Select compound',
       field: 'compound.name',
       options: [],
-      value: [],
-    },
-    uniprot_ids: {
+      value: []
+    }),
+    uniprot_ids: new MultiselectFilterConfig({
       category: 'parameter',
       label: 'Uniprot IDs',
       placeholder: 'Select uniprot ID',
       field: 'uniprot_id',
       options: [],
       value: [],
-    },
-    ec_numbers: {
+      matchMode: 'subset',
+    }),
+    ec_numbers: new MultiselectFilterConfig({
       category: 'parameter',
       label: 'EC Numbers',
       placeholder: 'Select EC number',
       field: 'ec_number',
       options: [],
-      value: [],
-    },
-    enzyme_types: {
+      value: []
+    }),
+    enzyme_types: new MultiselectFilterConfig({
       category: 'parameter',
       label: 'Enzyme Types',
       placeholder: 'Select enzyme type',
       field: 'enzyme_type',
       options: [],
-      value: [],
-    },
-    ph: {
+      value: []
+    }),
+    ph: new RangeFilterConfig({
       category: 'parameter',
       label: 'pH',
       placeholder: 'Select pH range',
       field: 'ph',
-      options: [],
-      value: [],
-    },
-    temperature: {
+      min: 0,
+      max: 14
+    }),
+    temperature: new RangeFilterConfig({
       category: 'parameter',
       label: 'Temperature (°C)',
       placeholder: 'Select temperature range',
       field: 'temperature',
-      options: [],
-      value: [],
-    },
-    kcat: {
+      min: 0,
+      max: 100
+    }),
+    kcat: new RangeFilterConfig({
       category: 'enzyme',
       label: 'kcat (s⁻¹)',
       placeholder: 'Select kcat range',
       field: 'kcat',
-      options: [],
-      value: [],
-    },
-    km: {
+      min: 0,
+      max: 100
+    }),
+    km: new RangeFilterConfig({
       category: 'enzyme',
       label: 'KM (M)',
       placeholder: 'Select KM range',
       field: 'km',
-      options: [],
-      value: [],
-    },
-    kcat_km: {
+      min: 0,
+      max: 100
+    }),
+    kcat_km: new RangeFilterConfig({
       category: 'enzyme',
       label: 'kcat/KM (M⁻¹s⁻¹)',
       placeholder: 'Select kcat/KM range',
       field: 'kcat_km',
-      options: [],
-      value: [],
-    },
-    pubmed_id: {
+      min: 0,
+      max: 100
+    }),
+    pubmed_id: new MultiselectFilterConfig({
       category: 'literature',
       label: 'PubMed',
       placeholder: 'Select PubMed ID',
       field: 'pubmed_id',
       options: [],
-      value: [],
-    },
+      value: []
+    }),
   }
 
   readonly filterRecordsByCategory = Object.entries(this.filters)
@@ -170,11 +302,28 @@ export class QueryComponent {
       }
       return acc;
     }, {} as Record<string, FilterConfig[]>);
+
+  readonly filterRecords = Object.values(this.filters);
  
   constructor(
     public service: OpenEnzymeDBService,
     private router: Router,
-  ) { }
+    private filterService: FilterService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    this.filterService.register(
+      "range",
+      (value: number, filter: [number, number]) => {
+        return value >= filter[0] && value <= filter[1];
+      },
+    );
+    this.filterService.register(
+      "subset",
+      (value: any[], filter: any[]) => {
+        return filter.every((f) => value.includes(f));
+      },
+    );
+  }
 
   useExample() {
     this.queryInputComponent.useExample('compound');
@@ -186,11 +335,18 @@ export class QueryComponent {
   }
 
   clearAllFilters() {
-
+    this.filterRecords.forEach((filter) => {
+      filter.value = filter.defaultValue;
+    });
+    this.resultsTable.reset();
+    this.hasFilter = false;
   }
 
   applyFilters() {
-    
+    this.filterRecords.forEach((filter) => {
+      this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
+    });
+    this.hasFilter = this.filterRecords.some((filter) => filter.hasFilter());
   }
 
   viewAllData() {
@@ -272,10 +428,18 @@ export class QueryComponent {
       Object.entries(this.filters).forEach(([key, filter]) => {
         const options = response.map((row: any) => getField(row, filter.field)).flat();
         const optionsSet = new Set(options);
-        filter.options = Array.from(optionsSet).map((option: any) => ({
-          label: option,
-          value: option,
-        }));
+        if (filter instanceof MultiselectFilterConfig) {
+          filter.options = Array.from(optionsSet).map((option: any) => ({
+            label: option,
+            value: option,
+          }));
+          filter.defaultValue = [];
+        } else if (filter instanceof RangeFilterConfig) {
+          filter.min = Math.min(...options);
+          filter.max = Math.max(...options);
+          filter.value = [filter.min, filter.max];
+          filter.defaultValue = [filter.min, filter.max];
+        }
         console.log('filter:', key, optionsSet.size);
       });
 
@@ -284,5 +448,18 @@ export class QueryComponent {
         total: response.length,
       };
     });
+  }
+
+  searchTable(event: any, filter: FilterConfig): void {
+    if (filter instanceof RangeFilterConfig) {
+      filter.value = event.target.value;
+    } else if (filter instanceof MultiselectFilterConfig) {
+      filter.value = event.value;
+    }
+    
+    this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
+    this.hasFilter = this.filterRecords.some(f => f.hasFilter());
+
+    console.log(this.resultsTable.filteredValue);
   }
 }
