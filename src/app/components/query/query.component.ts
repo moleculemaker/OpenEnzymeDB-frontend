@@ -195,9 +195,14 @@ export class QueryComponent {
   });
 
   result: {
+    status: 'loading' | 'loaded' | 'error' | 'na';
     data: any[];
     total: number;
-  } | null = null;
+  } = {
+    status: 'na',
+    data: [],
+    total: 0,
+  };
 
   showFilter = false;
   hasFilter = false;
@@ -292,6 +297,8 @@ export class QueryComponent {
       value: []
     }),
   }
+
+  columns: any[] = [];
 
   readonly filterRecordsByCategory = Object.entries(this.filters)
     .reduce((acc, [key, filter]) => {
@@ -444,7 +451,13 @@ export class QueryComponent {
         console.log('filter:', key, optionsSet.size);
       });
 
+      this.columns = Object.values(this.filters).map((filter) => ({
+        field: filter.field,
+        header: filter.label,
+      }));
+
       this.result = {
+        status: 'loaded',
         data: response,
         total: response.length,
       };
