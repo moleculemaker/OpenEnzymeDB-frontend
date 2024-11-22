@@ -124,7 +124,7 @@
                                 <th class="align-middle">Temp (°C)</th>
                                 <th class="align-middle"><span class="italic">Kcat</span> (s⁻¹)</th>
                                 <th class="align-middle"><span class="italic">Km</span> (mM)</th>
-                                <th class="align-middle"><span class="italic">Kcat/Km</span> (M⁻¹s⁻¹)</th>
+                                <th class="align-middle"><span class="italic">Kcat/Km</span> (mM⁻¹s⁻¹)</th>
                                 <th class="align-middle">Literature</th>
                             </tr>
                         </ng-template>
@@ -150,16 +150,19 @@
                                 <td class="align-middle">{{ row.enzyme_type }}</td>
                                 <td class="align-middle">{{ row.ph }}</td>
                                 <td class="align-middle">{{ row.temperature }}</td>
-                                <td class="align-middle">{{ row.kcat }}</td>
-                                <td class="align-middle">{{ row.km }}</td>
-                                <td class="align-middle">{{ row.kcat_km }}</td>
+                                <td class="align-middle">{{ row.kcat | number: '1.1-4' }}</td>
+                                <td class="align-middle">{{ row.km | number: '1.1-4' }}</td>
+                                <td class="align-middle">{{ row.kcat_km | number: '1.1-4' }}</td>
                                 <td class="align-middle">
-                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
+                                    @for (id of row.pubmed_id; track id) {
+                                        <ng-container *ngTemplateOutlet="externalLink; context: { 
                                             $implicit: {
-                                                url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                                                label: row.pubmed_id
+                                                url: 'https://pubmed.ncbi.nlm.nih.gov/' + id,
+                                                label: id
                                             }
-                                        }"></ng-container>
+                                        }">
+                                        </ng-container>
+                                    }
                                 </td>
                             </tr>
                         </ng-template>
@@ -213,6 +216,8 @@
                                         <div class="w-[1px] bg-[--surface-d]"></div>
                                         <div class="w-1/2">
                                             <div class="font-bold">Reaction Scheme</div>
+                                            <!-- TODO: Add reaction scheme -->
+                                            <small class="text-text-secondary">Coming Soon</small>
                                         </div>
                                     </div>
                                 </td>
@@ -239,7 +244,7 @@
 </div>
 
 <ng-template #externalLink let-linkItem>
-    <a [href]="linkItem.url" target="_blank" class="flex items-center gap-1 text-[#0080FF] font-semibold">
+    <a [href]="linkItem.url" target="_blank" class="flex items-center gap-1 text-[#0080FF] font-semibold justify-end">
         <p>{{ linkItem.label }}</p>
         <i class="pi pi-external-link"></i>
     </a>

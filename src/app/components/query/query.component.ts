@@ -294,7 +294,8 @@ export class QueryComponent {
       placeholder: 'Select PubMed ID',
       field: 'pubmed_id',
       options: [],
-      value: []
+      value: [],
+      matchMode: 'subset',
     }),
   }
 
@@ -391,7 +392,7 @@ export class QueryComponent {
             kcat: row['KCAT VALUE'],
             km: row['KM VALUE'],
             kcat_km: row['KCAT/KM VALUE'],
-            pubmed_id: row.PubMedID,
+            pubmed_id: row.PubMedID.split(';'),
           }))
           .filter((row: any) => {
             const search = this.form.value.search;
