@@ -8,6 +8,8 @@ import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
 import { PanelModule } from "primeng/panel";
 import { combineLatest, combineLatestAll } from "rxjs";
+import { DropdownModule } from "primeng/dropdown";
+import { FormsModule } from "@angular/forms";
 
 type ChartData = {
   status: 'loading' | 'loaded',
@@ -30,6 +32,8 @@ type ChartData = {
     ChartModule,
     TableModule,
     PanelModule,
+    DropdownModule,
+    FormsModule,
   ],
   host: {
     class: 'flex flex-col justify-center items-center w-full'
@@ -38,32 +42,63 @@ type ChartData = {
 export class LandingPageComponent {
   @ViewChildren(UIChart) charts!: QueryList<UIChart>;
 
-  readonly pieChartData: {
-    kcat: ChartData,
-    km: ChartData,
-    kcat_km: ChartData,
-  } = {
-    kcat: {
-      status: 'loading',
-      data: [],
-      options: {},
-      plugins: [],
-    },
-    km: {
-      status: 'loading',
-      data: [],
-      options: {},
-      plugins: [],
-    },
-    kcat_km: {
-      status: 'loading',
-      data: [],
-      options: {},
-      plugins: [],
-    },
-  };
+  dropdownOptions = [
+    { label: 'Kinetic Parameters Summary', value: 'pieChart' },
+    { label: 'EC Number Summary', value: 'barChart' },
+  ];
 
-  pieChartStyleConfig: any;
+  chartConfigs: {
+    currentChart: 'pieChart' | 'barChart',
+    pieChart: {
+      data: {
+        kcat: ChartData,
+        km: ChartData,
+        kcat_km: ChartData,
+      },
+      styleConfig: any,
+    },
+    barChart: {
+      data: ChartData,
+      styleConfig: any,
+    }
+  } = {
+    currentChart: 'pieChart',
+
+    pieChart: {
+      data: {
+        kcat: {
+          status: 'loading',
+          data: [],
+          options: {},
+          plugins: [],
+        },
+        km: {
+          status: 'loading',
+          data: [],
+          options: {},
+          plugins: [],
+        },
+        kcat_km: {
+          status: 'loading',
+          data: [],
+          options: {},
+          plugins: [],
+        },
+      },
+      styleConfig: {},
+    },
+
+    barChart: {
+      data: {
+        status: 'loading',
+        data: [],
+        options: {},
+        plugins: [],
+      },
+      styleConfig: {},
+    }
+  }
+
   #pieChartState: {
     state: 'focused' | 'hovering' | 'mouseout' | 'default',
     payload: any
@@ -126,32 +161,7 @@ export class LandingPageComponent {
     { label: 'EC 7', longLabel: 'EC 7 - Translocases', description: 'Move ions, molecules across membranes.' },
   ]
 
-  dataSetSummary: any[] = [];
-
-  readonly histogramData: {
-    kcat: ChartData,
-    km: ChartData,
-    kcat_km: ChartData,
-  } = {
-    kcat: {
-      status: 'loading',
-      data: [],
-      options: {},
-      plugins: [],
-    },
-    km: {
-      status: 'loading',
-      data: [],
-      options: {},
-      plugins: [],
-    },
-    kcat_km: {
-      status: 'loading',
-      data: [],
-      options: {},
-      plugins: [],
-    },
-  };
+  datasetSummary: any[] = [];
 
   constructor(
     protected service: OpenEnzymeDBService,
@@ -162,11 +172,13 @@ export class LandingPageComponent {
       service.KCAT_DF$,
       service.KM_DF$,
       service.KCAT_KM_DF$,
-    ]).subscribe(([kcatDf, kmDf, kcatKmDf]) => {
-      this.pieChartData['kcat'] = this.generatePieChart(kcatDf);
-      this.pieChartData['km'] = this.generatePieChart(kmDf);
-      this.pieChartData['kcat_km'] = this.generatePieChart(kcatKmDf);
-      this.dataSetSummary = this.generateSummary(kcatDf, kmDf, kcatKmDf);
+    ]).subscribe((dfs) => {
+      const [kcatDf, kmDf, kcatKmDf] = dfs;
+      this.chartConfigs['pieChart']['data']['kcat'] = this.generatePieChart(kcatDf);
+      this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart(kmDf);
+      this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart(kcatKmDf);
+      this.chartConfigs['barChart']['data'] = this.generateHistogram(dfs);
+      this.datasetSummary = this.generateSummary(kcatDf, kmDf, kcatKmDf);
     });
 
     const documentStyle = getComputedStyle(document.documentElement);
@@ -174,11 +186,19 @@ export class LandingPageComponent {
     const hoverColorLayer = ['600', '400', '200', '100'];
     const colors = ['blue', 'green', 'orange', 'purple', 'pink', 'teal', 'red'];
     const dimOpacity = 0.2;
-    this.pieChartStyleConfig = {
+    this.chartConfigs['pieChart']['styleConfig'] = {
       dimOpacity,
       textColor: documentStyle.getPropertyValue('--text-color'),
       backgroundColor: colors.map((color) => documentStyle.getPropertyValue(`--${color}-${colorLayer[0]}`)),
       hoverBackgroundColor: colors.map((color) => documentStyle.getPropertyValue(`--${color}-${hoverColorLayer[0]}`))
+    }
+
+    const barChartColors = ['blue', 'cyan', 'teal'];
+    this.chartConfigs['barChart']['styleConfig'] = {
+      dimOpacity,
+      textColor: documentStyle.getPropertyValue('--text-color'),
+      backgroundColor: barChartColors.map((color) => documentStyle.getPropertyValue(`--${color}-${colorLayer[0]}`)),
+      hoverBackgroundColor: barChartColors.map((color) => documentStyle.getPropertyValue(`--${color}-${hoverColorLayer[0]}`))
     }
 
     document.addEventListener('click', (e) => {
@@ -221,7 +241,7 @@ export class LandingPageComponent {
     return transposed;
   }
 
-  generatePieChart(df: any): ChartData {
+  generateECMap(df: any): Record<string, number> {
     const ecMap: Record<string, number> = {};
 
     df.forEach((row: any) => {
@@ -233,6 +253,12 @@ export class LandingPageComponent {
         ecMap[ecLabel] = (ecMap[ecLabel] || 0) + 1;
       }
     });
+
+    return ecMap;
+  }
+
+  generatePieChart(df: any): ChartData {
+    const ecMap: Record<string, number> = this.generateECMap(df);
 
     const data = Object.entries(ecMap)
       .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/))
@@ -246,8 +272,8 @@ export class LandingPageComponent {
           { 
             data: data.map((d) => d.count),
             total: data.reduce((acc, d) => acc + d.count, 0),
-            backgroundColor: this.pieChartStyleConfig['backgroundColor'],
-            hoverBackgroundColor: this.pieChartStyleConfig['hoverBackgroundColor'],
+            backgroundColor: this.chartConfigs['pieChart']['styleConfig']['backgroundColor'],
+            hoverBackgroundColor: this.chartConfigs['pieChart']['styleConfig']['hoverBackgroundColor'],
           },
         ],
       },
@@ -296,12 +322,59 @@ export class LandingPageComponent {
     };
   }
 
+  generateHistogram(dfs: any[]): ChartData {
+    const ecMaps: { ec: string, count: number }[][] = dfs
+      .map((df) => Object.entries(this.generateECMap(df))
+        .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/)) // only use top level ECs
+        .map(([ec, count]) => ({ ec, count }))
+      );
+
+    return {
+      status: 'loaded',
+      data: {
+        labels: ecMaps[0].map((_, i) => this.ecSummary[i].label),
+        datasets: ecMaps.map((ecMap, i) => ({
+          label: ['kcat', 'km', 'kcat/km'][i],
+          data: ecMap.map((d) => d.count),
+          total: ecMap.reduce((acc, d) => acc + d.count, 0),
+          backgroundColor: this.chartConfigs['barChart']['styleConfig']['backgroundColor'][i],
+          hoverBackgroundColor: this.chartConfigs['barChart']['styleConfig']['hoverBackgroundColor'][i],
+        })),
+      },
+      options: {
+        plugins: { 
+          // legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (tooltipItem: any) => {
+                return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue} (${(tooltipItem.raw / tooltipItem.dataset.total * 100).toFixed(1)}%)`;
+              }
+            }
+          },
+        }
+      },
+      plugins: [],
+      //   {
+      //     id: 'event-catcher',
+      //     beforeEvent: (chart: any, args: any) => {
+      //       if (args.event.type === 'mouseout') {
+      //         this.pieChartState = {
+      //           state: 'mouseout',
+      //           payload: null,
+      //         };
+      //       }
+      //     }
+      //   }
+      // ],
+    };
+  }
+
   highlightAllPieCharts(activeIndex: number) {
     // Reset all segments
     this.charts.forEach((chart) => {
       if (chart.type === 'pie') {
-        const hexDimOpacity = Math.round(this.pieChartStyleConfig['dimOpacity'] * 255).toString(16);
-        chart.data.datasets[0].backgroundColor = [...this.pieChartStyleConfig['backgroundColor'].map((color: string) => color + hexDimOpacity)];
+        const hexDimOpacity = Math.round(this.chartConfigs['pieChart']['styleConfig']['dimOpacity'] * 255).toString(16);
+        chart.data.datasets[0].backgroundColor = [...this.chartConfigs['pieChart']['styleConfig']['backgroundColor'].map((color: string) => color + hexDimOpacity)];
         chart.data.datasets[0].backgroundColor[activeIndex] = chart.data.datasets[0].hoverBackgroundColor[activeIndex];
         chart.chart.update();
       }
@@ -311,7 +384,7 @@ export class LandingPageComponent {
   resetHighlight() {
     this.charts.forEach((chart) => {
       if (chart.type === 'pie') {
-        chart.data.datasets[0].backgroundColor = [...this.pieChartStyleConfig['backgroundColor']];
+        chart.data.datasets[0].backgroundColor = [...this.chartConfigs['pieChart']['styleConfig']['backgroundColor']];
         chart.chart.update();
       }
     });

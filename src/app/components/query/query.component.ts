@@ -376,6 +376,7 @@ export class QueryComponent {
               name: row.SUBSTRATE,
               smiles: row.SMILES,
             },
+            enzyme_type: row.EnzymeType,
             organism: row.ORGANISM,
             uniprot_id: row.UNIPROT.split(','),
             ph: row.PH,
