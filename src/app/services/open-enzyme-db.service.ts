@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, from, map, of } from "rxjs";
 
-import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService } from "../api/mmli-backend/v1";
+import { BodyCreateJobJobTypeJobsPost, ChemicalAutoCompleteResponse, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
 import { EnvironmentService } from "./environment.service";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
@@ -28,6 +28,7 @@ export class OpenEnzymeDBService {
     private jobsService: JobsService,
     private filesService: FilesService,
     private environmentService: EnvironmentService,
+    private sharedService: SharedService,
 
     // private apiService: OpenEnzymeDBApiService,
   ) {
@@ -72,5 +73,16 @@ export class OpenEnzymeDBService {
       run_id: 0,
       email: email,
     });
+  }
+
+  validateChemical(smiles: string): Observable<any> {
+    return this.sharedService.drawSmilesSmilesDrawGet(smiles).pipe(
+      map((res) => {
+        return {
+          smiles: smiles,
+          structure: res,
+        } as ChemicalAutoCompleteResponse;
+      })
+    );
   }
 }

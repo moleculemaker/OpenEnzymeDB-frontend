@@ -52,7 +52,7 @@
         @switch (selectedSearchOption?.key) {
             @case ('compound') {
                 <app-marvinjs-input 
-                    placeholder="Enter a compound"
+                    [placeholder]="selectedSearchOption?.placeholder || ''"
                     class="grow h-8"
                     [formControl]="selectedSearchOption!.formControls['value']"
                 >
@@ -62,7 +62,8 @@
                 <input 
                     pInputText 
                     type="text" 
-                    placeholder="Enter organism name"
+                    title="{{selectedSearchOption?.placeholder}}"
+                    [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
                     (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
                     [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
@@ -72,7 +73,8 @@
                 <input 
                     pInputText 
                     type="text" 
-                    placeholder="Enter EC number"
+                    title="{{selectedSearchOption?.placeholder}}"
+                    [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
                     (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
                     [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
@@ -82,7 +84,8 @@
                 <input 
                     pInputText 
                     type="text" 
-                    placeholder="Enter Uniprot ID"
+                    title="{{selectedSearchOption?.placeholder}}"
+                    [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
                     (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
                     [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
@@ -92,7 +95,8 @@
                 <input 
                     pInputText 
                     type="text" 
-                    placeholder="Enter pH range"
+                    title="{{selectedSearchOption?.placeholder}}"
+                    [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
                     (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
                     [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
@@ -102,7 +106,8 @@
                 <input 
                     pInputText 
                     type="text" 
-                    placeholder="Enter temperature range (°C)"
+                    title="{{selectedSearchOption?.placeholder}}"
+                    [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
                     (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
                     [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
@@ -117,7 +122,8 @@
     @if (
         selectedSearchOption &&
         selectedSearchOption.key === 'compound' && 
-        selectedSearchOption.formControls['value'].value
+        selectedSearchOption.formControls['value'].value &&
+        selectedSearchOption.formControls['select']?.value === 'smiles'
     ) {
         <div
             class="relative mt-4 grow flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
@@ -129,12 +135,30 @@
                 <i class="absolute pi left-3 top-3"
                     [class.pi-check-circle]="selectedSearchOption!.formControls['value']['valid']"
                 ></i>
-                <app-molecule-image 
-                    [height]="300" 
-                    [width]="300"
-                    [molecule]="''"
-                >
-                </app-molecule-image>
+                @switch (chemicalInfo.status) {
+                    @case ('valid') {
+                        <app-molecule-image 
+                            [height]="300" 
+                            [width]="300"
+                            [molecule]="chemicalInfo.structure"
+                        ></app-molecule-image>
+                    }
+                    @case ('empty') {
+                        <div class="h-[300px] flex items-center justify-center">
+                            No image available
+                        </div>
+                    }
+                    @case ('invalid') {
+                        <div class="h-[300px] flex items-center justify-center">
+                            Input is invalid
+                        </div>
+                    }
+                    @case ('loading') {
+                        <div class="h-[300px] flex items-center justify-center">
+                            <p-progressSpinner aria-label="Loading"></p-progressSpinner>
+                        </div>
+                    }
+                }
             </div>
         </div>
     }

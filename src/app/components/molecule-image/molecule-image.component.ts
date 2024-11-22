@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { SafePipe } from '../../pipes/safe.pipe';
 
@@ -9,7 +9,7 @@ import { SafePipe } from '../../pipes/safe.pipe';
     standalone: true,
     imports: [NgIf, SafePipe]
 })
-export class MoleculeImageComponent implements OnInit {
+export class MoleculeImageComponent implements OnInit, OnChanges {
   @Input() molecule: string;
   @Input() width: number = 300;
   @Input() height: number = 150;
@@ -18,6 +18,16 @@ export class MoleculeImageComponent implements OnInit {
   placeholderClassName = ''
 
   ngOnInit(): void {
+    this.init();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['molecule']) {
+      this.init();
+    }
+  }
+
+  init() {
     const element = document.createElement('div');
     element.innerHTML = this.molecule ?? '';
     element.querySelector('svg')?.setAttribute('width', `${this.width}px`);

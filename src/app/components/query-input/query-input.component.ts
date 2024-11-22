@@ -1,6 +1,6 @@
 import { CommonModule, JsonPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,20 +9,44 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 
 import { MarvinjsInputComponent } from '../marvinjs-input/marvinjs-input.component';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
+import { of, switchMap, map, first, catchError, filter, tap } from 'rxjs';
+import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { ProgressSpinner, ProgressSpinnerModule } from 'primeng/progressspinner';
+import { SkeletonModule } from 'primeng/skeleton';
 
 type SearchType = 'string' | 'range' | 'molecule';
 
+interface BaseSearchOptionParams {
+  key: string;
+  label: string;
+  type: SearchType;
+  placeholder: string;
+  formControls: {
+    value: FormControl<any | null>;
+    [key: string]: FormControl<any> | undefined;
+  };
+  example: Record<string, any>;
+}
+
 class BaseSearchOption {
-  constructor(
-    public key: string,
-    public label: string,
-    public type: SearchType,
-    public formControls: {
-      value: FormControl<any | null>;
-      [key: string]: FormControl<any> | undefined;
-    },
-    public example: Record<string, any>
-  ) {}
+  key: string;
+  label: string;
+  type: SearchType;
+  placeholder: string;
+  formControls: {
+    value: FormControl<any | null>;
+    [key: string]: FormControl<any> | undefined;
+  };
+  example: Record<string, any>;
+
+  constructor(params: BaseSearchOptionParams) {
+    this.key = params.key;
+    this.label = params.label;
+    this.type = params.type;
+    this.placeholder = params.placeholder;
+    this.formControls = params.formControls;
+    this.example = params.example;
+  }
 
   reset() {
     Object.values(this.formControls).forEach(control => {
@@ -33,45 +57,59 @@ class BaseSearchOption {
   }
 }
 
+type StringSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
+  formControls: {
+    value: FormControl<string | null>;
+  };
+  example: Record<string, any>;
+}
+
 class StringSearchOption extends BaseSearchOption {
-  constructor(
-    key: string,
-    label: string,
-    formControls: {
-      value: FormControl<string | null>;
-    },
-    example: Record<string, any>
-  ) {
-    super(key, label, 'string', formControls, example);
+  constructor(params: StringSearchOptionParams) {
+    super({
+      ...params,
+      type: 'string',
+    });
   }
+}
+
+type RangeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
+  formControls: {
+    value: FormControl<[number, number] | null>;
+  };
+  example: Record<string, any>;
+  min?: number;
+  max?: number;
 }
 
 class RangeSearchOption extends BaseSearchOption {
-  constructor(
-    key: string,
-    label: string,
-    formControls: {
-      value: FormControl<[number, number] | null>;
-    },
-    example: Record<string, any>,
-    public min?: number,
-    public max?: number
-  ) {
-    super(key, label, 'range', formControls, example);
+  min?: number;
+  max?: number;
+
+  constructor(params: RangeSearchOptionParams) {
+    super({
+      ...params,
+      type: 'range',
+    });
+    this.min = params.min;
+    this.max = params.max;
   }
 }
 
+type MoleculeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
+  formControls: {
+    select: FormControl<'name' | 'smiles' | null>;
+    value: FormControl<string | null>;
+  };
+  example: Record<string, any>;
+}
+
 class MoleculeSearchOption extends BaseSearchOption {
-  constructor(
-    key: string,
-    label: string,
-    formControls: {
-      select: FormControl<'name' | 'smiles' | null>;
-      value: FormControl<string | null>;
-    },
-    example: Record<string, any>
-  ) {
-    super(key, label, 'molecule', formControls, example);
+  constructor(params: MoleculeSearchOptionParams) {
+    super({
+      ...params,
+      type: 'molecule',
+    });
   }
 }
 
@@ -115,12 +153,13 @@ export interface QueryValue {
     FormsModule,
     InputTextModule,
     MenuModule,
-    JsonPipe,
     CommonModule,
     MarvinjsInputComponent,
     ReactiveFormsModule,
     RadioButtonModule,
     MoleculeImageComponent,
+    ProgressSpinnerModule,
+    SkeletonModule,
   ],
   templateUrl: './query-input.component.html',
   styleUrl: './query-input.component.scss',
@@ -133,75 +172,125 @@ export interface QueryValue {
   ]
 })
 export class QueryInputComponent implements ControlValueAccessor {
+  
+  chemicalInfo: {
+    structure: string;
+    status: 'valid' | 'invalid' | 'loading' | 'empty';
+  } = {
+    structure: '',
+    status: 'loading'
+  }
+
   searchConfigs: SearchOption[] = [
-    new MoleculeSearchOption(
-      'compound',
-      'Compound',
-      {
+    new MoleculeSearchOption({
+      key: 'compound',
+      label: 'Compound',
+      placeholder: 'Enter a compound',
+      formControls: {
         select: new FormControl<'name' | 'smiles' | null>('name', [Validators.required]),
-        value: new FormControl<string | null>('', [Validators.required])
+        value: new FormControl<string | null>('', [Validators.required], [
+          (control: AbstractControl) => {
+            return of(control.value).pipe(
+              filter(() => {
+                if (this.selectedSearchOption?.key === 'compound') {
+                  if (this.selectedSearchOption?.formControls['select']?.value === 'smiles') {
+                    this.chemicalInfo.status = 'loading';
+                    return true;
+                  }
+                }
+                return false;
+              }),
+              switchMap((smiles) => this.service.validateChemical(smiles)),
+              map((chemical) => {
+                if (chemical) {
+                  this.chemicalInfo.structure = chemical.structure || "";
+                  this.chemicalInfo.status = 'valid';
+                  return null;
+                }
+                this.chemicalInfo.status = 'invalid';
+                return { invalidSmiles: true };
+              }),
+              first(),
+              catchError((err) => {
+                if (err.name === "EmptyError") {
+                  this.chemicalInfo.status = 'empty';
+                  return of(null);
+                }
+                
+                console.error('[query-input] error validating chemical', err);
+                this.chemicalInfo.status = 'invalid';
+                return of({ invalidSmiles: true });
+              })
+            );
+          }
+        ])
       },
-      {
+      example: {
         label: 'Ethanol (CCO)',
         select: 'smiles',
         value: 'CCO'
       }
-    ),
-    new StringSearchOption(
-      'organism',
-      'Organism',
-      {
+    }),
+    new StringSearchOption({
+      key: 'organism',
+      label: 'Organism',
+      placeholder: 'Enter organism name',
+      formControls: {
         value: new FormControl<string | null>('', [Validators.required])
       },
-      {
+      example: {
         label: 'Lentzea aerocolonigenes',
         value: 'Lentzea aerocolonigenes'
       }
-    ),
-    new StringSearchOption(
-      'uniprot_id',
-      'Uniprot ID',
-      {
+    }),
+    new StringSearchOption({
+      key: 'uniprot_id',
+      label: 'Uniprot ID',
+      placeholder: 'Enter Uniprot ID',
+      formControls: {
         value: new FormControl<string | null>('', [Validators.required])
       },
-      {
+      example: {
         label: 'A2BC19',
         value: 'A2BC19'
       }
-    ),
-    new StringSearchOption(
-      'ec_number',
-      'EC Number',
-      {
+    }),
+    new StringSearchOption({
+      key: 'ec_number',
+      label: 'EC Number',
+      placeholder: 'Enter EC Number',
+      formControls: {
         value: new FormControl<string | null>('', [Validators.required])
       },
-      {
+      example: {
         label: '2.7.10.1',
         value: '2.7.10.1'
       }
-    ),
-    new RangeSearchOption(
-      'ph',
-      'pH',
-      {
+    }),
+    new RangeSearchOption({
+      key: 'ph',
+      label: 'pH',
+      placeholder: 'Enter pH range',
+      formControls: {
         value: new FormControl<[number, number] | null>(null, [Validators.required])
       },
-      {
+      example: {
         label: '1-8',
         value: [1, 8]
       }
-    ),
-    new RangeSearchOption(
-      'temperature',
-      'Temperature',
-      {
+    }),
+    new RangeSearchOption({
+      key: 'temperature',
+      label: 'Temperature',
+      placeholder: 'Enter temperature range',
+      formControls: {
         value: new FormControl<[number, number] | null>(null, [Validators.required])
       },
-      {
+      example: {
         label: '37-39°C',
         value: [37, 39]
       }
-    ),
+    }),
   ];
 
   private onChange: (value: QueryValue) => void = () => {};
@@ -279,6 +368,10 @@ export class QueryInputComponent implements ControlValueAccessor {
 
 
   selectedSearchOption: SearchOption | null = null;
+
+  constructor(
+    private service: OpenEnzymeDBService
+  ) {}
 
   ngOnInit() {
     // Subscribe to value changes for all search configs
