@@ -322,12 +322,18 @@ export class QueryComponent {
     this.filterService.register(
       "range",
       (value: number, filter: [number, number]) => {
+        if (!filter) {
+          return true;
+        }
         return value >= filter[0] && value <= filter[1];
       },
     );
     this.filterService.register(
       "subset",
       (value: any[], filter: any[]) => {
+        if (!filter) {
+          return true;
+        }
         return filter.every((f) => value.includes(f));
       },
     );
