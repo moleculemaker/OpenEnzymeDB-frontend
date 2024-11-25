@@ -251,8 +251,8 @@ export class QueryInputComponent implements ControlValueAccessor {
         value: new FormControl<string | null>('', [Validators.required])
       },
       example: {
-        label: 'A2BC19',
-        value: 'A2BC19'
+        label: 'P05655',
+        value: 'P05655'
       }
     }),
     new StringSearchOption({
@@ -263,8 +263,8 @@ export class QueryInputComponent implements ControlValueAccessor {
         value: new FormControl<string | null>('', [Validators.required])
       },
       example: {
-        label: '2.7.10.1',
-        value: '2.7.10.1'
+        label: '5.1.1.1',
+        value: '5.1.1.1'
       }
     }),
     new RangeSearchOption({

@@ -10,6 +10,7 @@ import { PanelModule } from "primeng/panel";
 import { combineLatest, combineLatestAll } from "rxjs";
 import { DropdownModule } from "primeng/dropdown";
 import { FormsModule } from "@angular/forms";
+import { SkeletonModule } from "primeng/skeleton";
 
 type ChartData = {
   status: 'loading' | 'loaded',
@@ -34,6 +35,7 @@ type ChartData = {
     PanelModule,
     DropdownModule,
     FormsModule,
+    SkeletonModule,
   ],
   host: {
     class: 'flex flex-col justify-center items-center w-full'
@@ -56,6 +58,8 @@ export class LandingPageComponent {
         kcat_km: ChartData,
       },
       styleConfig: any,
+      state: 'focused' | 'hovering' | 'mouseout' | 'default',
+      [key: string]: any,
     },
     barChart: {
       data: ChartData,
@@ -86,6 +90,13 @@ export class LandingPageComponent {
         },
       },
       styleConfig: {},
+      _state: 'default',
+      get state() {
+        return this['_state'];
+      },
+      set state(state: 'focused' | 'hovering' | 'mouseout' | 'default') {
+        this['_state'] = state;
+      }
     },
 
     barChart: {
@@ -151,6 +162,26 @@ export class LandingPageComponent {
     this.cdr.detectChanges();
   }
 
+  #barChartState: {
+    state: 'focused' | 'default',
+    payload: any
+  } = {
+    state: 'default',
+    payload: null,
+  }
+
+  get barChartState() {
+    return this.#barChartState;
+  }
+
+  set barChartState(state: { 
+    state: 'focused' | 'default', 
+    payload: any 
+  }) {
+    this.#pieChartState = state;
+    this.cdr.detectChanges();
+  }
+
   ecSummary = [
     { label: 'EC 1', longLabel: 'EC 1 - Oxidoreductases', description: 'Catalyze oxidation-reduction reactions.' },
     { label: 'EC 2', longLabel: 'EC 2 - Transferases', description: 'Transfer a functional group from one molecule to another.' },
@@ -166,8 +197,10 @@ export class LandingPageComponent {
     kcat: any,
     km: any,
     kcat_km: any,
-    dataset: any
+    dataset: any,
+    status: 'na' | 'loading' | 'loaded',
   } = {
+    status: 'na',
     kcat: null,
     km: null,
     kcat_km: null,
@@ -190,7 +223,10 @@ export class LandingPageComponent {
       this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart(kcatKmDf);
       this.chartConfigs['barChart']['data'] = this.generateHistogram(dfs);
       
-      this.summary = this.generateSummary(kcatDf, kmDf, kcatKmDf);
+      this.summary = {
+        ...this.generateSummary(kcatDf, kmDf, kcatKmDf),
+        status: 'loaded',
+      };
     });
 
     const documentStyle = getComputedStyle(document.documentElement);
@@ -215,6 +251,10 @@ export class LandingPageComponent {
 
     document.addEventListener('click', (e) => {
       this.pieChartState = {
+        state: 'default',
+        payload: null,
+      };
+      this.barChartState = {
         state: 'default',
         payload: null,
       };
@@ -359,6 +399,15 @@ export class LandingPageComponent {
         })),
       },
       options: {
+        onClick: (e: any, chartElement: any) => {
+          console.log(chartElement[0]);
+          if (chartElement.length > 0) {
+            this.barChartState = {
+              state: 'focused',
+              payload: chartElement[0].index,
+            };
+          }
+        },
         plugins: { 
           // legend: { display: false },
           tooltip: {
@@ -371,39 +420,24 @@ export class LandingPageComponent {
         }
       },
       plugins: [],
-      //   {
-      //     id: 'event-catcher',
-      //     beforeEvent: (chart: any, args: any) => {
-      //       if (args.event.type === 'mouseout') {
-      //         this.pieChartState = {
-      //           state: 'mouseout',
-      //           payload: null,
-      //         };
-      //       }
-      //     }
-      //   }
-      // ],
     };
   }
 
   highlightAllPieCharts(activeIndex: number) {
     // Reset all segments
-    this.charts.forEach((chart) => {
-      if (chart.type === 'pie') {
-        const hexDimOpacity = Math.round(this.chartConfigs['pieChart']['styleConfig']['dimOpacity'] * 255).toString(16);
-        chart.data.datasets[0].backgroundColor = [...this.chartConfigs['pieChart']['styleConfig']['backgroundColor'].map((color: string) => color + hexDimOpacity)];
-        chart.data.datasets[0].backgroundColor[activeIndex] = chart.data.datasets[0].hoverBackgroundColor[activeIndex];
-        chart.chart.update();
-      }
+    const pieChartStyleConfig = this.chartConfigs['pieChart']['styleConfig'];
+    this.charts.filter((chart) => chart.type === 'pie').forEach((chart) => {
+      const hexDimOpacity = Math.round(pieChartStyleConfig['dimOpacity'] * 255).toString(16);
+      chart.data.datasets[0].backgroundColor = [...pieChartStyleConfig['backgroundColor'].map((color: string) => color + hexDimOpacity)];
+      chart.data.datasets[0].backgroundColor[activeIndex] = pieChartStyleConfig['hoverBackgroundColor'][activeIndex];
+      chart.chart.update();
     });
   }
 
   resetHighlight() {
-    this.charts.forEach((chart) => {
-      if (chart.type === 'pie') {
-        chart.data.datasets[0].backgroundColor = [...this.chartConfigs['pieChart']['styleConfig']['backgroundColor']];
-        chart.chart.update();
-      }
+    this.charts.filter((chart) => chart.type === 'pie').forEach((chart) => {
+      chart.data.datasets[0].backgroundColor = [...this.chartConfigs['pieChart']['styleConfig']['backgroundColor']];
+      chart.chart.update();
     });
   }
 }

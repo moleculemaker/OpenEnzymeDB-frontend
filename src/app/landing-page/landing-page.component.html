@@ -177,15 +177,17 @@
 <div class="my-4 bg-[#F3F5FB] w-full flex flex-col justify-center items-center py-16">
   <div class="xl:w-full w-content-xl pt-6 pb-8">
     <h4>Data Snapshot</h4>
-    <h5 class="max-w-screen-md mt-5 leading-xl">
-      The first release of Open Enzyme Database includes quantities of dataset, featuring 
-      {{ summary.kcat.total | number }} entries for enzyme turnover number (kcat), 
-      {{ summary.km.total | number }} entries for Michaelis constants (Km), and 
-      {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (kcat/Km)
-    </h5>
-    <h5 class="max-w-screen-md mt-5 leading-xl">
-      Learn more about our curated data below, or by visiting our statistics page for more information.
-    </h5>
+    @if (summary) {
+      <h5 class="max-w-screen-md mt-5 leading-xl">
+        The first release of Open Enzyme Database includes quantities of dataset, featuring 
+        {{ summary.kcat.total | number }} entries for enzyme turnover number (<h5 class="inline italic">k<sub>cat</sub></h5>), 
+        {{ summary.km.total | number }} entries for Michaelis constants (<h5 class="inline italic">K<sub>m</sub></h5>), and 
+        {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (<h5 class="inline italic">k<sub>cat</sub> / K<sub>m</sub></h5>)
+      </h5>
+      <h5 class="max-w-screen-md mt-5 leading-xl">
+        Learn more about our curated data below, or by visiting our statistics page for more information.
+      </h5>
+    }
   </div>
 
   <p-panel styleClass="xl:w-full w-content-xl">
@@ -196,27 +198,25 @@
     <div class="flex flex-col">
       <div class="relative"></div>
       <div class="flex gap-2 bg-[#F7F8F9] p-2">
-        @if (chartConfigs['currentChart'] === 'pieChart') {
-          <span>
-            <div class="rounded-md border border-solid border-[--surface-d] py-2 flex flex-col gap-2 bg-white">
-              <div class="font-semibold px-2">EC Classes</div>
-              <hr>
-              <div class="flex flex-col">
-                @for (color of chartConfigs['pieChart']['styleConfig']['backgroundColor']; track color; let i = $index) {
-                <button title="EC {{ i + 1 }}" type="button" class="flex items-center gap-2 cursor-pointer px-2 py-1"
-                  [class.bg-[#F5F9FF]]="pieChartState.state === 'focused' && pieChartState.payload === i"
-                  (click)="pieChartState = { state: 'focused', payload: i }; $event.stopPropagation()">
-                  <div class="w-4 h-4 rounded-full" [style.background-color]="color"></div>
-                  <div>{{ ecSummary[i].label }}</div>
-                </button>
-                }
-              </div>
+        <span>
+          <div class="rounded-md border border-solid border-[--surface-d] py-2 flex flex-col gap-2 bg-white">
+            <div class="font-semibold px-2">EC Classes</div>
+            <hr>
+            <div class="flex flex-col">
+              @for (color of chartConfigs['pieChart']['styleConfig']['backgroundColor']; track color; let i = $index) {
+              <button title="EC {{ i + 1 }}" type="button" class="flex items-center gap-2 cursor-pointer px-2 py-1"
+                [class.bg-[#F5F9FF]]="pieChartState.state === 'focused' && pieChartState.payload === i"
+                (click)="pieChartState = { state: 'focused', payload: i }; $event.stopPropagation()">
+                <div class="w-4 h-4 rounded-full" [style.background-color]="color"></div>
+                <div>{{ ecSummary[i].label }}</div>
+              </button>
+              }
             </div>
-          </span>
-        }
+          </div>
+        </span>
         <div class="flex flex-col gap-2 w-full">
           <div class="flex justify-end w-full pr-8 gap-2">
-              @if (pieChartState.state === 'focused') {
+              @if (pieChartState.state === 'focused' || barChartState.state === 'focused') {
                 <div class="rounded-md border border-solid border-[--surface-d] p-2 flex flex-col gap-2 bg-white grow">
                   <div class="font-semibold flex items-center gap-2">
                     <div class="w-4 h-4 rounded-full"
@@ -264,35 +264,52 @@
             <!-- Pie Charts -->
             @case ('pieChart') {
               <div 
-                class="flex justify-center gap-4" 
-                [class.mt-24]="pieChartState.state !== 'focused'"
+                class="flex justify-center gap-4 p-8" 
               >
-                <div *ngIf="chartConfigs['pieChart']['data']['kcat'].status === 'loaded'">
-                  <div class="italic font-semibold"><span
-                      class="pb-1 border-b-2 border-dashed border-black">k<sub>cat</sub></span></div>
-                  <p-chart type="pie" #kcatChart 
-                    [data]="chartConfigs['pieChart']['data']['kcat'].data"
-                    [options]="chartConfigs['pieChart']['data']['kcat'].options" 
-                    [plugins]="chartConfigs['pieChart']['data']['kcat'].plugins"></p-chart>
-                </div>
+                @if (chartConfigs['pieChart']['data']['kcat'].status === 'loaded') {
+                  <div>
+                    <div class="italic font-semibold"><span
+                        class="pb-1 border-b-2 border-dashed border-black">k<sub>cat</sub></span></div>
+                    <p-chart type="pie" #kcatChart 
+                      [data]="chartConfigs['pieChart']['data']['kcat'].data"
+                      [options]="chartConfigs['pieChart']['data']['kcat'].options" 
+                      [plugins]="chartConfigs['pieChart']['data']['kcat'].plugins"></p-chart>
+                  </div>
+                } @else {
+                  <div class="flex justify-center items-center h-full">
+                    <p-skeleton width="100%" height="100%"></p-skeleton>
+                  </div>
+                }
 
-                <div *ngIf="chartConfigs['pieChart']['data']['km'].status === 'loaded'">
-                  <div class="italic font-semibold"><span
+                @if (chartConfigs['pieChart']['data']['km'].status === 'loaded') {
+                  <div>
+                    <div class="italic font-semibold"><span
                       class="pb-1 border-b-2 border-dashed border-black">K<sub>m</sub></span></div>
-                  <p-chart type="pie" #kmChart 
-                    [data]="chartConfigs['pieChart']['data']['km'].data"
-                    [options]="chartConfigs['pieChart']['data']['km'].options" 
-                    [plugins]="chartConfigs['pieChart']['data']['km'].plugins"></p-chart>
-                </div>
+                    <p-chart type="pie" #kmChart 
+                      [data]="chartConfigs['pieChart']['data']['km'].data"
+                      [options]="chartConfigs['pieChart']['data']['km'].options" 
+                      [plugins]="chartConfigs['pieChart']['data']['km'].plugins"></p-chart>
+                  </div>
+                } @else {
+                  <div class="flex justify-center items-center h-full">
+                    <p-skeleton width="100%" height="100%"></p-skeleton>
+                  </div>
+                }
 
-                <div *ngIf="chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded'">
-                  <div class="italic font-semibold"><span
+                @if (chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded') {
+                  <div>
+                    <div class="italic font-semibold"><span
                       class="pb-1 border-b-2 border-dashed border-black">k<sub>cat</sub> / K<sub>m</sub></span></div>
-                  <p-chart type="pie" #kcatKmChart 
-                    [data]="chartConfigs['pieChart']['data']['kcat_km'].data"
-                    [options]="chartConfigs['pieChart']['data']['kcat_km'].options" 
-                    [plugins]="chartConfigs['pieChart']['data']['kcat_km'].plugins"></p-chart>
-                </div>
+                    <p-chart type="pie" #kcatKmChart 
+                      [data]="chartConfigs['pieChart']['data']['kcat_km'].data"
+                      [options]="chartConfigs['pieChart']['data']['kcat_km'].options" 
+                      [plugins]="chartConfigs['pieChart']['data']['kcat_km'].plugins"></p-chart>
+                  </div>
+                } @else {
+                  <div class="flex justify-center items-center h-full">
+                    <p-skeleton width="100%" height="100%"></p-skeleton>
+                  </div>
+                }
               </div>
             }
 
@@ -301,7 +318,7 @@
               @if (chartConfigs['barChart']['data'].status === 'loaded') {
                 <div class="p-8">
                   <p-chart type="bar" #histogramChart 
-                    styleClass="mt-24 w-full"
+                    styleClass="w-full"
                     [data]="chartConfigs['barChart']['data'].data"
                     [options]="chartConfigs['barChart']['data'].options" 
                     [plugins]="chartConfigs['barChart']['data'].plugins">
