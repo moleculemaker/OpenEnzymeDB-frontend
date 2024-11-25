@@ -11,6 +11,7 @@ import { combineLatest, combineLatestAll } from "rxjs";
 import { DropdownModule } from "primeng/dropdown";
 import { FormsModule } from "@angular/forms";
 import { SkeletonModule } from "primeng/skeleton";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
 
 type ChartData = {
   status: 'loading' | 'loaded',
@@ -36,6 +37,7 @@ type ChartData = {
     DropdownModule,
     FormsModule,
     SkeletonModule,
+    ProgressSpinnerModule,
   ],
   host: {
     class: 'flex flex-col justify-center items-center w-full'
