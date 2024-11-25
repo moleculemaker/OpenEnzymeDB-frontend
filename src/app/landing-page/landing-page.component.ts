@@ -161,7 +161,18 @@ export class LandingPageComponent {
     { label: 'EC 7', longLabel: 'EC 7 - Translocases', description: 'Move ions, molecules across membranes.' },
   ]
 
-  datasetSummary: any[] = [];
+  // datasetSummary: any[] = [];
+  summary: {
+    kcat: any,
+    km: any,
+    kcat_km: any,
+    dataset: any
+  } = {
+    kcat: null,
+    km: null,
+    kcat_km: null,
+    dataset: null,
+  }
 
   constructor(
     protected service: OpenEnzymeDBService,
@@ -178,7 +189,8 @@ export class LandingPageComponent {
       this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart(kmDf);
       this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart(kcatKmDf);
       this.chartConfigs['barChart']['data'] = this.generateHistogram(dfs);
-      this.datasetSummary = this.generateSummary(kcatDf, kmDf, kcatKmDf);
+      
+      this.summary = this.generateSummary(kcatDf, kmDf, kcatKmDf);
     });
 
     const documentStyle = getComputedStyle(document.documentElement);
@@ -230,7 +242,7 @@ export class LandingPageComponent {
     const kcatKmSummary = getSummary(kcatKm);
 
     // transpose the summary
-    const transposed = [
+    const dataset = [
       { label: 'Unique Substrates', kcat: kcatSummary.substrates, km: kmSummary.substrates, kcat_km: kcatKmSummary.substrates },
       { label: 'Unique Organisms', kcat: kcatSummary.organisms, km: kmSummary.organisms, kcat_km: kcatKmSummary.organisms },
       { label: 'Unique Uniprot IDs', kcat: kcatSummary.uniprotIds, km: kmSummary.uniprotIds, kcat_km: kcatKmSummary.uniprotIds },
@@ -238,7 +250,12 @@ export class LandingPageComponent {
       { label: 'Total Entries', kcat: kcatSummary.total, km: kmSummary.total, kcat_km: kcatKmSummary.total },
     ];
 
-    return transposed;
+    return {
+      kcat: kcatSummary,
+      km: kmSummary,
+      kcat_km: kcatKmSummary,
+      dataset,
+    };
   }
 
   generateECMap(df: any): Record<string, number> {

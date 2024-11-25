@@ -178,7 +178,10 @@
   <div class="xl:w-full w-content-xl pt-6 pb-8">
     <h4>Data Snapshot</h4>
     <h5 class="max-w-screen-md mt-5 leading-xl">
-      The first release of Open Enzyme Database includes quantities of dataset, featuring 87,833 entries for enzyme turnover number (kcat), 169,264 entries for Michaelis constants (Km), and 51,698 entries for enzyme catalytic efficiency (kcat/Km)
+      The first release of Open Enzyme Database includes quantities of dataset, featuring 
+      {{ summary.kcat.total | number }} entries for enzyme turnover number (kcat), 
+      {{ summary.km.total | number }} entries for Michaelis constants (Km), and 
+      {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (kcat/Km)
     </h5>
     <h5 class="max-w-screen-md mt-5 leading-xl">
       Learn more about our curated data below, or by visiting our statistics page for more information.
@@ -226,7 +229,7 @@
                     <div class="flex flex-col gap-2">
                       <div class="italic font-semibold">k<sub>cat</sub></div>
                       <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                          chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[pieChartState.payload] }}</span></div>
+                          chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[pieChartState.payload] | number }}</span></div>
                       <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
                           (chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[pieChartState.payload] /
                           chartConfigs['pieChart']['data']['kcat'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
@@ -234,7 +237,7 @@
                     <div class="flex flex-col gap-2">
                       <div class="italic font-semibold">K<sub>m</sub></div>
                       <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                          chartConfigs['pieChart']['data']['km'].data.datasets[0].data[pieChartState.payload] }}</span></div>
+                          chartConfigs['pieChart']['data']['km'].data.datasets[0].data[pieChartState.payload] | number }}</span></div>
                       <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
                           (chartConfigs['pieChart']['data']['km'].data.datasets[0].data[pieChartState.payload] /
                           chartConfigs['pieChart']['data']['km'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
@@ -242,7 +245,7 @@
                     <div class="flex flex-col gap-2">
                       <div class="italic font-semibold">k<sub>cat</sub> / K<sub>m</sub></div>
                       <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                          chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[pieChartState.payload] }}</span></div>
+                          chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[pieChartState.payload] | number }}</span></div>
                       <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
                           (chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[pieChartState.payload] /
                           chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
@@ -314,7 +317,7 @@
     <hr />
 
     <div class="flex w-full">
-      <p-table #resultsTable [value]="datasetSummary"
+      <p-table #resultsTable [value]="summary.dataset"
         dataKey="label" class="w-full h-full" tableStyleClass="w-full" styleClass="w-full">
         <ng-template pTemplate="header">
           <tr>
@@ -334,9 +337,9 @@
         <ng-template pTemplate="body" let-row let-expanded="expanded">
           <tr>
             <td class="align-middle w-[300px]">{{ row.label }}</td>
-            <td class="align-middle">{{ row.kcat }}</td>
-            <td class="align-middle">{{ row.km }}</td>
-            <td class="align-middle">{{ row.kcat_km }}</td>
+            <td class="align-middle">{{ row.kcat | number }}</td>
+            <td class="align-middle">{{ row.km | number }}</td>
+            <td class="align-middle">{{ row.kcat_km | number }}</td>
           </tr>
         </ng-template>
       </p-table>
