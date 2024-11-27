@@ -1,23 +1,26 @@
 .marvin-filter-container {
-  padding: 5px;
-  border: #CED4DA;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 6px;
-  background-color: white;
+  display: flex;
+  align-items: center;
+  height: 100%;
 
   &.invalid {
     border-color: var(--status-error-color);
   }
 
   .p-inputgroup{
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
     input{
       border-width: 0px;
+      height: 100%;
     }
     button{
       background-color: #F8F9FA;
       border-color: #CED4DA;
       border-radius: 6px;
+      height: 100%;
     }
   }
 }
