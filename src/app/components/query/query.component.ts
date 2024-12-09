@@ -378,12 +378,24 @@ export class QueryComponent {
 
     console.log(this.form.value);
 
+    let marginCount = 0;
     // TODO: replace with actual job ID and job type
     this.service.getResult(JobType.Defaults, '123')
     .pipe(
       map((response: any) => 
         response
-          .map((row: any, index: number) => ({
+          .map((row: any, index: number) => {
+            
+            if (row['KCAT VALUE'] && row['KM VALUE'] && row['KCAT/KM VALUE']) {
+              const v = row['KCAT VALUE'] / row['KM VALUE'];
+              const threshold = v * 0.5;
+              if (v > row['KCAT/KM VALUE'] + threshold || v < row['KCAT/KM VALUE'] - threshold) {
+                marginCount++;
+                console.log('margin value: ', row, v, row['KCAT/KM VALUE']);
+              }
+            }
+
+            return ({
             iid: index,
             ec_number: row.EC,
             compound: {
@@ -398,8 +410,8 @@ export class QueryComponent {
             kcat: row['KCAT VALUE'],
             km: row['KM VALUE'],
             kcat_km: row['KCAT/KM VALUE'],
-            pubmed_id: row.PubMedID.split(';'),
-          }))
+            pubmed_id: `${row.PubMedID}`,
+          })})
           .filter((row: any) => {
             const search = this.form.value.search;
             if (!search) {
@@ -457,6 +469,8 @@ export class QueryComponent {
         }
         console.log('filter:', key, optionsSet.size);
       });
+
+      console.log('kcat/km margin percentage: ', marginCount / response.length);
 
       this.columns = Object.values(this.filters).map((filter) => ({
         field: filter.field,

@@ -154,15 +154,13 @@
                                 <td class="align-middle">{{ row.km | number: '1.1-4' }}</td>
                                 <td class="align-middle">{{ row.kcat_km | number: '1.1-4' }}</td>
                                 <td class="align-middle">
-                                    @for (id of row.pubmed_id; track id) {
-                                        <ng-container *ngTemplateOutlet="externalLink; context: { 
-                                            $implicit: {
-                                                url: 'https://pubmed.ncbi.nlm.nih.gov/' + id,
-                                                label: id
-                                            }
-                                        }">
-                                        </ng-container>
-                                    }
+                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
+                                        $implicit: {
+                                            url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                            label: row.pubmed_id
+                                        }
+                                    }">
+                                    </ng-container>
                                 </td>
                             </tr>
                         </ng-template>
