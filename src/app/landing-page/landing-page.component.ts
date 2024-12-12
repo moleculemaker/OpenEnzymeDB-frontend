@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, QueryList, ViewChild, ViewChildren } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -19,6 +19,13 @@ type ChartData = {
   options: any,
   plugins: any[],
 };
+
+type PieChartState = 'focused' 
+| 'hovering' 
+| 'mouseout' 
+| 'default' 
+| 'hovering-ec' 
+| 'mouseout-ec';
 
 @Component({
   selector: "landing-page",
@@ -45,6 +52,7 @@ type ChartData = {
 })
 export class LandingPageComponent {
   @ViewChildren(UIChart) charts!: QueryList<UIChart>;
+  @ViewChild('dataSnapshot') dataSnapshot!: ElementRef<HTMLDivElement>;
 
   dropdownOptions = [
     { label: 'Kinetic Parameters Summary', value: 'pieChart' },
@@ -60,8 +68,6 @@ export class LandingPageComponent {
         kcat_km: ChartData,
       },
       styleConfig: any,
-      state: 'focused' | 'hovering' | 'mouseout' | 'default',
-      [key: string]: any,
     },
     barChart: {
       data: ChartData,
@@ -92,13 +98,6 @@ export class LandingPageComponent {
         },
       },
       styleConfig: {},
-      _state: 'default',
-      get state() {
-        return this['_state'];
-      },
-      set state(state: 'focused' | 'hovering' | 'mouseout' | 'default') {
-        this['_state'] = state;
-      }
     },
 
     barChart: {
@@ -113,7 +112,7 @@ export class LandingPageComponent {
   }
 
   #pieChartState: {
-    state: 'focused' | 'hovering' | 'mouseout' | 'default',
+    state: PieChartState,
     payload: any
   } = {
     state: 'default',
@@ -125,7 +124,7 @@ export class LandingPageComponent {
   }
 
   set pieChartState(state: { 
-    state: 'focused' | 'hovering' | 'mouseout' | 'default', 
+    state: PieChartState, 
     payload: any 
   }) {
     const stateStr = `${this.#pieChartState.state}--->${state.state}`;
@@ -136,6 +135,8 @@ export class LandingPageComponent {
       case 'default--->focused':
       case 'hovering--->focused':
       case 'hovering--->hovering':
+      case 'hovering--->hovering-ec':
+      case 'hovering-ec--->hovering-ec':
       case 'focused--->focused':
       case 'mouseout--->focused':
       case 'mouseout--->hovering':
@@ -144,6 +145,7 @@ export class LandingPageComponent {
         break;
 
       case 'hovering--->mouseout':
+      case 'hovering-ec--->mouseout-ec':
       case 'focused--->default':
         console.log('resetting highlight: ', stateStr);
         this.resetHighlight();
@@ -151,6 +153,8 @@ export class LandingPageComponent {
 
       case 'focused--->mouseout':
       case 'focused--->hovering':
+      case 'focused--->mouseout-ec':
+      case 'focused--->hovering-ec':
         // prevent mouseout from resetting the highlight
         return;
 
@@ -233,14 +237,13 @@ export class LandingPageComponent {
 
     const documentStyle = getComputedStyle(document.documentElement);
     const colorLayer = ['500', '300', '100', '50'];
-    const hoverColorLayer = ['600', '400', '200', '100'];
     const colors = ['blue', 'green', 'orange', 'purple', 'pink', 'teal', 'red'];
     const dimOpacity = 0.2;
     this.chartConfigs['pieChart']['styleConfig'] = {
       dimOpacity,
       textColor: documentStyle.getPropertyValue('--text-color'),
       backgroundColor: colors.map((color) => documentStyle.getPropertyValue(`--${color}-${colorLayer[0]}`)),
-      hoverBackgroundColor: colors.map((color) => documentStyle.getPropertyValue(`--${color}-${hoverColorLayer[0]}`))
+      hoverBackgroundColor: colors.map((color) => documentStyle.getPropertyValue(`--${color}-${colorLayer[0]}`))
     }
 
     const barChartColors = ['blue', 'cyan', 'teal'];
@@ -248,7 +251,7 @@ export class LandingPageComponent {
       dimOpacity,
       textColor: documentStyle.getPropertyValue('--text-color'),
       backgroundColor: barChartColors.map((color) => documentStyle.getPropertyValue(`--${color}-${colorLayer[0]}`)),
-      hoverBackgroundColor: barChartColors.map((color) => documentStyle.getPropertyValue(`--${color}-${hoverColorLayer[0]}`))
+      hoverBackgroundColor: barChartColors.map((color) => documentStyle.getPropertyValue(`--${color}-${colorLayer[0]}`))
     }
 
     document.addEventListener('click', (e) => {
@@ -441,5 +444,9 @@ export class LandingPageComponent {
       chart.data.datasets[0].backgroundColor = [...this.chartConfigs['pieChart']['styleConfig']['backgroundColor']];
       chart.chart.update();
     });
+  }
+
+  scrollToDataSnapshot() {
+    this.dataSnapshot.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 }

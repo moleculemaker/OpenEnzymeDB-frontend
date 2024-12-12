@@ -470,7 +470,12 @@ export class QueryComponent {
         console.log('filter:', key, optionsSet.size);
       });
 
-      console.log('kcat/km margin percentage: ', marginCount / response.length);
+      console.log(`
+kcat/km value:
+  over-threshold percentage: ${marginCount / response.length * 100}%
+  margin count: ${marginCount}
+  response length: ${response.length}
+`);
 
       this.columns = Object.values(this.filters).map((filter) => ({
         field: filter.field,
