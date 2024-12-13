@@ -5,13 +5,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap');
 
 //use for base app and primeNG components
-body,
-body .p-component {
-  font: {
-    family: $font_family;
-    size: $font_size_default;
-  }
-}
+// body,
+// body .p-component {
+//   font: {
+//     family: $font_family;
+//     size: $font_size_default;
+//   }
+// }
 
 body {
   margin: 0px;
