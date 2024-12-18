@@ -6,13 +6,59 @@ import { EnvironmentService } from "./environment.service";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
 // import exampleStatus from '../../assets/example_status.json';
-const example = import('../../assets/example.json').then(res => res.default);
-const kcat = import('../../assets/data_df_KCAT.json').then(res => res.default);
-const km = import('../../assets/data_df_KM.json').then(res => res.default);
-const kcat_km = import('../../assets/data_df_KCATKM.json').then(res => res.default);
+
+import { ungzip } from 'pako';
+
+async function loadGzippedJson<T>(path: string): Promise<T> {
+  try {
+    const response = await fetch(path);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    
+    // Check if the file starts with the gzip magic numbers (1f 8b)
+    if (uint8Array[0] === 0x1f && uint8Array[1] === 0x8b) {
+      const decompressed = ungzip(uint8Array, { to: 'string' });
+      return JSON.parse(decompressed);
+    } else {
+      // Not gzipped, just parse as regular JSON
+      const text = new TextDecoder().decode(uint8Array);
+      return JSON.parse(text);
+    }
+  } catch (error) {
+    console.error(`Error loading JSON from ${path}:`, error);
+    throw error;
+  }
+}
 
 const exampleStatus: any = "WARNING: please provide your own example_status.json";
 // const example: any = "WARNING: please provide your own example.json";
+
+export type OEDRecord = {
+  "EC": string,
+  "SUBSTRATE": string,
+  "ORGANISM": string,
+  "UNIPROT": string,
+  "EnzymeType": string,
+  "PH": number,
+  "Temperature": number,
+  "PubMedID": number,
+  "KCAT VALUE": number,
+  "SMILES": string,
+  "KM VALUE": number,
+  "KCAT/KM VALUE": number,
+  "Lineage": string[],
+};
+
+const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
+const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
+const km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KM.json.gz');
+const kcat_km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCATKM.json.gz');
+
 
 @Injectable({
   providedIn: "root",
@@ -23,6 +69,7 @@ export class OpenEnzymeDBService {
   readonly KCAT_DF$ = from(kcat) ;
   readonly KM_DF$ = from(km);
   readonly KCAT_KM_DF$ = from(kcat_km);
+  readonly LINEAGE_DF$ = from(example);
 
   constructor(
     private jobsService: JobsService,
@@ -50,7 +97,7 @@ export class OpenEnzymeDBService {
       .pipe(map((jobs) => jobs[0]));
   }
 
-  getResult(jobType: JobType, jobID: string): Observable<any> {
+  getResult(jobType: JobType, jobID: string): Observable<OEDRecord[]> {
     if (this.frontendOnly) {
       return from(example);
     }
