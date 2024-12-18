@@ -325,7 +325,12 @@ export class QueryInputComponent implements ControlValueAccessor {
     this.selectedSearchOption = this.searchOptionRecords[option];
     Object.entries(this.selectedSearchOption.formControls).forEach(([key, control]) => {
       if (control) {
-        control.setValue(this.selectedSearchOption!.example[key]);
+        control.setValue(
+          formatValue(
+            this.selectedSearchOption!,
+            this.selectedSearchOption!.example[key]
+          )
+        );
       }
     });
   }

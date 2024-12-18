@@ -23,3 +23,7 @@
         @apply p-0;
     }
 }
+
+.table-row:hover {
+    @apply bg-[#3b82f60A];
+}

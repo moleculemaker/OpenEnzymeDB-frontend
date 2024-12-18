@@ -28,16 +28,20 @@
                         <ng-template pTemplate="header">
                             <h6 class="grow">Input</h6>
                             <div class="flex gap-2 -my-1">
-                                <button type="button" class="flex items-center btn-outline" (click)="useExample()">
+                                <button type="button" class="flex items-center btn-outline"
+                                    (click)="useExampleMenu.toggle($event)">
                                     <i class="mr-2 pi pi-box"></i>
                                     Use an Example
+                                    <p-menu #useExampleMenu styleClass="w-[300px]" [model]="exampleRecords"
+                                        [popup]="true" />
                                 </button>
                                 <button type="button" class="rounded-lg border border-[--surface-d] p-2"
                                     (click)="viewAllData()">
                                     <i class="mr-2 pi pi-table"></i>
                                     View All Data
                                 </button>
-                                <button type="button" class="rounded-lg border border-[--surface-d] p-2"
+                                <button type="button" class="rounded-lg border border-[--surface-d] p-2 disabled:opacity-50"
+                                    [disabled]="form.value.search === null"
                                     (click)="clearAll()">
                                     Reset Search
                                 </button>
@@ -94,7 +98,7 @@
                         @for (filter of filterRecords; track filter.label) {
                         @if (filter.hasFilter()) {
                         <span class="rounded-sm bg-[--surface-d] p-1 flex items-center gap-1">
-                            {{ filter.label }}: {{ filter.formattedValue }}
+                            <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>: {{ filter.formattedValue }}
                             <i class="pi pi-times-circle cursor-pointer" (click)="
                                                 filter.value = filter.defaultValue;
                                                 applyFilters();
@@ -129,7 +133,7 @@
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-row let-expanded="expanded">
-                            <tr>
+                            <tr class="table-row">
                                 <!-- <td class="align-middle">
                                         <div class="flex gap-2 items-center">
                                             <button title="Expand" type="button" [pRowToggler]="row">
@@ -139,12 +143,14 @@
                                         </div>
                                     </td> -->
                                 <td class="align-middle">
-                                    <button title="Expand" type="button" [pRowToggler]="row">
-                                        <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-                                    </button>
-                                    {{ row.compound.name }}
+                                    <div class="flex items-start gap-2">
+                                        <button title="Expand" type="button" [pRowToggler]="row">
+                                            <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                                        </button>
+                                        <div>{{ row.compound.name }}</div>
+                                    </div>
                                 </td>
-                                <td class="align-middle">{{ row.organism }}</td>
+                                <td class="align-middle italic">{{ row.organism }}</td>
                                 <td class="align-middle">{{ row.uniprot_id }}</td>
                                 <td class="align-middle">{{ row.ec_number }}</td>
                                 <td class="align-middle">{{ row.enzyme_type }}</td>
@@ -154,25 +160,23 @@
                                 <td class="align-middle">{{ row.km | number: '1.1-4' }}</td>
                                 <td class="align-middle">{{ row.kcat_km | number: '1.1-4' }}</td>
                                 <td class="align-middle">
-                                    @for (id of row.pubmed_id; track id) {
-                                        <ng-container *ngTemplateOutlet="externalLink; context: { 
-                                            $implicit: {
-                                                url: 'https://pubmed.ncbi.nlm.nih.gov/' + id,
-                                                label: id
-                                            }
-                                        }">
-                                        </ng-container>
-                                    }
+                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
+                                        $implicit: {
+                                            url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                            label: row.pubmed_id
+                                        }
+                                    }">
+                                    </ng-container>
                                 </td>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="rowexpansion" let-row>
                             <tr>
                                 <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
-                                    <div
+                                    <div [@slideIn]
                                         class="rounded-md border border-[--surface-d] border-solid bg-white p-2 flex gap-2 w-full">
                                         <div class="flex flex-col gap-2 w-1/2">
-                                            <div class="font-bold">Experimental Information</div>
+                                            <div class="font-bold">Experiment Information</div>
                                             <div class="flex justify-between">
                                                 <div>Organism</div>
                                                 <div class="text-end italic">{{ row.organism }}</div>
@@ -214,10 +218,12 @@
                                             </div>
                                         </div>
                                         <div class="w-[1px] bg-[--surface-d]"></div>
-                                        <div class="w-1/2">
+                                        <div class="w-1/2 flex flex-col gap-1">
                                             <div class="font-bold">Reaction Scheme</div>
-                                            <!-- TODO: Add reaction scheme -->
-                                            <small class="text-text-secondary">Coming Soon</small>
+                                            <div
+                                                class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
+                                                <span>(Coming Soon)</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -249,7 +255,7 @@
     </a>
 </ng-template>
 
-<p-dialog [(visible)]="showFilter" styleClass="w-[800px] h-[800px]">
+<p-dialog [(visible)]="showFilter" [modal]="true" styleClass="w-[800px] h-[800px]">
     <ng-template pTemplate="header">
         <div class="flex items-center gap-2 font-semibold">
             <i class="px-2 pi pi-filter"></i>
@@ -262,7 +268,7 @@
                 <div class="font-bold">Experimental Parameters</div>
                 @for (filter of filterRecordsByCategory['parameter']; track filter.label) {
                 <div class="flex flex-col gap-2">
-                    <div>{{ filter.label }}</div>
+                    <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>
                     <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                 </div>
                 }
@@ -271,7 +277,7 @@
                 <div class="font-bold">Enzyme Kinetics</div>
                 @for (filter of filterRecordsByCategory['enzyme']; track filter.label) {
                 <div class="flex flex-col gap-2">
-                    <div>{{ filter.label }}</div>
+                    <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>
                     <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                 </div>
                 }
@@ -279,7 +285,7 @@
                 <div class="font-bold">Literature</div>
                 @for (filter of filterRecordsByCategory['literature']; track filter.label) {
                 <div class="flex flex-col gap-2">
-                    <div>{{ filter.label }}</div>
+                    <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>
                     <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                 </div>
                 }
@@ -289,13 +295,13 @@
     </div>
     <ng-template pTemplate="footer">
         <div class="flex items-center justify-between pt-4">
-            <p-button outlined class="bg-white" (onClick)="clearAllFilters(); showFilter = false">
+            <button class="rounded-lg border border-solid border-[--primary-color] py-3 px-5 bg-white text-[--primary-color] text-[1rem]" (click)="clearAllFilters(); showFilter = false">
                 Reset Filters
-            </p-button>
-            <p-button (onClick)="applyFilters(); showFilter = false">
+            </button>
+            <button class="rounded-lg border border-solid border-[--primary-color] py-3 px-5 bg-[--primary-color] text-white text-[1rem]" (click)="applyFilters(); showFilter = false">
                 Show {{ resultsTable.filteredValue?.length ?? this.result!.total }} Result{{
                 resultsTable.filteredValue?.length !== this.result!.total ? 's' : '' }}
-            </p-button>
+            </button>
         </div>
     </ng-template>
 </p-dialog>
@@ -311,11 +317,22 @@
     @case ('range') {
     <input pInputText title="{{ filter.placeholder }}" type="text" [placeholder]="filter.placeholder"
         (blur)="searchTable($event, filter)" [value]="filter.formattedValue"
-        class="w-full p-3 border border-[#ced4da] rounded-md" />
+        class="w-full p-3 border border-[#ced4da] rounded-md !text-base"/>
     }
     @default {
     <span>{{ filter.value }}</span>
     <!-- <p-inputText styleClass="w-full" [placeholder]="filter.placeholder" [(ngModel)]="filter.value"></p-inputText> -->
+    }
+    }
+</ng-template>
+
+<ng-template #filterLabel let-label>
+    @switch (label.type) {
+    @case ('text') {
+    <div>{{ label.value }}</div>
+    }
+    @case ('html') {
+    <div [innerHTML]="label.value"></div>
     }
     }
 </ng-template>

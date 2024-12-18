@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
@@ -16,10 +16,17 @@ import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
 import { FilterService } from "primeng/api";
 import { InputTextModule } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
+import { trigger } from "@angular/animations";
+import { animate } from "@angular/animations";
+import { style, transition } from "@angular/animations";
 
 interface FilterConfigParams {
   category: string;
-  label: string;
+  label: {
+    value: string;
+    type: 'html' | 'text';
+  };
   placeholder: string;
   field: string;
   type?: 'range' | 'multiselect';
@@ -30,14 +37,16 @@ interface FilterConfigParams {
 
 abstract class FilterConfig {
   public category: string;
-  public label: string;
+  public label: {
+    value: string;
+    type: 'html' | 'text';
+  };
   public placeholder: string;
   public field: string;
   public type: 'range' | 'multiselect';
   public defaultValue: any;
   public matchMode: 'in' | 'range' | 'subset';
   public formattedValue: any;
-
   #value: any;
 
   constructor(params: FilterConfigParams) {
@@ -164,6 +173,21 @@ class MultiselectFilterConfig extends FilterConfig {
   selector: 'app-query',
   templateUrl: './query.component.html',
   styleUrls: ['./query.component.scss'],
+  animations: [
+    trigger(
+      'slideIn', 
+      [
+        transition(
+          ':enter', 
+          [
+            style({ maxHeight: 0 }),
+            animate('.5s ease-out', 
+                    style({ maxHeight: 800 }))
+          ]
+        )
+      ]
+    )
+  ],
   standalone: true,
   imports: [
     CommonModule,
@@ -178,12 +202,13 @@ class MultiselectFilterConfig extends FilterConfig {
     ChipModule,
     DialogModule,
     InputTextModule,
+    MenuModule,
 ],
   host: {
     class: "flex flex-col h-full"
   }
 })
-export class QueryComponent {
+export class QueryComponent implements AfterViewInit {
   @ViewChild(QueryInputComponent) queryInputComponent!: QueryInputComponent;
   @ViewChild(Table) resultsTable!: Table;
 
@@ -217,15 +242,32 @@ export class QueryComponent {
     // ),
     compounds: new MultiselectFilterConfig({
       category: 'parameter',
-      label: 'Compounds',
+      label: {
+        value: 'Compounds',
+        type: 'text',
+      },
       placeholder: 'Select compound',
       field: 'compound.name',
       options: [],
-      value: []
+      value: [],
+    }),
+    organism: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Organism',
+        type: 'text',
+      },
+      placeholder: 'Select organism',
+      field: 'organism',
+      options: [],
+      value: [],
     }),
     uniprot_ids: new MultiselectFilterConfig({
       category: 'parameter',
-      label: 'Uniprot IDs',
+      label: {
+        value: 'Uniprot IDs',
+        type: 'text',
+      },
       placeholder: 'Select uniprot ID',
       field: 'uniprot_id',
       options: [],
@@ -234,63 +276,87 @@ export class QueryComponent {
     }),
     ec_numbers: new MultiselectFilterConfig({
       category: 'parameter',
-      label: 'EC Numbers',
+      label: {
+        value: 'EC Numbers',
+        type: 'text',
+      },
       placeholder: 'Select EC number',
       field: 'ec_number',
       options: [],
-      value: []
+      value: [],
     }),
     enzyme_types: new MultiselectFilterConfig({
       category: 'parameter',
-      label: 'Enzyme Types',
+      label: {
+        value: 'Enzyme Types',
+        type: 'text',
+      },
       placeholder: 'Select enzyme type',
       field: 'enzyme_type',
       options: [],
-      value: []
+      value: [],
     }),
     ph: new RangeFilterConfig({
       category: 'parameter',
-      label: 'pH',
-      placeholder: 'Select pH range',
+      label: {
+        value: 'pH',
+        type: 'text',
+      },
+      placeholder: 'Enter pH range',
       field: 'ph',
       min: 0,
-      max: 14
+      max: 14,
     }),
     temperature: new RangeFilterConfig({
       category: 'parameter',
-      label: 'Temperature (°C)',
-      placeholder: 'Select temperature range',
+      label: {
+        value: 'Temperature (°C)',
+        type: 'text',
+      },
+      placeholder: 'Enter temperature range',
       field: 'temperature',
       min: 0,
-      max: 100
+      max: 100,
     }),
     kcat: new RangeFilterConfig({
       category: 'enzyme',
-      label: 'kcat (s⁻¹)',
-      placeholder: 'Select kcat range',
+      label: {
+        value: '<span class="italic">k</span><sub>cat</sub> (s<sup class="text-xs"> -1</sup>)',
+        type: 'html',
+      },
+      placeholder: 'Enter kcat range',
       field: 'kcat',
       min: 0,
       max: 100
     }),
     km: new RangeFilterConfig({
       category: 'enzyme',
-      label: 'KM (M)',
-      placeholder: 'Select KM range',
+      label: {
+        value: '<span class="italic">K</span><sub>m</sub> (M)',
+        type: 'html',
+      },
+      placeholder: 'Enter KM range',
       field: 'km',
       min: 0,
       max: 100
     }),
     kcat_km: new RangeFilterConfig({
       category: 'enzyme',
-      label: 'kcat/KM (M⁻¹s⁻¹)',
-      placeholder: 'Select kcat/KM range',
+      label: {
+        value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (M<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
+        type: 'html',
+      },
+      placeholder: 'Enter kcat/KM range',
       field: 'kcat_km',
       min: 0,
       max: 100
     }),
     pubmed_id: new MultiselectFilterConfig({
       category: 'literature',
-      label: 'PubMed',
+      label: {
+        value: 'PubMed',
+        type: 'text',
+      },
       placeholder: 'Select PubMed ID',
       field: 'pubmed_id',
       options: [],
@@ -301,6 +367,7 @@ export class QueryComponent {
 
   columns: any[] = [];
 
+  exampleRecords: any[] = [];
   readonly filterRecordsByCategory = Object.entries(this.filters)
     .reduce((acc, [key, filter]) => {
       if (!acc[filter.category]) {
@@ -337,6 +404,17 @@ export class QueryComponent {
         return filter.every((f) => value.includes(f));
       },
     );
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.exampleRecords = this.queryInputComponent.searchOptions
+        .filter((option) => option.example)
+        .map((option) => ({
+          label: `${option.label} (${option.example['label']})`,
+          command: () => this.queryInputComponent.useExample(option.key)
+        }));
+    });
   }
 
   useExample() {
@@ -378,12 +456,24 @@ export class QueryComponent {
 
     console.log(this.form.value);
 
+    let marginCount = 0;
     // TODO: replace with actual job ID and job type
     this.service.getResult(JobType.Defaults, '123')
     .pipe(
       map((response: any) => 
         response
-          .map((row: any, index: number) => ({
+          .map((row: any, index: number) => {
+            
+            if (row['KCAT VALUE'] && row['KM VALUE'] && row['KCAT/KM VALUE']) {
+              const v = row['KCAT VALUE'] / row['KM VALUE'];
+              const threshold = v * 0.5;
+              if (v > row['KCAT/KM VALUE'] + threshold || v < row['KCAT/KM VALUE'] - threshold) {
+                marginCount++;
+                console.log('margin value: ', row, v, row['KCAT/KM VALUE']);
+              }
+            }
+
+            return ({
             iid: index,
             ec_number: row.EC,
             compound: {
@@ -398,8 +488,8 @@ export class QueryComponent {
             kcat: row['KCAT VALUE'],
             km: row['KM VALUE'],
             kcat_km: row['KCAT/KM VALUE'],
-            pubmed_id: row.PubMedID.split(';'),
-          }))
+            pubmed_id: `${row.PubMedID}`,
+          })})
           .filter((row: any) => {
             const search = this.form.value.search;
             if (!search) {
@@ -457,6 +547,13 @@ export class QueryComponent {
         }
         console.log('filter:', key, optionsSet.size);
       });
+
+      console.log(`
+kcat/km value:
+  over-threshold percentage: ${marginCount / response.length * 100}%
+  margin count: ${marginCount}
+  response length: ${response.length}
+`);
 
       this.columns = Object.values(this.filters).map((filter) => ({
         field: filter.field,
