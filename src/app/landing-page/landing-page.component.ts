@@ -76,7 +76,7 @@ export class LandingPageComponent {
     { label: 'EC Class Summary', value: 'barChart' },
   ];
 
-  displayTutorial = this.tutorialService.showTutorial;
+  displayTutorial = true;
 
   #chartStates: Record<'pieChart' | 'barChart', {
     state: PieChartState | BarChartState,
@@ -272,6 +272,13 @@ export class LandingPageComponent {
     private cdr: ChangeDetectorRef,
     protected tutorialService: TutorialService,
   ) {
+
+    this.tutorialService.tutorialKey = 'landing-page-tutorial';
+    if (!this.tutorialService.showTutorial) {
+      this.displayTutorial = true;
+    } else {
+      this.displayTutorial = false;
+    }
 
     combineLatest([
       service.KCAT_DF$,
