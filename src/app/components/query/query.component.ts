@@ -466,10 +466,10 @@ export class QueryComponent implements AfterViewInit {
             
             if (row['KCAT VALUE'] && row['KM VALUE'] && row['KCAT/KM VALUE']) {
               const v = row['KCAT VALUE'] / row['KM VALUE'];
-              const threshold = v * 0.5;
+              const threshold = v * 0.2;
               if (v > row['KCAT/KM VALUE'] + threshold || v < row['KCAT/KM VALUE'] - threshold) {
                 marginCount++;
-                console.log('margin value: ', row, v, row['KCAT/KM VALUE']);
+                console.log('margin value: ', 'kcat: ', row['KCAT VALUE'], 'km: ', row['KM VALUE'], 'kcat/km: ', row['KCAT/KM VALUE']);
               }
             }
 
