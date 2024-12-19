@@ -15,7 +15,7 @@
         Learn more about how the Open Enzyme Database works below and get started using the tool today.
       </h5> -->
     </div>
-    <div class="inline-block flex flex-col gap-4 bg-[#FFEDF4] p-4 mt-5">
+    <div class="inline-block flex flex-col gap-4 bg-[#FFEDF4] p-4 mt-5" id="container_feedback">
       <div>
         <h5 class="font-bold leading-xl mt-0">Help Us Improve OED!</h5>
         <p class="leading-xl">We're looking for input on features, bugs, and user feedback in order to improve on our pre-release for future versions. Share your thoughts with us by filling out a short form below (you can do this multiple times). We’re excited to hear from you!</p>
@@ -424,7 +424,11 @@
 >
     <div class="flex flex-col gap-6 -mb-2">
         <p class="leading-xl">
-          Welcome to Open Enzyme Database, a growing repository for enzymatic data and predictions. We’ve created an early “pre-release” version of the tool to showcase some core functionalities, but we have a much bigger vision for the future. You can read more this vision in our white paper or feature documentation.
+          Welcome to Open Enzyme Database, a growing repository for enzymatic data and predictions. 
+          We've created an early "pre-release" version of the tool to showcase some core functionalities, 
+          but we have a much bigger vision for the future. You can read more this vision 
+          in our <a [href]="whitePaperUrl" target="_blank" rel="noopener noreferrer" class="text-[#0080FF]">white paper</a> or 
+          <a [href]="visionUrl" target="_blank" rel="noopener noreferrer" class="text-[#0080FF]">feature documentation</a>.
         </p>
         <p class="leading-xl">
           We're looking for suggestions and feedback from you that we'll use to guide future versions of this tool. Share your input with us by submitting a short form (or multiple)! You may access this form at any time using one of the “Share Your Thoughts” buttons.
