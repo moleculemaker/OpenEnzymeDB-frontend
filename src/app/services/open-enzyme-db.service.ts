@@ -71,6 +71,10 @@ export class OpenEnzymeDBService {
   readonly KCAT_KM_DF$ = from(kcat_km);
   readonly LINEAGE_DF$ = from(example);
 
+  public readonly WHITE_PAPER_URL = '';
+  public readonly VISION_URL = 'https://docs.google.com/document/d/17nfpqWG8N8uS4wGpNlUumwknwh7kIsKp2rZNv6TLYyk/edit?usp=sharing';
+  public readonly FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfISchgT9oNHL5f0_Ev1T0BD736AakYnS4GUuJJdtA9fxF78A/viewform';
+
   constructor(
     private jobsService: JobsService,
     private filesService: FilesService,

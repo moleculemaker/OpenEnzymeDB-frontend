@@ -13,6 +13,9 @@ import { FormsModule } from "@angular/forms";
 import { SkeletonModule } from "primeng/skeleton";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { active } from "d3";
+import { DialogModule } from "primeng/dialog";
+import { TutorialService } from "../services/tutorial.service";
+import { CheckboxModule } from "primeng/checkbox";
 
 type ChartData = {
   status: 'loading' | 'loaded',
@@ -53,6 +56,8 @@ type BarChartState = 'focused'
     FormsModule,
     SkeletonModule,
     ProgressSpinnerModule,
+    DialogModule,
+    CheckboxModule,
   ],
   host: {
     class: 'flex flex-col justify-center items-center w-full'
@@ -62,10 +67,16 @@ export class LandingPageComponent {
   @ViewChildren(UIChart) charts!: QueryList<UIChart>;
   @ViewChild('dataSnapshot') dataSnapshot!: ElementRef<HTMLDivElement>;
 
+  readonly whitePaperUrl = this.service.WHITE_PAPER_URL;
+  readonly visionUrl = this.service.VISION_URL;
+  readonly feedbackUrl = this.service.FEEDBACK_URL;
+
   dropdownOptions = [
     { label: 'Kinetic Parameters Summary', value: 'pieChart' },
     { label: 'EC Class Summary', value: 'barChart' },
   ];
+
+  displayTutorial = true;
 
   #chartStates: Record<'pieChart' | 'barChart', {
     state: PieChartState | BarChartState,
@@ -259,6 +270,7 @@ export class LandingPageComponent {
   constructor(
     protected service: OpenEnzymeDBService,
     private cdr: ChangeDetectorRef,
+    protected tutorialService: TutorialService,
   ) {
 
     combineLatest([

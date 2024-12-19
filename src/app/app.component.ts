@@ -4,6 +4,7 @@ import { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
 import { NgIf } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
+import { OpenEnzymeDBService } from "./services/open-enzyme-db.service";
 
 @Component({
     selector: "app-root",
@@ -41,7 +42,14 @@ export class AppComponent {
     return this.userInfoService.userInfo;
   }
 
-  constructor(private userInfoService: UserInfoService) {}
+  readonly whitePaperUrl = this.openEnzymeDBService.WHITE_PAPER_URL;
+  readonly visionUrl = this.openEnzymeDBService.VISION_URL;
+  readonly feedbackUrl = this.openEnzymeDBService.FEEDBACK_URL;
+
+  constructor(
+    private userInfoService: UserInfoService,
+    private openEnzymeDBService: OpenEnzymeDBService,
+  ) {}
 
   ngOnInit() {
     this.userInfoService.fetchUserInfo();
