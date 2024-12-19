@@ -1,13 +1,15 @@
 import { Injectable } from "@angular/core";
-import { Observable, from, map, of } from "rxjs";
+import { Observable, from, map, of, tap } from "rxjs";
 
 import { BodyCreateJobJobTypeJobsPost, ChemicalAutoCompleteResponse, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
+import { DataDfKcat, DataDfKcatService } from "../api/moldb/v1";
 import { EnvironmentService } from "./environment.service";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
 // import exampleStatus from '../../assets/example_status.json';
 
 import { ungzip } from 'pako';
+import { HttpEvent } from "@angular/common/http";
 
 async function loadGzippedJson<T>(path: string): Promise<T> {
   try {
@@ -92,6 +94,7 @@ export class OpenEnzymeDBService {
     private filesService: FilesService,
     private environmentService: EnvironmentService,
     private sharedService: SharedService,
+    private dataDfKcatService: DataDfKcatService,
 
     // private apiService: OpenEnzymeDBApiService,
   ) {
@@ -99,6 +102,12 @@ export class OpenEnzymeDBService {
     this._WHITE_PAPER_URL = this.environmentService.getEnvConfig().whitePaperUrl;
     this._VISION_URL = this.environmentService.getEnvConfig().visionUrl;
     this._FEEDBACK_URL = this.environmentService.getEnvConfig().feedbackUrl;
+  }
+
+  getKCats(...params: Parameters<typeof this.dataDfKcatService.dataDfKcatGet>): Observable<DataDfKcat[]> {
+    return this.dataDfKcatService.dataDfKcatGet(...params).pipe(
+      map((res) => res as unknown as DataDfKcat[])
+    );
   }
 
   createAndRunJob(jobType: JobType, requestBody: BodyCreateJobJobTypeJobsPost): Observable<Job> {

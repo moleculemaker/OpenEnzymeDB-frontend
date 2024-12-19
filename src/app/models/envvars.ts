@@ -12,4 +12,7 @@ export interface EnvVars {
   whitePaperUrl: string;
   visionUrl: string;
   feedbackUrl: string;
+
+  molDBHostname: string;
+  molDBBasePath: string;
 }

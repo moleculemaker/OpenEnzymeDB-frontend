@@ -17,4 +17,7 @@ config:
   whitePaperUrl: ""
   visionUrl: "https://docs.google.com/document/d/17nfpqWG8N8uS4wGpNlUumwknwh7kIsKp2rZNv6TLYyk/edit?usp=sharing"
   feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfISchgT9oNHL5f0_Ev1T0BD736AakYnS4GUuJJdtA9fxF78A/viewform"
+
+  molDBHostname: "https://postgrest.openenzymedb.mmli1.ncsa.illinois.edu"
+  molDBBasePath: ""
 extraDeploy: []
