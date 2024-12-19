@@ -71,6 +71,22 @@ export class OpenEnzymeDBService {
   readonly KCAT_KM_DF$ = from(kcat_km);
   readonly LINEAGE_DF$ = from(example);
 
+  private _WHITE_PAPER_URL = '';
+  private _VISION_URL = '';
+  private _FEEDBACK_URL = '';
+
+  public get WHITE_PAPER_URL() {
+    return this._WHITE_PAPER_URL;
+  }
+  
+  public get VISION_URL() {
+    return this._VISION_URL;
+  }
+
+  public get FEEDBACK_URL() {
+    return this._FEEDBACK_URL;
+  }
+
   constructor(
     private jobsService: JobsService,
     private filesService: FilesService,
@@ -80,6 +96,9 @@ export class OpenEnzymeDBService {
     // private apiService: OpenEnzymeDBApiService,
   ) {
     this.frontendOnly = this.environmentService.getEnvConfig().frontendOnly === "true";
+    this._WHITE_PAPER_URL = this.environmentService.getEnvConfig().whitePaperUrl;
+    this._VISION_URL = this.environmentService.getEnvConfig().visionUrl;
+    this._FEEDBACK_URL = this.environmentService.getEnvConfig().feedbackUrl;
   }
 
   createAndRunJob(jobType: JobType, requestBody: BodyCreateJobJobTypeJobsPost): Observable<Job> {

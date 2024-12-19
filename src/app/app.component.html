@@ -38,20 +38,35 @@
 
     <div class="coming_soon" [class.show_popup]="showComingSoonPopup">
         <div class="coming_soon_button" (click)="autocloseComingSoonPopup=false;toggleComingSoonPopup();">
-            Initial Release
+            Share your thoughts
         </div>
 
         <div class="coming_soon_popup" (click)="toggleComingSoonPopup()">
             <div class="close_btn"><i class="pi pi-times"></i></div>
 
-            <h3>Welcome to our initial release</h3>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <h3>Welcome to our pre-release</h3>
 
-            <p>
-                We welcome your suggestions and
-                <a [href]="emailstring" target="_top"><u>feedback</u></a>. New features and improvements will be
-                released over the
-                coming weeks.
-            </p>
+                    <p>
+                        We’re looking for input on features, bugs, and user feedback in order to improve on our pre-release for future versions.
+                        <!-- We welcome your suggestions and
+                        <a [href]="emailstring" target="_top"><u>feedback</u></a>. New features and improvements will be
+                        released over the
+                        coming weeks. -->
+                    </p>
+                </div>
+
+                <div class="flex justify-center">
+                    <a
+                    [href]="feedbackUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-white !text-[#D5618C] font-semibold px-5 py-3 rounded-md inline-block">
+                    <h6>Share Your Thoughts</h6>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </header>
@@ -94,7 +109,16 @@
             </a>
         </div> -->
         <div class="flex link">
-            <button class="flex items-center m-1 ml-3 cursor-pointer opacity-80">
+            <button class="flex items-center gap-1 m-1 ml-3 cursor-pointer opacity-80" type="button">
+                <i class="pi pi-file !text-lg"></i>
+                <a 
+                    [href]="whitePaperUrl"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <span class="text-base">White Paper</span>
+                </a>
+            </button>
+            <button class="flex items-center m-1 ml-3 cursor-pointer opacity-80" type="button">
                 <svg style="transform: scale(0.75)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_474_34867)">
                         <path
@@ -107,7 +131,12 @@
                         </clipPath>
                     </defs>
                 </svg>
-                Our Vision
+                <a 
+                    [href]="visionUrl"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <span class="text-base">Our Vision</span>
+                </a>
             </button>
         </div>
     </div>

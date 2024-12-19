@@ -7,5 +7,9 @@ export interface EnvVars {
   signOutUrl: string;
 
   userInfoUrl: string;
+
   frontendOnly: string;
+  whitePaperUrl: string;
+  visionUrl: string;
+  feedbackUrl: string;
 }
