@@ -76,7 +76,7 @@ export class LandingPageComponent {
     { label: 'EC Class Summary', value: 'barChart' },
   ];
 
-  displayTutorial = true;
+  displayTutorial = this.tutorialService.showTutorial;
 
   #chartStates: Record<'pieChart' | 'barChart', {
     state: PieChartState | BarChartState,
