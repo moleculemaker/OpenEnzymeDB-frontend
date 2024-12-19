@@ -12,5 +12,9 @@ config:
   signInUrl: "https://mmli1.ncsa.illinois.edu/oauth2/start?rd=https%3A%2F%2Fopenenzymedb.proxy.localhost%2Fconfiguration"
   signOutUrl: "https://mmli1.ncsa.illinois.edu/oauth2/sign_out?rd=https%3A%2F%2Fopenenzymedb.proxy.localhost%2Fconfiguration"
   userInfoUrl: "https://mmli1.ncsa.illinois.edu/oauth2/userinfo"
-  frontendOnly: "false"
+
+  frontendOnly: "true"
+  whitePaperUrl: ""
+  visionUrl: "https://docs.google.com/document/d/17nfpqWG8N8uS4wGpNlUumwknwh7kIsKp2rZNv6TLYyk/edit?usp=sharing"
+  feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfISchgT9oNHL5f0_Ev1T0BD736AakYnS4GUuJJdtA9fxF78A/viewform"
 extraDeploy: []

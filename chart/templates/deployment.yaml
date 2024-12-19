@@ -57,6 +57,24 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: frontendOnly
 
+          - name: WHITE_PAPER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: whitePaperUrl
+
+          - name: VISION_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: visionUrl
+
+          - name: FEEDBACK_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: feedbackUrl
+
           ports:
             - containerPort: 80
           imagePullPolicy: Always
