@@ -65,8 +65,6 @@
                     title="{{selectedSearchOption?.placeholder}}"
                     [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
-                    (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
-                    [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
                     class="grow border-none h-8" />
             }
             @case ('ec_number') {
@@ -76,8 +74,6 @@
                     title="{{selectedSearchOption?.placeholder}}"
                     [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
-                    (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
-                    [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
                     class="grow border-none h-8" />
             }
             @case ('uniprot_id') {
@@ -87,8 +83,6 @@
                     title="{{selectedSearchOption?.placeholder}}"
                     [placeholder]="selectedSearchOption?.placeholder"
                     [formControl]="selectedSearchOption!.formControls['value']"
-                    (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
-                    [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
                     class="grow border-none h-8" />
             }
             @case ('ph') {
@@ -97,9 +91,7 @@
                     type="text" 
                     title="{{selectedSearchOption?.placeholder}}"
                     [placeholder]="selectedSearchOption?.placeholder"
-                    [formControl]="selectedSearchOption!.formControls['value']"
-                    (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
-                    [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
+                    [formControl]="selectedSearchOption!.formControls['valueLabel']!"
                     class="grow border-none h-8" />
             }
             @case ('temperature') {
@@ -108,9 +100,7 @@
                     type="text" 
                     title="{{selectedSearchOption?.placeholder}}"
                     [placeholder]="selectedSearchOption?.placeholder"
-                    [formControl]="selectedSearchOption!.formControls['value']"
-                    (input)="parseInput($event, selectedSearchOption!, selectedSearchOption!.formControls['value'])"
-                    [value]="formatValue(selectedSearchOption!, selectedSearchOption!.formControls['value'].value)"
+                    [formControl]="selectedSearchOption!.formControls['valueLabel']!"
                     class="grow border-none h-8" />
             }
             @default {

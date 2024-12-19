@@ -417,13 +417,9 @@ export class QueryComponent implements AfterViewInit {
     });
   }
 
-  useExample() {
-    this.queryInputComponent.useExample('compound');
-  }
-
   clearAll() {
     this.form.reset();
-    this.queryInputComponent.writeValue(null);
+    this.queryInputComponent.reset();
   }
 
   clearAllFilters() {
