@@ -434,6 +434,7 @@ export class QueryComponent implements AfterViewInit {
     this.form.reset();
     this.queryInputComponent.reset();
     this.result.status = 'na';
+    this.clearAllFilters();
   }
 
   clearAllFilters() {
@@ -575,10 +576,6 @@ kcat/km value:
         data: response,
         total: response.length,
       };
-
-      setTimeout(() => {
-        this.applyFilters();
-      });
     });
   }
 
