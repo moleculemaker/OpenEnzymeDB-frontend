@@ -11,7 +11,7 @@ import { MarvinjsInputComponent } from '../marvinjs-input/marvinjs-input.compone
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { of, switchMap, map, first, catchError, filter, tap } from 'rxjs';
 import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
-import { ProgressSpinner, ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 
 type SearchType = 'string' | 'range' | 'molecule';
@@ -76,6 +76,7 @@ class StringSearchOption extends BaseSearchOption {
 type RangeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   formControls: {
     value: FormControl<[number, number] | null>;
+    valueLabel: FormControl<string | null>;
   };
   example: Record<string, any>;
   min?: number;
@@ -93,6 +94,44 @@ class RangeSearchOption extends BaseSearchOption {
     });
     this.min = params.min;
     this.max = params.max;
+
+    this.formControls['valueLabel']!.valueChanges.subscribe((label) => {
+      this.updateValueFromLabel(label);
+    });
+
+    this.formControls['value']!.valueChanges.subscribe((value) => {
+      this.updateLabelFromValue(value);
+    });
+  }
+
+  private updateLabelFromValue(value: [number, number] | null) {
+    console.log('[query-input] updating label from value', value);
+    if (!value) {
+      this.formControls['valueLabel']!.setValue(null, { emitEvent: false });
+      return;
+    }
+
+    this.formControls['valueLabel']!.setValue(
+      `${value[0]}-${value[1]}`,
+      { emitEvent: false }
+    );
+  }
+
+  private updateValueFromLabel(label: string | null) {
+    if (!label) {
+      this.formControls['value']!.setValue(null, { emitEvent: false });
+      return;
+    }
+
+    const matches = [...label.matchAll(/^(-?\d+)-(-?\d+)$/g)][0];
+    if (matches && matches.length === 3) {
+      const [_, min, max] = matches.map(Number);
+      this.formControls['value']!.setValue([min, max], { emitEvent: false });
+      console.log('[query-input] updated value from label', label, [min, max]);
+    } else {
+      this.formControls['value']!.setValue(null, { emitEvent: false });
+      console.error('[query-input] invalid label', label);
+    }
   }
 }
 
@@ -114,18 +153,6 @@ class MoleculeSearchOption extends BaseSearchOption {
 }
 
 type SearchOption = StringSearchOption | RangeSearchOption | MoleculeSearchOption;
-
-// Helper functions for each type
-const formatValue = (option: SearchOption, value: any): string => {
-  switch (option.type) {
-    case 'range':
-      return value ? `${value[0]}-${value[1]}` : '';
-    case 'molecule':
-    case 'string':
-    default:
-      return value?.toString() || '';
-  }
-};
 
 const parseValue = (option: SearchOption, input: string): any => {
   switch (option.type) {
@@ -272,7 +299,8 @@ export class QueryInputComponent implements ControlValueAccessor {
       label: 'pH',
       placeholder: 'Enter pH range',
       formControls: {
-        value: new FormControl<[number, number] | null>(null, [Validators.required])
+        value: new FormControl<[number, number] | null>(null, [Validators.required]),
+        valueLabel: new FormControl<string | null>(null, [Validators.required])
       },
       example: {
         label: '1-8',
@@ -284,7 +312,8 @@ export class QueryInputComponent implements ControlValueAccessor {
       label: 'Temperature',
       placeholder: 'Enter temperature range',
       formControls: {
-        value: new FormControl<[number, number] | null>(null, [Validators.required])
+        value: new FormControl<[number, number] | null>(null, [Validators.required]),
+        valueLabel: new FormControl<string | null>(null, [Validators.required])
       },
       example: {
         label: '37-39°C',
@@ -324,15 +353,18 @@ export class QueryInputComponent implements ControlValueAccessor {
     this.selectedSearchOption?.reset();
     this.selectedSearchOption = this.searchOptionRecords[option];
     Object.entries(this.selectedSearchOption.formControls).forEach(([key, control]) => {
-      if (control) {
-        control.setValue(
-          formatValue(
-            this.selectedSearchOption!,
-            this.selectedSearchOption!.example[key]
-          )
-        );
+      const value = this.selectedSearchOption!.example[key];
+      if (control && value) {
+        control.setValue(value);
       }
     });
+  }
+
+  reset() {
+    Object.values(this.searchConfigs).forEach((config) => {
+      config.reset();
+    });
+    this.selectedSearchOption = null;
   }
 
   private emitValue(): void {
@@ -389,17 +421,5 @@ export class QueryInputComponent implements ControlValueAccessor {
         }
       });
     });
-  }
-
-  formatValue(option: SearchOption, value: any): string {
-    return formatValue(option, value);
-  }
-
-  parseInput(event: Event, option: SearchOption, control: FormControl): void {
-    const input = (event.target as HTMLInputElement).value;
-    const parsedValue = parseValue(option, input);
-    if (parsedValue !== null) {
-      control.setValue(parsedValue);
-    }
   }
 }

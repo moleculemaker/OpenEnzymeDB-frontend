@@ -26,6 +26,7 @@ interface FilterConfigParams {
   label: {
     value: string;
     type: 'html' | 'text';
+    rawValue: string;
   };
   placeholder: string;
   field: string;
@@ -40,6 +41,7 @@ abstract class FilterConfig {
   public label: {
     value: string;
     type: 'html' | 'text';
+    rawValue: string;
   };
   public placeholder: string;
   public field: string;
@@ -245,6 +247,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'Compounds',
         type: 'text',
+        rawValue: 'Compounds',
       },
       placeholder: 'Select compound',
       field: 'compound.name',
@@ -256,6 +259,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'Organism',
         type: 'text',
+        rawValue: 'Organism',
       },
       placeholder: 'Select organism',
       field: 'organism',
@@ -267,6 +271,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'Uniprot IDs',
         type: 'text',
+        rawValue: 'Uniprot IDs',
       },
       placeholder: 'Select uniprot ID',
       field: 'uniprot_id',
@@ -279,6 +284,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'EC Numbers',
         type: 'text',
+        rawValue: 'EC Numbers',
       },
       placeholder: 'Select EC number',
       field: 'ec_number',
@@ -290,6 +296,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'Enzyme Types',
         type: 'text',
+        rawValue: 'Enzyme Types',
       },
       placeholder: 'Select enzyme type',
       field: 'enzyme_type',
@@ -301,6 +308,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'pH',
         type: 'text',
+        rawValue: 'pH',
       },
       placeholder: 'Enter pH range',
       field: 'ph',
@@ -312,6 +320,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'Temperature (°C)',
         type: 'text',
+        rawValue: 'Temperature (°C)',
       },
       placeholder: 'Enter temperature range',
       field: 'temperature',
@@ -323,6 +332,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: '<span class="italic">k</span><sub>cat</sub> (s<sup class="text-xs"> -1</sup>)',
         type: 'html',
+        rawValue: 'kcat',
       },
       placeholder: 'Enter kcat range',
       field: 'kcat',
@@ -334,6 +344,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: '<span class="italic">K</span><sub>m</sub> (M)',
         type: 'html',
+        rawValue: 'km',
       },
       placeholder: 'Enter KM range',
       field: 'km',
@@ -345,6 +356,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (M<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
         type: 'html',
+        rawValue: 'kcat_km',
       },
       placeholder: 'Enter kcat/KM range',
       field: 'kcat_km',
@@ -356,6 +368,7 @@ export class QueryComponent implements AfterViewInit {
       label: {
         value: 'PubMed',
         type: 'text',
+        rawValue: 'PubMed',
       },
       placeholder: 'Select PubMed ID',
       field: 'pubmed_id',
@@ -417,13 +430,11 @@ export class QueryComponent implements AfterViewInit {
     });
   }
 
-  useExample() {
-    this.queryInputComponent.useExample('compound');
-  }
-
   clearAll() {
     this.form.reset();
-    this.queryInputComponent.writeValue(null);
+    this.queryInputComponent.reset();
+    this.result.status = 'na';
+    this.clearAllFilters();
   }
 
   clearAllFilters() {
@@ -557,7 +568,7 @@ kcat/km value:
 
       this.columns = Object.values(this.filters).map((filter) => ({
         field: filter.field,
-        header: filter.label,
+        header: filter.label.rawValue,
       }));
 
       this.result = {
