@@ -441,7 +441,9 @@ export class QueryComponent implements AfterViewInit {
     this.filterRecords.forEach((filter) => {
       filter.value = filter.defaultValue;
     });
-    this.resultsTable.reset();
+    if (this.resultsTable) {
+      this.resultsTable.reset();
+    }
     this.hasFilter = false;
   }
 
