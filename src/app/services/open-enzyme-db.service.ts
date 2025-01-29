@@ -9,7 +9,6 @@ import { EnvironmentService } from "./environment.service";
 // import exampleStatus from '../../assets/example_status.json';
 
 import { ungzip } from 'pako';
-import { HttpEvent } from "@angular/common/http";
 
 async function loadGzippedJson<T>(path: string): Promise<T> {
   try {

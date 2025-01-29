@@ -8,20 +8,17 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "init": "ng g @moleculemaker/ui-lib:deployment && npm run openapi:live",
-    
     "openapi:clean": "rm -rf src/app/api/",
     "openapi:mmli": "openapi-generator-cli generate --skip-validate-spec -i openapi/mmli-backend.openapi.json -g typescript-angular -o src/app/api/mmli-backend/v1",
     "openapi:mmli:sync": "curl https://mmli.fastapi.staging.mmli1.ncsa.illinois.edu/openapi.json > openapi/mmli-backend.openapi.json && cat openapi/mmli-backend.openapi.json",
     "openapi:mmli:live": "npm run openapi:mmli:sync && npm run openapi:mmli",
     "openapi:mmli:sync:local": "curl http://localhost:8080/openapi.json > openapi/mmli-backend.openapi.json && cat openapi/mmli-backend.openapi.json",
     "openapi:mmli:live:local": "npm run openapi:mmli:sync:local && npm run openapi:mmli",
-
     "openapi:moldb": "openapi-generator-cli generate --skip-validate-spec -i openapi/moldb.openapi.json -g typescript-angular -o src/app/api/moldb/v1",
-    "openapi:moldb:sync": "curl https://postgrest.openenzymedb.mmli1.ncsa.illinois.edu/ > openapi/moldb.openapi.json && cat openapi/moldb.openapi.json",
+    "openapi:moldb:sync": "curl --cookie _oauth2_proxy=$OAUTH_PROXY_TOKEN https://postgrest.openenzymedb.mmli1.ncsa.illinois.edu/ > openapi/moldb.openapi.json && cat openapi/moldb.openapi.json",
     "openapi:moldb:live": "npm run openapi:moldb:sync && npm run openapi:moldb",
     "openapi:moldb:sync:local": "curl http://localhost:4000 > openapi/moldb.openapi.json && cat openapi/moldb.openapi.json",
     "openapi:moldb:live:local": "npm run openapi:moldb:sync:local && npm run openapi:moldb",
-
     "openapi": "npm run openapi:mmli && npm run openapi:moldb",
     "openapi:live": "npm run openapi:mmli:live && npm run openapi:moldb:live",
     "openapi:live:local": "npm run openapi:mmli:live:local && npm run openapi:moldb:live:local",

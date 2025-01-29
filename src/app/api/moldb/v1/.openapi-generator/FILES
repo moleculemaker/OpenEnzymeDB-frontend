@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 api.module.ts
 api/api.ts
@@ -7,6 +6,11 @@ api/dataDfKcat.service.ts
 api/dataDfKcatkm.service.ts
 api/dataDfKm.service.ts
 api/introspection.service.ts
+api/kcatEcPieChart.service.ts
+api/kcatkmEcPieChart.service.ts
+api/kineticSummary.service.ts
+api/kmEcPieChart.service.ts
+api/table1.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
@@ -14,6 +18,11 @@ index.ts
 model/dataDfKcat.ts
 model/dataDfKcatkm.ts
 model/dataDfKm.ts
+model/kcatEcPieChart.ts
+model/kcatkmEcPieChart.ts
+model/kineticSummary.ts
+model/kmEcPieChart.ts
 model/models.ts
+model/table1.ts
 param.ts
 variables.ts
