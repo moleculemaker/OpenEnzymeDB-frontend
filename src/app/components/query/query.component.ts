@@ -1,12 +1,21 @@
-import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService, Pagination, SearchableField, SearchCriteria, SortCriteria } from '~/app/services/open-enzyme-db.service';
+import { 
+  OpenEnzymeDBService, 
+  Pagination, 
+  SearchableField, 
+  SearchCriteria, 
+  SortCriteria,
+  DataDfKcat,
+  DataDfKm,
+  DataDfKcatkm,
+  CombinedData
+} from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent, QueryInputOutput } from "../query-input/query-input.component";
 import { Table, TableModule, TablePageEvent } from "primeng/table";
@@ -20,7 +29,6 @@ import { MenuModule } from "primeng/menu";
 import { trigger } from "@angular/animations";
 import { animate } from "@angular/animations";
 import { style, transition } from "@angular/animations";
-import { DataDfKcat, DataDfKcatkm, DataDfKm } from "~/app/api/moldb/v1";
 
 interface FilterConfigParams {
   category: string;
@@ -491,17 +499,17 @@ export class QueryComponent implements AfterViewInit {
     let marginCount = 0;
     this.service.getAll(searchCriteriaMap, sortCriteria, pagination)
     .pipe(
-      map((response: (DataDfKcat & DataDfKm & DataDfKcatkm)[]) => 
+      map((response: CombinedData[]) => 
         response
-          .map((row: DataDfKcat & DataDfKm & DataDfKcatkm, index: number) => {
+          .map((row: CombinedData, index: number) => {
             
             // TODO: discuss how to handle missing values
-            if (row.KCAT_VALUE && row.KM_VALUE && row.KCAT_KM_VALUE) {
-              const v = row.KCAT_VALUE / row.KM_VALUE;
+            if (row['KCAT VALUE'] && row['KM VALUE'] && row['KCAT/KM VALUE']) {
+              const v = row['KCAT VALUE'] / row['KM VALUE'];
               const threshold = v * 0.2;
-              if (v > row.KCAT_KM_VALUE + threshold || v < row.KCAT_KM_VALUE - threshold) {
+              if (v > row['KCAT/KM VALUE'] + threshold || v < row['KCAT/KM VALUE'] - threshold) {
                 marginCount++;
-                console.log('margin value: ', 'kcat: ', row['KCAT_VALUE'], 'km: ', row['KM_VALUE'], 'kcat/km: ', row['KCAT_KM_VALUE']);
+                console.log('margin value: ', 'kcat: ', row['KCAT VALUE'], 'km: ', row['KM VALUE'], 'kcat/km: ', row['KCAT/KM VALUE']);
               }
             }
 
@@ -517,9 +525,9 @@ export class QueryComponent implements AfterViewInit {
               uniprot_id: row.uniprot?.split(','),
               ph: row.ph,
               temperature: row.temperature,
-              kcat: row.KCAT_VALUE,
-              km: row.KM_VALUE,
-              kcat_km: row.KCAT_KM_VALUE,
+              kcat: row['KCAT VALUE'],
+              km: row['KM VALUE'],
+              kcat_km: row['KCAT/KM VALUE'],
               pubmed_id: `${row.pubmedid}`,
           })})
           .filter((row: any) => {

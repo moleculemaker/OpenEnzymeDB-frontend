@@ -3,7 +3,7 @@ import { Observable, combineLatest, forkJoin, from, map, of } from "rxjs";
 
 import { BodyCreateJobJobTypeJobsPost, ChemicalAutoCompleteResponse, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
 import { 
-  DataDfKcat, 
+  DataDfKcat as DataDfKcatResponse, 
   DataDfKcatService, 
   KcatkmEcPieChartService,
   KcatEcPieChartService,
@@ -15,8 +15,8 @@ import {
   KcatkmEcPieChart,
   DataDfKmService,
   DataDfKcatkmService,
-  DataDfKm,
-  DataDfKcatkm
+  DataDfKm as DataDfKmResponse,
+  DataDfKcatkm as DataDfKcatkmResponse
 } from "../api/moldb/v1";
 import { EnvironmentService } from "./environment.service";
 
@@ -135,6 +135,12 @@ export class Pagination {
     this.rows = rows;
   }
 }
+
+// TODO: discuss if we need to change column names
+export type DataDfKcat = Omit<DataDfKcatResponse, 'KCAT_VALUE'> & { 'KCAT VALUE': number };
+export type DataDfKm = Omit<DataDfKmResponse, 'KM_VALUE'> & { 'KM VALUE': number };
+export type DataDfKcatkm = Omit<DataDfKcatkmResponse, 'KCAT_KM_VALUE'> & { 'KCAT/KM VALUE': number };
+export type CombinedData = DataDfKcat & DataDfKm & DataDfKcatkm;
 
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
 const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
@@ -295,13 +301,14 @@ export class OpenEnzymeDBService {
     criteriaMap: Map<SearchableField, SearchCriteria>,
     sortCriteria: SortCriteria,
     pagination: Pagination,
-  ): Observable<(DataDfKcat & DataDfKm & DataDfKcatkm)[]> {
+  ): Observable<CombinedData[]> {
     return combineLatest([
       this.getKCats(criteriaMap, sortCriteria, pagination),
       this.getKms(criteriaMap, sortCriteria, pagination),
       this.getKcatKms(criteriaMap, sortCriteria, pagination),
     ]).pipe(
-      map(([kcat, km, kcatkm]) => [ ...kcat, ...km, ...kcatkm ])
+      map(([kcat, km, kcatkm]) => [ ...kcat, ...km, ...kcatkm ]),
+      map((res) => res as unknown as CombinedData[])
     );
   }
 
