@@ -12,7 +12,11 @@ import {
   KineticSummary,
   KcatEcPieChart,
   KmEcPieChart,
-  KcatkmEcPieChart
+  KcatkmEcPieChart,
+  DataDfKmService,
+  DataDfKcatkmService,
+  DataDfKm,
+  DataDfKcatkm
 } from "../api/moldb/v1";
 import { EnvironmentService } from "./environment.service";
 
@@ -72,6 +76,17 @@ export type EcBarChart = {
   count: number 
 }
 
+export type SearchCriteria = {
+  compound?: string,
+  organism?: string,
+  uniprot?: string,
+  ec?: string,
+  ph?: string,
+  temperature?: string,
+}
+
+export type SearchCriteriaKey = keyof SearchCriteria;
+
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
 const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
 const km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KM.json.gz');
@@ -117,6 +132,8 @@ export class OpenEnzymeDBService {
     private environmentService: EnvironmentService,
     private sharedService: SharedService,
     private dataDfKcatService: DataDfKcatService,
+    private dataDfKmService: DataDfKmService,
+    private dataDfKcatKmService: DataDfKcatkmService,
     private kcatECPieChartService: KcatEcPieChartService,
     private kmECPieChartService: KmEcPieChartService,
     private kcatkmECPieChartService: KcatkmEcPieChartService,
@@ -135,7 +152,45 @@ export class OpenEnzymeDBService {
     );
   }
 
-  getKineticSummary(...params: Parameters<typeof this.kineticSummaryService.kineticSummaryGet>): Observable<KineticSummary[]> {
+  getAll(criteria: SearchCriteria = {
+    ec: undefined,
+    compound: undefined,
+    organism: undefined,
+    uniprot: undefined,
+    ph: undefined,
+    temperature: undefined,
+  }): Observable<(DataDfKcat | DataDfKm | DataDfKcatkm)[]> {
+    return combineLatest([
+      this.dataDfKcatService.dataDfKcatGet(
+        criteria.ec,
+        criteria.compound,
+        criteria.organism,
+        criteria.uniprot,
+        criteria.ph,
+        criteria.temperature,
+      ),
+      this.dataDfKmService.dataDfKmGet(
+        criteria.ec,
+        criteria.compound,
+        criteria.organism,
+        criteria.uniprot,
+        criteria.ph,
+        criteria.temperature,
+      ),
+      this.dataDfKcatKmService.dataDfKcatkmGet(
+        criteria.ec,
+        criteria.compound,
+        criteria.organism,
+        criteria.uniprot,
+        criteria.ph,
+        criteria.temperature,
+      ),
+    ]).pipe(
+      map(([kcat, km, kcatkm]) => [ ...kcat, ...km, ...kcatkm ])
+    );
+  }
+
+  getKineticSummary(): Observable<KineticSummary[]> {
     // if (this.frontendOnly) {
       return from(kinetic_summary);
     // }

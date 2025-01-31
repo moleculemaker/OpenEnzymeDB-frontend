@@ -10,14 +10,14 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { MarvinjsInputComponent } from '../marvinjs-input/marvinjs-input.component';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { of, switchMap, map, first, catchError, filter, tap } from 'rxjs';
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, SearchCriteriaKey } from '~/app/services/open-enzyme-db.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 
 type SearchType = 'string' | 'range' | 'molecule';
 
 interface BaseSearchOptionParams {
-  key: string;
+  key: SearchCriteriaKey;
   label: string;
   type: SearchType;
   placeholder: string;
@@ -29,7 +29,7 @@ interface BaseSearchOptionParams {
 }
 
 class BaseSearchOption {
-  key: string;
+  key: SearchCriteriaKey;
   label: string;
   type: SearchType;
   placeholder: string;
@@ -167,7 +167,7 @@ const parseValue = (option: SearchOption, input: string): any => {
 };
 
 export interface QueryValue {
-  selectedOption: string;
+  selectedOption: SearchCriteriaKey;
   value: any;
   [key: string]: any;
 }
@@ -271,7 +271,7 @@ export class QueryInputComponent implements ControlValueAccessor {
       }
     }),
     new StringSearchOption({
-      key: 'uniprot_id',
+      key: 'uniprot',
       label: 'Uniprot ID',
       placeholder: 'Enter Uniprot ID',
       formControls: {
@@ -283,7 +283,7 @@ export class QueryInputComponent implements ControlValueAccessor {
       }
     }),
     new StringSearchOption({
-      key: 'ec_number',
+      key: 'ec',
       label: 'EC Number',
       placeholder: 'Enter EC Number',
       formControls: {

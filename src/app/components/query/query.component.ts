@@ -6,7 +6,7 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, SearchCriteria } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent, QueryValue } from "../query-input/query-input.component";
 import { Table, TableModule } from "primeng/table";
@@ -20,6 +20,7 @@ import { MenuModule } from "primeng/menu";
 import { trigger } from "@angular/animations";
 import { animate } from "@angular/animations";
 import { style, transition } from "@angular/animations";
+import { DataDfKcat, DataDfKcatkm, DataDfKm } from "~/app/api/moldb/v1";
 
 interface FilterConfigParams {
   category: string;
@@ -469,39 +470,46 @@ export class QueryComponent implements AfterViewInit {
 
     console.log(this.form.value);
 
+    const searchCriteria: SearchCriteria = {};
+    if (this.form.value.search) {
+      searchCriteria[this.form.value.search.selectedOption] = this.form.value.search.value;
+    }
+
     let marginCount = 0;
     // TODO: replace with actual job ID and job type
-    this.service.getResult(JobType.Defaults, '123')
+    // this.service.getResult(JobType.Defaults, '123')
+    this.service.getAll(searchCriteria)
     .pipe(
-      map((response: any) => 
+      map((response: (DataDfKcat | DataDfKm | DataDfKcatkm)[]) => 
         response
-          .map((row: any, index: number) => {
+          .map((row: DataDfKcat | DataDfKm | DataDfKcatkm, index: number) => {
             
-            if (row['KCAT VALUE'] && row['KM VALUE'] && row['KCAT/KM VALUE']) {
-              const v = row['KCAT VALUE'] / row['KM VALUE'];
-              const threshold = v * 0.2;
-              if (v > row['KCAT/KM VALUE'] + threshold || v < row['KCAT/KM VALUE'] - threshold) {
-                marginCount++;
-                console.log('margin value: ', 'kcat: ', row['KCAT VALUE'], 'km: ', row['KM VALUE'], 'kcat/km: ', row['KCAT/KM VALUE']);
-              }
-            }
+            // TODO: discuss how to handle missing values
+            // if (row.KCAT_VALUE && row.KM_VALUE && row.KCAT_KM_VALUE) {
+            //   const v = row.KCAT_VALUE / row.KM_VALUE;
+            //   const threshold = v * 0.2;
+            //   if (v > row.KCAT_KM_VALUE + threshold || v < row.KCAT_KM_VALUE - threshold) {
+            //     marginCount++;
+            //     console.log('margin value: ', 'kcat: ', row['KCAT_VALUE'], 'km: ', row['KM_VALUE'], 'kcat/km: ', row['KCAT/KM_VALUE']);
+            //   }
+            // }
 
             return ({
-            iid: index,
-            ec_number: row.EC,
-            compound: {
-              name: row.SUBSTRATE,
-              smiles: row.SMILES,
-            },
-            enzyme_type: row.EnzymeType,
-            organism: row.ORGANISM,
-            uniprot_id: row.UNIPROT.split(','),
-            ph: row.PH,
-            temperature: row.Temperature,
-            kcat: row['KCAT VALUE'],
-            km: row['KM VALUE'],
-            kcat_km: row['KCAT/KM VALUE'],
-            pubmed_id: `${row.PubMedID}`,
+              iid: index,
+              ec_number: row.ec,
+              compound: {
+                name: row.substrate,
+                smiles: row.smiles,
+              },
+              enzyme_type: row.enzymetype,
+              organism: row.organism,
+              uniprot_id: row.uniprot?.split(','),
+              ph: row.ph,
+              temperature: row.temperature,
+              kcat: 'KCAT_VALUE' in row ? row.KCAT_VALUE : null,
+              km: 'KM_VALUE' in row ? row.KM_VALUE : null,
+              kcat_km: 'KCAT_KM_VALUE' in row ? row.KCAT_KM_VALUE : null,
+              pubmed_id: `${row.pubmedid}`,
           })})
           .filter((row: any) => {
             const search = this.form.value.search;
@@ -518,7 +526,7 @@ export class QueryComponent implements AfterViewInit {
               case 'organism':
                 return row.organism.toLowerCase() === searchValue.value.toLowerCase();
 
-              case 'uniprot_id':
+              case 'uniprot':
                 return row.uniprot_id.some((id: string) => id.toLowerCase() === searchValue.value.toLowerCase());
 
               case 'ph':
@@ -529,7 +537,7 @@ export class QueryComponent implements AfterViewInit {
                 return row.temperature >= searchValue.value[0] 
                   && row.temperature <= searchValue.value[1];
 
-              case 'ec_number':
+              case 'ec':
                 return row.ec_number === searchValue.value;
 
               default:
@@ -562,7 +570,7 @@ export class QueryComponent implements AfterViewInit {
       });
 
       console.log(`
-kcat/km value:
+kcat/KM_VALUE:
   over-threshold percentage: ${marginCount / response.length * 100}%
   margin count: ${marginCount}
   response length: ${response.length}
