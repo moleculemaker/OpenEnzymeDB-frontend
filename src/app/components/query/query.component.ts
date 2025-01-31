@@ -6,10 +6,10 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService, SearchCriteria } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, Pagination, SearchableField, SearchCriteria, SortCriteria } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { QueryInputComponent, QueryValue } from "../query-input/query-input.component";
-import { Table, TableModule } from "primeng/table";
+import { QueryInputComponent, QueryInputOutput } from "../query-input/query-input.component";
+import { Table, TableModule, TablePageEvent } from "primeng/table";
 import { map } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
@@ -216,7 +216,7 @@ export class QueryComponent implements AfterViewInit {
   @ViewChild(Table) resultsTable!: Table;
 
   form = new FormGroup({
-    search: new FormControl<QueryValue | null>(
+    search: new FormControl<QueryInputOutput | null>(
       null,
       [Validators.required]
     ),
@@ -231,6 +231,8 @@ export class QueryComponent implements AfterViewInit {
     data: [],
     total: 0,
   };
+
+  pagination = new Pagination(0, 10);
 
   showFilter = false;
   hasFilter = false;
@@ -468,31 +470,40 @@ export class QueryComponent implements AfterViewInit {
     //   return;
     // }
 
-    console.log(this.form.value);
-
-    const searchCriteria: SearchCriteria = {};
+    const searchCriteriaMap = new Map<SearchableField, SearchCriteria>();
     if (this.form.value.search) {
-      searchCriteria[this.form.value.search.selectedOption] = this.form.value.search.value;
+      const searchCriteria = new SearchCriteria();
+
+      searchCriteria.field = this.form.value.search.select === 'smiles' 
+        ? 'smiles' : this.form.value.search.field;
+      searchCriteria.operator = this.form.value.search.searchType === 'range' 
+        ? 'range' : 'eq';
+      searchCriteria.value = this.form.value.search.value;
+
+      searchCriteriaMap.set(searchCriteria.field, searchCriteria);
     }
 
+    const sortCriteria = new SortCriteria('substrate', 'asc');
+    const pagination = this.pagination;
+
+    console.log(searchCriteriaMap, sortCriteria, pagination);
+
     let marginCount = 0;
-    // TODO: replace with actual job ID and job type
-    // this.service.getResult(JobType.Defaults, '123')
-    this.service.getAll(searchCriteria)
+    this.service.getAll(searchCriteriaMap, sortCriteria, pagination)
     .pipe(
-      map((response: (DataDfKcat | DataDfKm | DataDfKcatkm)[]) => 
+      map((response: (DataDfKcat & DataDfKm & DataDfKcatkm)[]) => 
         response
-          .map((row: DataDfKcat | DataDfKm | DataDfKcatkm, index: number) => {
+          .map((row: DataDfKcat & DataDfKm & DataDfKcatkm, index: number) => {
             
             // TODO: discuss how to handle missing values
-            // if (row.KCAT_VALUE && row.KM_VALUE && row.KCAT_KM_VALUE) {
-            //   const v = row.KCAT_VALUE / row.KM_VALUE;
-            //   const threshold = v * 0.2;
-            //   if (v > row.KCAT_KM_VALUE + threshold || v < row.KCAT_KM_VALUE - threshold) {
-            //     marginCount++;
-            //     console.log('margin value: ', 'kcat: ', row['KCAT_VALUE'], 'km: ', row['KM_VALUE'], 'kcat/km: ', row['KCAT/KM_VALUE']);
-            //   }
-            // }
+            if (row.KCAT_VALUE && row.KM_VALUE && row.KCAT_KM_VALUE) {
+              const v = row.KCAT_VALUE / row.KM_VALUE;
+              const threshold = v * 0.2;
+              if (v > row.KCAT_KM_VALUE + threshold || v < row.KCAT_KM_VALUE - threshold) {
+                marginCount++;
+                console.log('margin value: ', 'kcat: ', row['KCAT_VALUE'], 'km: ', row['KM_VALUE'], 'kcat/km: ', row['KCAT_KM_VALUE']);
+              }
+            }
 
             return ({
               iid: index,
@@ -506,9 +517,9 @@ export class QueryComponent implements AfterViewInit {
               uniprot_id: row.uniprot?.split(','),
               ph: row.ph,
               temperature: row.temperature,
-              kcat: 'KCAT_VALUE' in row ? row.KCAT_VALUE : null,
-              km: 'KM_VALUE' in row ? row.KM_VALUE : null,
-              kcat_km: 'KCAT_KM_VALUE' in row ? row.KCAT_KM_VALUE : null,
+              kcat: row.KCAT_VALUE,
+              km: row.KM_VALUE,
+              kcat_km: row.KCAT_KM_VALUE,
               pubmed_id: `${row.pubmedid}`,
           })})
           .filter((row: any) => {
@@ -517,17 +528,18 @@ export class QueryComponent implements AfterViewInit {
               return true;
             }
 
-            const { selectedOption: searchType, ...searchValue } = search!
-            switch(searchType) {
+            const { field, ...searchValue } = search!
+            switch(field) {
               case 'compound':
-                return row.compound[searchValue['select']].toLowerCase()
-                  === searchValue.value.toLowerCase(); 
+                return row.compound[searchValue.select!].toLowerCase()
+                  === (searchValue.value as string).toLowerCase(); 
 
               case 'organism':
-                return row.organism.toLowerCase() === searchValue.value.toLowerCase();
+                return row.organism.toLowerCase() === (searchValue.value as string).toLowerCase();
 
               case 'uniprot':
-                return row.uniprot_id.some((id: string) => id.toLowerCase() === searchValue.value.toLowerCase());
+                return row.uniprot_id.some((id: string) => 
+                  id.toLowerCase() === (searchValue.value as string).toLowerCase());
 
               case 'ph':
                 return row.ph >= searchValue.value[0] 
@@ -600,5 +612,10 @@ kcat/KM_VALUE:
     this.hasFilter = this.filterRecords.some(f => f.hasFilter());
 
     console.log(this.resultsTable.filteredValue);
+  }
+
+  onPageChange(event: TablePageEvent) {
+    this.pagination = new Pagination(event.first, event.rows);
+    this.submit();
   }
 }

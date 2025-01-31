@@ -76,16 +76,65 @@ export type EcBarChart = {
   count: number 
 }
 
-export type SearchCriteria = {
-  compound?: string,
-  organism?: string,
-  uniprot?: string,
-  ec?: string,
-  ph?: [number, number],
-  temperature?: [number, number],
+export type SearchableField = 
+  | 'compound'
+  | 'organism'
+  | 'uniprot'
+  | 'ec'
+  | 'ph'
+  | 'temperature'
+  | 'smiles';
+
+export class SearchCriteria {
+  field: SearchableField;
+  operator: 'eq' | 'range';
+  value: string | [number, number];
+
+  toString() {
+    switch (this.operator) {
+      case 'eq':
+        return `eq.${this.value}`;
+      case 'range':
+        return `gte.${this.value[0]}&lte.${this.value[1]}`;
+    }
+  }
 }
 
-export type SearchCriteriaKey = keyof SearchCriteria;
+export class SortCriteria {
+  order: 'asc' | 'desc';
+  field: 
+    | 'substrate' 
+    | 'organism' 
+    | 'uniprot' 
+    | 'ec' 
+    | 'enzymetype'
+    | 'ph'
+    | 'temperature'
+    | 'smiles'
+    | 'pubmedid'
+    | 'KCAT_VALUE'
+    | 'KM_VALUE'
+    | 'KCAT/KM_VALUE';
+
+  constructor(field: SortCriteria['field'], order: SortCriteria['order']) {
+    this.order = order;
+    this.field = field;
+  }
+
+  toString() {
+    return `${this.field}.${this.order}`;
+  }
+}
+
+export class Pagination {
+  first: number = 0;
+  rows: number = 10;
+
+  constructor(first: number, rows: number) {
+    this.first = first;
+    this.rows = rows;
+  }
+}
 
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
 const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
@@ -146,45 +195,111 @@ export class OpenEnzymeDBService {
     this._FEEDBACK_URL = this.environmentService.getEnvConfig().feedbackUrl;
   }
 
-  getKCats(...params: Parameters<typeof this.dataDfKcatService.dataDfKcatGet>): Observable<DataDfKcat[]> {
-    return this.dataDfKcatService.dataDfKcatGet(...params).pipe(
+  getKCats(
+    criteriaMap: Map<SearchableField, SearchCriteria>,
+    sortCriteria: SortCriteria,
+    pagination: Pagination,
+  ): Observable<DataDfKcat[]> {
+    return this.dataDfKcatService.dataDfKcatGet(
+      criteriaMap.get('ec')?.toString(),            /* ec */ 
+      criteriaMap.get('compound')?.toString(),      /* substrate */ 
+      criteriaMap.get('organism')?.toString(),      /* organism */ 
+      criteriaMap.get('uniprot')?.toString(),       /* uniprot */ 
+      undefined,                                    /* enzymetype */ 
+      criteriaMap.get('ph')?.toString(),            /* ph */ 
+      criteriaMap.get('temperature')?.toString(),   /* temperature */ 
+      undefined,                                    /* pubmedid */ 
+      undefined,                                    /* kMVALUE */ 
+      undefined,                                    /* unit */ 
+      criteriaMap.get('smiles')?.toString(),        /* smiles */ 
+      undefined,                                    /* select */ 
+      sortCriteria.toString(),                      /* order */ 
+      undefined,                                    /* range */ 
+      undefined,                                    /* rangeUnit */ 
+      `${pagination.first}`,                        /* offset */ 
+      `${pagination.rows}`,                         /* limit */ 
+      undefined,                                    /* prefer */ 
+      undefined,                                    /* observe */ 
+      undefined,                                    /* reportProgress */ 
+      undefined                                     /* options */ 
+    ).pipe(
       map((res) => res as unknown as DataDfKcat[])
     );
   }
 
-  getAll(criteria: SearchCriteria = {
-    ec: undefined,
-    compound: undefined,
-    organism: undefined,
-    uniprot: undefined,
-    ph: undefined,
-    temperature: undefined,
-  }): Observable<(DataDfKcat | DataDfKm | DataDfKcatkm)[]> {
+  getKms(
+    criteriaMap: Map<SearchableField, SearchCriteria>,
+    sortCriteria: SortCriteria,
+    pagination: Pagination,
+  ): Observable<DataDfKm[]> {
+    return this.dataDfKmService.dataDfKmGet(
+      criteriaMap.get('ec')?.toString(),            /* ec */ 
+      criteriaMap.get('compound')?.toString(),      /* substrate */ 
+      criteriaMap.get('organism')?.toString(),      /* organism */ 
+      criteriaMap.get('uniprot')?.toString(),       /* uniprot */ 
+      undefined,                                    /* enzymetype */ 
+      criteriaMap.get('ph')?.toString(),            /* ph */ 
+      criteriaMap.get('temperature')?.toString(),   /* temperature */ 
+      undefined,                                    /* pubmedid */ 
+      undefined,                                    /* kMVALUE */ 
+      undefined,                                    /* unit */ 
+      criteriaMap.get('smiles')?.toString(),        /* smiles */ 
+      undefined,                                    /* select */ 
+      sortCriteria.toString(),                      /* order */ 
+      undefined,                                    /* range */ 
+      undefined,                                    /* rangeUnit */ 
+      `${pagination.first}`,                        /* offset */ 
+      `${pagination.rows}`,                         /* limit */ 
+      undefined,                                    /* prefer */ 
+      undefined,                                    /* observe */ 
+      undefined,                                    /* reportProgress */ 
+      undefined                                     /* options */ 
+    ).pipe(
+      map((res) => res as unknown as DataDfKm[])
+    );
+  }
+
+  getKcatKms(
+    criteriaMap: Map<SearchableField, SearchCriteria>,
+    sortCriteria: SortCriteria,
+    pagination: Pagination,
+  ): Observable<DataDfKcatkm[]> {
+    return this.dataDfKcatKmService.dataDfKcatkmGet(
+      criteriaMap.get('ec')?.toString(),            /* ec */ 
+      criteriaMap.get('compound')?.toString(),      /* substrate */ 
+      criteriaMap.get('organism')?.toString(),      /* organism */ 
+      criteriaMap.get('uniprot')?.toString(),       /* uniprot */ 
+      undefined,                                    /* enzymetype */ 
+      criteriaMap.get('ph')?.toString(),            /* ph */ 
+      criteriaMap.get('temperature')?.toString(),   /* temperature */ 
+      undefined,                                    /* pubmedid */ 
+      undefined,                                    /* kMVALUE */ 
+      undefined,                                    /* unit */ 
+      criteriaMap.get('smiles')?.toString(),        /* smiles */ 
+      undefined,                                    /* select */ 
+      sortCriteria.toString(),                      /* order */ 
+      undefined,                                    /* range */ 
+      undefined,                                    /* rangeUnit */ 
+      `${pagination.first}`,                        /* offset */ 
+      `${pagination.rows}`,                         /* limit */ 
+      undefined,                                    /* prefer */ 
+      undefined,                                    /* observe */ 
+      undefined,                                    /* reportProgress */ 
+      undefined                                     /* options */ 
+    ).pipe(
+      map((res) => res as unknown as DataDfKcatkm[])
+    );
+  }
+
+  getAll(
+    criteriaMap: Map<SearchableField, SearchCriteria>,
+    sortCriteria: SortCriteria,
+    pagination: Pagination,
+  ): Observable<(DataDfKcat & DataDfKm & DataDfKcatkm)[]> {
     return combineLatest([
-      this.dataDfKcatService.dataDfKcatGet(
-        this.queryEq(criteria.ec),
-        this.queryEq(criteria.compound),
-        this.queryEq(criteria.organism),
-        this.queryEq(criteria.uniprot),
-        this.queryBetween(criteria.ph),
-        this.queryBetween(criteria.temperature),
-      ),
-      this.dataDfKmService.dataDfKmGet(
-        this.queryEq(criteria.ec),
-        this.queryEq(criteria.compound),
-        this.queryEq(criteria.organism),
-        this.queryEq(criteria.uniprot),
-        this.queryBetween(criteria.ph),
-        this.queryBetween(criteria.temperature),
-      ),
-      this.dataDfKcatKmService.dataDfKcatkmGet(
-        this.queryEq(criteria.ec),
-        this.queryEq(criteria.compound),
-        this.queryEq(criteria.organism),
-        this.queryEq(criteria.uniprot),
-        this.queryBetween(criteria.ph),
-        this.queryBetween(criteria.temperature),
-      ),
+      this.getKCats(criteriaMap, sortCriteria, pagination),
+      this.getKms(criteriaMap, sortCriteria, pagination),
+      this.getKcatKms(criteriaMap, sortCriteria, pagination),
     ]).pipe(
       map(([kcat, km, kcatkm]) => [ ...kcat, ...km, ...kcatkm ])
     );

@@ -1,4 +1,4 @@
-import { CommonModule, JsonPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -10,14 +10,21 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { MarvinjsInputComponent } from '../marvinjs-input/marvinjs-input.component';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { of, switchMap, map, first, catchError, filter, tap } from 'rxjs';
-import { OpenEnzymeDBService, SearchCriteriaKey } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, SearchableField, SearchCriteria } from '~/app/services/open-enzyme-db.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
+
+export type QueryInputOutput = {
+  field: SearchableField;
+  searchType: SearchType;
+  value: any;
+  select?: 'name' | 'smiles';
+}
 
 type SearchType = 'string' | 'range' | 'molecule';
 
 interface BaseSearchOptionParams {
-  key: SearchCriteriaKey;
+  key: SearchableField;
   label: string;
   type: SearchType;
   placeholder: string;
@@ -29,7 +36,7 @@ interface BaseSearchOptionParams {
 }
 
 class BaseSearchOption {
-  key: SearchCriteriaKey;
+  key: SearchableField;
   label: string;
   type: SearchType;
   placeholder: string;
@@ -153,24 +160,6 @@ class MoleculeSearchOption extends BaseSearchOption {
 }
 
 type SearchOption = StringSearchOption | RangeSearchOption | MoleculeSearchOption;
-
-const parseValue = (option: SearchOption, input: string): any => {
-  switch (option.type) {
-    case 'range':
-      const [min, max] = input.split('-').map(Number);
-      return (!isNaN(min) && !isNaN(max)) ? [min, max] : null;
-    case 'molecule':
-    case 'string':
-    default:
-      return input;
-  }
-};
-
-export interface QueryValue {
-  selectedOption: SearchCriteriaKey;
-  value: any;
-  [key: string]: any;
-}
 
 @Component({
   selector: 'app-query-input',
@@ -322,13 +311,13 @@ export class QueryInputComponent implements ControlValueAccessor {
     }),
   ];
 
-  private onChange: (value: QueryValue) => void = () => {};
+  private onChange: (value: QueryInputOutput) => void = () => {};
   private onTouched: () => void = () => {};
   disabled = false;
 
-  writeValue(value: QueryValue | null): void {
+  writeValue(value: SearchCriteria | null): void {
     if (value) {
-      this.selectedSearchOption = this.searchOptionRecords[value.selectedOption];
+      this.selectedSearchOption = this.searchOptionRecords[value.field];
       if (this.selectedSearchOption) {
         this.selectedSearchOption.formControls.value.setValue(value.value);
       }
@@ -378,8 +367,9 @@ export class QueryInputComponent implements ControlValueAccessor {
       return acc;
     }, {} as Record<string, any>);
 
-    const value: QueryValue = {
-      selectedOption: this.selectedSearchOption.key,
+    const value: QueryInputOutput = {
+      field: this.selectedSearchOption.key,
+      searchType: this.selectedSearchOption.type,
       value: inputValue,
       ...others
     };

@@ -284,9 +284,9 @@ export class LandingPageComponent {
     protected tutorialService: TutorialService,
   ) {
 
-    this.service.getKCats().subscribe((kcats) => {
-      console.log('get kcats from api: ', kcats.length);
-    });
+    // this.service.getKCats().subscribe((kcats) => {
+    //   console.log('get kcats from api: ', kcats.length);
+    // });
 
     this.tutorialService.tutorialKey = 'landing-page-tutorial';
     if (!this.tutorialService.showTutorial) {

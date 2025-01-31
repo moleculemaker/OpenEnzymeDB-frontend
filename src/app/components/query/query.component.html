@@ -113,9 +113,18 @@
                 }
 
                 <div class="flex w-full">
-                    <p-table #resultsTable [value]="result.data" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]"
-                        [paginator]="true" dataKey="iid" class="w-full h-full" tableStyleClass="w-full"
-                        styleClass="w-full" [columns]="columns">
+                    <p-table #resultsTable 
+                        [value]="result.data" 
+                        [rows]="pagination.rows"
+                        [rowsPerPageOptions]="[10, 20, 50]"
+                        [paginator]="true"
+                        dataKey="iid" 
+                        class="w-full h-full" 
+                        tableStyleClass="w-full"
+                        styleClass="w-full" 
+                        [columns]="columns"
+                        (onPage)="onPageChange($event)"
+                    >
                         <ng-template pTemplate="header">
                             <tr>
                                 <!-- <th class="align-middle">Reaction</th> -->
