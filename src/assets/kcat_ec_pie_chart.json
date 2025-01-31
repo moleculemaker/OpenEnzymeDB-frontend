@@ -1,0 +1,7 @@
+[{"dataset":"kcat","ec_class":"EC 1","count":28684,"percentage":32.66}, 
+ {"dataset":"kcat","ec_class":"EC 2","count":17371,"percentage":19.78}, 
+ {"dataset":"kcat","ec_class":"EC 3","count":27202,"percentage":30.97}, 
+ {"dataset":"kcat","ec_class":"EC 4","count":7056,"percentage":8.03}, 
+ {"dataset":"kcat","ec_class":"EC 5","count":3707,"percentage":4.22}, 
+ {"dataset":"kcat","ec_class":"EC 6","count":3538,"percentage":4.03}, 
+ {"dataset":"kcat","ec_class":"EC 7","count":275,"percentage":0.31}]

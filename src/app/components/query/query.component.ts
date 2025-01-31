@@ -1,15 +1,24 @@
-import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { 
+  OpenEnzymeDBService, 
+  Pagination, 
+  SearchableField, 
+  SearchCriteria, 
+  SortCriteria,
+  DataDfKcat,
+  DataDfKm,
+  DataDfKcatkm,
+  CombinedData
+} from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { QueryInputComponent, QueryValue } from "../query-input/query-input.component";
-import { Table, TableModule } from "primeng/table";
+import { QueryInputComponent, QueryInputOutput } from "../query-input/query-input.component";
+import { Table, TableModule, TablePageEvent } from "primeng/table";
 import { map } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
@@ -215,7 +224,7 @@ export class QueryComponent implements AfterViewInit {
   @ViewChild(Table) resultsTable!: Table;
 
   form = new FormGroup({
-    search: new FormControl<QueryValue | null>(
+    search: new FormControl<QueryInputOutput | null>(
       null,
       [Validators.required]
     ),
@@ -230,6 +239,8 @@ export class QueryComponent implements AfterViewInit {
     data: [],
     total: 0,
   };
+
+  pagination = new Pagination(0, 10);
 
   showFilter = false;
   hasFilter = false;
@@ -467,16 +478,32 @@ export class QueryComponent implements AfterViewInit {
     //   return;
     // }
 
-    console.log(this.form.value);
+    const searchCriteriaMap = new Map<SearchableField, SearchCriteria>();
+    if (this.form.value.search) {
+      const searchCriteria = new SearchCriteria();
+
+      searchCriteria.field = this.form.value.search.select === 'smiles' 
+        ? 'smiles' : this.form.value.search.field;
+      searchCriteria.operator = this.form.value.search.searchType === 'range' 
+        ? 'range' : 'eq';
+      searchCriteria.value = this.form.value.search.value;
+
+      searchCriteriaMap.set(searchCriteria.field, searchCriteria);
+    }
+
+    const sortCriteria = new SortCriteria('substrate', 'asc');
+    const pagination = this.pagination;
+
+    console.log(searchCriteriaMap, sortCriteria, pagination);
 
     let marginCount = 0;
-    // TODO: replace with actual job ID and job type
-    this.service.getResult(JobType.Defaults, '123')
+    this.service.getAll(searchCriteriaMap, sortCriteria, pagination)
     .pipe(
-      map((response: any) => 
+      map((response: CombinedData[]) => 
         response
-          .map((row: any, index: number) => {
+          .map((row: CombinedData, index: number) => {
             
+            // TODO: discuss how to handle missing values
             if (row['KCAT VALUE'] && row['KM VALUE'] && row['KCAT/KM VALUE']) {
               const v = row['KCAT VALUE'] / row['KM VALUE'];
               const threshold = v * 0.2;
@@ -487,21 +514,21 @@ export class QueryComponent implements AfterViewInit {
             }
 
             return ({
-            iid: index,
-            ec_number: row.EC,
-            compound: {
-              name: row.SUBSTRATE,
-              smiles: row.SMILES,
-            },
-            enzyme_type: row.EnzymeType,
-            organism: row.ORGANISM,
-            uniprot_id: row.UNIPROT.split(','),
-            ph: row.PH,
-            temperature: row.Temperature,
-            kcat: row['KCAT VALUE'],
-            km: row['KM VALUE'],
-            kcat_km: row['KCAT/KM VALUE'],
-            pubmed_id: `${row.PubMedID}`,
+              iid: index,
+              ec_number: row.ec,
+              compound: {
+                name: row.substrate,
+                smiles: row.smiles,
+              },
+              enzyme_type: row.enzymetype,
+              organism: row.organism,
+              uniprot_id: row.uniprot?.split(','),
+              ph: row.ph,
+              temperature: row.temperature,
+              kcat: row['KCAT VALUE'],
+              km: row['KM VALUE'],
+              kcat_km: row['KCAT/KM VALUE'],
+              pubmed_id: `${row.pubmedid}`,
           })})
           .filter((row: any) => {
             const search = this.form.value.search;
@@ -509,17 +536,18 @@ export class QueryComponent implements AfterViewInit {
               return true;
             }
 
-            const { selectedOption: searchType, ...searchValue } = search!
-            switch(searchType) {
+            const { field, ...searchValue } = search!
+            switch(field) {
               case 'compound':
-                return row.compound[searchValue['select']].toLowerCase()
-                  === searchValue.value.toLowerCase(); 
+                return row.compound[searchValue.select!].toLowerCase()
+                  === (searchValue.value as string).toLowerCase(); 
 
               case 'organism':
-                return row.organism.toLowerCase() === searchValue.value.toLowerCase();
+                return row.organism.toLowerCase() === (searchValue.value as string).toLowerCase();
 
-              case 'uniprot_id':
-                return row.uniprot_id.some((id: string) => id.toLowerCase() === searchValue.value.toLowerCase());
+              case 'uniprot':
+                return row.uniprot_id.some((id: string) => 
+                  id.toLowerCase() === (searchValue.value as string).toLowerCase());
 
               case 'ph':
                 return row.ph >= searchValue.value[0] 
@@ -529,7 +557,7 @@ export class QueryComponent implements AfterViewInit {
                 return row.temperature >= searchValue.value[0] 
                   && row.temperature <= searchValue.value[1];
 
-              case 'ec_number':
+              case 'ec':
                 return row.ec_number === searchValue.value;
 
               default:
@@ -562,7 +590,7 @@ export class QueryComponent implements AfterViewInit {
       });
 
       console.log(`
-kcat/km value:
+kcat/KM_VALUE:
   over-threshold percentage: ${marginCount / response.length * 100}%
   margin count: ${marginCount}
   response length: ${response.length}
@@ -592,5 +620,10 @@ kcat/km value:
     this.hasFilter = this.filterRecords.some(f => f.hasFilter());
 
     console.log(this.resultsTable.filteredValue);
+  }
+
+  onPageChange(event: TablePageEvent) {
+    this.pagination = new Pagination(event.first, event.rows);
+    this.submit();
   }
 }

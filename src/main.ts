@@ -38,6 +38,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { MatomoModule, MatomoRouterModule } from 'ngx-matomo-client';
 import { MenuModule } from 'primeng/menu';
 import { ApiModule, Configuration } from '@api/mmli-backend/v1';
+import { ApiModule as MoldbApiModule, Configuration as MoldbConfiguration } from '@api/moldb/v1';
 import { DialogModule } from 'primeng/dialog';
 import { AppComponent } from './app/app.component';
 
@@ -50,10 +51,49 @@ const initAppFn = (envService: EnvironmentService) => {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule, CardModule, ChipModule, ChartModule, FormsModule, MessagesModule, ButtonModule, InputTextareaModule, InputNumberModule, PanelModule, MultiSelectModule, ProgressBarModule, SelectButtonModule, SkeletonModule, ProgressSpinnerModule, StepsModule, SliderModule, DropdownModule, TableModule, InputTextModule, ListboxModule, OverlayPanelModule, SidebarModule, TabViewModule, TabMenuModule, RadioButtonModule, CheckboxModule, FileUploadModule, SplitButtonModule, PanelModule, MatomoModule.forRoot({
-            siteId: 9, //TODO: update site id
-            trackerUrl: 'https://matomo.mmli1.ncsa.illinois.edu/'
-        }), MatomoRouterModule, MenuModule, ApiModule.forRoot(() => new Configuration()), ReactiveFormsModule, DialogModule),
+        importProvidersFrom(
+            BrowserModule, 
+            AppRoutingModule, 
+            CardModule, 
+            ChipModule, 
+            ChartModule, 
+            FormsModule, 
+            MessagesModule, 
+            ButtonModule, 
+            InputTextareaModule, 
+            InputNumberModule, 
+            PanelModule, 
+            MultiSelectModule, 
+            ProgressBarModule, 
+            SelectButtonModule, 
+            SkeletonModule, 
+            ProgressSpinnerModule, 
+            StepsModule, 
+            SliderModule, 
+            DropdownModule, 
+            TableModule, 
+            InputTextModule, 
+            ListboxModule, 
+            OverlayPanelModule, 
+            SidebarModule, 
+            TabViewModule, 
+            TabMenuModule, 
+            RadioButtonModule, 
+            CheckboxModule, 
+            FileUploadModule, 
+            SplitButtonModule, 
+            PanelModule, 
+            MatomoModule.forRoot({
+                siteId: 9, //TODO: update site id
+                trackerUrl: 'https://matomo.mmli1.ncsa.illinois.edu/'
+            }), 
+            MatomoRouterModule, 
+            MenuModule, 
+            ApiModule.forRoot(() => new Configuration()), 
+            MoldbApiModule.forRoot(() => new MoldbConfiguration()),
+            ReactiveFormsModule, 
+            DialogModule
+        ),
         EnvironmentService,
         {
             provide: APP_INITIALIZER,

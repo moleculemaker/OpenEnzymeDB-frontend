@@ -75,6 +75,18 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: feedbackUrl
 
+          - name: MOLDB_HOSTNAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: molDBHostname
+
+          - name: MOLDB_BASEPATH
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: molDBBasePath
+
           ports:
             - containerPort: 80
           imagePullPolicy: Always

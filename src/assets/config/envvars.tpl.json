@@ -9,6 +9,9 @@
   "frontendOnly": "${FRONTEND_ONLY}",
   "whitePaperUrl": "${WHITE_PAPER_URL}",
   "visionUrl": "${VISION_URL}",
-  "feedbackUrl": "${FEEDBACK_URL}"
+  "feedbackUrl": "${FEEDBACK_URL}",
+
+  "molDBHostname": "${MOLDB_HOSTNAME}",
+  "molDBBasePath": "${MOLDB_BASEPATH}"
 }
 

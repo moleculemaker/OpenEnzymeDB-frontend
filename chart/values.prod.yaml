@@ -24,6 +24,9 @@ config:
   visionUrl: "https://docs.google.com/document/d/17nfpqWG8N8uS4wGpNlUumwknwh7kIsKp2rZNv6TLYyk/edit?usp=sharing"
   feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfISchgT9oNHL5f0_Ev1T0BD736AakYnS4GUuJJdtA9fxF78A/viewform"
 
+  molDBHostname: "https://api.openenzymedb.platform.moleculemaker.org"
+  molDBBasePath: ""
+
 extraDeploy:
 - apiVersion: traefik.io/v1alpha1
   kind: Middleware

@@ -1,21 +1,22 @@
-import { ChangeDetectorRef, Component, computed, ElementRef, QueryList, ViewChild, ViewChildren } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { OpenEnzymeDBService } from "../services/open-enzyme-db.service";
+import { EcBarChart, OpenEnzymeDBService } from "../services/open-enzyme-db.service";
 import { ChartModule, UIChart } from "primeng/chart";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
 import { PanelModule } from "primeng/panel";
-import { combineLatest, combineLatestAll } from "rxjs";
+import { combineLatest, Subscription } from "rxjs";
 import { DropdownModule } from "primeng/dropdown";
 import { FormsModule } from "@angular/forms";
 import { SkeletonModule } from "primeng/skeleton";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { active } from "d3";
 import { DialogModule } from "primeng/dialog";
 import { TutorialService } from "../services/tutorial.service";
 import { CheckboxModule } from "primeng/checkbox";
+import { KcatkmEcPieChart, KineticSummary, KmEcPieChart } from "../api/moldb/v1";
+import { PickRecordPipe } from "../pipes/pick-record.pipe";
 
 type ChartData = {
   status: 'loading' | 'loaded',
@@ -38,6 +39,13 @@ type BarChartState = 'focused'
   | 'hovering-ec'
   | 'mouseout-ec';
 
+type KineticSummaryVM = {
+  label: string,
+  kcat: number,
+  km: number,
+  kcat_km: number,
+}
+
 @Component({
   selector: "landing-page",
   templateUrl: "./landing-page.component.html",
@@ -58,7 +66,8 @@ type BarChartState = 'focused'
     ProgressSpinnerModule,
     DialogModule,
     CheckboxModule,
-  ],
+    PickRecordPipe
+],
   host: {
     class: 'flex flex-col justify-center items-center w-full'
   }
@@ -161,7 +170,7 @@ export class LandingPageComponent {
         case 'mouseout--->focused':
         case 'mouseout-ec--->focused':
         case 'focused--->focused':
-          console.log('highlighting bar: ', stateStr, state.payload);
+          // console.log('highlighting bar: ', stateStr, state.payload);
           this.highlightAllBarCharts(state.payload);
           break;
 
@@ -254,24 +263,30 @@ export class LandingPageComponent {
 
   // datasetSummary: any[] = [];
   summary: {
-    kcat: any,
-    km: any,
-    kcat_km: any,
-    dataset: any,
+    dataset: {
+      uniqueSubstrates: KineticSummaryVM,
+      uniqueOrganisms: KineticSummaryVM,
+      uniqueUniprotIds: KineticSummaryVM,
+      uniqueECNumbers: KineticSummaryVM,
+      totalEntries: KineticSummaryVM,
+    } | null,
     status: 'na' | 'loading' | 'loaded',
   } = {
       status: 'na',
-      kcat: null,
-      km: null,
-      kcat_km: null,
       dataset: null,
     }
+
+  subscriptions: Subscription[] = [];
 
   constructor(
     protected service: OpenEnzymeDBService,
     private cdr: ChangeDetectorRef,
     protected tutorialService: TutorialService,
   ) {
+
+    // this.service.getKCats().subscribe((kcats) => {
+    //   console.log('get kcats from api: ', kcats.length);
+    // });
 
     this.tutorialService.tutorialKey = 'landing-page-tutorial';
     if (!this.tutorialService.showTutorial) {
@@ -280,21 +295,43 @@ export class LandingPageComponent {
       this.displayTutorial = false;
     }
 
+    this.subscriptions = this.subscriptions.concat([
+      this.service.getKCatECPieChartData().subscribe((kcat) => {
+        this.chartConfigs['pieChart']['data']['kcat'] = this.generatePieChart('kcat', kcat);
+      }),
+
+      this.service.getKMECPieChartData().subscribe((km) => {
+        this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart('km', km);
+      }),
+
+      this.service.getKCatKmECPieChartData().subscribe((kcatkm) => {
+        this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart('kcat_km', kcatkm);
+      }),
+
+      this.service.getKineticSummary().subscribe((summary) => {
+        this.summary = {
+          dataset: this.generateSummary(summary),
+          status: 'loaded',
+        };
+      }),
+
+      this.service.getEcBarChartData().subscribe((ec) => {
+        this.chartConfigs['barChart']['data'] = this.generateHistogram(ec);
+      }),
+    ]);
+
     combineLatest([
       service.KCAT_DF$,
       service.KM_DF$,
       service.KCAT_KM_DF$,
     ]).subscribe((dfs) => {
       const [kcatDf, kmDf, kcatKmDf] = dfs;
-      this.chartConfigs['pieChart']['data']['kcat'] = this.generatePieChart('kcat', kcatDf);
-      this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart('km', kmDf);
-      this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart('kcat_km', kcatKmDf);
-      this.chartConfigs['barChart']['data'] = this.generateHistogram(dfs);
+      
 
-      this.summary = {
-        ...this.generateSummary(kcatDf, kmDf, kcatKmDf),
-        status: 'loaded',
-      };
+      // this.summary = {
+      //   ...this.generateSummary(kcatDf, kmDf, kcatKmDf),
+      //   status: 'loaded',
+      // };
     });
 
     const documentStyle = getComputedStyle(document.documentElement);
@@ -324,74 +361,55 @@ export class LandingPageComponent {
     });
   }
 
-  generateSummary(kcat: any, km: any, kcatKm: any) {
-    function getSummary(df: any) {
-      const substratesSet = new Set(df.map((row: any) => row['SUBSTRATE']));
-      const organismsSet = new Set(df.map((row: any) => row['ORGANISM']));
-      const ecNumbersSet = new Set(df.map((row: any) => row['EC']));
-      const uniprotIdsSet = new Set(df.map((row: any) => row['UNIPROT']));
-
+  generateSummary(summaryResponse: KineticSummary[]): typeof this.summary['dataset'] {
+    const dataset = summaryResponse.map((summary) => {
       return {
-        substrates: substratesSet.size,
-        organisms: organismsSet.size,
-        ecNumbers: ecNumbersSet.size,
-        uniprotIds: uniprotIdsSet.size,
-        total: df.length,
+        label: summary.metric!,
+        kcat: summary.kcat_dataset!,
+        km: summary.km_dataset!,
+        kcat_km: summary.kcat_km_dataset!,
       };
-    }
-
-    const kcatSummary = getSummary(kcat);
-    const kmSummary = getSummary(km);
-    const kcatKmSummary = getSummary(kcatKm);
-
-    // transpose the summary
-    const dataset = [
-      { label: 'Unique Substrates', kcat: kcatSummary.substrates, km: kmSummary.substrates, kcat_km: kcatKmSummary.substrates },
-      { label: 'Unique Organisms', kcat: kcatSummary.organisms, km: kmSummary.organisms, kcat_km: kcatKmSummary.organisms },
-      { label: 'Unique Uniprot IDs', kcat: kcatSummary.uniprotIds, km: kmSummary.uniprotIds, kcat_km: kcatKmSummary.uniprotIds },
-      { label: 'Unique EC Numbers', kcat: kcatSummary.ecNumbers, km: kmSummary.ecNumbers, kcat_km: kcatKmSummary.ecNumbers },
-      { label: 'Total Entries', kcat: kcatSummary.total, km: kmSummary.total, kcat_km: kcatKmSummary.total },
-    ];
+    });
 
     return {
-      kcat: kcatSummary,
-      km: kmSummary,
-      kcat_km: kcatKmSummary,
-      dataset,
+      uniqueSubstrates: dataset.find((summary) => summary.label === 'Unique Substrates')!,
+      uniqueOrganisms: dataset.find((summary) => summary.label === 'Unique Organisms')!,
+      uniqueUniprotIds: dataset.find((summary) => summary.label === 'Unique Uniprot IDs')!,
+      uniqueECNumbers: dataset.find((summary) => summary.label === 'Unique EC Numbers')!,
+      totalEntries: dataset.find((summary) => summary.label === 'Total Entries')!,
     };
   }
 
-  generateECMap(df: any): Record<string, number> {
-    const ecMap: Record<string, number> = {};
+  // generateECMap(df: any): Record<string, number> {
+  //   const ecMap: Record<string, number> = {};
 
-    df.forEach((row: any) => {
-      // EC number is in format of x.x.x.x, build ecMap hierarchy
-      let acc = '';
-      for (let i = 0; i < 4; i++) {
-        acc += row['EC'].split('.')[i] + '.';
-        const ecLabel = acc + Array(3 - i).fill('*').join('.');
-        ecMap[ecLabel] = (ecMap[ecLabel] || 0) + 1;
-      }
-    });
+  //   df.forEach((row: any) => {
+  //     // EC number is in format of x.x.x.x, build ecMap hierarchy
+  //     let acc = '';
+  //     for (let i = 0; i < 4; i++) {
+  //       acc += row['EC'].split('.')[i] + '.';
+  //       const ecLabel = acc + Array(3 - i).fill('*').join('.');
+  //       ecMap[ecLabel] = (ecMap[ecLabel] || 0) + 1;
+  //     }
+  //   });
 
-    return ecMap;
-  }
+  //   return ecMap;
+  // }
 
-  generatePieChart(type: 'kcat' | 'km' | 'kcat_km', df: any): ChartData {
-    const ecMap: Record<string, number> = this.generateECMap(df);
-
-    const data = Object.entries(ecMap)
-      .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/))
-      .map(([ec, count]) => ({ ec, count }));
+  // TODO: add KcatEcPieChart after data structure is updated
+  generatePieChart(
+    type: 'kcat' | 'km' | 'kcat_km', 
+    data: (KmEcPieChart | KcatkmEcPieChart)[]
+  ): ChartData {
 
     return {
       status: 'loaded',
       data: {
-        labels: data.map((d) => d.ec),
+        labels: data.map((d) => d.ec_class),
         datasets: [
           {
-            data: data.map((d) => d.count),
-            total: data.reduce((acc, d) => acc + d.count, 0),
+            data: data.map((d) => d.count!),
+            total: data.reduce((acc, d) => acc + d.count!, 0),
             backgroundColor: this.chartConfigs['pieChart']['styleConfig']['backgroundColor'],
             hoverBackgroundColor: this.chartConfigs['pieChart']['styleConfig']['hoverBackgroundColor'],
           },
@@ -503,21 +521,37 @@ export class LandingPageComponent {
     };
   }
 
-  generateHistogram(dfs: any[]): ChartData {
-    const ecMaps: { ec: string, count: number }[][] = dfs
-      .map((df) => Object.entries(this.generateECMap(df))
-        .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/)) // only use top level ECs
-        .map(([ec, count]) => ({ ec, count }))
-      );
+  // TODO: add EcPieChart after data structure is updated
+  generateHistogram(dfs: EcBarChart[]): ChartData {
+    // const ecMaps: { ec: string, count: number }[][] = dfs
+    //   .map((df) => Object.entries(this.generateECMap(df))
+    //     .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/)) // only use top level ECs
+    //     .map(([ec, count]) => ({ ec, count }))
+    //   );
+    const datasetsMap = dfs.reduce((acc, df) => {
+      acc.set(df.dataset, acc.get(df.dataset) || []);
+      acc.get(df.dataset)!.push(df);
+      return acc;
+    }, new Map<string, EcBarChart[]>());
+
+    // sort datasets by ec_group
+    datasetsMap.forEach((dfs) => {
+      dfs.sort((a, b) => a.ec_group.localeCompare(b.ec_group));
+    });
+
+    const datasets = ['kcat', 'Km', 'kcat/Km']
+      .map((name) => ({ label: name, data: datasetsMap.get(name) }));
+    
+    console.log(datasets);
 
     return {
       status: 'loaded',
       data: {
-        labels: ecMaps[0].map((_, i) => this.ecSummary[i].label),
-        datasets: ecMaps.map((ecMap, i) => ({
-          label: ['kcat', 'km', 'kcat/km'][i],
-          data: ecMap.map((d) => d.count),
-          total: ecMap.reduce((acc, d) => acc + d.count, 0),
+        labels: ['EC 1', 'EC 2', 'EC 3', 'EC 4', 'EC 5', 'EC 6', 'EC 7'],
+        datasets: datasets.map(({ label, data }, i) => ({
+          label,
+          data: data!.map((df: EcBarChart) => df.count),
+          total: data!.reduce((acc: number, d: EcBarChart) => acc + d.count, 0),
           backgroundColor: this.chartConfigs['barChart']['styleConfig']['backgroundColor'][i],
           hoverBackgroundColor: this.chartConfigs['barChart']['styleConfig']['hoverBackgroundColor'][i],
         })),

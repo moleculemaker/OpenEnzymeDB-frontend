@@ -1,0 +1,7 @@
+[{"dataset":"kcat/km","ec_class":"EC 1","count":18040,"percentage":34.89}, 
+ {"dataset":"kcat/km","ec_class":"EC 2","count":10807,"percentage":20.90}, 
+ {"dataset":"kcat/km","ec_class":"EC 3","count":14275,"percentage":27.61}, 
+ {"dataset":"kcat/km","ec_class":"EC 4","count":4398,"percentage":8.51}, 
+ {"dataset":"kcat/km","ec_class":"EC 5","count":2363,"percentage":4.57}, 
+ {"dataset":"kcat/km","ec_class":"EC 6","count":1774,"percentage":3.43}, 
+ {"dataset":"kcat/km","ec_class":"EC 7","count":41,"percentage":0.08}]

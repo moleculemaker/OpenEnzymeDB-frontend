@@ -1,0 +1,7 @@
+[{"dataset":"km","ec_class":"EC 1","count":57397,"percentage":33.91}, 
+ {"dataset":"km","ec_class":"EC 2","count":43000,"percentage":25.40}, 
+ {"dataset":"km","ec_class":"EC 3","count":41696,"percentage":24.63}, 
+ {"dataset":"km","ec_class":"EC 4","count":12827,"percentage":7.58}, 
+ {"dataset":"km","ec_class":"EC 5","count":5597,"percentage":3.31}, 
+ {"dataset":"km","ec_class":"EC 6","count":7672,"percentage":4.53}, 
+ {"dataset":"km","ec_class":"EC 7","count":1075,"percentage":0.64}]

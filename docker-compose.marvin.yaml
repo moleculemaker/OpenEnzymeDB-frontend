@@ -77,7 +77,7 @@ services:
 
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=http://localhost:4200,http://chemcraper.proxy.localhost"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=http://localhost:4200,http://openenzymedb.proxy.localhost"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolmaxage=100"
       - "traefik.http.middlewares.cors-headers.headers.addvaryheader=true"
       - "traefik.http.routers.openenzymedb.middlewares=cors-headers"
