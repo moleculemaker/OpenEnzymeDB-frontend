@@ -1,0 +1,5 @@
+[{"metric":"Unique Substrates","kcat_dataset":17458,"km_dataset":28611,"kcat_km_dataset":10094}, 
+ {"metric":"Unique Organisms","kcat_dataset":2975,"km_dataset":5014,"kcat_km_dataset":2100}, 
+ {"metric":"Unique Uniprot IDs","kcat_dataset":7906,"km_dataset":12855,"kcat_km_dataset":6206}, 
+ {"metric":"Unique EC Numbers","kcat_dataset":3686,"km_dataset":5291,"kcat_km_dataset":2871}, 
+ {"metric":"Total Entries","kcat_dataset":87833,"km_dataset":169264,"kcat_km_dataset":51698}]

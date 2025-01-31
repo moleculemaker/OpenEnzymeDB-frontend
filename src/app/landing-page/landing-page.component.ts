@@ -2,12 +2,12 @@ import { ChangeDetectorRef, Component, ElementRef, QueryList, ViewChild, ViewChi
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { OpenEnzymeDBService } from "../services/open-enzyme-db.service";
+import { EcBarChart, OpenEnzymeDBService } from "../services/open-enzyme-db.service";
 import { ChartModule, UIChart } from "primeng/chart";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
 import { PanelModule } from "primeng/panel";
-import { combineLatest } from "rxjs";
+import { combineLatest, Subscription } from "rxjs";
 import { DropdownModule } from "primeng/dropdown";
 import { FormsModule } from "@angular/forms";
 import { SkeletonModule } from "primeng/skeleton";
@@ -15,7 +15,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { DialogModule } from "primeng/dialog";
 import { TutorialService } from "../services/tutorial.service";
 import { CheckboxModule } from "primeng/checkbox";
-import { KineticSummary } from "../api/moldb/v1";
+import { KcatkmEcPieChart, KineticSummary, KmEcPieChart } from "../api/moldb/v1";
 import { PickRecordPipe } from "../pipes/pick-record.pipe";
 
 type ChartData = {
@@ -170,7 +170,7 @@ export class LandingPageComponent {
         case 'mouseout--->focused':
         case 'mouseout-ec--->focused':
         case 'focused--->focused':
-          console.log('highlighting bar: ', stateStr, state.payload);
+          // console.log('highlighting bar: ', stateStr, state.payload);
           this.highlightAllBarCharts(state.payload);
           break;
 
@@ -276,6 +276,8 @@ export class LandingPageComponent {
       dataset: null,
     }
 
+  subscriptions: Subscription[] = [];
+
   constructor(
     protected service: OpenEnzymeDBService,
     private cdr: ChangeDetectorRef,
@@ -293,18 +295,30 @@ export class LandingPageComponent {
       this.displayTutorial = false;
     }
 
-    this.service.getKCatECPieChartData().subscribe(({ kcat, km, kcatkm }) => {
-      this.chartConfigs['pieChart']['data']['kcat'] = this.generatePieChart('kcat', kcat);
-      this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart('km', km);
-      this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart('kcat_km', kcatkm);
-    });
+    this.subscriptions = this.subscriptions.concat([
+      this.service.getKCatECPieChartData().subscribe((kcat) => {
+        this.chartConfigs['pieChart']['data']['kcat'] = this.generatePieChart('kcat', kcat);
+      }),
 
-    this.service.getKineticSummary().subscribe((summary) => {
-      this.summary = {
-        dataset: this.generateSummary(summary),
-        status: 'loaded',
-      };
-    });
+      this.service.getKMECPieChartData().subscribe((km) => {
+        this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart('km', km);
+      }),
+
+      this.service.getKCatKmECPieChartData().subscribe((kcatkm) => {
+        this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart('kcat_km', kcatkm);
+      }),
+
+      this.service.getKineticSummary().subscribe((summary) => {
+        this.summary = {
+          dataset: this.generateSummary(summary),
+          status: 'loaded',
+        };
+      }),
+
+      this.service.getEcBarChartData().subscribe((ec) => {
+        this.chartConfigs['barChart']['data'] = this.generateHistogram(ec);
+      }),
+    ]);
 
     combineLatest([
       service.KCAT_DF$,
@@ -312,7 +326,7 @@ export class LandingPageComponent {
       service.KCAT_KM_DF$,
     ]).subscribe((dfs) => {
       const [kcatDf, kmDf, kcatKmDf] = dfs;
-      this.chartConfigs['barChart']['data'] = this.generateHistogram(dfs);
+      
 
       // this.summary = {
       //   ...this.generateSummary(kcatDf, kmDf, kcatKmDf),
@@ -366,37 +380,36 @@ export class LandingPageComponent {
     };
   }
 
-  generateECMap(df: any): Record<string, number> {
-    const ecMap: Record<string, number> = {};
+  // generateECMap(df: any): Record<string, number> {
+  //   const ecMap: Record<string, number> = {};
 
-    df.forEach((row: any) => {
-      // EC number is in format of x.x.x.x, build ecMap hierarchy
-      let acc = '';
-      for (let i = 0; i < 4; i++) {
-        acc += row['EC'].split('.')[i] + '.';
-        const ecLabel = acc + Array(3 - i).fill('*').join('.');
-        ecMap[ecLabel] = (ecMap[ecLabel] || 0) + 1;
-      }
-    });
+  //   df.forEach((row: any) => {
+  //     // EC number is in format of x.x.x.x, build ecMap hierarchy
+  //     let acc = '';
+  //     for (let i = 0; i < 4; i++) {
+  //       acc += row['EC'].split('.')[i] + '.';
+  //       const ecLabel = acc + Array(3 - i).fill('*').join('.');
+  //       ecMap[ecLabel] = (ecMap[ecLabel] || 0) + 1;
+  //     }
+  //   });
 
-    return ecMap;
-  }
+  //   return ecMap;
+  // }
 
-  generatePieChart(type: 'kcat' | 'km' | 'kcat_km', df: any): ChartData {
-    const ecMap: Record<string, number> = this.generateECMap(df);
-
-    const data = Object.entries(ecMap)
-      .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/))
-      .map(([ec, count]) => ({ ec, count }));
+  // TODO: add KcatEcPieChart after data structure is updated
+  generatePieChart(
+    type: 'kcat' | 'km' | 'kcat_km', 
+    data: (KmEcPieChart | KcatkmEcPieChart)[]
+  ): ChartData {
 
     return {
       status: 'loaded',
       data: {
-        labels: data.map((d) => d.ec),
+        labels: data.map((d) => d.ec_class),
         datasets: [
           {
-            data: data.map((d) => d.count),
-            total: data.reduce((acc, d) => acc + d.count, 0),
+            data: data.map((d) => d.count!),
+            total: data.reduce((acc, d) => acc + d.count!, 0),
             backgroundColor: this.chartConfigs['pieChart']['styleConfig']['backgroundColor'],
             hoverBackgroundColor: this.chartConfigs['pieChart']['styleConfig']['hoverBackgroundColor'],
           },
@@ -508,21 +521,37 @@ export class LandingPageComponent {
     };
   }
 
-  generateHistogram(dfs: any[]): ChartData {
-    const ecMaps: { ec: string, count: number }[][] = dfs
-      .map((df) => Object.entries(this.generateECMap(df))
-        .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/)) // only use top level ECs
-        .map(([ec, count]) => ({ ec, count }))
-      );
+  // TODO: add EcPieChart after data structure is updated
+  generateHistogram(dfs: EcBarChart[]): ChartData {
+    // const ecMaps: { ec: string, count: number }[][] = dfs
+    //   .map((df) => Object.entries(this.generateECMap(df))
+    //     .filter(([ec, count]) => ec.match(/\d+\.\*\.\*\.\*/)) // only use top level ECs
+    //     .map(([ec, count]) => ({ ec, count }))
+    //   );
+    const datasetsMap = dfs.reduce((acc, df) => {
+      acc.set(df.dataset, acc.get(df.dataset) || []);
+      acc.get(df.dataset)!.push(df);
+      return acc;
+    }, new Map<string, EcBarChart[]>());
+
+    // sort datasets by ec_group
+    datasetsMap.forEach((dfs) => {
+      dfs.sort((a, b) => a.ec_group.localeCompare(b.ec_group));
+    });
+
+    const datasets = ['kcat', 'Km', 'kcat/Km']
+      .map((name) => ({ label: name, data: datasetsMap.get(name) }));
+    
+    console.log(datasets);
 
     return {
       status: 'loaded',
       data: {
-        labels: ecMaps[0].map((_, i) => this.ecSummary[i].label),
-        datasets: ecMaps.map((ecMap, i) => ({
-          label: ['kcat', 'km', 'kcat/km'][i],
-          data: ecMap.map((d) => d.count),
-          total: ecMap.reduce((acc, d) => acc + d.count, 0),
+        labels: ['EC 1', 'EC 2', 'EC 3', 'EC 4', 'EC 5', 'EC 6', 'EC 7'],
+        datasets: datasets.map(({ label, data }, i) => ({
+          label,
+          data: data!.map((df: EcBarChart) => df.count),
+          total: data!.reduce((acc: number, d: EcBarChart) => acc + d.count, 0),
           backgroundColor: this.chartConfigs['barChart']['styleConfig']['backgroundColor'][i],
           hoverBackgroundColor: this.chartConfigs['barChart']['styleConfig']['hoverBackgroundColor'][i],
         })),

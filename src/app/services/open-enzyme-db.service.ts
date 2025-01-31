@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, combineLatest, from, map, of } from "rxjs";
+import { Observable, combineLatest, forkJoin, from, map, of } from "rxjs";
 
 import { BodyCreateJobJobTypeJobsPost, ChemicalAutoCompleteResponse, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
 import { 
@@ -20,7 +20,6 @@ import { EnvironmentService } from "./environment.service";
 // import exampleStatus from '../../assets/example_status.json';
 
 import { ungzip } from 'pako';
-import { HttpEvent } from "@angular/common/http";
 
 async function loadGzippedJson<T>(path: string): Promise<T> {
   try {
@@ -67,10 +66,22 @@ export type OEDRecord = {
   "Lineage": string[],
 };
 
+export type EcBarChart = { 
+  dataset: string, 
+  ec_group: string, 
+  count: number 
+}
+
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
 const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
 const km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KM.json.gz');
 const kcat_km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCATKM.json.gz');
+
+const kcat_ec_pie_chart = import('../../assets/kcat_ec_pie_chart.json').then(res => res.default);
+const km_ec_pie_chart = import('../../assets/km_ec_pie_chart.json').then(res => res.default);
+const kcatkm_ec_pie_chart = import('../../assets/kcatkm_ec_pie_chart.json').then(res => res.default);
+const ec_bar_chart = import('../../assets/ec_bar_chart.json').then(res => res.default);
+const kinetic_summary = import('../../assets/kinetic_summary.json').then(res => res.default);
 
 
 @Injectable({
@@ -125,23 +136,40 @@ export class OpenEnzymeDBService {
   }
 
   getKineticSummary(...params: Parameters<typeof this.kineticSummaryService.kineticSummaryGet>): Observable<KineticSummary[]> {
-    return this.kineticSummaryService.kineticSummaryGet(...params).pipe(
-      map((res) => res as unknown as KineticSummary[])
-    );
+    // if (this.frontendOnly) {
+      return from(kinetic_summary);
+    // }
+    // return this.kineticSummaryService.kineticSummaryGet(...params).pipe(
+    //   map((res) => res as unknown as KineticSummary[])
+    // );
   }
 
-  getKCatECPieChartData(): Observable<{
-    kcat: KcatEcPieChart[],
-    km: KmEcPieChart[],
-    kcatkm: KcatkmEcPieChart[],
-  }> {
-    return combineLatest([
-      this.kcatECPieChartService.kcatEcPieChartGet(),
-      this.kmECPieChartService.kmEcPieChartGet(),
-      this.kcatkmECPieChartService.kcatkmEcPieChartGet(),
-    ]).pipe(
-      map(([kcat, km, kcatkm]) => ({ kcat, km, kcatkm }))
-    );
+  getKCatECPieChartData(): Observable<KcatEcPieChart[]> {
+    // if (this.frontendOnly) {
+      return from(kcat_ec_pie_chart);
+    // }
+    // return this.kcatECPieChartService.kcatEcPieChartGet();
+  }
+
+  getKMECPieChartData(): Observable<KmEcPieChart[]> {
+    // if (this.frontendOnly) {
+      return from(km_ec_pie_chart);
+    // }
+    // return this.kmECPieChartService.kmEcPieChartGet();
+  }
+
+  getKCatKmECPieChartData(): Observable<KcatkmEcPieChart[]> {
+    // if (this.frontendOnly) {
+      return from(kcatkm_ec_pie_chart);
+    // }
+    // return this.kcatkmECPieChartService.kcatkmEcPieChartGet();
+  }
+
+  getEcBarChartData(): Observable<EcBarChart[]> {
+    // if (this.frontendOnly) {
+    return from(ec_bar_chart);
+    // }
+    // return this.kcatECPieChartService.kcatEcPieChartGet();
   }
 
   createAndRunJob(jobType: JobType, requestBody: BodyCreateJobJobTypeJobsPost): Observable<Job> {
