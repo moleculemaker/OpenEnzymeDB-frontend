@@ -81,8 +81,8 @@ export type SearchCriteria = {
   organism?: string,
   uniprot?: string,
   ec?: string,
-  ph?: string,
-  temperature?: string,
+  ph?: [number, number],
+  temperature?: [number, number],
 }
 
 export type SearchCriteriaKey = keyof SearchCriteria;
@@ -162,28 +162,28 @@ export class OpenEnzymeDBService {
   }): Observable<(DataDfKcat | DataDfKm | DataDfKcatkm)[]> {
     return combineLatest([
       this.dataDfKcatService.dataDfKcatGet(
-        criteria.ec,
-        criteria.compound,
-        criteria.organism,
-        criteria.uniprot,
-        criteria.ph,
-        criteria.temperature,
+        this.queryEq(criteria.ec),
+        this.queryEq(criteria.compound),
+        this.queryEq(criteria.organism),
+        this.queryEq(criteria.uniprot),
+        this.queryBetween(criteria.ph),
+        this.queryBetween(criteria.temperature),
       ),
       this.dataDfKmService.dataDfKmGet(
-        criteria.ec,
-        criteria.compound,
-        criteria.organism,
-        criteria.uniprot,
-        criteria.ph,
-        criteria.temperature,
+        this.queryEq(criteria.ec),
+        this.queryEq(criteria.compound),
+        this.queryEq(criteria.organism),
+        this.queryEq(criteria.uniprot),
+        this.queryBetween(criteria.ph),
+        this.queryBetween(criteria.temperature),
       ),
       this.dataDfKcatKmService.dataDfKcatkmGet(
-        criteria.ec,
-        criteria.compound,
-        criteria.organism,
-        criteria.uniprot,
-        criteria.ph,
-        criteria.temperature,
+        this.queryEq(criteria.ec),
+        this.queryEq(criteria.compound),
+        this.queryEq(criteria.organism),
+        this.queryEq(criteria.uniprot),
+        this.queryBetween(criteria.ph),
+        this.queryBetween(criteria.temperature),
       ),
     ]).pipe(
       map(([kcat, km, kcatkm]) => [ ...kcat, ...km, ...kcatkm ])
@@ -276,5 +276,13 @@ export class OpenEnzymeDBService {
         } as ChemicalAutoCompleteResponse;
       })
     );
+  }
+
+  private queryBetween(range: [number, number] | undefined) {
+    return range ? `gte.${range[0]}&lte.${range[1]}` : undefined;
+  }
+
+  private queryEq(value: string | undefined) {
+    return value ? `eq.${value}` : undefined;
   }
 }
