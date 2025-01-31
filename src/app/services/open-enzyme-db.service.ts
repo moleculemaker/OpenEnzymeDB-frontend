@@ -1,14 +1,26 @@
 import { Injectable } from "@angular/core";
-import { Observable, from, map, of, tap } from "rxjs";
+import { Observable, combineLatest, from, map, of } from "rxjs";
 
 import { BodyCreateJobJobTypeJobsPost, ChemicalAutoCompleteResponse, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
-import { DataDfKcat, DataDfKcatService } from "../api/moldb/v1";
+import { 
+  DataDfKcat, 
+  DataDfKcatService, 
+  KcatkmEcPieChartService,
+  KcatEcPieChartService,
+  KmEcPieChartService,
+  KineticSummaryService,
+  KineticSummary,
+  KcatEcPieChart,
+  KmEcPieChart,
+  KcatkmEcPieChart
+} from "../api/moldb/v1";
 import { EnvironmentService } from "./environment.service";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
 // import exampleStatus from '../../assets/example_status.json';
 
 import { ungzip } from 'pako';
+import { HttpEvent } from "@angular/common/http";
 
 async function loadGzippedJson<T>(path: string): Promise<T> {
   try {
@@ -94,7 +106,10 @@ export class OpenEnzymeDBService {
     private environmentService: EnvironmentService,
     private sharedService: SharedService,
     private dataDfKcatService: DataDfKcatService,
-
+    private kcatECPieChartService: KcatEcPieChartService,
+    private kmECPieChartService: KmEcPieChartService,
+    private kcatkmECPieChartService: KcatkmEcPieChartService,
+    private kineticSummaryService: KineticSummaryService,
     // private apiService: OpenEnzymeDBApiService,
   ) {
     this.frontendOnly = this.environmentService.getEnvConfig().frontendOnly === "true";
@@ -106,6 +121,26 @@ export class OpenEnzymeDBService {
   getKCats(...params: Parameters<typeof this.dataDfKcatService.dataDfKcatGet>): Observable<DataDfKcat[]> {
     return this.dataDfKcatService.dataDfKcatGet(...params).pipe(
       map((res) => res as unknown as DataDfKcat[])
+    );
+  }
+
+  getKineticSummary(...params: Parameters<typeof this.kineticSummaryService.kineticSummaryGet>): Observable<KineticSummary[]> {
+    return this.kineticSummaryService.kineticSummaryGet(...params).pipe(
+      map((res) => res as unknown as KineticSummary[])
+    );
+  }
+
+  getKCatECPieChartData(): Observable<{
+    kcat: KcatEcPieChart[],
+    km: KmEcPieChart[],
+    kcatkm: KcatkmEcPieChart[],
+  }> {
+    return combineLatest([
+      this.kcatECPieChartService.kcatEcPieChartGet(),
+      this.kmECPieChartService.kmEcPieChartGet(),
+      this.kcatkmECPieChartService.kcatkmEcPieChartGet(),
+    ]).pipe(
+      map(([kcat, km, kcatkm]) => ({ kcat, km, kcatkm }))
     );
   }
 

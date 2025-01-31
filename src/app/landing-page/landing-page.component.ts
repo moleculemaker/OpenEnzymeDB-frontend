@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, computed, ElementRef, QueryList, ViewChild, ViewChildren } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -7,15 +7,16 @@ import { ChartModule, UIChart } from "primeng/chart";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
 import { PanelModule } from "primeng/panel";
-import { combineLatest, combineLatestAll } from "rxjs";
+import { combineLatest } from "rxjs";
 import { DropdownModule } from "primeng/dropdown";
 import { FormsModule } from "@angular/forms";
 import { SkeletonModule } from "primeng/skeleton";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { active } from "d3";
 import { DialogModule } from "primeng/dialog";
 import { TutorialService } from "../services/tutorial.service";
 import { CheckboxModule } from "primeng/checkbox";
+import { KineticSummary } from "../api/moldb/v1";
+import { PickRecordPipe } from "../pipes/pick-record.pipe";
 
 type ChartData = {
   status: 'loading' | 'loaded',
@@ -38,6 +39,13 @@ type BarChartState = 'focused'
   | 'hovering-ec'
   | 'mouseout-ec';
 
+type KineticSummaryVM = {
+  label: string,
+  kcat: number,
+  km: number,
+  kcat_km: number,
+}
+
 @Component({
   selector: "landing-page",
   templateUrl: "./landing-page.component.html",
@@ -58,7 +66,8 @@ type BarChartState = 'focused'
     ProgressSpinnerModule,
     DialogModule,
     CheckboxModule,
-  ],
+    PickRecordPipe
+],
   host: {
     class: 'flex flex-col justify-center items-center w-full'
   }
@@ -254,16 +263,16 @@ export class LandingPageComponent {
 
   // datasetSummary: any[] = [];
   summary: {
-    kcat: any,
-    km: any,
-    kcat_km: any,
-    dataset: any,
+    dataset: {
+      uniqueSubstrates: KineticSummaryVM,
+      uniqueOrganisms: KineticSummaryVM,
+      uniqueUniprotIds: KineticSummaryVM,
+      uniqueECNumbers: KineticSummaryVM,
+      totalEntries: KineticSummaryVM,
+    } | null,
     status: 'na' | 'loading' | 'loaded',
   } = {
       status: 'na',
-      kcat: null,
-      km: null,
-      kcat_km: null,
       dataset: null,
     }
 
@@ -284,21 +293,31 @@ export class LandingPageComponent {
       this.displayTutorial = false;
     }
 
+    this.service.getKCatECPieChartData().subscribe(({ kcat, km, kcatkm }) => {
+      this.chartConfigs['pieChart']['data']['kcat'] = this.generatePieChart('kcat', kcat);
+      this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart('km', km);
+      this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart('kcat_km', kcatkm);
+    });
+
+    this.service.getKineticSummary().subscribe((summary) => {
+      this.summary = {
+        dataset: this.generateSummary(summary),
+        status: 'loaded',
+      };
+    });
+
     combineLatest([
       service.KCAT_DF$,
       service.KM_DF$,
       service.KCAT_KM_DF$,
     ]).subscribe((dfs) => {
       const [kcatDf, kmDf, kcatKmDf] = dfs;
-      this.chartConfigs['pieChart']['data']['kcat'] = this.generatePieChart('kcat', kcatDf);
-      this.chartConfigs['pieChart']['data']['km'] = this.generatePieChart('km', kmDf);
-      this.chartConfigs['pieChart']['data']['kcat_km'] = this.generatePieChart('kcat_km', kcatKmDf);
       this.chartConfigs['barChart']['data'] = this.generateHistogram(dfs);
 
-      this.summary = {
-        ...this.generateSummary(kcatDf, kmDf, kcatKmDf),
-        status: 'loaded',
-      };
+      // this.summary = {
+      //   ...this.generateSummary(kcatDf, kmDf, kcatKmDf),
+      //   status: 'loaded',
+      // };
     });
 
     const documentStyle = getComputedStyle(document.documentElement);
@@ -328,40 +347,22 @@ export class LandingPageComponent {
     });
   }
 
-  generateSummary(kcat: any, km: any, kcatKm: any) {
-    function getSummary(df: any) {
-      const substratesSet = new Set(df.map((row: any) => row['SUBSTRATE']));
-      const organismsSet = new Set(df.map((row: any) => row['ORGANISM']));
-      const ecNumbersSet = new Set(df.map((row: any) => row['EC']));
-      const uniprotIdsSet = new Set(df.map((row: any) => row['UNIPROT']));
-
+  generateSummary(summaryResponse: KineticSummary[]): typeof this.summary['dataset'] {
+    const dataset = summaryResponse.map((summary) => {
       return {
-        substrates: substratesSet.size,
-        organisms: organismsSet.size,
-        ecNumbers: ecNumbersSet.size,
-        uniprotIds: uniprotIdsSet.size,
-        total: df.length,
+        label: summary.metric!,
+        kcat: summary.kcat_dataset!,
+        km: summary.km_dataset!,
+        kcat_km: summary.kcat_km_dataset!,
       };
-    }
-
-    const kcatSummary = getSummary(kcat);
-    const kmSummary = getSummary(km);
-    const kcatKmSummary = getSummary(kcatKm);
-
-    // transpose the summary
-    const dataset = [
-      { label: 'Unique Substrates', kcat: kcatSummary.substrates, km: kmSummary.substrates, kcat_km: kcatKmSummary.substrates },
-      { label: 'Unique Organisms', kcat: kcatSummary.organisms, km: kmSummary.organisms, kcat_km: kcatKmSummary.organisms },
-      { label: 'Unique Uniprot IDs', kcat: kcatSummary.uniprotIds, km: kmSummary.uniprotIds, kcat_km: kcatKmSummary.uniprotIds },
-      { label: 'Unique EC Numbers', kcat: kcatSummary.ecNumbers, km: kmSummary.ecNumbers, kcat_km: kcatKmSummary.ecNumbers },
-      { label: 'Total Entries', kcat: kcatSummary.total, km: kmSummary.total, kcat_km: kcatKmSummary.total },
-    ];
+    });
 
     return {
-      kcat: kcatSummary,
-      km: kmSummary,
-      kcat_km: kcatKmSummary,
-      dataset,
+      uniqueSubstrates: dataset.find((summary) => summary.label === 'Unique Substrates')!,
+      uniqueOrganisms: dataset.find((summary) => summary.label === 'Unique Organisms')!,
+      uniqueUniprotIds: dataset.find((summary) => summary.label === 'Unique Uniprot IDs')!,
+      uniqueECNumbers: dataset.find((summary) => summary.label === 'Unique EC Numbers')!,
+      totalEntries: dataset.find((summary) => summary.label === 'Total Entries')!,
     };
   }
 
