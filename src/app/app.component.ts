@@ -45,6 +45,7 @@ export class AppComponent {
   readonly whitePaperUrl = this.openEnzymeDBService.WHITE_PAPER_URL;
   readonly visionUrl = this.openEnzymeDBService.VISION_URL;
   readonly feedbackUrl = this.openEnzymeDBService.FEEDBACK_URL;
+  readonly releaseNotesUrl = this.openEnzymeDBService.RELEASE_NOTES_URL;
 
   constructor(
     private userInfoService: UserInfoService,

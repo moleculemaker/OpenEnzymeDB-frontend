@@ -74,6 +74,7 @@ export class OpenEnzymeDBService {
   private _WHITE_PAPER_URL = '';
   private _VISION_URL = '';
   private _FEEDBACK_URL = '';
+  private _RELEASE_NOTES_URL = '';
 
   public get WHITE_PAPER_URL() {
     return this._WHITE_PAPER_URL;
@@ -85,6 +86,10 @@ export class OpenEnzymeDBService {
 
   public get FEEDBACK_URL() {
     return this._FEEDBACK_URL;
+  }
+
+  public get RELEASE_NOTES_URL() {
+    return this._RELEASE_NOTES_URL;
   }
 
   constructor(
@@ -99,6 +104,7 @@ export class OpenEnzymeDBService {
     this._WHITE_PAPER_URL = this.environmentService.getEnvConfig().whitePaperUrl;
     this._VISION_URL = this.environmentService.getEnvConfig().visionUrl;
     this._FEEDBACK_URL = this.environmentService.getEnvConfig().feedbackUrl;
+    this._RELEASE_NOTES_URL = this.environmentService.getEnvConfig().releaseNotesUrl;
   }
 
   createAndRunJob(jobType: JobType, requestBody: BodyCreateJobJobTypeJobsPost): Observable<Job> {
