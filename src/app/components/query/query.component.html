@@ -98,7 +98,7 @@
                         @for (filter of filterRecords; track filter.label) {
                         @if (filter.hasFilter()) {
                         <span class="rounded-sm bg-[--surface-d] p-1 flex items-center gap-1">
-                            <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>: {{ filter.formattedValue }}
+                            <div [innerHTML]="filter.label.value"></div>: {{ filter.formattedValue }}
                             <i class="pi pi-times-circle cursor-pointer" (click)="
                                                 filter.value = filter.defaultValue;
                                                 applyFilters();
@@ -119,17 +119,50 @@
                         <ng-template pTemplate="header">
                             <tr>
                                 <!-- <th class="align-middle">Reaction</th> -->
-                                <th class="align-middle">Compound</th>
-                                <th class="align-middle">Organism</th>
-                                <th class="align-middle">Uniprot ID</th>
-                                <th class="align-middle">EC Number</th>
-                                <th class="align-middle">Enzyme Type</th>
-                                <th class="align-middle">pH</th>
-                                <th class="align-middle">Temp (°C)</th>
-                                <th class="align-middle"><span class="italic">Kcat</span> (s⁻¹)</th>
-                                <th class="align-middle"><span class="italic">Km</span> (mM)</th>
-                                <th class="align-middle"><span class="italic">Kcat/Km</span> (mM⁻¹s⁻¹)</th>
-                                <th class="align-middle">Literature</th>
+                                <th class="align-middle relative group" pSortableColumn="compound.name">
+                                    <span>Compound</span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="compound.name" />
+                                </th>
+                                <th class="align-middle relative group" pSortableColumn="organism">
+                                    <span>Organism</span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="organism" />
+                                </th>
+                                <th class="align-middle relative group" pSortableColumn="uniprot_id">
+                                    <span>Uniprot ID</span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="uniprot_id" />
+                                </th>
+                                <th class="align-middle relative group" pSortableColumn="ec_number">
+                                    <span>EC Number</span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="ec_number" />
+                                </th>
+                                <th class="align-middle relative group" pSortableColumn="enzyme_type">
+                                    <span>Enzyme Type</span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="enzyme_type" />
+                                </th>
+                                <th class="align-middle relative group" pSortableColumn="ph">
+                                    <span [innerHTML]="filters['ph'].label.value"></span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="ph" />
+                                </th>
+                                <th class="align-middle relative group min-w-[100px]" pSortableColumn="temperature">
+                                    <span>Temp (°C)</span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="temperature" />
+                                </th>
+                                <th class="align-middle relative group min-w-[100px]" pSortableColumn="kcat">
+                                    <span class="italic">k</span><sub>cat</sub><br/>(s<sup class="text-xs"> -1</sup>)
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="kcat" />
+                                </th>
+                                <th class="align-middle relative group min-w-[100px]" pSortableColumn="km">
+                                    <span class="italic">K</span><sub>m</sub><br/>(mM)
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="km" />
+                                </th>
+                                <th class="align-middle relative group min-w-[120px]" pSortableColumn="kcat_km">
+                                    <span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub><br/>(mM<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="kcat_km" />
+                                </th>
+                                <th class="align-middle relative group" pSortableColumn="pubmed_id">
+                                    <span>Literature</span>
+                                    <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="pubmed_id" />
+                                </th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-row let-expanded="expanded">
@@ -268,7 +301,7 @@
                 <div class="font-bold">Experimental Parameters</div>
                 @for (filter of filterRecordsByCategory['parameter']; track filter.label) {
                 <div class="flex flex-col gap-2">
-                    <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>
+                    <div [innerHTML]="filter.label.value"></div>
                     <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                 </div>
                 }
@@ -277,7 +310,7 @@
                 <div class="font-bold">Enzyme Kinetics</div>
                 @for (filter of filterRecordsByCategory['enzyme']; track filter.label) {
                 <div class="flex flex-col gap-2">
-                    <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>
+                    <div [innerHTML]="filter.label.value"></div>
                     <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                 </div>
                 }
@@ -285,7 +318,7 @@
                 <div class="font-bold">Literature</div>
                 @for (filter of filterRecordsByCategory['literature']; track filter.label) {
                 <div class="flex flex-col gap-2">
-                    <ng-container *ngTemplateOutlet="filterLabel; context: { $implicit: filter.label }"></ng-container>
+                    <div [innerHTML]="filter.label.value"></div>
                     <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
                 </div>
                 }
@@ -322,17 +355,6 @@
     @default {
     <span>{{ filter.value }}</span>
     <!-- <p-inputText styleClass="w-full" [placeholder]="filter.placeholder" [(ngModel)]="filter.value"></p-inputText> -->
-    }
-    }
-</ng-template>
-
-<ng-template #filterLabel let-label>
-    @switch (label.type) {
-    @case ('text') {
-    <div>{{ label.value }}</div>
-    }
-    @case ('html') {
-    <div [innerHTML]="label.value"></div>
     }
     }
 </ng-template>

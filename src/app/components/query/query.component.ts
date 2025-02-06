@@ -25,7 +25,6 @@ interface FilterConfigParams {
   category: string;
   label: {
     value: string;
-    type: 'html' | 'text';
     rawValue: string;
   };
   placeholder: string;
@@ -40,7 +39,6 @@ abstract class FilterConfig {
   public category: string;
   public label: {
     value: string;
-    type: 'html' | 'text';
     rawValue: string;
   };
   public placeholder: string;
@@ -246,7 +244,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'parameter',
       label: {
         value: 'Compounds',
-        type: 'text',
         rawValue: 'Compounds',
       },
       placeholder: 'Select compound',
@@ -257,9 +254,8 @@ export class QueryComponent implements AfterViewInit {
     organism: new MultiselectFilterConfig({
       category: 'parameter',
       label: {
-        value: 'Organism',
-        type: 'text',
-        rawValue: 'Organism',
+        value: 'Organisms',
+        rawValue: 'Organisms',
       },
       placeholder: 'Select organism',
       field: 'organism',
@@ -270,7 +266,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'parameter',
       label: {
         value: 'Uniprot IDs',
-        type: 'text',
         rawValue: 'Uniprot IDs',
       },
       placeholder: 'Select uniprot ID',
@@ -283,7 +278,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'parameter',
       label: {
         value: 'EC Numbers',
-        type: 'text',
         rawValue: 'EC Numbers',
       },
       placeholder: 'Select EC number',
@@ -295,7 +289,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'parameter',
       label: {
         value: 'Enzyme Types',
-        type: 'text',
         rawValue: 'Enzyme Types',
       },
       placeholder: 'Select enzyme type',
@@ -307,7 +300,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'parameter',
       label: {
         value: 'pH',
-        type: 'text',
         rawValue: 'pH',
       },
       placeholder: 'Enter pH range',
@@ -319,7 +311,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'parameter',
       label: {
         value: 'Temperature (°C)',
-        type: 'text',
         rawValue: 'Temperature (°C)',
       },
       placeholder: 'Enter temperature range',
@@ -331,7 +322,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'enzyme',
       label: {
         value: '<span class="italic">k</span><sub>cat</sub> (s<sup class="text-xs"> -1</sup>)',
-        type: 'html',
         rawValue: 'kcat',
       },
       placeholder: 'Enter kcat range',
@@ -342,8 +332,7 @@ export class QueryComponent implements AfterViewInit {
     km: new RangeFilterConfig({
       category: 'enzyme',
       label: {
-        value: '<span class="italic">K</span><sub>m</sub> (M)',
-        type: 'html',
+        value: '<span class="italic">K</span><sub>m</sub> (mM)',
         rawValue: 'km',
       },
       placeholder: 'Enter KM range',
@@ -354,8 +343,7 @@ export class QueryComponent implements AfterViewInit {
     kcat_km: new RangeFilterConfig({
       category: 'enzyme',
       label: {
-        value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (M<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
-        type: 'html',
+        value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (mM<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
         rawValue: 'kcat_km',
       },
       placeholder: 'Enter kcat/KM range',
@@ -367,7 +355,6 @@ export class QueryComponent implements AfterViewInit {
       category: 'literature',
       label: {
         value: 'PubMed',
-        type: 'text',
         rawValue: 'PubMed',
       },
       placeholder: 'Select PubMed ID',
