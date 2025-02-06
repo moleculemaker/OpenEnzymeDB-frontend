@@ -6,20 +6,24 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { LoadingStatus, OpenEnzymeDBService, ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent, QueryValue } from "../query-input/query-input.component";
-import { Table, TableModule } from "primeng/table";
-import { map } from "rxjs/operators";
+import { Table, TableModule, TableRowExpandEvent } from "primeng/table";
+import { catchError, map } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
 import { FilterService } from "primeng/api";
 import { InputTextModule } from "primeng/inputtext";
+import { ScrollPanelModule } from "primeng/scrollpanel";
 import { MenuModule } from "primeng/menu";
 import { trigger } from "@angular/animations";
 import { animate } from "@angular/animations";
 import { style, transition } from "@angular/animations";
+import { SkeletonModule } from "primeng/skeleton";
+import { of } from "rxjs";
+import { ReactionSchemaComponent } from "../reaction-schema/reaction-schema.component";
 
 interface FilterConfigParams {
   category: string;
@@ -203,6 +207,9 @@ class MultiselectFilterConfig extends FilterConfig {
     DialogModule,
     InputTextModule,
     MenuModule,
+    SkeletonModule,
+    ScrollPanelModule,
+    ReactionSchemaComponent,
 ],
   host: {
     class: "flex flex-col h-full"
@@ -220,7 +227,7 @@ export class QueryComponent implements AfterViewInit {
   });
 
   result: {
-    status: 'loading' | 'loaded' | 'error' | 'na';
+    status: LoadingStatus;
     data: any[];
     total: number;
   } = {
@@ -366,6 +373,10 @@ export class QueryComponent implements AfterViewInit {
   }
 
   columns: any[] = [];
+  reactionSchemaCache: Record<string, {
+    status: LoadingStatus;
+    data: ReactionSchemaRecord[];
+  }> = {};
 
   exampleRecords: any[] = [];
   readonly filterRecordsByCategory = Object.entries(this.filters)
@@ -432,6 +443,38 @@ export class QueryComponent implements AfterViewInit {
       this.resultsTable.reset();
     }
     this.hasFilter = false;
+  }
+
+  onRowExpand($event: TableRowExpandEvent) {
+    const { data } = $event;
+    const { ec_number, compound, organism } = data;
+    const key = `${ec_number}|${compound.name}|${organism}`;
+    if (this.reactionSchemaCache[key]) {
+      return;
+    }
+    this.reactionSchemaCache[key] = {
+      status: 'loading',
+      data: [],
+    };
+    this.service.getReactionSchemasFor(ec_number, compound.name, organism)
+      .pipe(
+        map(schemas => ({
+          status: (schemas && schemas.length > 0 
+            ? ('loaded' as const) 
+            : ('na' as const)),
+          data: schemas
+        })),
+        catchError(error => {
+          console.error('Failed to fetch reaction schemas:', error);
+          return of({
+            status: 'error' as const,
+            data: []
+          });
+        })
+      )
+      .subscribe((result) => {
+        this.reactionSchemaCache[key] = result;
+      });
   }
 
   applyFilters() {

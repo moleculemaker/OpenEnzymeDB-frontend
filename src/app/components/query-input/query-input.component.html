@@ -126,30 +126,11 @@
                 <i class="absolute pi left-3 top-3"
                     [class.pi-check-circle]="selectedSearchOption!.formControls['value']['valid']"
                 ></i>
-                @switch (chemicalInfo.status) {
-                    @case ('valid') {
-                        <app-molecule-image 
-                            [height]="300" 
-                            [width]="300"
-                            [molecule]="chemicalInfo.structure"
-                        ></app-molecule-image>
-                    }
-                    @case ('empty') {
-                        <div class="h-[300px] flex items-center justify-center">
-                            No image available
-                        </div>
-                    }
-                    @case ('invalid') {
-                        <div class="h-[300px] flex items-center justify-center">
-                            Input is invalid
-                        </div>
-                    }
-                    @case ('loading') {
-                        <div class="h-[300px] flex items-center justify-center">
-                            <p-progressSpinner aria-label="Loading"></p-progressSpinner>
-                        </div>
-                    }
-                }
+                <app-molecule-image 
+                    height="300px" 
+                    width="300px"
+                    [loadableImage]="chemicalInfo"
+                ></app-molecule-image>
             </div>
         </div>
     }

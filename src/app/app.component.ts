@@ -4,7 +4,7 @@ import { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
 import { NgIf } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
-import { OpenEnzymeDBService } from "./services/open-enzyme-db.service";
+import { OpenEnzymeDBService } from "./services/openenzymedb.service";
 
 @Component({
     selector: "app-root",

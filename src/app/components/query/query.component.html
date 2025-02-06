@@ -115,6 +115,7 @@
                 <div class="flex w-full">
                     <p-table #resultsTable [value]="result.data" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]"
                         [paginator]="true" dataKey="iid" class="w-full h-full" tableStyleClass="w-full"
+                        (onRowExpand)="onRowExpand($event)"
                         styleClass="w-full" [columns]="columns">
                         <ng-template pTemplate="header">
                             <tr>
@@ -143,7 +144,7 @@
                                     <span [innerHTML]="filters['ph'].label.value"></span>
                                     <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="ph" />
                                 </th>
-                                <th class="align-middle relative group min-w-[100px]" pSortableColumn="temperature">
+                                <th class="align-middle relative group min-w-[80px]" pSortableColumn="temperature">
                                     <span>Temp (°C)</span>
                                     <p-sortIcon class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible" field="temperature" />
                                 </th>
@@ -252,11 +253,41 @@
                                         </div>
                                         <div class="w-[1px] bg-[--surface-d]"></div>
                                         <div class="w-1/2 flex flex-col gap-1">
-                                            <div class="font-bold">Reaction Scheme</div>
+                                            @let schemas = reactionSchemaCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
+                                            <div class="flex items-center justify-between w-full">
+                                                <span class="font-bold">Reaction Schema</span>
+                                                <small class="italic text-[#6C757D]/75">Found: {{ schemas.data.length }}</small>
+                                            </div>
+                                            @switch (schemas.status) {
+                                            @case ('loaded') {
+                                            <div class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white flex-col items-center justify-center text-[#6C757D]">
+                                                <p-scrollPanel [style]="{ height: '100px', width: '100%' }">
+                                                @for (schema of schemas.data; track schema) {
+                                                    <app-reaction-schema [reactionSchema]="schema" />
+                                                    <hr class="mb-2"/>
+                                                }
+                                                </p-scrollPanel>
+                                            </div>
+                                            }
+                                            @case ('loading') {
                                             <div
                                                 class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
-                                                <span>(Coming Soon)</span>
+                                                <p-skeleton height="100%" width="100%"></p-skeleton>
                                             </div>
+                                            }
+                                            @case ('error') {
+                                            <div
+                                                class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
+                                                Error loading reaction schema
+                                            </div>
+                                            }
+                                            @case ('na') {
+                                            <div
+                                                class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
+                                                No reaction schema found
+                                            </div>
+                                            }
+                                            }
                                         </div>
                                     </div>
                                 </td>

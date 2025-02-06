@@ -1,10 +1,29 @@
-<div *ngIf="!image" 
-    [class]="placeholderClassName"
-    [style.width.px]="width"
-    [style.height.px]="height"
-    class="flex items-center justify-center"
->
-    No Image Available
-</div>
-
-<div [innerHTML]="image | safe:'html'"></div>
+@switch (loadableImage.status) {
+    @case ('loading') {
+        <p-progressSpinner aria-label="Loading"></p-progressSpinner>
+    }
+    @case ('loaded') {
+        <div [innerHTML]="image | safe:'html'"></div>
+    }
+    @case ('error') {
+        <div [class]="placeholderClassName" 
+            class="flex items-center justify-center"
+            [style.width]="width"
+            [style.height]="height"
+        >
+            Error loading image
+        </div>
+    }
+    @case ('na') {
+        <div [class]="placeholderClassName" 
+            class="flex items-center justify-center"
+            [style.width]="width"
+            [style.height]="height"
+        >
+            No Image Available
+        </div>
+    }
+    @default {
+        <div [innerHTML]="image | safe:'html'"></div>
+    }
+}

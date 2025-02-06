@@ -10,7 +10,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { MarvinjsInputComponent } from '../marvinjs-input/marvinjs-input.component';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { of, switchMap, map, first, catchError, filter, tap } from 'rxjs';
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { Loadable, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 
@@ -200,12 +200,9 @@ export interface QueryValue {
 })
 export class QueryInputComponent implements ControlValueAccessor {
   
-  chemicalInfo: {
-    structure: string;
-    status: 'valid' | 'invalid' | 'loading' | 'empty';
-  } = {
-    structure: '',
-    status: 'loading'
+  chemicalInfo: Loadable<string> = {
+    status: 'loading',
+    data: null
   }
 
   searchConfigs: SearchOption[] = [
@@ -219,35 +216,13 @@ export class QueryInputComponent implements ControlValueAccessor {
           (control: AbstractControl) => {
             return of(control.value).pipe(
               filter(() => {
-                if (this.selectedSearchOption?.key === 'compound') {
-                  if (this.selectedSearchOption?.formControls['select']?.value === 'smiles') {
-                    this.chemicalInfo.status = 'loading';
-                    return true;
-                  }
-                }
-                return false;
+                return this.selectedSearchOption?.key === 'compound'
+                  && this.selectedSearchOption?.formControls['select']?.value === 'smiles';
               }),
               switchMap((smiles) => this.service.validateChemical(smiles)),
-              map((chemical) => {
-                if (chemical) {
-                  this.chemicalInfo.structure = chemical.structure || "";
-                  this.chemicalInfo.status = 'valid';
-                  return null;
-                }
-                this.chemicalInfo.status = 'invalid';
-                return { invalidSmiles: true };
+              tap((res) => {
+                this.chemicalInfo = res;
               }),
-              first(),
-              catchError((err) => {
-                if (err.name === "EmptyError") {
-                  this.chemicalInfo.status = 'empty';
-                  return of(null);
-                }
-                
-                console.error('[query-input] error validating chemical', err);
-                this.chemicalInfo.status = 'invalid';
-                return of({ invalidSmiles: true });
-              })
             );
           }
         ])
