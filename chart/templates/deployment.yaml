@@ -75,6 +75,12 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: feedbackUrl
 
+          - name: RELEASE_NOTES_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: releaseNotesUrl
+
           ports:
             - containerPort: 80
           imagePullPolicy: Always
