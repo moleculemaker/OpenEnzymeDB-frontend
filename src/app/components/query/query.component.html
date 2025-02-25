@@ -98,7 +98,7 @@
                         @for (filter of filterRecords; track filter.label) {
                         @if (filter.hasFilter()) {
                         <span class="rounded-sm bg-[--surface-d] p-1 flex items-center gap-1">
-                            <div [innerHTML]="filter.label.value"></div>: {{ filter.formattedValue }}
+                            <div [innerHTML]="filter.label.value" class="font-semibold"></div>: {{ filter.formattedValue }}
                             <i class="pi pi-times-circle cursor-pointer" (click)="
                                                 filter.value = filter.defaultValue;
                                                 applyFilters();
@@ -361,7 +361,7 @@
 <ng-template #filterTemplate let-filter>
     @switch (filter.type) {
     @case ('multiselect') {
-    <p-multiSelect styleClass="w-full" [placeholder]="filter.placeholder" [options]="filter.options"
+    <p-multiSelect styleClass="w-full" [placeholder]="filter.placeholder" [options]="filter.options" appendTo="body" [baseZIndex]="9999"
         [(ngModel)]="filter.value" [virtualScroll]="true" [virtualScrollItemSize]="48"
         (onChange)="searchTable($event, filter)"></p-multiSelect>
     }
