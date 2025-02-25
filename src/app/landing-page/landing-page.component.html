@@ -154,12 +154,11 @@
     @if (summary.status === 'loaded') {
     <h5 class="max-w-screen-md mt-5 leading-xl">
       The first release of Open Enzyme Database includes quantities of dataset, featuring
-      {{ summary.kcat.total | number }} entries for enzyme turnover number (<span class="italic"><span
-          class="italic">k</span><sub>cat</sub></span>),
-      {{ summary.km.total | number }} entries for Michaelis constants (<span class="italic"><span
-          class="italic">K</span><sub>m</sub></span>), and
-      {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (<span class="italic"><span
-          class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span>)
+      {{ summary.kcat.total | number }} entries for enzyme turnover number (<span
+          class="italic text-lg">k</span><sub>cat</sub>),
+      {{ summary.km.total | number }} entries for Michaelis constants (<span class="italic text-lg">K</span><sub>m</sub>), and
+      {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (<span
+          class="italic text-lg">k</span><sub>cat</sub> / <span class="italic text-lg">K</span><sub>m</sub>)
     </h5>
     <h5 class="max-w-screen-md mt-5 leading-xl">
       Learn more about our curated data below, or by visiting our statistics page for more information.
