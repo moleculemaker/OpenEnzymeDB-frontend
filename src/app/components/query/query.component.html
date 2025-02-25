@@ -189,9 +189,27 @@
                                 <td class="align-middle">{{ row.enzyme_type }}</td>
                                 <td class="align-middle">{{ row.ph }}</td>
                                 <td class="align-middle">{{ row.temperature }}</td>
-                                <td class="align-middle">{{ row.kcat | number: '1.1-4' }}</td>
-                                <td class="align-middle">{{ row.km | number: '1.1-4' }}</td>
-                                <td class="align-middle">{{ row.kcat_km | number: '1.1-4' }}</td>
+                                <td class="align-middle">
+                                    @if (row.kcat) {
+                                    {{ row.kcat | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    @if (row.km) {
+                                    {{ row.km | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    @if (row.kcat_km) {
+                                    {{ row.kcat_km | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                </td>
                                 <td class="align-middle">
                                     <ng-container *ngTemplateOutlet="externalLink; context: { 
                                         $implicit: {
