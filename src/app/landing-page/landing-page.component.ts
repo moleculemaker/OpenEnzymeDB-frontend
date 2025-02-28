@@ -260,12 +260,12 @@ export class LandingPageComponent {
     dataset: any,
     status: 'na' | 'loading' | 'loaded',
   } = {
-      status: 'na',
-      kcat: null,
-      km: null,
-      kcat_km: null,
-      dataset: null,
-    }
+    status: 'na',
+    kcat: null,
+    km: null,
+    kcat_km: null,
+    dataset: null,
+  }
 
   constructor(
     protected service: OpenEnzymeDBService,
@@ -330,12 +330,14 @@ export class LandingPageComponent {
       const organismsSet = new Set(df.map((row: any) => row['ORGANISM']));
       const ecNumbersSet = new Set(df.map((row: any) => row['EC']));
       const uniprotIdsSet = new Set(df.map((row: any) => row['UNIPROT']));
+      const pubmedIdsSet = new Set(df.map((row: any) => row['PubMedID']));
 
       return {
         substrates: substratesSet.size,
         organisms: organismsSet.size,
         ecNumbers: ecNumbersSet.size,
         uniprotIds: uniprotIdsSet.size,
+        pubmedIds: pubmedIdsSet.size,
         total: df.length,
       };
     }
@@ -350,6 +352,7 @@ export class LandingPageComponent {
       { label: 'Unique Organisms', kcat: kcatSummary.organisms, km: kmSummary.organisms, kcat_km: kcatKmSummary.organisms },
       { label: 'Unique Uniprot IDs', kcat: kcatSummary.uniprotIds, km: kmSummary.uniprotIds, kcat_km: kcatKmSummary.uniprotIds },
       { label: 'Unique EC Numbers', kcat: kcatSummary.ecNumbers, km: kmSummary.ecNumbers, kcat_km: kcatKmSummary.ecNumbers },
+      { label: 'Unique Literature', kcat: kcatSummary.pubmedIds, km: kmSummary.pubmedIds, kcat_km: kcatKmSummary.pubmedIds },
       { label: 'Total Entries', kcat: kcatSummary.total, km: kmSummary.total, kcat_km: kcatKmSummary.total },
     ];
 
