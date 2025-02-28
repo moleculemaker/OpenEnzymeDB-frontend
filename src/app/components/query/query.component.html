@@ -256,7 +256,7 @@
                                             @let schemas = reactionSchemaCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
                                             <div class="flex items-center justify-between w-full">
                                                 <span class="font-bold">Reaction Schema</span>
-                                                <small class="italic text-[#6C757D]/75">Found: {{ schemas.data.length }}</small>
+                                                <small class="italic text-[#6C757D]/75">Found: {{ schemas.data ? schemas.data.length : 'N/A' }}</small>
                                             </div>
                                             @switch (schemas.status) {
                                             @case ('loaded') {
