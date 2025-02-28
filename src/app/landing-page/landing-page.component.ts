@@ -326,11 +326,11 @@ export class LandingPageComponent {
 
   generateSummary(kcat: any, km: any, kcatKm: any) {
     function getSummary(df: any) {
-      const substratesSet = new Set(df.map((row: any) => row['SUBSTRATE']));
-      const organismsSet = new Set(df.map((row: any) => row['ORGANISM']));
-      const ecNumbersSet = new Set(df.map((row: any) => row['EC']));
-      const uniprotIdsSet = new Set(df.map((row: any) => row['UNIPROT']));
-      const pubmedIdsSet = new Set(df.map((row: any) => row['PubMedID']));
+      const substratesSet = new Set(df.filter((row: any) => row['SUBSTRATE']).map((row: any) => row['SUBSTRATE']));
+      const organismsSet = new Set(df.filter((row: any) => row['ORGANISM']).map((row: any) => row['ORGANISM']));
+      const ecNumbersSet = new Set(df.filter((row: any) => row['EC']).map((row: any) => row['EC']));
+      const uniprotIdsSet = new Set(df.filter((row: any) => row['UNIPROT']).map((row: any) => row['UNIPROT']));
+      const pubmedIdsSet = new Set(df.filter((row: any) => row['PubMedID']).map((row: any) => row['PubMedID']));
 
       return {
         substrates: substratesSet.size,
