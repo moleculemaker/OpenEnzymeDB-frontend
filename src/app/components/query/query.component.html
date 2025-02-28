@@ -98,7 +98,7 @@
                         @for (filter of filterRecords; track filter.label) {
                         @if (filter.hasFilter()) {
                         <span class="rounded-sm bg-[--surface-d] p-1 flex items-center gap-1">
-                            <div [innerHTML]="filter.label.value"></div>: {{ filter.formattedValue }}
+                            <div [innerHTML]="filter.label.value" class="font-semibold"></div>: {{ filter.formattedValue }}
                             <i class="pi pi-times-circle cursor-pointer" (click)="
                                                 filter.value = filter.defaultValue;
                                                 applyFilters();
@@ -190,9 +190,27 @@
                                 <td class="align-middle">{{ row.enzyme_type }}</td>
                                 <td class="align-middle">{{ row.ph }}</td>
                                 <td class="align-middle">{{ row.temperature }}</td>
-                                <td class="align-middle">{{ row.kcat | number: '1.1-4' }}</td>
-                                <td class="align-middle">{{ row.km | number: '1.1-4' }}</td>
-                                <td class="align-middle">{{ row.kcat_km | number: '1.1-4' }}</td>
+                                <td class="align-middle">
+                                    @if (row.kcat) {
+                                    {{ row.kcat | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    @if (row.km) {
+                                    {{ row.km | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    @if (row.kcat_km) {
+                                    {{ row.kcat_km | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                </td>
                                 <td class="align-middle">
                                     <ng-container *ngTemplateOutlet="externalLink; context: { 
                                         $implicit: {
@@ -374,7 +392,7 @@
 <ng-template #filterTemplate let-filter>
     @switch (filter.type) {
     @case ('multiselect') {
-    <p-multiSelect styleClass="w-full" [placeholder]="filter.placeholder" [options]="filter.options"
+    <p-multiSelect styleClass="w-full" [placeholder]="filter.placeholder" [options]="filter.options" appendTo="body" [baseZIndex]="9999"
         [(ngModel)]="filter.value" [virtualScroll]="true" [virtualScrollItemSize]="48"
         (onChange)="searchTable($event, filter)"></p-multiSelect>
     }

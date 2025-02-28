@@ -2,7 +2,7 @@
   <div class="w-full flex mt-20">
     <div class="max-w-screen-md inline-block">
       <h1 class="font-bold leading-xl">Welcome to Open Enzyme Database!</h1>
-      <h5 class="mt-5 leading-xl">
+      <h5 class="mt-5 leading-xl pr-[76px]">
         We're building toward a community-driven resource for researchers and professionals in biochemistry, molecular biology, enzymology, protein and metabolic engineering, and related fields. In this pre-release version, Open Enzyme Database offers curated data on enzyme kinetics and experimental parameters, with ongoing algorithm development, an expanding knowledge base of enzyme solubility, stability, specificity, structures, functions and associated enzymatic reactions. We hope you'll join us in this collaboration!
       </h5>
       <!-- <h5 class="mt-5 leading-xl">
@@ -17,7 +17,7 @@
     </div>
     <div class="inline-block flex flex-col gap-4 bg-[#FFEDF4] p-4 mt-5" id="container_feedback">
       <div>
-        <h5 class="font-bold leading-xl mt-0">Help Us Improve OED!</h5>
+        <h5 class="font-bold leading-xl mt-0 mb-2">Help Us Improve OED!</h5>
         <p class="leading-xl">We're looking for input on features, bugs, and user feedback in order to improve on our pre-release for future versions. Share your thoughts with us by filling out a short form below (you can do this multiple times). We’re excited to hear from you!</p>
       </div>
       <div class="flex justify-center">
@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <div class="mt-6">
+  <div class="mt-6 mb-16">
     <div class="flex justify-start">
       <a routerLink="/query" routerLinkActive="active" id="btn-start-using-oed">
         <p-button label="Start Using Open Enzyme Database" styleClass="bg-[#224063]" iconPos="right"
@@ -148,18 +148,17 @@
 </div>
 
 
-<div #dataSnapshot class="mt-4 bg-[#F3F5FB] w-full flex flex-col justify-center items-center py-16">
+<div #dataSnapshot class="bg-[#F3F5FB] w-full flex flex-col justify-center items-center py-16">
   <div class="xl:w-full w-content-xl pt-6 pb-8 px-4">
     <h4>Data Snapshot</h4>
     @if (summary.status === 'loaded') {
     <h5 class="max-w-screen-md mt-5 leading-xl">
       The first release of Open Enzyme Database includes quantities of dataset, featuring
-      {{ summary.kcat.total | number }} entries for enzyme turnover number (<span class="italic"><span
-          class="italic">k</span><sub>cat</sub></span>),
-      {{ summary.km.total | number }} entries for Michaelis constants (<span class="italic"><span
-          class="italic">K</span><sub>m</sub></span>), and
-      {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (<span class="italic"><span
-          class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span>)
+      {{ summary.kcat.total | number }} entries for enzyme turnover number (<span
+          class="italic text-lg">k</span><sub>cat</sub>),
+      {{ summary.km.total | number }} entries for Michaelis constants (<span class="italic text-lg">K</span><sub>m</sub>), and
+      {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (<span
+          class="italic text-lg">k</span><sub>cat</sub> / <span class="italic text-lg">K</span><sub>m</sub>)
     </h5>
     <h5 class="max-w-screen-md mt-5 leading-xl">
       Learn more about our curated data below, or by visiting our statistics page for more information.
@@ -313,7 +312,7 @@
               @if (chartConfigs['pieChart']['data']['kcat'].status === 'loaded') {
               <div>
                 <div class="font-semibold"><span
-                    class="pb-1 border-b-2 border-dashed border-black"><span class="italic">k</span><sub>cat</sub></span></div>
+                    class="pb-1"><span class="italic">k</span><sub>cat</sub></span></div>
                 <p-chart type="pie" #kcatChart [data]="chartConfigs['pieChart']['data']['kcat'].data"
                   [options]="chartConfigs['pieChart']['data']['kcat'].options"
                   [plugins]="chartConfigs['pieChart']['data']['kcat'].plugins"></p-chart>
@@ -327,7 +326,7 @@
               @if (chartConfigs['pieChart']['data']['km'].status === 'loaded') {
               <div>
                 <div class="font-semibold"><span
-                    class="pb-1 border-b-2 border-dashed border-black"><span class="italic">K</span><sub>m</sub></span></div>
+                    class="pb-1"><span class="italic">K</span><sub>m</sub></span></div>
                 <p-chart type="pie" #kmChart [data]="chartConfigs['pieChart']['data']['km'].data"
                   [options]="chartConfigs['pieChart']['data']['km'].options"
                   [plugins]="chartConfigs['pieChart']['data']['km'].plugins"></p-chart>
@@ -340,7 +339,7 @@
 
               @if (chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded') {
               <div>
-                <div class="font-semibold"><span class="pb-1 border-b-2 border-dashed border-black"><span
+                <div class="font-semibold"><span class="pb-1"><span
                     class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span></div>
                 <p-chart type="pie" #kcatKmChart [data]="chartConfigs['pieChart']['data']['kcat_km'].data"
                   [options]="chartConfigs['pieChart']['data']['kcat_km'].options"
@@ -418,7 +417,7 @@
     header="Welcome to our pre-release!"
     [(visible)]="displayTutorial" 
     [modal]="true" 
-    [style]="{ width: '350px' }" 
+    [style]="{ width: '400px' }" 
     [draggable]="false" 
     [resizable]="false"
 >
