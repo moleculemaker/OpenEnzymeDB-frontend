@@ -1,110 +1,94 @@
-import { Component, EventEmitter, Input, Output, forwardRef } from "@angular/core";
-import { AbstractControl, AsyncValidator, ControlValueAccessor, NG_ASYNC_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, FormsModule } from "@angular/forms";
-import { BehaviorSubject, Observable, debounceTime, filter, first, map, of, switchMap, tap, withLatestFrom } from "rxjs";
+import { Component, EventEmitter, forwardRef, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { InputTextModule } from "primeng/inputtext";
-import { ButtonDirective, Button } from "primeng/button";
-import { NgIf, AsyncPipe } from "@angular/common";
+import { Button } from "primeng/button";
+import { NgIf } from "@angular/common";
 import { DialogModule } from "primeng/dialog";
 import { PrimeTemplate } from "primeng/api";
-
-import { ChemicalAutoCompleteResponse } from "~/app/api/mmli-backend/v1";
-import { MarvinJsEditorComponent } from "../marvinjs/marvinjs-editor.component";
+import { KetcherComponent } from "../ketcher/ketcher.component";
 
 @Component({
-    selector: "app-marvinjs-input",
-    templateUrl: "./marvinjs-input.component.html",
-    styleUrls: ["./marvinjs-input.component.scss"],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => MarvinjsInputComponent),
-            multi: true
-        },
-        {
-            provide: NG_ASYNC_VALIDATORS,
-            useExisting: forwardRef(() => MarvinjsInputComponent),
-            multi: true
-        }
-    ],
-    standalone: true,
-    imports: [FormsModule, InputTextModule, ButtonDirective, NgIf, DialogModule, MarvinJsEditorComponent, PrimeTemplate, Button, AsyncPipe]
+  selector: "app-marvinjs-input",
+  templateUrl: "./marvinjs-input.component.html",
+  styleUrls: ["./marvinjs-input.component.scss"],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => MarvinjsInputComponent),
+      multi: true
+    }
+  ],
+  standalone: true,
+  imports: [FormsModule, InputTextModule, NgIf, DialogModule, KetcherComponent, PrimeTemplate, Button]
 })
-export class MarvinjsInputComponent implements ControlValueAccessor, AsyncValidator {
+export class MarvinjsInputComponent implements OnChanges, ControlValueAccessor {
   @Input() placeholder: string = "";
-  @Output() onChemicalValidated = new EventEmitter<ChemicalAutoCompleteResponse | null>();
+  @Input() ngModel: string = '';
+  @Output() ngModelChange = new EventEmitter<string>();
 
-  userInput$ = new BehaviorSubject<string>("");
-  showDialog$ = new BehaviorSubject(false);
-
-  validateCache = new Map();
-  validatedChemical$ = this.userInput$.pipe(
-    debounceTime(1000),
-    switchMap((v) => 
-      this.validateCache.has(v) 
-      ? of(this.validateCache.get(v) as ChemicalAutoCompleteResponse)
-      : of(null) //TODO: replace with actual validation
-    ),
-    withLatestFrom(this.userInput$),
-    tap(([chemical, v]) => {
-      if (!this.validateCache.has(v)) {
-        this.validateCache.set(v, chemical);
-        this.onChange(v);
-        this.onTouched();
-      }
-    }),
-    map(([chemical, _]) => chemical)
-  );
-
-  smiles$ = this.validatedChemical$.pipe(
-    filter((chemical) => !!chemical),
-    map((chemical) => chemical!.smiles),
-  );
-
-  constructor() {}
-  
-  /* -------------------------------------------------------------------------- */
-  /*                      Control Value Accessor Interface                      */
-  /* -------------------------------------------------------------------------- */
+  showDialog = false;
   disabled = false;
-  onChange = (value: string) => {};
-  onTouched = () => {};
 
-  writeValue(obj: string): void {
-    this.userInput$.next(obj);
-    this.onChange(obj);
+  // this value is broadcasted to parent
+  #textInput = '';
+
+  // this value is used to sync with ketcher and text input
+  // sometimes text input can be a molecule object. in this case
+  // we need to convert it to a string
+  #marvinInput = '';
+
+  onChange: (value: string) => void = () => {};
+  onTouched: () => void = () => {};
+
+  get textInput() {
+    return this.#textInput;
   }
 
-  registerOnChange(fn: any): void {
+  set textInput(value: string) {
+    this.#textInput = value;
+    this.#marvinInput = value;
+    
+    this.ngModelChange.emit(value);
+    this.onChange(value);
+    this.onTouched();
+  }
+
+  get marvinInput() {
+    return this.#marvinInput;
+  }
+
+  set marvinInput(value: string) {
+    this.#marvinInput = value;
+    this.textInput = value;
+  }
+
+  constructor() {
+    if (this.ngModel) {
+      this.#textInput = this.ngModel;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['ngModel']) {
+      this.#textInput = this.ngModel;
+      this.#marvinInput = this.ngModel;
+    }
+  }
+
+  writeValue(value: string): void {
+    this.#textInput = value;
+    this.#marvinInput = value;
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /*                          Async Validator Interface                         */
-  /* -------------------------------------------------------------------------- */
-  onValidatorChange = () => {};
-
-  validate(control: AbstractControl<any, any>): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
-    return this.validatedChemical$.pipe(
-      map((chemical) => {
-        if (chemical) {
-          this.onChemicalValidated.emit(chemical);
-          return null;
-        }
-        return null;
-      }),
-      first()
-    );
-  }
-
-  registerOnValidatorChange?(fn: () => void): void {
-    this.onValidatorChange = fn;
   }
 }
