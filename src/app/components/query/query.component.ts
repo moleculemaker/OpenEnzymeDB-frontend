@@ -1,5 +1,5 @@
 import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray, FormBuilder } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
@@ -20,6 +20,9 @@ import { MenuModule } from "primeng/menu";
 import { trigger } from "@angular/animations";
 import { animate } from "@angular/animations";
 import { style, transition } from "@angular/animations";
+import { DropdownModule } from "primeng/dropdown";
+import { TooltipModule } from "primeng/tooltip";
+import { DividerModule } from "primeng/divider";
 
 interface FilterConfigParams {
   category: string;
@@ -203,6 +206,9 @@ class MultiselectFilterConfig extends FilterConfig {
     DialogModule,
     InputTextModule,
     MenuModule,
+    DropdownModule,
+    TooltipModule,
+    DividerModule,
 ],
   host: {
     class: "flex flex-col h-full"
@@ -212,12 +218,24 @@ export class QueryComponent implements AfterViewInit {
   @ViewChild(QueryInputComponent) queryInputComponent!: QueryInputComponent;
   @ViewChild(Table) resultsTable!: Table;
 
+  logicalOperators = [
+    { label: 'AND', value: 'AND' },
+    { label: 'OR', value: 'OR' },
+    { label: 'NOT', value: 'NOT' }
+  ];
+
   form = new FormGroup({
-    search: new FormControl<QueryValue | null>(
-      null,
-      [Validators.required]
-    ),
+    searchCriteria: new FormArray([
+      new FormGroup({
+        search: new FormControl<QueryValue | null>(null, [Validators.required]),
+        operator: new FormControl<string>('AND')
+      })
+    ])
   });
+
+  get searchCriteriaControls() {
+    return (this.form.get('searchCriteria') as FormArray).controls as FormGroup[];
+  }
 
   result: {
     status: 'loading' | 'loaded' | 'error' | 'na';
@@ -417,11 +435,33 @@ export class QueryComponent implements AfterViewInit {
     });
   }
 
+  addCriteria() {
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    const newCriteria = new FormGroup({
+      search: new FormControl<QueryValue | null>(null, [Validators.required]),
+      operator: new FormControl<string>('AND')
+    });
+    criteriaArray.push(newCriteria);
+  }
+
+  removeCriteria(index: number) {
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    if (criteriaArray.length > 1) {
+      criteriaArray.removeAt(index);
+    }
+  }
+
   clearAll() {
-    this.form.reset();
-    this.queryInputComponent.reset();
-    this.result.status = 'na';
-    this.clearAllFilters();
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    while (criteriaArray.length > 0) {
+      criteriaArray.removeAt(0);
+    }
+    this.addCriteria();
+    this.result = {
+      status: 'na',
+      data: [],
+      total: 0,
+    };
   }
 
   clearAllFilters() {
@@ -447,125 +487,233 @@ export class QueryComponent implements AfterViewInit {
   }
 
   submit() {
-    // if (!this.form.valid) {
-    //   console.warn('invalid form:', 
-    //     '\n\tstatus: ', this.form.status, 
-    //     '\n\tvalue: ', this.form.value);
-    //   return;
-    // }
+    if (this.form.invalid) {
+      return;
+    }
 
-    console.log(this.form.value);
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    if (criteriaArray.length === 0) {
+      return;
+    }
 
-    let marginCount = 0;
-    // TODO: replace with actual job ID and job type
-    this.service.getResult(JobType.Defaults, '123')
-    .pipe(
-      map((response: any) => 
-        response
-          .map((row: any, index: number) => {
-            
-            if (row['KCAT VALUE'] && row['KM VALUE'] && row['KCAT/KM VALUE']) {
-              const v = row['KCAT VALUE'] / row['KM VALUE'];
-              const threshold = v * 0.2;
-              if (v > row['KCAT/KM VALUE'] + threshold || v < row['KCAT/KM VALUE'] - threshold) {
-                marginCount++;
-                console.log('margin value: ', 'kcat: ', row['KCAT VALUE'], 'km: ', row['KM VALUE'], 'kcat/km: ', row['KCAT/KM VALUE']);
-              }
-            }
+    this.result = {
+      status: 'loading',
+      data: [],
+      total: 0,
+    };
 
-            return ({
-            iid: index,
-            ec_number: row.EC,
-            compound: {
-              name: row.SUBSTRATE,
-              smiles: row.SMILES,
-            },
-            enzyme_type: row.EnzymeType,
-            organism: row.ORGANISM,
-            uniprot_id: row.UNIPROT.split(','),
-            ph: row.PH,
-            temperature: row.Temperature,
-            kcat: row['KCAT VALUE'],
-            km: row['KM VALUE'],
-            kcat_km: row['KCAT/KM VALUE'],
-            pubmed_id: `${row.PubMedID}`,
-          })})
-          .filter((row: any) => {
-            const search = this.form.value.search;
-            if (!search) {
-              return true;
-            }
-
-            const { selectedOption: searchType, ...searchValue } = search!
-            switch(searchType) {
-              case 'compound':
-                return row.compound[searchValue['select']].toLowerCase()
-                  === searchValue.value.toLowerCase(); 
-
-              case 'organism':
-                return row.organism.toLowerCase() === searchValue.value.toLowerCase();
-
-              case 'uniprot_id':
-                return row.uniprot_id.some((id: string) => id.toLowerCase() === searchValue.value.toLowerCase());
-
-              case 'ph':
-                return row.ph >= searchValue.value[0] 
-                  && row.ph <= searchValue.value[1];
-
-              case 'temperature':
-                return row.temperature >= searchValue.value[0] 
-                  && row.temperature <= searchValue.value[1];
-
-              case 'ec_number':
-                return row.ec_number === searchValue.value;
-
-              default:
-                return true;
-            }
-          })
-    ))
-    .subscribe((response) => {
-      function getField(obj: any, dotPath: string) {
-        // console.log('obj:', obj, 'dotPath:', dotPath);
-        return dotPath.split('.').reduce((obj, key) => obj[key], obj);
+    // Build the query from multiple criteria
+    let query: any = {};
+    
+    for (let i = 0; i < criteriaArray.length; i++) {
+      const criteria = criteriaArray.at(i).value;
+      const search = criteria.search;
+      
+      if (!search) continue;
+      
+      let criteriaQuery: any = {};
+      
+      // Build query for this criteria
+      switch (search.selectedOption) {
+        case 'compound':
+          criteriaQuery = {
+            'compound.name': search.value,
+            searchType: search.inputType || 'name',
+          };
+          break;
+        case 'ec_number':
+          criteriaQuery = {
+            ec_number: search.value,
+          };
+          break;
+        case 'uniprot_id':
+          criteriaQuery = {
+            uniprot_id: search.value,
+          };
+          break;
+        case 'organism':
+          criteriaQuery = {
+            organism: search.value,
+          };
+          break;
+        case 'ph':
+        case 'temperature':
+          criteriaQuery = {
+            [search.selectedOption]: search.value,
+          };
+          break;
+        default:
+          break;
       }
-
-      Object.entries(this.filters).forEach(([key, filter]) => {
-        const options = response.map((row: any) => getField(row, filter.field)).flat();
-        const optionsSet = new Set(options);
-        if (filter instanceof MultiselectFilterConfig) {
-          filter.options = Array.from(optionsSet).map((option: any) => ({
-            label: option,
-            value: option,
-          }));
-          filter.defaultValue = [];
-        } else if (filter instanceof RangeFilterConfig) {
-          filter.min = Math.min(...options);
-          filter.max = Math.max(...options);
-          filter.value = [filter.min, filter.max];
-          filter.defaultValue = [filter.min, filter.max];
+      
+      // For the first criteria, just use it directly
+      if (i === 0) {
+        query = criteriaQuery;
+      } else {
+        // For subsequent criteria, combine with appropriate operator
+        const operator = criteria.operator;
+        
+        if (operator === 'AND') {
+          // Merge criteriaQuery into query (AND logic)
+          query = { ...query, ...criteriaQuery };
+        } else if (operator === 'OR') {
+          // Create OR condition
+          query = { $or: [query, criteriaQuery] };
+        } else if (operator === 'NOT') {
+          // Create NOT condition for this criteria
+          query = { 
+            $and: [
+              query, 
+              { $not: criteriaQuery }
+            ] 
+          };
         }
-        console.log('filter:', key, optionsSet.size);
+      }
+    }
+
+    // Use the existing getResult method
+    // For the prototype, we'll use a fixed JobType.Defaults and dummy job ID
+    // In a real implementation, this would send the query to the backend first
+    this.service.getResult(JobType.Defaults, '123')
+      .pipe(
+        map((response: any) => 
+          response
+            .map((row: any, index: number) => ({
+              iid: index,
+              ec_number: row.EC,
+              compound: {
+                name: row.SUBSTRATE,
+                smiles: row.SMILES,
+              },
+              enzyme_type: row.EnzymeType,
+              organism: row.ORGANISM,
+              uniprot_id: row.UNIPROT.split(','),
+              ph: row.PH,
+              temperature: row.Temperature,
+              kcat: row['KCAT VALUE'],
+              km: row['KM VALUE'],
+              kcat_km: row['KCAT/KM VALUE'],
+              pubmed_id: `${row.PubMedID}`,
+            }))
+            .filter((row: any) => {
+              // Process multi-criteria filtering client-side
+              return this.matchesSearchCriteria(row, criteriaArray);
+            })
+        )
+      )
+      .subscribe({
+        next: (response: any) => {
+          // Update options for filters
+          this.updateFilterOptions(response);
+          
+          this.result = {
+            status: 'loaded',
+            data: response,
+            total: response.length,
+          };
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.result = {
+            status: 'error',
+            data: [],
+            total: 0,
+          };
+        }
       });
+  }
 
-      console.log(`
-kcat/km value:
-  over-threshold percentage: ${marginCount / response.length * 100}%
-  margin count: ${marginCount}
-  response length: ${response.length}
-`);
-
-      this.columns = Object.values(this.filters).map((filter) => ({
-        field: filter.field,
-        header: filter.label.rawValue,
-      }));
-
-      this.result = {
-        status: 'loaded',
-        data: response,
-        total: response.length,
-      };
+  // Helper method to match a row against all criteria
+  private matchesSearchCriteria(row: any, criteriaArray: FormArray): boolean {
+    let matches = true;
+    let prevMatch = true;
+    
+    for (let i = 0; i < criteriaArray.length; i++) {
+      const criteria = criteriaArray.at(i).value;
+      const search = criteria.search;
+      
+      if (!search) continue;
+      
+      let currentMatch = false;
+      
+      // Check if this criteria matches
+      switch (search.selectedOption) {
+        case 'compound':
+          const searchType = search.inputType || 'name';
+          currentMatch = row.compound[searchType]?.toLowerCase() === search.value.toLowerCase();
+          break;
+        case 'organism':
+          currentMatch = row.organism.toLowerCase() === search.value.toLowerCase();
+          break;
+        case 'uniprot_id':
+          currentMatch = row.uniprot_id.some((id: string) => id.toLowerCase() === search.value.toLowerCase());
+          break;
+        case 'ph':
+          currentMatch = row.ph >= search.value[0] && row.ph <= search.value[1];
+          break;
+        case 'temperature':
+          currentMatch = row.temperature >= search.value[0] && row.temperature <= search.value[1];
+          break;
+        case 'ec_number':
+          currentMatch = row.ec_number === search.value;
+          break;
+        default:
+          currentMatch = true;
+          break;
+      }
+      
+      // For the first criteria, initialize matches with the result
+      if (i === 0) {
+        matches = currentMatch;
+        prevMatch = currentMatch;
+      } else {
+        // For subsequent criteria, combine based on operator
+        const operator = criteria.operator;
+        
+        if (operator === 'AND') {
+          matches = matches && currentMatch;
+        } else if (operator === 'OR') {
+          matches = matches || currentMatch;
+        } else if (operator === 'NOT') {
+          // NOT means previous must match and current must not
+          matches = prevMatch && !currentMatch;
+        }
+        
+        prevMatch = currentMatch;
+      }
+    }
+    
+    return matches;
+  }
+  
+  // Update filter options based on response data
+  private updateFilterOptions(response: any[]) {
+    function getField(obj: any, dotPath: string) {
+      return dotPath.split('.').reduce((obj, key) => obj[key], obj);
+    }
+    
+    Object.entries(this.filters).forEach(([key, filter]) => {
+      const options = response.map((row: any) => getField(row, filter.field)).flat();
+      const optionsSet = new Set(options);
+      if (filter instanceof MultiselectFilterConfig) {
+        filter.options = Array.from(optionsSet).map((option: any) => ({
+          label: option,
+          value: option,
+        }));
+        filter.defaultValue = [];
+      } else if (filter instanceof RangeFilterConfig) {
+        filter.min = Math.min(...options);
+        filter.max = Math.max(...options);
+        filter.value = [filter.min, filter.max];
+        filter.defaultValue = [filter.min, filter.max];
+      }
     });
+    
+    this.columns = Object.values(this.filters).map((filter) => ({
+      field: filter.field,
+      header: filter.label.rawValue,
+    }));
   }
 
   searchTable(event: any, filter: FilterConfig): void {

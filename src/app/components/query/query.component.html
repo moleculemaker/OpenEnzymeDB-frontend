@@ -41,7 +41,7 @@
                                     View All Data
                                 </button>
                                 <button type="button" class="rounded-lg border border-[--surface-d] p-2 disabled:opacity-50"
-                                    [disabled]="form.value.search === null"
+                                    [disabled]="!form.value.searchCriteria?.length"
                                     (click)="clearAll()">
                                     Reset Search
                                 </button>
@@ -49,19 +49,37 @@
                         </ng-template>
                         <ng-template pTemplate="content">
                             <div class="p-4 flex flex-col gap-4">
-                                <app-query-input formControlName="search" />
-                                <div class="flex items-center justify-end">
-                                    <!-- <button
+                                <div formArrayName="searchCriteria" class="flex flex-col gap-3 w-full">
+                                    @for (criteria of searchCriteriaControls; let i = $index; track i) {
+                                        <div [formGroupName]="i" class="flex flex-col gap-2 w-full">
+                                            @if (i > 0) {
+                                                <p-divider align="center" type="solid">
+                                                    <p-dropdown formControlName="operator"
+                                                        styleClass="mmli-dropdown"
+                                                        size="small"
+                                                        [options]="logicalOperators" 
+                                                        appendTo="body">
+                                                    </p-dropdown>
+                                                </p-divider>
+                                            }
+                                            <app-query-input formControlName="search" />
+                                        </div>
+                                    }
+                                    <p-divider type="solid" class="pt-2"></p-divider>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <button
                                         type="button"
                                         class="rounded-lg border border-[--surface-d] p-2 bg-[--surface-b] flex items-center px-3"
-                                        disabled
-                                        (click)="clearAll()"
+                                        (click)="addCriteria()"
                                     >
                                         <i class="mr-2 pi pi-plus"></i>
                                         Add Search Criteria
-                                    </button> -->
+                                    </button>
                                     <button type="button"
                                         class="rounded-lg border border-[--surface-d] p-3 px-8 bg-[--primary-color] text-white font-semibold"
+                                        [disabled]="form.invalid"
                                         (click)="submit()">
                                         Search Open Enzyme Database
                                     </button>

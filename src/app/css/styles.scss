@@ -72,6 +72,16 @@ html, body {
 }
 
 /************************** MMLI Customized Theme **************************/
+p-divider {
+	.p-divider {
+		@apply my-1 #{!important};
+	}
+
+	::before, ::after {
+		@apply border;
+	}
+}
+
 .p-panel {
 	@apply h-full;
 
@@ -183,5 +193,27 @@ hr {
 	@apply p-2;
 	@apply text-base;
 	@apply leading-lg;
+}
+
+.mmli-dropdown {
+	@apply flex;
+	@apply items-center;
+	@apply justify-between;
+	@apply gap-2;
+
+	@apply p-2;
+	@apply pr-0;
+	@apply bg-[--surface-b];
+	@apply text-[--surface-700];
+	@apply rounded-md;
+
+	.p-dropdown-label {
+		@apply p-0;
+	}
+
+	.p-dropdown-trigger {
+		@apply w-auto;
+		@apply py-1;
+	}
 }
 /**************************** MMLI Customized END **************************/
