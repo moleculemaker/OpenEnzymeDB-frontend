@@ -62,7 +62,15 @@
                                                     </p-dropdown>
                                                 </p-divider>
                                             }
-                                            <app-query-input formControlName="search" />
+                                            <div class="flex items-center gap-4 w-full">
+                                                @if (i > 0) {
+                                                    <button type="button" title="Remove Criteria"
+                                                        (click)="removeCriteria(i)">
+                                                        <i class="pi pi-times"></i>
+                                                    </button>
+                                                }
+                                                <app-query-input formControlName="search" class="w-full"/>
+                                            </div>
                                         </div>
                                     }
                                     <p-divider type="solid" class="pt-2"></p-divider>
