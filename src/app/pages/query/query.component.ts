@@ -1,6 +1,6 @@
-import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray, FormBuilder } from "@angular/forms";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
@@ -27,6 +27,7 @@ import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/
 import { FilterComponent } from "~/app/components/filter/filter.component";
 import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
 import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dialog.component";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-query',
@@ -66,7 +67,6 @@ import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dia
     DividerModule,
 
     ExternalLinkComponent,
-    FilterComponent,
     FilterDialogComponent,
     QueryInputComponent,
 ],
@@ -74,7 +74,7 @@ import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dia
     class: "flex flex-col h-full"
   }
 })
-export class QueryComponent implements AfterViewInit {
+export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild(QueryInputComponent) queryInputComponent!: QueryInputComponent;
   @ViewChild(Table) resultsTable!: Table;
 
@@ -257,10 +257,13 @@ export class QueryComponent implements AfterViewInit {
     }, {} as Record<string, FilterConfig[]>);
 
   readonly filterRecords = Object.values(this.filters);
+  
+  private formSubscription: Subscription | null = null;
  
   constructor(
     public service: OpenEnzymeDBService,
     private router: Router,
+    private route: ActivatedRoute,
     private filterService: FilterService,
     private cdr: ChangeDetectorRef,
   ) {
@@ -282,6 +285,30 @@ export class QueryComponent implements AfterViewInit {
         return filter.every((f) => value.includes(f));
       },
     );
+  }
+
+  ngOnInit(): void {
+    const search = this.route.snapshot.queryParams['search'];
+    if (search) {
+      const searchCriteria = JSON.parse(decodeURIComponent(search));
+      this.applySearchCriteriaFromParams(searchCriteria);
+    }
+
+    // Subscribe to form changes to clear result when search criteria changes
+    this.formSubscription = this.form.valueChanges.subscribe(() => {
+      // Only clear if we have results and the form is valid
+      if (this.result.status === 'loaded' && this.form.valid) {
+        this.clearResult();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscriptions
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.formSubscription = null;
+    }
   }
 
   ngAfterViewInit(): void {
@@ -312,17 +339,20 @@ export class QueryComponent implements AfterViewInit {
   }
 
   clearAll() {
-    this.result = {
-      status: 'na',
-      data: [],
-      total: 0,
-    };
+    this.clearResult();
     const criteriaArray = this.form.get('searchCriteria') as FormArray;
     criteriaArray.clear();
     setTimeout(() => {
       this.addCriteria();
     });
     this.submit(true);
+    
+    // Clear URL parameters
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      queryParamsHandling: 'merge'
+    });
   }
 
   clearAllFilters() {
@@ -359,11 +389,15 @@ export class QueryComponent implements AfterViewInit {
       return;
     }
 
+    // Set loading state
     this.result = {
       status: 'loading',
       data: [],
       total: 0,
     };
+    
+    // Trigger change detection to show loading state
+    this.cdr.detectChanges();
 
     // Build the query from multiple criteria
     let query: any = {};
@@ -434,6 +468,9 @@ export class QueryComponent implements AfterViewInit {
       }
     }
 
+    // Update URL with search criteria
+    this.updateUrlWithSearchCriteria(criteriaArray.value);
+
     // Use the existing getResult method
     // For the prototype, we'll use a fixed JobType.Defaults and dummy job ID
     // In a real implementation, this would send the query to the backend first
@@ -483,6 +520,7 @@ export class QueryComponent implements AfterViewInit {
             data: [],
             total: 0,
           };
+          this.cdr.detectChanges();
         }
       });
   }
@@ -582,5 +620,78 @@ export class QueryComponent implements AfterViewInit {
   searchTable(filter: FilterConfig): void {
     this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     this.hasFilter = this.filterRecords.some(f => f.hasFilter());
+  }
+
+  // Update URL with search criteria
+  private updateUrlWithSearchCriteria(searchCriteria: any[]): void {
+    // Only include criteria that have search values
+    const validCriteria = searchCriteria.filter(criteria => criteria.search);
+    console.log(validCriteria);
+    
+    if (validCriteria.length > 0) {
+      // Convert search criteria to URL-safe format
+      const searchParam = encodeURIComponent(JSON.stringify(validCriteria));
+      
+      // Update URL without triggering navigation
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { search: searchParam },
+        queryParamsHandling: 'merge'
+      });
+    } else {
+      // If no valid criteria, remove search parameter
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { search: null },
+        queryParamsHandling: 'merge'
+      });
+    }
+  }
+
+  // Clear the result when search criteria changes
+  private clearResult(): void {
+    this.result = {
+      status: 'na',
+      data: [],
+      total: 0,
+    };
+  }
+
+  // Apply search criteria from URL parameters
+  private applySearchCriteriaFromParams(searchCriteria: any[]): void {
+    if (!searchCriteria || !Array.isArray(searchCriteria) || searchCriteria.length === 0) {
+      return;
+    }
+
+    // Clear existing criteria
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    criteriaArray.clear();
+
+    // Add criteria from URL parameters
+    searchCriteria.forEach((criteria, index) => {
+      if (index > 0) {
+        // Add operator for criteria after the first one
+        const prevCriteria = criteriaArray.at(criteriaArray.length - 1).value;
+        prevCriteria.operator = criteria.operator || 'AND';
+      }
+
+      // Add new criteria
+      const newCriteria = new FormGroup({
+        search: new FormControl<QueryValue | null>(criteria.search, [Validators.required]),
+        operator: new FormControl<string>(criteria.operator || 'AND')
+      });
+      criteriaArray.push(newCriteria);
+    });
+
+    // If no criteria were added, add a default one
+    if (criteriaArray.length === 0) {
+      this.addCriteria();
+    }
+
+    // Clear result before submitting
+    this.clearResult();
+    
+    // Submit the search
+    this.submit(true);
   }
 }
