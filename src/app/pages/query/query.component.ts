@@ -24,6 +24,9 @@ import { DropdownModule } from "primeng/dropdown";
 import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
+import { FilterComponent } from "~/app/components/filter/filter.component";
+import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
+import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dialog.component";
 
 @Component({
   selector: 'app-query',
@@ -52,7 +55,6 @@ import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/
     CheckboxModule,
     ButtonModule,
     PanelModule,
-    QueryInputComponent,
     TableModule,
     MultiSelectModule,
     ChipModule,
@@ -62,6 +64,11 @@ import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/
     DropdownModule,
     TooltipModule,
     DividerModule,
+
+    ExternalLinkComponent,
+    FilterComponent,
+    FilterDialogComponent,
+    QueryInputComponent,
 ],
   host: {
     class: "flex flex-col h-full"
@@ -319,6 +326,7 @@ export class QueryComponent implements AfterViewInit {
   }
 
   clearAllFilters() {
+    this.showFilter = false;
     this.filterRecords.forEach((filter) => {
       filter.value = filter.defaultValue;
     });
@@ -329,6 +337,7 @@ export class QueryComponent implements AfterViewInit {
   }
 
   applyFilters() {
+    this.showFilter = false;
     this.filterRecords.forEach((filter) => {
       this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     });
@@ -424,8 +433,6 @@ export class QueryComponent implements AfterViewInit {
         }
       }
     }
-
-    console.log(criteriaArray);
 
     // Use the existing getResult method
     // For the prototype, we'll use a fixed JobType.Defaults and dummy job ID
@@ -572,16 +579,8 @@ export class QueryComponent implements AfterViewInit {
     }));
   }
 
-  searchTable(event: any, filter: FilterConfig): void {
-    if (filter instanceof RangeFilterConfig) {
-      filter.value = event.target.value;
-    } else if (filter instanceof MultiselectFilterConfig) {
-      filter.value = event.value;
-    }
-    
+  searchTable(filter: FilterConfig): void {
     this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     this.hasFilter = this.filterRecords.some(f => f.hasFilter());
-
-    console.log(this.resultsTable.filteredValue);
   }
 }

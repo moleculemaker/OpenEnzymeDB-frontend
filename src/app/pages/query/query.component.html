@@ -206,7 +206,7 @@
                                         <button title="Expand" type="button" [pRowToggler]="row">
                                             <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                                         </button>
-                                        <div>{{ row.compound.name }}</div>
+                                        <a href="/compound/{{ row.compound.name }}">{{ row.compound.name }}</a>
                                     </div>
                                 </td>
                                 <td class="align-middle italic">{{ row.organism }}</td>
@@ -237,13 +237,10 @@
                                     }
                                 </td>
                                 <td class="align-middle">
-                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
-                                        $implicit: {
-                                            url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                                            label: row.pubmed_id
-                                        }
-                                    }">
-                                    </ng-container>
+                                    <app-external-link [linkItem]="{
+                                        url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                        label: row.pubmed_id
+                                    }"></app-external-link>
                                 </td>
                             </tr>
                         </ng-template>
@@ -262,35 +259,29 @@
                                                 <div>Uniprot ID</div>
                                                 <div>
                                                     @for (id of row.uniprot_id; track id) {
-                                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
-                                                                $implicit: {
-                                                                    url: 'https://www.uniprot.org/uniprotkb/' + id + '/entry',
-                                                                    label: id
-                                                                }
-                                                            }"></ng-container>
+                                                    <app-external-link [linkItem]="{
+                                                        url: 'https://www.uniprot.org/uniprotkb/' + id + '/entry',
+                                                        label: id
+                                                    }"></app-external-link>
                                                     }
                                                 </div>
                                             </div>
                                             <div class="flex justify-between">
                                                 <div>EC Number</div>
                                                 <div class="text-end">
-                                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
-                                                            $implicit: {
-                                                                url: 'https://www.brenda-enzymes.org/enzyme.php?ecno=' + row.ec_number,
-                                                                label: row.ec_number
-                                                            }
-                                                        }"></ng-container>
+                                                    <app-external-link [linkItem]="{
+                                                        url: 'https://www.brenda-enzymes.org/enzyme.php?ecno=' + row.ec_number,
+                                                        label: row.ec_number
+                                                    }"></app-external-link>
                                                 </div>
                                             </div>
                                             <div class="flex justify-between">
                                                 <div>PubMed ID</div>
                                                 <div class="text-end">
-                                                    <ng-container *ngTemplateOutlet="externalLink; context: { 
-                                                            $implicit: {
-                                                                url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                                                                label: row.pubmed_id
-                                                            }
-                                                        }"></ng-container>
+                                                    <app-external-link [linkItem]="{
+                                                        url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                                        label: row.pubmed_id
+                                                    }"></app-external-link>
                                                 </div>
                                             </div>
                                         </div>
@@ -325,80 +316,11 @@
     }
 </div>
 
-<ng-template #externalLink let-linkItem>
-    <a [href]="linkItem.url" target="_blank" class="flex items-center gap-1 text-[#0080FF] font-semibold justify-end">
-        <p>{{ linkItem.label }}</p>
-        <i class="pi pi-external-link"></i>
-    </a>
-</ng-template>
-
-<p-dialog [(visible)]="showFilter" [modal]="true" styleClass="w-[800px] h-[800px]">
-    <ng-template pTemplate="header">
-        <div class="flex items-center gap-2 font-semibold">
-            <i class="px-2 pi pi-filter"></i>
-            Filter
-        </div>
-    </ng-template>
-    <div class="mx-4 h-full">
-        <div class="flex w-full h-full grow gap-4">
-            <div class="w-1/2 flex flex-col gap-4 p-3">
-                <div class="font-bold">Experimental Parameters</div>
-                @for (filter of filterRecordsByCategory['parameter']; track filter.label) {
-                <div class="flex flex-col gap-2">
-                    <div [innerHTML]="filter.label.value"></div>
-                    <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
-                </div>
-                }
-            </div>
-            <div class="w-1/2 border-l border-solid border-[--surface-d] p-3 pl-7 flex flex-col gap-4">
-                <div class="font-bold">Enzyme Kinetics</div>
-                @for (filter of filterRecordsByCategory['enzyme']; track filter.label) {
-                <div class="flex flex-col gap-2">
-                    <div [innerHTML]="filter.label.value"></div>
-                    <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
-                </div>
-                }
-                <hr class="-mx-7" />
-                <div class="font-bold">Literature</div>
-                @for (filter of filterRecordsByCategory['literature']; track filter.label) {
-                <div class="flex flex-col gap-2">
-                    <div [innerHTML]="filter.label.value"></div>
-                    <ng-container *ngTemplateOutlet="filterTemplate; context: { $implicit: filter }"></ng-container>
-                </div>
-                }
-                <hr class="-mx-7" />
-            </div>
-        </div>
-    </div>
-    <ng-template pTemplate="footer">
-        <div class="flex items-center justify-between pt-4">
-            <button class="rounded-lg border border-solid border-[--primary-color] py-3 px-5 bg-white text-[--primary-color] text-[1rem]" (click)="clearAllFilters(); showFilter = false">
-                Reset Filters
-            </button>
-            <button class="rounded-lg border border-solid border-[--primary-color] py-3 px-5 bg-[--primary-color] text-white text-[1rem]" (click)="applyFilters(); showFilter = false">
-                Show {{ resultsTable.filteredValue?.length ?? this.result!.total }} Result{{
-                resultsTable.filteredValue?.length !== this.result!.total ? 's' : '' }}
-            </button>
-        </div>
-    </ng-template>
-</p-dialog>
-
-
-<ng-template #filterTemplate let-filter>
-    @switch (filter.type) {
-    @case ('multiselect') {
-    <p-multiSelect styleClass="w-full" [placeholder]="filter.placeholder" [options]="filter.options" appendTo="body" [baseZIndex]="9999"
-        [(ngModel)]="filter.value" [virtualScroll]="true" [virtualScrollItemSize]="48"
-        (onChange)="searchTable($event, filter)"></p-multiSelect>
-    }
-    @case ('range') {
-    <input pInputText title="{{ filter.placeholder }}" type="text" [placeholder]="filter.placeholder"
-        (blur)="searchTable($event, filter)" [value]="filter.formattedValue"
-        class="w-full p-3 border border-[#ced4da] rounded-md !text-base"/>
-    }
-    @default {
-    <span>{{ filter.value }}</span>
-    <!-- <p-inputText styleClass="w-full" [placeholder]="filter.placeholder" [(ngModel)]="filter.value"></p-inputText> -->
-    }
-    }
-</ng-template>
+<app-filter-dialog 
+    [(visible)]="showFilter" 
+    [filterRecordsByCategory]="filterRecordsByCategory" 
+    [numberResults]="$any(resultsTable)?.filteredValue?.length ?? result.total" 
+    (filterChange)="searchTable($event)" 
+    (clearAllFilters)="clearAllFilters()" 
+    (applyFilters)="applyFilters()">
+</app-filter-dialog>
