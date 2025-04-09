@@ -5,13 +5,13 @@
                 <small class="font-semibold leading-xl">
                     {{ option.label }} {{ option.type === 'range' ? 'Range' : '' }}
                 </small>
-                @if (option.formControls['select']) {
+                @if (option.formControls['inputType']) {
                     <div class="flex gap-2 items-center">
                         <div class="flex items-center gap-2">
                             <p-radioButton 
                                 name="inputType" 
                                 value="name" 
-                                [formControl]="option.formControls['select']"
+                                [formControl]="option.formControls['inputType']"
                                 inputId="inputType1" />
                             <label for="inputType1">Name</label>
                         </div>
@@ -20,7 +20,7 @@
                             <p-radioButton 
                                 name="inputType" 
                                 value="smiles" 
-                                [formControl]="option.formControls['select']" 
+                                [formControl]="option.formControls['inputType']" 
                                 inputId="inputType2" />
                             <label for="inputType2">SMILES</label>
                         </div>

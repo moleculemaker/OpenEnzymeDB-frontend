@@ -137,7 +137,7 @@ class RangeSearchOption extends BaseSearchOption {
 
 type MoleculeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   formControls: {
-    select: FormControl<'name' | 'smiles' | null>;
+    inputType: FormControl<'name' | 'smiles' | null>;
     value: FormControl<string | null>;
   };
   example: Record<string, any>;
@@ -214,7 +214,7 @@ export class QueryInputComponent implements ControlValueAccessor {
       label: 'Compound',
       placeholder: 'Enter a compound',
       formControls: {
-        select: new FormControl<'name' | 'smiles' | null>('name', [Validators.required]),
+        inputType: new FormControl<'name' | 'smiles' | null>('name', [Validators.required]),
         value: new FormControl<string | null>('', [Validators.required], [
           (control: AbstractControl) => {
             return of(control.value).pipe(
@@ -254,7 +254,7 @@ export class QueryInputComponent implements ControlValueAccessor {
       },
       example: {
         label: 'Ethanol (CCO)',
-        select: 'smiles',
+        inputType: 'smiles',
         value: 'CCO'
       }
     }),
