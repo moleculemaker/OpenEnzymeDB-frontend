@@ -1,0 +1,587 @@
+import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray, FormBuilder } from "@angular/forms";
+import { Router } from "@angular/router";
+import { CheckboxModule } from "primeng/checkbox";
+import { ButtonModule } from "primeng/button";
+import { CommonModule } from "@angular/common";
+
+import { JobType } from "~/app/api/mmli-backend/v1";
+import { OEDRecord, OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { PanelModule } from "primeng/panel";
+import { QueryInputComponent, QueryValue } from "../../components/query-input/query-input.component";
+import { Table, TableModule } from "primeng/table";
+import { map } from "rxjs/operators";
+import { ChipModule } from "primeng/chip";
+import { DialogModule } from "primeng/dialog";
+import { MultiSelectModule } from "primeng/multiselect";
+import { FilterService } from "primeng/api";
+import { InputTextModule } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
+import { trigger } from "@angular/animations";
+import { animate } from "@angular/animations";
+import { style, transition } from "@angular/animations";
+import { DropdownModule } from "primeng/dropdown";
+import { TooltipModule } from "primeng/tooltip";
+import { DividerModule } from "primeng/divider";
+import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
+
+@Component({
+  selector: 'app-query',
+  templateUrl: './query.component.html',
+  styleUrls: ['./query.component.scss'],
+  animations: [
+    trigger(
+      'slideIn', 
+      [
+        transition(
+          ':enter', 
+          [
+            style({ maxHeight: 0 }),
+            animate('.5s ease-out', 
+                    style({ maxHeight: 800 }))
+          ]
+        )
+      ]
+    )
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    CheckboxModule,
+    ButtonModule,
+    PanelModule,
+    QueryInputComponent,
+    TableModule,
+    MultiSelectModule,
+    ChipModule,
+    DialogModule,
+    InputTextModule,
+    MenuModule,
+    DropdownModule,
+    TooltipModule,
+    DividerModule,
+],
+  host: {
+    class: "flex flex-col h-full"
+  }
+})
+export class QueryComponent implements AfterViewInit {
+  @ViewChild(QueryInputComponent) queryInputComponent!: QueryInputComponent;
+  @ViewChild(Table) resultsTable!: Table;
+
+  logicalOperators = [
+    { label: 'AND', value: 'AND' },
+    { label: 'OR', value: 'OR' },
+    { label: 'NOT', value: 'NOT' }
+  ];
+
+  form = new FormGroup({
+    searchCriteria: new FormArray([
+      new FormGroup({
+        search: new FormControl<QueryValue | null>(null, [Validators.required]),
+        operator: new FormControl<string>('AND')
+      })
+    ])
+  });
+
+  get searchCriteriaControls() {
+    return (this.form.get('searchCriteria') as FormArray).controls as FormGroup[];
+  }
+
+  result: {
+    status: 'loading' | 'loaded' | 'error' | 'na';
+    data: any[];
+    total: number;
+  } = {
+    status: 'na',
+    data: [],
+    total: 0,
+  };
+
+  showFilter = false;
+  hasFilter = false;
+  filters: Record<string, FilterConfig> = {
+    // reactions: new MultiselectFilterConfig(
+    //   'parameter',
+    //   'Reactions',
+    //   'Select reaction',
+    //   'reaction',
+    //   [],
+    //   [],
+    // ),
+    compounds: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Compounds',
+        rawValue: 'Compounds',
+      },
+      placeholder: 'Select compound',
+      field: 'compound.name',
+      options: [],
+      value: [],
+    }),
+    organism: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Organisms',
+        rawValue: 'Organisms',
+      },
+      placeholder: 'Select organism',
+      field: 'organism',
+      options: [],
+      value: [],
+    }),
+    uniprot_ids: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Uniprot IDs',
+        rawValue: 'Uniprot IDs',
+      },
+      placeholder: 'Select uniprot ID',
+      field: 'uniprot_id',
+      options: [],
+      value: [],
+      matchMode: 'subset',
+    }),
+    ec_numbers: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'EC Numbers',
+        rawValue: 'EC Numbers',
+      },
+      placeholder: 'Select EC number',
+      field: 'ec_number',
+      options: [],
+      value: [],
+    }),
+    enzyme_types: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Enzyme Types',
+        rawValue: 'Enzyme Types',
+      },
+      placeholder: 'Select enzyme type',
+      field: 'enzyme_type',
+      options: [],
+      value: [],
+    }),
+    ph: new RangeFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'pH',
+        rawValue: 'pH',
+      },
+      placeholder: 'Enter pH range',
+      field: 'ph',
+      min: 0,
+      max: 14,
+    }),
+    temperature: new RangeFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Temperature (°C)',
+        rawValue: 'Temperature (°C)',
+      },
+      placeholder: 'Enter temperature range',
+      field: 'temperature',
+      min: 0,
+      max: 100,
+    }),
+    kcat: new RangeFilterConfig({
+      category: 'enzyme',
+      label: {
+        value: '<span class="italic">k</span><sub>cat</sub> (s<sup class="text-xs"> -1</sup>)',
+        rawValue: 'kcat',
+      },
+      placeholder: 'Enter kcat range',
+      field: 'kcat',
+      min: 0,
+      max: 100
+    }),
+    km: new RangeFilterConfig({
+      category: 'enzyme',
+      label: {
+        value: '<span class="italic">K</span><sub>m</sub> (mM)',
+        rawValue: 'km',
+      },
+      placeholder: 'Enter KM range',
+      field: 'km',
+      min: 0,
+      max: 100
+    }),
+    kcat_km: new RangeFilterConfig({
+      category: 'enzyme',
+      label: {
+        value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (mM<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
+        rawValue: 'kcat_km',
+      },
+      placeholder: 'Enter kcat/KM range',
+      field: 'kcat_km',
+      min: 0,
+      max: 100
+    }),
+    pubmed_id: new MultiselectFilterConfig({
+      category: 'literature',
+      label: {
+        value: 'PubMed',
+        rawValue: 'PubMed',
+      },
+      placeholder: 'Select PubMed ID',
+      field: 'pubmed_id',
+      options: [],
+      value: [],
+      matchMode: 'subset',
+    }),
+  }
+
+  columns: any[] = [];
+
+  exampleRecords: any[] = [];
+  readonly filterRecordsByCategory = Object.entries(this.filters)
+    .reduce((acc, [key, filter]) => {
+      if (!acc[filter.category]) {
+        acc[filter.category] = [filter];
+      } else {
+        acc[filter.category].push(filter);
+      }
+      return acc;
+    }, {} as Record<string, FilterConfig[]>);
+
+  readonly filterRecords = Object.values(this.filters);
+ 
+  constructor(
+    public service: OpenEnzymeDBService,
+    private router: Router,
+    private filterService: FilterService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    this.filterService.register(
+      "range",
+      (value: number, filter: [number, number]) => {
+        if (!filter) {
+          return true;
+        }
+        return value >= filter[0] && value <= filter[1];
+      },
+    );
+    this.filterService.register(
+      "subset",
+      (value: any[], filter: any[]) => {
+        if (!filter) {
+          return true;
+        }
+        return filter.every((f) => value.includes(f));
+      },
+    );
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.exampleRecords = this.queryInputComponent.searchOptions
+        .filter((option) => option.example)
+        .map((option) => ({
+          label: `${option.label} (${option.example['label']})`,
+          command: () => this.queryInputComponent.useExample(option.key)
+        }));
+    });
+  }
+
+  addCriteria() {
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    const newCriteria = new FormGroup({
+      search: new FormControl<QueryValue | null>(null, [Validators.required]),
+      operator: new FormControl<string>('AND')
+    });
+    criteriaArray.push(newCriteria);
+  }
+
+  removeCriteria(index: number) {
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    if (criteriaArray.length > 1) {
+      criteriaArray.removeAt(index);
+    }
+  }
+
+  clearAll() {
+    this.result = {
+      status: 'na',
+      data: [],
+      total: 0,
+    };
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    criteriaArray.clear();
+    setTimeout(() => {
+      this.addCriteria();
+    });
+    this.submit(true);
+  }
+
+  clearAllFilters() {
+    this.filterRecords.forEach((filter) => {
+      filter.value = filter.defaultValue;
+    });
+    if (this.resultsTable) {
+      this.resultsTable.reset();
+    }
+    this.hasFilter = false;
+  }
+
+  applyFilters() {
+    this.filterRecords.forEach((filter) => {
+      this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
+    });
+    this.hasFilter = this.filterRecords.some((filter) => filter.hasFilter());
+  }
+
+  viewAllData() {
+    this.clearAll();
+    this.submit(true);
+  }
+
+  submit(force: boolean = false) {
+    if (this.form.invalid && !force) {
+      return;
+    }
+
+    const criteriaArray = this.form.get('searchCriteria') as FormArray;
+    if (criteriaArray.length === 0 && !force) {
+      return;
+    }
+
+    this.result = {
+      status: 'loading',
+      data: [],
+      total: 0,
+    };
+
+    // Build the query from multiple criteria
+    let query: any = {};
+    
+    for (let i = 0; i < criteriaArray.length; i++) {
+      const criteria = criteriaArray.at(i).value;
+      const search = criteria.search;
+      
+      if (!search) continue;
+      
+      let criteriaQuery: any = {};
+      
+      // Build query for this criteria
+      switch (search.selectedOption) {
+        case 'compound':
+          criteriaQuery = {
+            'compound.name': search.value,
+            searchType: search.inputType || 'name',
+          };
+          break;
+        case 'ec_number':
+          criteriaQuery = {
+            ec_number: search.value,
+          };
+          break;
+        case 'uniprot_id':
+          criteriaQuery = {
+            uniprot_id: search.value,
+          };
+          break;
+        case 'organism':
+          criteriaQuery = {
+            organism: search.value,
+          };
+          break;
+        case 'ph':
+        case 'temperature':
+          criteriaQuery = {
+            [search.selectedOption]: search.value,
+          };
+          break;
+        default:
+          break;
+      }
+      
+      // For the first criteria, just use it directly
+      if (i === 0) {
+        query = criteriaQuery;
+      } else {
+        // For subsequent criteria, combine with appropriate operator
+        const operator = criteria.operator;
+        
+        if (operator === 'AND') {
+          // Merge criteriaQuery into query (AND logic)
+          query = { ...query, ...criteriaQuery };
+        } else if (operator === 'OR') {
+          // Create OR condition
+          query = { $or: [query, criteriaQuery] };
+        } else if (operator === 'NOT') {
+          // Create NOT condition for this criteria
+          query = { 
+            $and: [
+              query, 
+              { $not: criteriaQuery }
+            ] 
+          };
+        }
+      }
+    }
+
+    console.log(criteriaArray);
+
+    // Use the existing getResult method
+    // For the prototype, we'll use a fixed JobType.Defaults and dummy job ID
+    // In a real implementation, this would send the query to the backend first
+    this.service.getResult(JobType.Defaults, '123')
+      .pipe(
+        map((response: OEDRecord[]) => 
+          response
+            .map((row: OEDRecord, index: number) => ({
+              iid: index,
+              ec_number: row.EC,
+              compound: {
+                name: row.SUBSTRATE,
+                smiles: row.SMILES,
+              },
+              enzyme_type: row.EnzymeType,
+              organism: row.ORGANISM,
+              uniprot_id: row.UNIPROT.split(','),
+              ph: row.PH,
+              temperature: row.Temperature,
+              kcat: row['KCAT VALUE'],
+              km: row['KM VALUE'],
+              kcat_km: row['KCAT/KM VALUE'],
+              pubmed_id: `${row.PubMedID}`,
+            }))
+            .filter((row) => {
+              // Process multi-criteria filtering client-side
+              return this.matchesSearchCriteria(row, criteriaArray);
+            })
+        )
+      )
+      .subscribe({
+        next: (response: any) => {
+          // Update options for filters
+          this.updateFilterOptions(response);
+          
+          this.result = {
+            status: 'loaded',
+            data: response,
+            total: response.length,
+          };
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.result = {
+            status: 'error',
+            data: [],
+            total: 0,
+          };
+        }
+      });
+  }
+
+  // Helper method to match a row against all criteria
+  private matchesSearchCriteria(row: any, criteriaArray: FormArray): boolean {
+    let matches = true;
+    let prevMatch = true;
+    
+    for (let i = 0; i < criteriaArray.length; i++) {
+      const criteria = criteriaArray.at(i).value;
+      const search = criteria.search;
+      
+      if (!search) continue;
+      
+      let currentMatch = false;
+      
+      // Check if this criteria matches
+      switch (search.selectedOption) {
+        case 'compound':
+          const searchType = search.inputType || 'name';
+          currentMatch = row.compound[searchType]?.toLowerCase() === search.value.toLowerCase();
+          break;
+        case 'organism':
+          currentMatch = row.organism.toLowerCase() === search.value.toLowerCase();
+          break;
+        case 'uniprot_id':
+          currentMatch = row.uniprot_id.some((id: string) => id.toLowerCase() === search.value.toLowerCase());
+          break;
+        case 'ph':
+          currentMatch = row.ph >= search.value[0] && row.ph <= search.value[1];
+          break;
+        case 'temperature':
+          currentMatch = row.temperature >= search.value[0] && row.temperature <= search.value[1];
+          break;
+        case 'ec_number':
+          currentMatch = row.ec_number === search.value;
+          break;
+        default:
+          currentMatch = true;
+          break;
+      }
+      
+      // For the first criteria, initialize matches with the result
+      if (i === 0) {
+        matches = currentMatch;
+        prevMatch = currentMatch;
+      } else {
+        // For subsequent criteria, combine based on operator
+        const operator = criteria.operator;
+        
+        if (operator === 'AND') {
+          matches = matches && currentMatch;
+        } else if (operator === 'OR') {
+          matches = matches || currentMatch;
+        } else if (operator === 'NOT') {
+          // NOT means previous must match and current must not
+          matches = prevMatch && !currentMatch;
+        }
+        
+        prevMatch = currentMatch;
+      }
+    }
+    
+    return matches;
+  }
+  
+  // Update filter options based on response data
+  private updateFilterOptions(response: any[]) {
+    function getField(obj: any, dotPath: string) {
+      return dotPath.split('.').reduce((obj, key) => obj[key], obj);
+    }
+    
+    Object.entries(this.filters).forEach(([key, filter]) => {
+      const options = response.map((row: any) => getField(row, filter.field)).flat();
+      const optionsSet = new Set(options);
+      if (filter instanceof MultiselectFilterConfig) {
+        filter.options = Array.from(optionsSet).map((option: any) => ({
+          label: option,
+          value: option,
+        }));
+        filter.defaultValue = [];
+      } else if (filter instanceof RangeFilterConfig) {
+        filter.min = Math.min(...options);
+        filter.max = Math.max(...options);
+        filter.value = [filter.min, filter.max];
+        filter.defaultValue = [filter.min, filter.max];
+      }
+    });
+    
+    this.columns = Object.values(this.filters).map((filter) => ({
+      field: filter.field,
+      header: filter.label.rawValue,
+    }));
+  }
+
+  searchTable(event: any, filter: FilterConfig): void {
+    if (filter instanceof RangeFilterConfig) {
+      filter.value = event.target.value;
+    } else if (filter instanceof MultiselectFilterConfig) {
+      filter.value = event.value;
+    }
+    
+    this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
+    this.hasFilter = this.filterRecords.some(f => f.hasFilter());
+
+    console.log(this.resultsTable.filteredValue);
+  }
+}
