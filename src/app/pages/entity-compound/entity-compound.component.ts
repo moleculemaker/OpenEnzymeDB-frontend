@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
@@ -15,9 +14,6 @@ import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
-import { trigger } from "@angular/animations";
-import { animate } from "@angular/animations";
-import { style, transition } from "@angular/animations";
 import { DropdownModule } from "primeng/dropdown";
 import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
@@ -28,9 +24,7 @@ import { FilterConfig } from "~/app/models/filters";
 import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
 import { MoleculeImageComponent } from "~/app/components/molecule-image/molecule-image.component";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
-import { ExternalLinkComponent } from '~/app/components/external-link/external-link.component';
 import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
-import { SafePipe } from '~/app/pipes/safe.pipe';
 
 
 @Component({
@@ -60,7 +54,6 @@ import { SafePipe } from '~/app/pipes/safe.pipe';
     MoleculeImageComponent,
     KineticTableComponent,
     ChemicalPropertyPipe,
-    SafePipe,
 ],
   host: {
     class: "flex flex-col h-full"

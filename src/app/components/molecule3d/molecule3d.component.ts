@@ -16,13 +16,17 @@ export interface ThreeDMolInputOptions {
   data: string;
   dataType: 'uniprot' | 'smi';
   viewerOptions: {
-    mode: 'line' | 'stick';
+    mode: 'line' | 'stick' | 'cartoon';
+    modeConfig?: any,
   };
 }
 
 interface FetchMoleculeResult {
   model: string;
   dtype: 'sdf' | 'pdb';
+}
+
+interface FetchMoleculeResultWithViewerOptions extends FetchMoleculeResult {
   viewerOptions: ThreeDMolInputOptions['viewerOptions'];
 }
 
@@ -45,7 +49,7 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
   options$ = new BehaviorSubject<ThreeDMolInputOptions | null>(null);
   subscriptions: Subscription[] = [];
 
-  moleculeResult: FetchMoleculeResult | null = null;
+  moleculeToRender: FetchMoleculeResultWithViewerOptions | null = null;
 
   constructor(
     private $3dMolLoaderService: ThreedmolLoaderService
@@ -67,8 +71,11 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
       )
       .subscribe(([viewer, options]) => {
         this.fetchMolecule(viewer, options!).then(result => {
-          this.moleculeResult = result;
-          this.renderMolecule(viewer, result);
+          this.moleculeToRender = {
+            ...result,
+            viewerOptions: options!.viewerOptions
+          };
+          this.renderMolecule(viewer, this.moleculeToRender);
         });
       })
     );
@@ -98,11 +105,11 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
         break;
 
       case 'structure':
-        if (this.moleculeResult) {
-          const blob = new Blob([this.moleculeResult.model], { type: 'text/plain' });
+        if (this.moleculeToRender) {
+          const blob = new Blob([this.moleculeToRender.model], { type: 'text/plain' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          const fileType = this.moleculeResult.dtype;
+          const fileType = this.moleculeToRender.dtype;
           a.href = url;
           a.download = `${this.options.dataType}-${this.options.data}.${fileType}`;
           a.click();
@@ -125,7 +132,6 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
         .then(data => ({
           model: data,
           dtype: 'pdb',
-          viewerOptions: options.viewerOptions
         }));
 
     } else {
@@ -148,7 +154,6 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
             .then(data => ({
               model: data,
               dtype: 'sdf',
-              viewerOptions: options.viewerOptions
             })
           )
         );
@@ -157,12 +162,16 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   private renderMolecule(
     viewer: any, 
-    result: FetchMoleculeResult
+    result: FetchMoleculeResultWithViewerOptions
   ) {
     viewer.clear();
     viewer.addModel(result.model, result.dtype);
 
-    viewer.setStyle({}, { [result.viewerOptions.mode]: {} });
+    viewer.setStyle({}, { 
+      [result.viewerOptions.mode]: {
+        ...(result.viewerOptions.modeConfig ?? {})
+      }
+    });
 
     // Center and zoom the molecule
     viewer.zoomTo();

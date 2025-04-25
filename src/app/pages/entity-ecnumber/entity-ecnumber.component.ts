@@ -26,10 +26,8 @@ import { TieredMenuModule } from "primeng/tieredmenu";
 
 import { MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
 import { FilterConfig } from "~/app/models/filters";
-import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dialog.component";
 import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
 import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
-import { MoleculeImageComponent } from "~/app/components/molecule-image/molecule-image.component";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
 
 
@@ -82,6 +80,7 @@ import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-ta
 })
 export class EntityECNumberComponent {
   @ViewChild(KineticTableComponent) kineticTable!: KineticTableComponent;
+  @ViewChild(Molecule3dComponent) molecule3d!: Molecule3dComponent;
 
   logicalOperators = [
     { label: 'AND', value: 'AND' },
@@ -102,11 +101,40 @@ export class EntityECNumberComponent {
   ec: ECRecord | null = null;
 
   exportOptions = [
-    // {
-    //   label: 'Export as CSV',
-    //   icon: 'pi pi-file-csv',
-    //   command: () => this.exportAsCSV(),
-    // },
+    {
+      label: 'EC Number Information (JSON)',
+      command: () => {
+        // export compound information as json
+        const json = JSON.stringify(this.ec, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${this.ec?.entry.replace('.', '_')}.json`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+        a.remove();
+      },
+    },
+    {
+      label: 'Reaction Schema',
+      command: () => {
+        // this.molecule2d.exportImage('png');
+      },
+    },
+    {
+      label: 'Representative Structure',
+      command: () => {
+        this.molecule3d.export('structure');
+      },
+    },
+    {
+      label: 'Table Results',
+      command: () => {
+        this.kineticTable.export();
+      },
+    },
   ];
 
   showFilter = false;

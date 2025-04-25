@@ -45,3 +45,5 @@ chart/charts/
 .env
 chart/secret.yaml
 chart/sealed-secret.yaml
+
+src/assets/__services__/
