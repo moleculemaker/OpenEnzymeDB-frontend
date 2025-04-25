@@ -54,10 +54,112 @@ export type OEDRecord = {
   "Lineage": string[],
 };
 
+export type UniprotEvidence = {
+  evidenceCode: string,
+  source: string,
+  id: string
+}
+
+export type UniprotRecordDict = {
+  [key: string]: UniprotRecord
+}
+
+export type UniprotRecord = {
+  entryType: string,
+  primaryAccession: string,
+  organism: {
+    scientificName: string,
+    taxonId: number,
+    evidences: Array<UniprotEvidence>,
+    lineage: Array<string>,
+  },
+  proteinDescription: {
+    recommendedName: {
+      fullName: {
+        evidences: Array<UniprotEvidence>,
+        value: string
+      },
+      ecNumbers: Array<{
+        evidences: Array<UniprotEvidence>,
+        value: string
+      }>,
+    }
+  },
+  sequence: {
+    value: string,
+    length: number,
+    molWeight: number,
+    crc64: string,
+    md5: string,
+  }
+  lineages: Array<{
+    scientificName: string,
+    taxonId: number,
+    rank: string,
+    hidden: boolean,
+  }>,
+  extraAttributes: {
+    uniParcId: string,
+  },
+  structure_url: string,
+};
+
+export type ECRecordDict = {
+  [key: string]: ECRecord
+}
+
+export type ECRecord = {
+  entry: string,
+  name: Array<string>,
+  classname: Array<string>,
+  sysname: Array<string>,
+  reaction: Array<string>,
+  substrate: Array<string>,
+  product: Array<string>,
+  inhibitor: Array<string>,
+  cofactor: Array<string>,
+  effector: Array<string>,
+  comment: Array<string>,
+  pathway: Array<{
+    database: string,
+    id: string,
+    description: string,
+    url: string,
+  }>,
+  genes: Array<any>,
+  diseases: Array<any>,
+  structures: Array<any>,
+  dblink: Array<[string, Array<string>]>,
+  uniprots: Array<{
+    uniprot_id: string,
+    sequence: string,
+    structure_url: string,
+  }>,
+}
+
+export type SubstrateRecordDict = {
+  [key: string]: SubstrateRecord
+}
+
+export type SubstrateRecord = {
+  SUBSTRATE: string,
+  SMILES: string,
+  FORMULA: string,
+  MOLECULAR_WEIGHT: number,
+  LOG_P: number,
+  TPSA: number,
+  H_BOND_DONOR: number,
+  H_BOND_ACCEPTOR: number,
+  N_RINGS: number,
+}
+
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
 const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
 const km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KM.json.gz');
 const kcat_km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCATKM.json.gz');
+// const uniprot_data = loadGzippedJson<UniprotRecordDict>('/assets/uniprot.json.gz');
+const ec_data = loadGzippedJson<ECRecordDict>('/assets/kegg_ec.json.gz');
+const substrate_data = loadGzippedJson<SubstrateRecordDict>('/assets/substrate.json.gz');
 
 
 @Injectable({
@@ -70,6 +172,10 @@ export class OpenEnzymeDBService {
   readonly KM_DF$ = from(km);
   readonly KCAT_KM_DF$ = from(kcat_km);
   readonly LINEAGE_DF$ = from(example);
+
+  // readonly UNIPROT$ = from(uniprot_data);
+  readonly EC$ = from(ec_data);
+  readonly SUBSTRATE$ = from(substrate_data);
 
   private _WHITE_PAPER_URL = '';
   private _VISION_URL = '';
@@ -120,6 +226,18 @@ export class OpenEnzymeDBService {
     }
     return this.jobsService.listJobsByTypeAndJobIdJobTypeJobsJobIdGet(jobType, jobID)
       .pipe(map((jobs) => jobs[0]));
+  }
+
+  // getUniprotInfo(uniprot: string): Observable<UniprotRecord> {
+  //   return this.UNIPROT$.pipe(map((uniprotData) => uniprotData[uniprot]));
+  // }
+
+  getECInfo(ec: string): Observable<ECRecord> {
+    return this.EC$.pipe(map((ecData) => ecData[ec]));
+  }
+
+  getSubstrateInfo(substrate: string): Observable<SubstrateRecord> {
+    return this.SUBSTRATE$.pipe(map((substrateRecord) => substrateRecord[substrate.toLowerCase()]));
   }
 
   getResult(jobType: JobType, jobID: string): Observable<OEDRecord[]> {

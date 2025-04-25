@@ -15,3 +15,25 @@
 
 <br/>
 <br/>
+
+<app-molecule3d 
+    class="w-[400px] h-[400px] relative m-4"
+    [options]="{
+        data: 'P01567',
+        dataType: 'uniprot',
+        viewerOptions: {
+            mode: 'stick'
+        }
+    }"
+></app-molecule3d>
+
+<app-molecule3d 
+    class="w-[400px] h-[400px] relative m-4"
+    [options]="{
+        data: 'CCCC',
+        dataType: 'smi',
+        viewerOptions: {
+            mode: 'stick'
+        }
+    }"
+></app-molecule3d>

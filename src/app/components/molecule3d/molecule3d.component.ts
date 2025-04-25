@@ -45,6 +45,7 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
   options$ = new BehaviorSubject<ThreeDMolInputOptions | null>(null);
   subscriptions: Subscription[] = [];
 
+  moleculeResult: FetchMoleculeResult | null = null;
 
   constructor(
     private $3dMolLoaderService: ThreedmolLoaderService
@@ -56,18 +57,21 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
       map($3dmol => $3dmol.createViewer(this.container.nativeElement))
     );
 
-    combineLatest([
-      viewer$,
-      this.options$
-    ])
+    this.subscriptions.push(
+      combineLatest([
+        viewer$,
+        this.options$
+      ])
       .pipe(
         filter(([_, options]) => options !== null)
       )
       .subscribe(([viewer, options]) => {
         this.fetchMolecule(viewer, options!).then(result => {
+          this.moleculeResult = result;
           this.renderMolecule(viewer, result);
         });
-      });
+      })
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -76,6 +80,38 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  export(type: 'structure' | 'image') {
+    switch (type) {
+      case 'image':
+        const viewer = this.$3dMolLoaderService.get3DMol().pipe(
+            first(),
+            map($3dmol => $3dmol.createViewer(this.container.nativeElement))
+        );
+
+        this.subscriptions.push(
+          viewer.subscribe((viewer: any) => {
+            viewer.exportImage('png');
+          })
+        );
+        break;
+
+      case 'structure':
+        if (this.moleculeResult) {
+          const blob = new Blob([this.moleculeResult.model], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          const fileType = this.moleculeResult.dtype;
+          a.href = url;
+          a.download = `${this.options.dataType}-${this.options.data}.${fileType}`;
+          a.click();
+          
+          URL.revokeObjectURL(url);
+          a.remove();
+        }
+        break;
+    }
   }
 
   fetchMolecule(viewer: any, options: ThreeDMolInputOptions): Promise<FetchMoleculeResult> {

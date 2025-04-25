@@ -1,0 +1,340 @@
+import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { CheckboxModule } from "primeng/checkbox";
+import { ButtonModule } from "primeng/button";
+import { CommonModule } from "@angular/common";
+
+import { JobType } from "~/app/api/mmli-backend/v1";
+import { ECRecord, OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { PanelModule } from "primeng/panel";
+import { Table, TableModule } from "primeng/table";
+import { map } from "rxjs/operators";
+import { ChipModule } from "primeng/chip";
+import { DialogModule } from "primeng/dialog";
+import { MultiSelectModule } from "primeng/multiselect";
+import { FilterService } from "primeng/api";
+import { InputTextModule } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
+import { trigger } from "@angular/animations";
+import { animate } from "@angular/animations";
+import { style, transition } from "@angular/animations";
+import { DropdownModule } from "primeng/dropdown";
+import { TooltipModule } from "primeng/tooltip";
+import { DividerModule } from "primeng/divider";
+import { TieredMenuModule } from "primeng/tieredmenu";
+
+import { MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
+import { FilterConfig } from "~/app/models/filters";
+import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dialog.component";
+import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
+import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
+import { MoleculeImageComponent } from "~/app/components/molecule-image/molecule-image.component";
+import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
+
+
+@Component({
+  selector: 'app-entity-ecnumber',
+  templateUrl: './entity-ecnumber.component.html',
+  styleUrls: ['./entity-ecnumber.component.scss'],
+  animations: [
+    trigger(
+      'slideIn', 
+      [
+        transition(
+          ':enter', 
+          [
+            style({ maxHeight: 0 }),
+            animate('.5s ease-out', 
+                    style({ maxHeight: 800 }))
+          ]
+        )
+      ]
+    )
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    CheckboxModule,
+    ButtonModule,
+    PanelModule,
+    TableModule,
+    MultiSelectModule,
+    ChipModule,
+    DialogModule,
+    InputTextModule,
+    MenuModule,
+    DropdownModule,
+    TooltipModule,
+    DividerModule,
+    TieredMenuModule,
+    DividerModule,
+
+    Molecule3dComponent,
+    KineticTableComponent,
+    ExternalLinkComponent,
+],
+  host: {
+    class: "flex flex-col h-full"
+  }
+})
+export class EntityECNumberComponent {
+  @ViewChild(KineticTableComponent) kineticTable!: KineticTableComponent;
+
+  logicalOperators = [
+    { label: 'AND', value: 'AND' },
+    { label: 'OR', value: 'OR' },
+    { label: 'NOT', value: 'NOT' }
+  ];
+
+  result: {
+    status: 'loading' | 'loaded' | 'error' | 'na';
+    data: any[];
+    total: number;
+  } = {
+    status: 'na',
+    data: [],
+    total: 0,
+  };
+
+  ec: ECRecord | null = null;
+
+  exportOptions = [
+    // {
+    //   label: 'Export as CSV',
+    //   icon: 'pi pi-file-csv',
+    //   command: () => this.exportAsCSV(),
+    // },
+  ];
+
+  showFilter = false;
+  hasFilter = false;
+  filters: Record<string, FilterConfig> = {
+    compounds: new MultiselectFilterConfig({
+      category: 'parameter',
+      disabled: true,
+      label: {
+        value: 'Compounds',
+        rawValue: 'Compounds',
+      },
+      placeholder: 'Select compound',
+      field: 'compound.name',
+      options: [],
+      value: [],
+    }),
+    organism: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Organisms',
+        rawValue: 'Organisms',
+      },
+      placeholder: 'Select organism',
+      field: 'organism',
+      options: [],
+      value: [],
+    }),
+    uniprot_ids: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Uniprot IDs',
+        rawValue: 'Uniprot IDs',
+      },
+      placeholder: 'Select uniprot ID',
+      field: 'uniprot_id',
+      options: [],
+      value: [],
+      matchMode: 'subset',
+    }),
+    ec_numbers: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'EC Numbers',
+        rawValue: 'EC Numbers',
+      },
+      placeholder: 'Select EC number',
+      field: 'ec_number',
+      options: [],
+      value: [],
+    }),
+    enzyme_types: new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Enzyme Types',
+        rawValue: 'Enzyme Types',
+      },
+      placeholder: 'Select enzyme type',
+      field: 'enzyme_type',
+      options: [],
+      value: [],
+    }),
+    ph: new RangeFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'pH',
+        rawValue: 'pH',
+      },
+      placeholder: 'Enter pH range',
+      field: 'ph',
+      min: 0,
+      max: 14,
+    }),
+    temperature: new RangeFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Temperature (°C)',
+        rawValue: 'Temperature (°C)',
+      },
+      placeholder: 'Enter temperature range',
+      field: 'temperature',
+      min: 0,
+      max: 100,
+    }),
+    kcat: new RangeFilterConfig({
+      category: 'enzyme',
+      label: {
+        value: '<span class="italic">k</span><sub>cat</sub> (s<sup class="text-xs"> -1</sup>)',
+        rawValue: 'kcat',
+      },
+      placeholder: 'Enter kcat range',
+      field: 'kcat',
+      min: 0,
+      max: 100
+    }),
+    km: new RangeFilterConfig({
+      category: 'enzyme',
+      label: {
+        value: '<span class="italic">K</span><sub>m</sub> (mM)',
+        rawValue: 'km',
+      },
+      placeholder: 'Enter KM range',
+      field: 'km',
+      min: 0,
+      max: 100
+    }),
+    kcat_km: new RangeFilterConfig({
+      category: 'enzyme',
+      label: {
+        value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (mM<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
+        rawValue: 'kcat_km',
+      },
+      placeholder: 'Enter kcat/KM range',
+      field: 'kcat_km',
+      min: 0,
+      max: 100
+    }),
+    pubmed_id: new MultiselectFilterConfig({
+      category: 'literature',
+      label: {
+        value: 'PubMed',
+        rawValue: 'PubMed',
+      },
+      placeholder: 'Select PubMed ID',
+      field: 'pubmed_id',
+      options: [],
+      value: [],
+      matchMode: 'subset',
+    }),
+  }
+
+  columns: any[] = [];
+
+  readonly filterRecordsByCategory = Object.entries(this.filters)
+    .reduce((acc, [key, filter]) => {
+      if (!acc[filter.category]) {
+        acc[filter.category] = [filter];
+      } else {
+        acc[filter.category].push(filter);
+      }
+      return acc;
+    }, {} as Record<string, FilterConfig[]>);
+
+  readonly filterRecords = Object.values(this.filters);
+ 
+  constructor(
+    public service: OpenEnzymeDBService,
+    private filterService: FilterService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+  ) {
+    const ecNumber = this.route.snapshot.params['name'];
+    this.service.getECInfo(ecNumber).subscribe((ec) => {
+      this.ec = ec;
+    })
+
+    this.filterService.register(
+      "range",
+      (value: number, filter: [number, number]) => {
+        if (!filter) {
+          return true;
+        }
+        return value >= filter[0] && value <= filter[1];
+      },
+    );
+
+    this.filterService.register(
+      "subset",
+      (value: any[], filter: any[]) => {
+        if (!filter) {
+          return true;
+        }
+        return filter.every((f) => value.includes(f));
+      },
+    );
+
+    this.service.getResult(JobType.Defaults, '123')
+      .pipe(
+        map((response: any) => 
+          response
+            .map((row: any, index: number) => ({
+              iid: index,
+              ec_number: row.EC,
+              compound: {
+                name: row.SUBSTRATE,
+                smiles: row.SMILES,
+              },
+              enzyme_type: row.EnzymeType,
+              organism: row.ORGANISM,
+              uniprot_id: row.UNIPROT.split(','),
+              ph: row.PH,
+              temperature: row.Temperature,
+              kcat: row['KCAT VALUE'],
+              km: row['KM VALUE'],
+              kcat_km: row['KCAT/KM VALUE'],
+              pubmed_id: `${row.PubMedID}`,
+            }))
+        )
+      )
+      .subscribe({
+        next: (response: any) => {
+
+          // Update compound filter value and options
+          const ecNumberFilter = this.filters['ec_numbers'] as MultiselectFilterConfig;
+          const value = this.route.snapshot.params['name'];
+          ecNumberFilter.value = [value];
+          ecNumberFilter.defaultValue = [value];
+          this.kineticTable.applyFilters();
+          
+          this.result = {
+            status: 'loaded',
+            data: response,
+            total: response.length,
+          };
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.result = {
+            status: 'error',
+            data: [],
+            total: 0,
+          };
+        }
+      });
+  }
+
+  backToSearch() {
+    history.back();
+  }
+}
