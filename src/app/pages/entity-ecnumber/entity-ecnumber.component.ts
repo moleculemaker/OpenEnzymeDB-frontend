@@ -120,6 +120,7 @@ export class EntityECNumberComponent {
     {
       label: 'Reaction Schema',
       command: () => {
+        // TODO: export reaction schema
         // this.molecule2d.exportImage('png');
       },
     },
