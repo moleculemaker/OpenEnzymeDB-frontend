@@ -42,15 +42,76 @@
         <hr>
         <div class="grid grid-cols-2 gap-4">
           <p class="font-bold col-span-2">References</p>
-          @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8]; track i) {
-            <app-external-link 
-              class="col-span-1"
-              [linkItem]="{ 
-                url: ec['uniprots'][0]['structure_url'], 
-                label: 'Structure'
-              }"
-            ></app-external-link>
-          }
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://enzyme.expasy.org/EC/' + ec['entry'], 
+              label: 'Expasy'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.kegg.jp/dbget-bin/www_bget?ec:' + ec['entry'], 
+              label: 'KEGG'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://sabiork.h-its.org/newSearch?q=ecnumber:' + ec['entry'], 
+              label: 'SABIO-RK'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.uniprot.org/uniprotkb/?query=ec:' + ec['entry'] + '&sort=score', 
+              label: 'Uniprot'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.rcsb.org/search?request=' + '%7B%22query%22%3A%7B%22type%22%3A%22group%22%2C%22nodes%22%3A%5B%7B%22type%22%3A%22group%22%2C%22nodes%22%3A%5B%7B%22type%22%3A%22terminal%22%2C%22service%22%3A%22text%22%2C%22parameters%22%3A%7B%22attribute%22%3A%22rcsb_polymer_entity.rcsb_ec_lineage.id%22%2C%22negation%22%3Afalse%2C%22operator%22%3A%22in%22%2C%22value%22%3A%5B%22' + ec['entry'] + '%22%5D%7D%7D%5D%2C%22logical_operator%22%3A%22and%22%2C%22label%22%3A%22text%22%7D%5D%2C%22logical_operator%22%3A%22and%22%7D%2C%22return_type%22%3A%22entry%22%2C%22request_options%22%3A%7B%22paginate%22%3A%7B%22start%22%3A0%2C%22rows%22%3A25%7D%2C%22results_content_type%22%3A%5B%22experimental%22%5D%2C%22sort%22%3A%5B%7B%22sort_by%22%3A%22score%22%2C%22direction%22%3A%22desc%22%7D%5D%2C%22scoring_strategy%22%3A%22combined%22%7D%7D',
+              label: 'RCSB'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.rhea-db.org/rhea?query=ec:' + ec['entry'], 
+              label: 'RHEA'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.enzyme-database.org/query.php?ec=' + ec['entry'], 
+              label: 'Enzyme Database'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://prosite.expasy.org/cgi-bin/prosite/prosite_search_full.pl?SEARCH=' + ec['entry'], 
+              label: 'Prosite'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.ebi.ac.uk/interpro/search/text/' + ec['entry'] + '/?page=1#table', 
+              label: 'InterPro'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.ncbi.nlm.nih.gov/protein?SUBMIT=y&term=' + ec['entry'] + '%5BEC%2FRN%20Number%5D', 
+              label: 'NCBI'
+            }"
+          ></app-external-link>
         </div>
 
       </div>
