@@ -287,7 +287,7 @@ export class EntityECNumberComponent {
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
   ) {
-    const ecNumber = this.route.snapshot.params['name'];
+    const ecNumber = this.route.snapshot.params['number'];
     this.service.getECInfo(ecNumber).subscribe((ec) => {
       this.ec = ec;
     })
@@ -340,7 +340,7 @@ export class EntityECNumberComponent {
 
           // Update compound filter value and options
           const ecNumberFilter = this.filters['ec_numbers'] as MultiselectFilterConfig;
-          const value = this.route.snapshot.params['name'];
+          const value = this.route.snapshot.params['number'];
           ecNumberFilter.value = [value];
           ecNumberFilter.defaultValue = [value];
           this.kineticTable.applyFilters();

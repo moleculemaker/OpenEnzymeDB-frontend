@@ -130,12 +130,16 @@
                       <button title="Expand" type="button" [pRowToggler]="row">
                         <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                       </button>
-                      <a href="/compound/{{ row.compound.name }}">{{ row.compound.name }}</a>
+                      <a href="/compound/{{ row.compound.name }}" class="text-blue-500 cursor-pointer">{{ row.compound.name }}</a>
                     </div>
                   </td>
                   <td class="align-middle italic">{{ row.organism }}</td>
-                  <td class="align-middle">{{ row.uniprot_id }}</td>
-                  <td class="align-middle">{{ row.ec_number }}</td>
+                  <td class="align-middle">
+                    <a href="/uniprot/{{ row.uniprot_id }}" class="text-blue-500 cursor-pointer">{{ row.uniprot_id }}</a>
+                  </td>
+                  <td class="align-middle">
+                    <a href="/ec/{{ row.ec_number }}" class="text-blue-500 cursor-pointer">{{ row.ec_number }}</a>
+                  </td>
                   <td class="align-middle">{{ row.enzyme_type }}</td>
                   <td class="align-middle">{{ row.ph }}</td>
                   <td class="align-middle">{{ row.temperature }}</td>

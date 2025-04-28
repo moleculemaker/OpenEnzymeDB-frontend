@@ -28,6 +28,7 @@ import { FilterComponent } from "~/app/components/filter/filter.component";
 import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
 import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dialog.component";
 import { Subscription } from "rxjs";
+import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
 
 @Component({
   selector: 'app-query',
@@ -66,8 +67,7 @@ import { Subscription } from "rxjs";
     TooltipModule,
     DividerModule,
 
-    ExternalLinkComponent,
-    FilterDialogComponent,
+    KineticTableComponent,
     QueryInputComponent,
 ],
   host: {
@@ -76,7 +76,7 @@ import { Subscription } from "rxjs";
 })
 export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild(QueryInputComponent) queryInputComponent!: QueryInputComponent;
-  @ViewChild(Table) resultsTable!: Table;
+  @ViewChild(KineticTableComponent) kineticTable!: KineticTableComponent;
 
   logicalOperators = [
     { label: 'AND', value: 'AND' },
@@ -264,28 +264,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     public service: OpenEnzymeDBService,
     private router: Router,
     private route: ActivatedRoute,
-    private filterService: FilterService,
     private cdr: ChangeDetectorRef,
-  ) {
-    this.filterService.register(
-      "range",
-      (value: number, filter: [number, number]) => {
-        if (!filter) {
-          return true;
-        }
-        return value >= filter[0] && value <= filter[1];
-      },
-    );
-    this.filterService.register(
-      "subset",
-      (value: any[], filter: any[]) => {
-        if (!filter) {
-          return true;
-        }
-        return filter.every((f) => value.includes(f));
-      },
-    );
-  }
+  ) {}
 
   ngOnInit(): void {
     const search = this.route.snapshot.queryParams['search'];
@@ -353,25 +333,6 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       queryParams: {},
       queryParamsHandling: 'merge'
     });
-  }
-
-  clearAllFilters() {
-    this.showFilter = false;
-    this.filterRecords.forEach((filter) => {
-      filter.value = filter.defaultValue;
-    });
-    if (this.resultsTable) {
-      this.resultsTable.reset();
-    }
-    this.hasFilter = false;
-  }
-
-  applyFilters() {
-    this.showFilter = false;
-    this.filterRecords.forEach((filter) => {
-      this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
-    });
-    this.hasFilter = this.filterRecords.some((filter) => filter.hasFilter());
   }
 
   viewAllData() {
@@ -615,11 +576,6 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       field: filter.field,
       header: filter.label.rawValue,
     }));
-  }
-
-  searchTable(filter: FilterConfig): void {
-    this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
-    this.hasFilter = this.filterRecords.some(f => f.hasFilter());
   }
 
   // Update URL with search criteria

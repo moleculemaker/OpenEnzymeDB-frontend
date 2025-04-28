@@ -85,6 +85,10 @@ export type UniprotRecord = {
       }>,
     }
   },
+  genes: Array<{
+    geneName: { value: string },
+    orderedLocusNames: Array<{ value: string }>,
+  }>,
   sequence: {
     value: string,
     length: number,
@@ -157,7 +161,7 @@ const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
 const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
 const km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KM.json.gz');
 const kcat_km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCATKM.json.gz');
-// const uniprot_data = loadGzippedJson<UniprotRecordDict>('/assets/uniprot.json.gz');
+const uniprot_data = loadGzippedJson<UniprotRecordDict>('/assets/uniprot.json.gz');
 const ec_data = loadGzippedJson<ECRecordDict>('/assets/kegg_ec.json.gz');
 const substrate_data = loadGzippedJson<SubstrateRecordDict>('/assets/substrate.json.gz');
 
@@ -173,7 +177,7 @@ export class OpenEnzymeDBService {
   readonly KCAT_KM_DF$ = from(kcat_km);
   readonly LINEAGE_DF$ = from(example);
 
-  // readonly UNIPROT$ = from(uniprot_data);
+  readonly UNIPROT$ = from(uniprot_data);
   readonly EC$ = from(ec_data);
   readonly SUBSTRATE$ = from(substrate_data);
 
@@ -228,9 +232,9 @@ export class OpenEnzymeDBService {
       .pipe(map((jobs) => jobs[0]));
   }
 
-  // getUniprotInfo(uniprot: string): Observable<UniprotRecord> {
-  //   return this.UNIPROT$.pipe(map((uniprotData) => uniprotData[uniprot]));
-  // }
+  getUniprotInfo(uniprot: string): Observable<UniprotRecord> {
+    return this.UNIPROT$.pipe(map((uniprotData) => uniprotData[uniprot]));
+  }
 
   getECInfo(ec: string): Observable<ECRecord> {
     return this.EC$.pipe(map((ecData) => ecData[ec]));

@@ -7,7 +7,7 @@ import { CenterLayoutComponent } from "./components/center-layout/center-layout.
 import { QueryComponent } from "~/app/pages/query/query.component";
 import { EntityCompoundComponent } from "./pages/entity-compound/entity-compound.component";
 import { EntityECNumberComponent } from "./pages/entity-ecnumber/entity-ecnumber.component";
-
+import { EntityUniprotComponent } from "./pages/entity-uniprot/entity-uniprot.component";
 const routes: Routes = [
   { path: "", pathMatch: "full", redirectTo: "home" },
   { path: "home", component: LandingPageComponent },
@@ -17,7 +17,8 @@ const routes: Routes = [
     children: [
       { path: 'query', component: QueryComponent },
       { path: 'compound/:name', component: EntityCompoundComponent },
-      { path: 'ec/:name', component: EntityECNumberComponent },
+      { path: 'ec/:number', component: EntityECNumberComponent },
+      { path: 'uniprot/:id', component: EntityUniprotComponent },
     ]
   },
   { path: "font-match", component: FontMatchComponent },
