@@ -1,6 +1,6 @@
 import { timer, switchMap, tap, takeWhile, BehaviorSubject, skipUntil, filter, map, delay, shareReplay } from "rxjs";
 import { JobStatus, JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 
 export class JobResult {
     jobId: string;

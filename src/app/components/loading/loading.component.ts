@@ -7,7 +7,7 @@ import { ProgressBarModule } from "primeng/progressbar";
 
 import { JobStatus, JobType } from "~/app/api/mmli-backend/v1";
 import { JobResult } from "~/app/models/job-result";
-import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 
 @Component({
     selector: "app-loading",

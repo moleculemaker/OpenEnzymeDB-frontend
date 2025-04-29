@@ -1,0 +1,88 @@
+<!-- Model Results -->
+<div class="flex flex-col h-full gap-8">
+  <div class="flex items-center justify-between">
+    <div *ngIf="statusResponse$ | async as status">
+      <h5 class="flex items-center gap-2 mb-2 font-bold opacity-100 leading-xl">
+        Job ID: {{ status.job_id || "loading" }}
+        <button
+          type="button"
+          title="copy job id"
+          class="border-none cursor-pointer"
+        >
+          <i class="pi pi-copy" (click)="copyAndPasteURL()"></i>
+        </button>
+      </h5>
+      <h6 class="text-text-secondary leading-lg">
+        Submission Time:
+        {{ (status.time_created || 0) * 1000 | date : "short" }}
+      </h6>
+    </div>
+    <div class="flex items-center gap-2">
+
+      <!-- TODO: add button here -->
+      
+    </div>
+  </div>
+
+  <app-loading *ngIf="isLoading$ | async" [jobType]="jobType"></app-loading>
+
+  <div class="flex flex-col gap-8" [class.hidden]="isLoading$ | async">
+    <ng-container *ngIf="response$ | async as response">
+
+      <p-panel>
+        <ng-template pTemplate="header">
+          <h6 class="grow">Results Summary</h6>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="flex w-full grow">
+            <p-table #resultsTable [value]="results" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]"
+              [paginator]="true" dataKey="iid" class="w-full h-full" tableStyleClass="w-full" styleClass="w-full"
+              [columns]="columns">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="align-middle relative group" pSortableColumn="compound.name">
+                    <span>Model</span>
+                    <p-sortIcon
+                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
+                      field="compound.name" />
+                  </th>
+                  <th class="align-middle relative group" pSortableColumn="organism">
+                    <span>Description</span>
+                    <p-sortIcon
+                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
+                      field="organism" />
+                  </th>
+                  <th class="align-middle relative group" pSortableColumn="uniprot_id">
+                    <span>Top Substrates Matches</span>
+                    <p-sortIcon
+                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
+                      field="uniprot_id" />
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row let-expanded="expanded">
+                <tr class="table-row">
+                  <td class="align-middle">
+                    {{ row.model }}
+                  </td>
+                  <td class="align-middle">
+                    <div [innerHTML]="row.description.html | safe: 'html'"></div>
+                  </td>
+                  <td class="align-middle">
+                    <!-- TODO: Add Matches -->
+                    <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center">
+                      <span>View full results</span>
+                      <i class="pi pi-arrow-right"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </ng-template>
+    </p-panel>
+
+
+    </ng-container>
+  </div>
+</div>

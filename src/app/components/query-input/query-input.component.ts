@@ -48,7 +48,7 @@ export class QueryInputComponent implements ControlValueAccessor {
 
   searchOptions = this.searchConfigs.map((config) => ({
     ...config,
-    command: () => { 
+    command: () => {
       this.selectedSearchOption?.reset();
       this.selectedSearchOption = config;
       this.emitValue();
@@ -62,7 +62,7 @@ export class QueryInputComponent implements ControlValueAccessor {
 
   constructor(
     private service: OpenEnzymeDBService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Subscribe to value changes for all search configs
@@ -76,23 +76,19 @@ export class QueryInputComponent implements ControlValueAccessor {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['searchConfigs']) {
-      this.searchOptions = this.searchConfigs.map((config) => ({
-        ...config,
-        command: () => { 
-          this.selectedSearchOption?.reset();
-          this.selectedSearchOption = config;
-        }
-      }));
+      this.updateSearchOptions();
+    }
 
-      this.searchOptionRecords = this.searchConfigs.reduce((acc, config) => {
-        acc[config.key] = config;
-        return acc;
-      }, {} as Record<string, typeof this.searchConfigs[0]>);
+    if (changes['multiple']) {
+      this.updateSearchOptions();
+      this.selectedSearchOption = changes['multiple'].currentValue 
+        ? null 
+        : this.searchConfigs[0];
     }
   }
 
-  private onChange: (value: QueryValue) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: QueryValue) => void = () => { };
+  private onTouched: () => void = () => { };
   disabled = false;
 
   writeValue(value: QueryValue | null): void {
@@ -130,7 +126,7 @@ export class QueryInputComponent implements ControlValueAccessor {
     Object.values(this.searchConfigs).forEach((config) => {
       config.reset();
     });
-    this.selectedSearchOption = null;
+    this.selectedSearchOption = this.multiple ? null : this.searchConfigs[0];
   }
 
   private emitValue(): void {
@@ -154,5 +150,20 @@ export class QueryInputComponent implements ControlValueAccessor {
     console.log('[query-input] emitting value', value);
     this.onChange(value);
     this.onTouched();
+  }
+
+  private updateSearchOptions() {
+    this.searchOptions = this.searchConfigs.map((config) => ({
+      ...config,
+      command: () => {
+        this.selectedSearchOption?.reset();
+        this.selectedSearchOption = config;
+      }
+    }));
+
+    this.searchOptionRecords = this.searchConfigs.reduce((acc, config) => {
+      acc[config.key] = config;
+      return acc;
+    }, {} as Record<string, typeof this.searchConfigs[0]>);
   }
 }

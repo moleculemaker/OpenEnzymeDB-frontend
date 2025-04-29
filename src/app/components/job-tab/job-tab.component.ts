@@ -20,7 +20,7 @@ export class JobTabComponent implements OnChanges {
     : null;
   tabs: MenuItem[] = [
     { label: "Request Configuration" },
-    { label: "Model Results" },
+    { label: "Recommendation Results" },
   ];
   activeTab: MenuItem = this.tabs[0];
 
@@ -35,7 +35,6 @@ export class JobTabComponent implements OnChanges {
       this.activeTab = this.tabs[1];
     } else {
       this.tabs[1].disabled = true;
-      this.activeTab = this.tabs[0];
     }
     this.router.events.subscribe((e) => {
       if (e instanceof NavigationEnd) {
@@ -47,7 +46,6 @@ export class JobTabComponent implements OnChanges {
           this.activeTab = this.tabs[1];
         } else {
           this.tabs[1].disabled = true;
-          this.activeTab = this.tabs[0];
         }
       }
     });

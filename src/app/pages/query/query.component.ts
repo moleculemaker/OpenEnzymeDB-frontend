@@ -1,5 +1,5 @@
-import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray, FormBuilder, AbstractControl } from "@angular/forms";
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray, AbstractControl, ValidationErrors } from "@angular/forms";
 import { Router, ActivatedRoute } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
@@ -10,12 +10,10 @@ import { OEDRecord, OpenEnzymeDBService } from '~/app/services/open-enzyme-db.se
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent } from "../../components/query-input/query-input.component";
 import { MoleculeSearchOption, QueryValue, RangeSearchOption, SearchOption, StringSearchOption } from '~/app/models/SearchOption';
-import { Table, TableModule } from "primeng/table";
-import { catchError, filter, first, map, switchMap } from "rxjs/operators";
+import { TableModule } from "primeng/table";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
-import { FilterService } from "primeng/api";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { trigger } from "@angular/animations";
@@ -25,7 +23,7 @@ import { DropdownModule } from "primeng/dropdown";
 import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
-import { of, Subscription } from "rxjs";
+import { Subscription, map } from "rxjs";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
 
 @Component({
@@ -85,7 +83,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
   form = new FormGroup({
     searchCriteria: new FormArray([
       new FormGroup({
-        search: new FormControl<QueryValue | null>(null, [Validators.required]),
+        search: new FormControl<QueryValue | null>(null, [Validators.required, this.validateValue.bind(this)]),
         operator: new FormControl<string>('AND')
       })
     ])
@@ -364,7 +362,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
   addCriteria() {
     const criteriaArray = this.form.get('searchCriteria') as FormArray;
     const newCriteria = new FormGroup({
-      search: new FormControl<QueryValue | null>(null, [Validators.required]),
+      search: new FormControl<QueryValue | null>(null, [Validators.required, this.validateValue.bind(this)]),
       operator: new FormControl<string>('AND')
     });
     criteriaArray.push(newCriteria);
@@ -708,5 +706,12 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     
     // Submit the search
     this.submit(true);
+  }
+
+  private validateValue(control: AbstractControl): ValidationErrors | null {
+    if (!control.value?.value) {
+      return { required: true };
+    }
+    return null;
   }
 }
