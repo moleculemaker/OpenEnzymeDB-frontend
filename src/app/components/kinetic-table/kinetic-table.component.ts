@@ -10,6 +10,7 @@ import { FilterService } from 'primeng/api';
 import { animate } from '@angular/animations';
 import { style, transition } from '@angular/animations';
 import { trigger } from '@angular/animations';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-kinetic-table',
@@ -33,6 +34,7 @@ import { trigger } from '@angular/animations';
     PanelModule,
     TableModule,
     CommonModule,
+    RouterLink,
 
     ExternalLinkComponent,
     FilterDialogComponent,

@@ -1,19 +1,17 @@
-import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild } from "@angular/core";
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Component, ViewChild } from "@angular/core";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { JobType } from "~/app/api/mmli-backend/v1";
 import { ECRecord, OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { Table, TableModule } from "primeng/table";
-import { map } from "rxjs/operators";
+import { TableModule } from "primeng/table";
+import { combineLatestWith, map, switchMap } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
-import { FilterService } from "primeng/api";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { trigger } from "@angular/animations";
@@ -283,84 +281,55 @@ export class EntityECNumberComponent {
  
   constructor(
     public service: OpenEnzymeDBService,
-    private filterService: FilterService,
-    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
   ) {
-    const ecNumber = this.route.snapshot.params['number'];
-    this.service.getECInfo(ecNumber).subscribe((ec) => {
+    const ecNumber$ = this.route.params.pipe(map((params) => params['number']));
+
+    ecNumber$.pipe(
+      switchMap((ecNumber) => this.service.getECInfo(ecNumber))
+    ).subscribe((ec) => {
       this.ec = ec;
-    })
+    });
 
-    this.filterService.register(
-      "range",
-      (value: number, filter: [number, number]) => {
-        if (!filter) {
-          return true;
-        }
-        return value >= filter[0] && value <= filter[1];
+    ecNumber$.pipe(
+      combineLatestWith(this.service.getData()),
+    ).subscribe({
+      next: ([ecNumber, response]) => {
+        const results = response
+          .map((row: any, index: number) => ({
+            iid: index,
+            ec_number: row.EC,
+            compound: {
+              name: row.SUBSTRATE,
+              smiles: row.SMILES,
+            },
+            enzyme_type: row.EnzymeType,
+            organism: row.ORGANISM,
+            uniprot_id: row.UNIPROT.split(','),
+            ph: row.PH,
+            temperature: row.Temperature,
+            kcat: row['KCAT VALUE'],
+            km: row['KM VALUE'],
+            kcat_km: row['KCAT/KM VALUE'],
+            pubmed_id: `${row.PubMedID}`,
+          }))
+          .filter((row: any) => row.ec_number === ecNumber);  
+
+        this.result = {
+          status: 'loaded',
+          data: results,
+          total: results.length,
+        };
       },
-    );
-
-    this.filterService.register(
-      "subset",
-      (value: any[], filter: any[]) => {
-        if (!filter) {
-          return true;
-        }
-        return filter.every((f) => value.includes(f));
+      error: (err: any) => {
+        console.error(err);
+        this.result = {
+          status: 'error',
+          data: [],
+          total: 0,
+        };
       },
-    );
-
-    this.service.getData()
-      .pipe(
-        map((response: any) => 
-          response
-            .map((row: any, index: number) => ({
-              iid: index,
-              ec_number: row.EC,
-              compound: {
-                name: row.SUBSTRATE,
-                smiles: row.SMILES,
-              },
-              enzyme_type: row.EnzymeType,
-              organism: row.ORGANISM,
-              uniprot_id: row.UNIPROT.split(','),
-              ph: row.PH,
-              temperature: row.Temperature,
-              kcat: row['KCAT VALUE'],
-              km: row['KM VALUE'],
-              kcat_km: row['KCAT/KM VALUE'],
-              pubmed_id: `${row.PubMedID}`,
-            }))
-        )
-      )
-      .subscribe({
-        next: (response: any) => {
-
-          // Update compound filter value and options
-          const ecNumberFilter = this.filters['ec_numbers'] as MultiselectFilterConfig;
-          const value = this.route.snapshot.params['number'];
-          ecNumberFilter.value = [value];
-          ecNumberFilter.defaultValue = [value];
-          this.kineticTable.applyFilters();
-          
-          this.result = {
-            status: 'loaded',
-            data: response,
-            total: response.length,
-          };
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.result = {
-            status: 'error',
-            data: [],
-            total: 0,
-          };
-        }
-      });
+    });
   }
 
   backToSearch() {

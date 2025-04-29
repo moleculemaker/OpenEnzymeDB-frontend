@@ -33,6 +33,6 @@ export class JobResult {
     );
 
     constructor(
-        private service: OpenEnzymeDBService,
+        public service: OpenEnzymeDBService,
     ) { }
 }

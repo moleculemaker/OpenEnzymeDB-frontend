@@ -5,10 +5,9 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { JobType } from "~/app/api/mmli-backend/v1";
 import { OpenEnzymeDBService, type SubstrateRecord } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { map } from "rxjs/operators";
+import { combineLatest, combineLatestWith, map, switchMap } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -249,65 +248,55 @@ export class EntityCompoundComponent {
  
   constructor(
     public service: OpenEnzymeDBService,
-    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
   ) {
-    const compoundName = this.route.snapshot.params['name'];
-    this.service.getSubstrateInfo(compoundName).subscribe((compound) => {
+    const compoundName$ = this.route.params.pipe(map((params) => params['name']));
+
+    compoundName$.pipe(
+      switchMap((compoundName) => this.service.getSubstrateInfo(compoundName))
+    ).subscribe((compound) => {
       this.compound = compound;
-    })
-    
+    });
 
-    this.service.getData()
-      .pipe(
-        map((response: any) => 
-          response
-            .map((row: any, index: number) => ({
-              iid: index,
-              ec_number: row.EC,
-              compound: {
-                name: row.SUBSTRATE,
-                smiles: row.SMILES,
-              },
-              enzyme_type: row.EnzymeType,
-              organism: row.ORGANISM,
-              uniprot_id: row.UNIPROT.split(','),
-              ph: row.PH,
-              temperature: row.Temperature,
-              kcat: row['KCAT VALUE'],
-              km: row['KM VALUE'],
-              kcat_km: row['KCAT/KM VALUE'],
-              pubmed_id: `${row.PubMedID}`,
-            }))
-        )
-      )
-      .subscribe({
-        next: (response: any) => {
+    compoundName$.pipe(
+      combineLatestWith(this.service.getData()),
+    ).subscribe({
+      next: ([compoundName, response]) => {
+        const results = response
+          .map((row: any, index: number) => ({
+            iid: index,
+            ec_number: row.EC,
+            compound: {
+              name: row.SUBSTRATE,
+              smiles: row.SMILES,
+            },
+            enzyme_type: row.EnzymeType,
+            organism: row.ORGANISM,
+            uniprot_id: row.UNIPROT.split(','),
+            ph: row.PH,
+            temperature: row.Temperature,
+            kcat: row['KCAT VALUE'],
+            km: row['KM VALUE'],
+            kcat_km: row['KCAT/KM VALUE'],
+            pubmed_id: `${row.PubMedID}`,
+          }))
+          .filter((row: any) => row.compound.name === compoundName);  
 
-          // Update compound filter value and options
-          const compoundFilter = this.filters['compounds'] as MultiselectFilterConfig;
-          compoundFilter.value = [compoundName];
-          compoundFilter.defaultValue = [compoundName];
-          if (this.kineticTable) {
-            this.kineticTable.applyFilters();
-          }
-          
-          this.result = {
-            status: 'loaded',
-            data: response,
-            total: response.length,
-          };
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.result = {
-            status: 'error',
-            data: [],
-            total: 0,
-          };
-        }
-      });
+        this.result = {
+          status: 'loaded',
+          data: results,
+          total: results.length,
+        };
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.result = {
+          status: 'error',
+          data: [],
+          total: 0,
+        };
+      },
+    });
   }
 
   backToSearch() {

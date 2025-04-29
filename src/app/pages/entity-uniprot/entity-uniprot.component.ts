@@ -8,7 +8,7 @@ import { CommonModule } from "@angular/common";
 import { JobType } from "~/app/api/mmli-backend/v1";
 import { OpenEnzymeDBService, UniprotRecord } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { map } from "rxjs/operators";
+import { combineLatestWith, map, switchMap } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -245,63 +245,53 @@ export class EntityUniprotComponent {
     private route: ActivatedRoute,
     private messageService: MessageService,
   ) {
-    const uniprotId = this.route.snapshot.params['id'];
-    this.service.getUniprotInfo(uniprotId).subscribe((uniprot) => {
+    const uniprotId$ = this.route.params.pipe(map((params) => params['id']));
+
+    uniprotId$.pipe(
+      switchMap((uniprotId) => this.service.getUniprotInfo(uniprotId))
+    ).subscribe((uniprot) => {
       this.uniprot = uniprot;
-    })
-    
+    });
 
-    this.service.getData()
-      .pipe(
-        map((response: any) => 
-          response
-            .map((row: any, index: number) => ({
-              iid: index,
-              ec_number: row.EC,
-              compound: {
-                name: row.SUBSTRATE,
-                smiles: row.SMILES,
-              },
-              enzyme_type: row.EnzymeType,
-              organism: row.ORGANISM,
-              uniprot_id: row.UNIPROT.split(','),
-              ph: row.PH,
-              temperature: row.Temperature,
-              kcat: row['KCAT VALUE'],
-              km: row['KM VALUE'],
-              kcat_km: row['KCAT/KM VALUE'],
-              pubmed_id: `${row.PubMedID}`,
-            }))
-        )
-      )
-      .subscribe({
-        next: (response: any) => {
+    uniprotId$.pipe(
+      combineLatestWith(this.service.getData()),
+    ).subscribe({
+      next: ([uniprotId, response]) => {
+        const results = response
+          .map((row: any, index: number) => ({
+            iid: index,
+            ec_number: row.EC,
+            compound: {
+              name: row.SUBSTRATE,
+              smiles: row.SMILES,
+            },
+            enzyme_type: row.EnzymeType,
+            organism: row.ORGANISM,
+            uniprot_id: row.UNIPROT.split(','),
+            ph: row.PH,
+            temperature: row.Temperature,
+            kcat: row['KCAT VALUE'],
+            km: row['KM VALUE'],
+            kcat_km: row['KCAT/KM VALUE'],
+            pubmed_id: `${row.PubMedID}`,
+          }))
+          .filter((row: any) => row.uniprot_id.includes(uniprotId));  
 
-          // Update compound filter value and options
-          const uniprotFilter = this.filters['uniprot_ids'] as MultiselectFilterConfig;
-          const value = this.route.snapshot.params['id'];
-          uniprotFilter.value = [value];
-          uniprotFilter.defaultValue = [value];
-          if (this.kineticTable) {
-            this.kineticTable.applyFilters();
-          }
-          
-          this.result = {
-            status: 'loaded',
-            data: response,
-            total: response.length,
-          };
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.result = {
-            status: 'error',
-            data: [],
-            total: 0,
-          };
-        }
-      });
+        this.result = {
+          status: 'loaded',
+          data: results,
+          total: results.length,
+        };
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.result = {
+          status: 'error',
+          data: [],
+          total: 0,
+        };
+      },
+    });
   }
 
   backToSearch() {
