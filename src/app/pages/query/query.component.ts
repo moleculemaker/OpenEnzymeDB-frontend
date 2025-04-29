@@ -492,7 +492,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     // Use the existing getResult method
     // For the prototype, we'll use a fixed JobType.Defaults and dummy job ID
     // In a real implementation, this would send the query to the backend first
-    this.service.getResult(JobType.Defaults, '123')
+    this.service.getData()
       .pipe(
         map((response: OEDRecord[]) => 
           response

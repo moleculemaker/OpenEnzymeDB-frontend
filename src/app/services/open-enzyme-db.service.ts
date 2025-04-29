@@ -38,6 +38,25 @@ async function loadGzippedJson<T>(path: string): Promise<T> {
 const exampleStatus: any = "WARNING: please provide your own example_status.json";
 // const example: any = "WARNING: please provide your own example.json";
 
+export type RecommendationResult = {
+  errors: {
+    tanimoto: any,
+    fragment: any,
+    mcs: any,
+  },
+  tanimoto: {
+    [key: string]: number,
+  },
+  fragment: {
+    [key: string]: {
+      matches: number[][]
+    },
+  },
+  mcs: {
+    [key: string]: number,
+  },
+}
+
 export type OEDRecord = {
   "EC": string,
   "SUBSTRATE": string,
@@ -165,6 +184,8 @@ const uniprot_data = loadGzippedJson<UniprotRecordDict>('/assets/uniprot.json.gz
 const ec_data = loadGzippedJson<ECRecordDict>('/assets/kegg_ec.json.gz');
 const substrate_data = loadGzippedJson<SubstrateRecordDict>('/assets/substrate.json.gz');
 
+const exampleRecommendation = import('../../assets/example.recommendation.json');
+
 
 @Injectable({
   providedIn: "root",
@@ -244,11 +265,15 @@ export class OpenEnzymeDBService {
     return this.SUBSTRATE$.pipe(map((substrateRecord) => substrateRecord[substrate.toLowerCase()]));
   }
 
-  getResult(jobType: JobType, jobID: string): Observable<OEDRecord[]> {
+  getResult(jobType: JobType, jobID: string): Observable<RecommendationResult> {
     if (this.frontendOnly) {
-      return from(example);
+      return from(exampleRecommendation);
     }
     return this.filesService.getResultsBucketNameResultsJobIdGet(jobType, jobID);
+  }
+
+  getData(): Observable<OEDRecord[]> {
+    return from(example);
   }
 
   getError(jobType: JobType, jobID: string): Observable<string> {

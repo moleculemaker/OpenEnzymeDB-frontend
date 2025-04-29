@@ -312,7 +312,7 @@ export class EntityECNumberComponent {
       },
     );
 
-    this.service.getResult(JobType.Defaults, '123')
+    this.service.getData()
       .pipe(
         map((response: any) => 
           response
