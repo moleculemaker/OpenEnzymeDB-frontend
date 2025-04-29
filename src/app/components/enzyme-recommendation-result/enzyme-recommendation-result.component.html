@@ -52,7 +52,7 @@
                       class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
                       field="organism" />
                   </th>
-                  <th class="align-middle relative group" pSortableColumn="uniprot_id">
+                  <th class="align-middle relative group w-3/5" pSortableColumn="uniprot_id">
                     <span>Top Substrates Matches</span>
                     <p-sortIcon
                       class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
@@ -69,11 +69,36 @@
                     <div [innerHTML]="row.description.html | safe: 'html'"></div>
                   </td>
                   <td class="align-middle">
-                    <!-- TODO: Add Matches -->
-                    <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center">
-                      <span>View full results</span>
-                      <i class="pi pi-arrow-right"></i>
-                    </button>
+                    <div class="flex items-center gap-4">
+                      @for (match of row.topSubstratesMatches; track match[0]) {
+                        <div class="relative flex">
+                          <!-- TODO: add highlighted idx -->
+                          <app-molecule-image 
+                            class="top-0 left-0 border border-solid border-[#DEE2E6] rounded-md"
+                            [width]="120"
+                            [height]="120"
+                            [smiles]="match[0]">
+                          </app-molecule-image>
+                          @switch (row.algorithm) {
+                            <!-- @case ('fragment') {
+                              <span class="absolute top-1 left-1 text-xs text-white bg-black rounded-full px-2 py-1">
+                                {{ match[1].matches.length }}
+                              </span>
+                            } -->
+                            @case ('tanimoto') {
+                              <span class="absolute top-1 left-1 text-black font-semibold rounded-md bg-[#B2FDEF] px-2 py-1">{{ match[1] | chemicalProperty: 'default' }}</span>
+                            }
+                            @case ('mcs') {
+                              <span class="absolute top-1 left-1 text-white font-semibold rounded-md bg-[#726EDE] px-2 py-1">{{ match[1] | chemicalProperty: 'default' }}</span>
+                            }
+                          }
+                        </div>
+                      }
+                      <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
+                        <span>View full results</span>
+                        <i class="pi pi-arrow-right"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </ng-template>

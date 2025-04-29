@@ -5,7 +5,6 @@ import { BodyCreateJobJobTypeJobsPost, ChemicalAutoCompleteResponse, FilesServic
 import { EnvironmentService } from "./environment.service";
 
 // import { OpenEnzymeDBService as OpenEnzymeDBApiService } from "../api/mmli-backend/v1"; // TODO: use the correct service
-// import exampleStatus from '../../assets/example_status.json';
 
 import { ungzip } from 'pako';
 
@@ -35,7 +34,7 @@ async function loadGzippedJson<T>(path: string): Promise<T> {
   }
 }
 
-const exampleStatus: any = "WARNING: please provide your own example_status.json";
+// const exampleStatus: any = "WARNING: please provide your own example_status.json";
 // const example: any = "WARNING: please provide your own example.json";
 
 export type RecommendationResult = {
@@ -185,6 +184,7 @@ const ec_data = loadGzippedJson<ECRecordDict>('/assets/kegg_ec.json.gz');
 const substrate_data = loadGzippedJson<SubstrateRecordDict>('/assets/substrate.json.gz');
 
 const exampleRecommendation = import('../../assets/example.recommendation.json');
+const exampleStatus = import('../../assets/example_status.json') as Promise<any>;
 
 
 @Injectable({
@@ -240,14 +240,14 @@ export class OpenEnzymeDBService {
 
   createAndRunJob(jobType: JobType, requestBody: BodyCreateJobJobTypeJobsPost): Observable<Job> {
     if (this.frontendOnly) {
-      return of(exampleStatus as any);
+      return from(exampleStatus);
     }
     return this.jobsService.createJobJobTypeJobsPost(jobType, requestBody);
   }
 
   getResultStatus(jobType: JobType, jobID: string): Observable<Job> {
     if (this.frontendOnly) {
-      return of(exampleStatus as any);
+      return from(exampleStatus);
     }
     return this.jobsService.listJobsByTypeAndJobIdJobTypeJobsJobIdGet(jobType, jobID)
       .pipe(map((jobs) => jobs[0]));
@@ -285,7 +285,7 @@ export class OpenEnzymeDBService {
 
   updateSubscriberEmail(jobType: JobType, jobId: string, email: string) {
     if (this.frontendOnly) {
-      return of(exampleStatus as any);
+      return from(exampleStatus);
     }
     return this.jobsService.patchExistingJobJobTypeJobsJobIdRunIdPatch(jobType, {
       job_id: jobId,

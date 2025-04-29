@@ -11,7 +11,7 @@ import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
 import { PanelModule } from "primeng/panel";
 import { MenuModule } from "primeng/menu";
 import { QueryInputComponent } from "../query-input/query-input.component";
-import { SearchOption } from "~/app/models/SearchOption";
+import { QueryValue, SearchOption } from "~/app/models/SearchOption";
 import { MoleculeSearchOption } from "~/app/models/SearchOption";
 
 @Component({
@@ -40,6 +40,10 @@ export class EnzymeRecommendationComponent {
   currentPage = 'input';
 
   form = new FormGroup({
+    search: new FormControl<QueryValue>({
+      value: '',
+      selectedOption: 'compound',
+    }, [Validators.required]),
     email: new FormControl("", [Validators.email]),
     agreeToSubscription: new FormControl(false),
   });
@@ -71,10 +75,10 @@ export class EnzymeRecommendationComponent {
     console.log(this.form.value);
 
     this.service.createAndRunJob(
-      JobType.Somn, //TODO: use the correct job type
+      JobType.OedCheminfo,
       {
         job_info: JSON.stringify({
-          // TODO: add job info here
+          query_smiles: this.form.controls["search"].value?.value,
         }),
         email: this.form.controls["email"].value || '',
       }
