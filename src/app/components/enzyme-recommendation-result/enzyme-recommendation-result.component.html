@@ -9,7 +9,7 @@
           title="copy job id"
           class="border-none cursor-pointer"
         >
-          <i class="pi pi-copy" (click)="copyAndPasteURL()"></i>
+          <i class="pi pi-link" (click)="copyAndPasteURL()"></i>
         </button>
       </h5>
       <h6 class="text-text-secondary leading-lg">
@@ -94,10 +94,12 @@
                           }
                         </div>
                       }
-                      <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
-                        <span>View full results</span>
-                        <i class="pi pi-arrow-right"></i>
-                      </button>
+                      <a [routerLink]="['/enzyme-recommendation/result', jobId, row.algorithm]">
+                        <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
+                          <span>View full results</span>
+                          <i class="pi pi-arrow-right"></i>
+                        </button>
+                      </a>
                     </div>
                   </td>
                 </tr>

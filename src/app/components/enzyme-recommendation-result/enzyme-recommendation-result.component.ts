@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { JobType } from '~/app/api/mmli-backend/v1';
@@ -21,6 +21,7 @@ import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
     CommonModule,
     PanelModule,
     TableModule,
+    RouterLink,
     
     LoadingComponent,
     MoleculeImageComponent,
