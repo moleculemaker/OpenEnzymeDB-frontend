@@ -1,5 +1,5 @@
 import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray, FormBuilder } from "@angular/forms";
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, FormArray, FormBuilder, AbstractControl } from "@angular/forms";
 import { Router, ActivatedRoute } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
@@ -8,9 +8,10 @@ import { CommonModule } from "@angular/common";
 import { JobType } from "~/app/api/mmli-backend/v1";
 import { OEDRecord, OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { QueryInputComponent, QueryValue } from "../../components/query-input/query-input.component";
+import { QueryInputComponent } from "../../components/query-input/query-input.component";
+import { MoleculeSearchOption, QueryValue, RangeSearchOption, SearchOption, StringSearchOption } from '~/app/models/SearchOption';
 import { Table, TableModule } from "primeng/table";
-import { map } from "rxjs/operators";
+import { catchError, filter, first, map, switchMap } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -24,10 +25,7 @@ import { DropdownModule } from "primeng/dropdown";
 import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
-import { FilterComponent } from "~/app/components/filter/filter.component";
-import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
-import { FilterDialogComponent } from "~/app/components/filter-dialog/filter-dialog.component";
-import { Subscription } from "rxjs";
+import { of, Subscription } from "rxjs";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
 
 @Component({
@@ -242,6 +240,67 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       matchMode: 'subset',
     }),
   }
+
+  searchConfigs: SearchOption[] = [
+    new MoleculeSearchOption({
+      key: 'compound',
+      label: 'Compound',
+      placeholder: 'Enter a compound',
+      example: {
+        label: 'Ethanol (CCO)',
+        inputType: 'smiles',
+        value: 'CCO'
+      },
+      moleculeValidator: (smiles: string) => this.service.validateChemical(smiles),
+    }),
+    new StringSearchOption({
+      key: 'organism',
+      label: 'Organism',
+      placeholder: 'Enter organism name',
+      example: {
+        label: 'Lentzea aerocolonigenes',
+        value: 'Lentzea aerocolonigenes'
+      }
+    }),
+    new StringSearchOption({
+      key: 'uniprot_id',
+      label: 'Uniprot ID',
+      placeholder: 'Enter Uniprot ID',
+      example: {
+        label: 'P05655',
+        value: 'P05655'
+      }
+    }),
+    new StringSearchOption({
+      key: 'ec_number',
+      label: 'EC Number',
+      placeholder: 'Enter EC Number',
+      example: {
+        label: '5.1.1.1',
+        value: '5.1.1.1'
+      }
+    }),
+    new RangeSearchOption({
+      key: 'ph',
+      label: 'pH',
+      placeholder: 'Enter pH range',
+      example: {
+        label: '1-8',
+        valueLabel: '1-8',
+        value: [1, 8]
+      }
+    }),
+    new RangeSearchOption({
+      key: 'temperature',
+      label: 'Temperature',
+      placeholder: 'Enter temperature range',
+      example: {
+        label: '37-39°C',
+        valueLabel: '37-39',
+        value: [37, 39]
+      }
+    }),
+  ];
 
   columns: any[] = [];
 

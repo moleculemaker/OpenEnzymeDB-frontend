@@ -63,7 +63,11 @@
                                             <i class="pi pi-times"></i>
                                         </button>
                                         }
-                                        <app-query-input formControlName="search" class="w-full" />
+                                        <app-query-input 
+                                            class="w-full"
+                                            formControlName="search" 
+                                            [searchConfigs]="searchConfigs"
+                                        />
                                     </div>
                                 </div>
                                 }
