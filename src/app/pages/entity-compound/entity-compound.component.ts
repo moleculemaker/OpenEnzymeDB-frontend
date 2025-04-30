@@ -120,6 +120,17 @@ export class EntityCompoundComponent {
   ];
 
   filters: Map<string, FilterConfig> = new Map([
+    ['compound', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Compounds',
+        rawValue: 'Compounds',
+      },
+      placeholder: 'Select compound',
+      field: 'compound.name',
+      options: [],
+      value: [],
+    })],
     ['organism', new MultiselectFilterConfig({
       category: 'parameter',
       label: {

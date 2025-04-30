@@ -173,6 +173,17 @@ export class EntityECNumberComponent {
       value: [],
       matchMode: 'subset',
     })],
+    ['ec_numbers', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'EC Numbers',
+        rawValue: 'EC Numbers',
+      },
+      placeholder: 'Select EC number',
+      field: 'ec_number',
+      options: [],
+      value: [],
+    })],
     ['enzyme_types', new MultiselectFilterConfig({
       category: 'parameter',
       label: {

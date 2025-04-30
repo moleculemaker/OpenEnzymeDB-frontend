@@ -135,6 +135,18 @@ export class EntityUniprotComponent {
       options: [],
       value: [],
     })],
+    ['uniprot_ids', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Uniprot IDs',
+        rawValue: 'Uniprot IDs',
+      },
+      placeholder: 'Select uniprot ID',
+      field: 'uniprot_id',
+      options: [],
+      value: [],
+      matchMode: 'subset',
+    })],
     ['ec_numbers', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
