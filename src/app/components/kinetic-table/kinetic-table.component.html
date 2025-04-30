@@ -43,136 +43,92 @@
               [columns]="columns">
               <ng-template pTemplate="header">
                 <tr>
-                  <!-- <th class="align-middle">Reaction</th> -->
-                  <th class="align-middle relative group" pSortableColumn="compound.name">
-                    <span>Compound</span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="compound.name" />
-                  </th>
-                  <th class="align-middle relative group" pSortableColumn="organism">
-                    <span>Organism</span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="organism" />
-                  </th>
-                  <th class="align-middle relative group" pSortableColumn="uniprot_id">
-                    <span>Uniprot ID</span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="uniprot_id" />
-                  </th>
-                  <th class="align-middle relative group" pSortableColumn="ec_number">
-                    <span>EC Number</span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="ec_number" />
-                  </th>
-                  <th class="align-middle relative group" pSortableColumn="enzyme_type">
-                    <span>Enzyme Type</span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="enzyme_type" />
-                  </th>
-                  <th class="align-middle relative group" pSortableColumn="ph">
-                    <span [innerHTML]="filters['ph'].label.value"></span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="ph" />
-                  </th>
-                  <th class="align-middle relative group min-w-[100px]" pSortableColumn="temperature">
-                    <span>Temp (°C)</span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="temperature" />
-                  </th>
-                  <th class="align-middle relative group min-w-[100px]" pSortableColumn="kcat">
-                    <span class="italic">k</span><sub>cat</sub><br />(s<sup class="text-xs">
-                      -1</sup>)
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="kcat" />
-                  </th>
-                  <th class="align-middle relative group min-w-[100px]" pSortableColumn="km">
-                    <span class="italic">K</span><sub>m</sub><br />(mM)
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="km" />
-                  </th>
-                  <th class="align-middle relative group min-w-[120px]" pSortableColumn="kcat_km">
-                    <span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub><br />(mM<sup
-                      class="text-xs">
-                      -1</sup>s<sup class="text-xs"> -1</sup>)
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="kcat_km" />
-                  </th>
-                  <th class="align-middle relative group" pSortableColumn="pubmed_id">
-                    <span>Literature</span>
-                    <p-sortIcon
-                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                      field="pubmed_id" />
-                  </th>
+                  @for (filter of filters.entries(); track filter[0]) {
+                    @let value = filter[1];
+                    <th class="align-middle relative group" pSortableColumn="{{ value.field }}">
+                      <div [innerHTML]="value.label.value"></div>
+                      <p-sortIcon
+                        class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
+                        [field]="value.field" />
+                    </th>  
+                  }
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row let-expanded="expanded">
                 <tr class="table-row">
-                  <!-- <td class="align-middle">
-                                        <div class="flex gap-2 items-center">
-                                            <button title="Expand" type="button" [pRowToggler]="row">
-                                                <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-                                            </button>
-                                            <span>{{ row.reaction || 'template reaction string'}}</span>
-                                        </div>
-                                    </td> -->
-                  <td class="align-middle">
-                    <div class="flex items-start gap-2">
-                      <button title="Expand" type="button" [pRowToggler]="row">
-                        <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-                      </button>
-                      <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{ row.compound.name }}</a>
-                    </div>
-                  </td>
-                  <td class="align-middle italic">{{ row.organism }}</td>
-                  <td class="align-middle">
-                    <a [routerLink]="['/query/uniprot', row.uniprot_id[0]]" class="text-blue-500 cursor-pointer">{{ row.uniprot_id }}</a>
-                  </td>
-                  <td class="align-middle">
-                    <a [routerLink]="['/query/ec', row.ec_number]" class="text-blue-500 cursor-pointer">{{ row.ec_number }}</a>
-                  </td>
-                  <td class="align-middle">{{ row.enzyme_type }}</td>
-                  <td class="align-middle">{{ row.ph }}</td>
-                  <td class="align-middle">{{ row.temperature }}</td>
-                  <td class="align-middle">
-                    @if (row.kcat) {
-                    {{ row.kcat | number: '1.1-4' }}
-                    } @else {
-                    <span class="opacity-25">N/A</span>
+                  @for (filter of filters.entries(); track filter[0]) {
+                    @let value = filter[1];
+                    @switch (value.field) {
+                      @case ('compound.name') {
+                        <td class="align-middle">
+                          <div class="flex items-start gap-2">
+                            <button title="Expand" type="button" [pRowToggler]="row">
+                              <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                            </button>
+                            <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{ row.compound.name }}</a>
+                          </div>
+                        </td>
+                      }
+                      @case ('organism') {
+                        <td class="align-middle italic">
+                          {{ row[value.field] }}
+                        </td>
+                      }
+                      @case ('uniprot_id') {
+                        <td class="align-middle">
+                          <a [routerLink]="['/query/uniprot', row.uniprot_id[0]]" class="text-blue-500 cursor-pointer">{{ row.uniprot_id }}</a>
+                        </td>
+                      }
+                      @case ('ec_number') {
+                        <td class="align-middle">
+                          <a [routerLink]="['/query/ec', row.ec_number]" class="text-blue-500 cursor-pointer">{{ row.ec_number }}</a>
+                        </td>
+                      }
+                      @case ('kcat') {
+                        <td class="align-middle">
+                          @if (row.kcat) {
+                          {{ row.kcat | number: '1.1-4' }}
+                          } @else {
+                          <span class="opacity-25">N/A</span>
+                          }
+                        </td>
+                      }
+                      @case ('km') {
+                        <td class="align-middle">
+                          @if (row.km) {
+                          {{ row.km | number: '1.1-4' }}
+                          } @else {
+                          <span class="opacity-25">N/A</span>
+                          }
+                        </td>
+                      }
+                      @case ('kcat_km') {
+                        <td class="align-middle">
+                          @if (row.kcat_km) {
+                          {{ row.kcat_km | number: '1.1-4' }}
+                          } @else {
+                          <span class="opacity-25">N/A</span>
+                          }
+                        </td>
+                      }
+                      @case ('pubmed_id') {
+                        <td class="text-end align-middle">
+                          <app-external-link
+                            class="justify-end"
+                            [linkItem]="{
+                              url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                              label: row.pubmed_id
+                            }"
+                          ></app-external-link>
+                        </td>
+                      }
+                      @default {
+                        <td class="align-middle">
+                          {{ row[value.field] }}
+                        </td>
+                      }
                     }
-                  </td>
-                  <td class="align-middle">
-                    @if (row.km) {
-                    {{ row.km | number: '1.1-4' }}
-                    } @else {
-                    <span class="opacity-25">N/A</span>
-                    }
-                  </td>
-                  <td class="align-middle">
-                    @if (row.kcat_km) {
-                    {{ row.kcat_km | number: '1.1-4' }}
-                    } @else {
-                    <span class="opacity-25">N/A</span>
-                    }
-                  </td>
-                  <td class="text-end align-middle">
-                    <app-external-link
-                      class="justify-end"
-                      [linkItem]="{
-                        url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                        label: row.pubmed_id
-                      }"
-                    ></app-external-link>
-                  </td>
+                  }
                 </tr>
               </ng-template>
               <ng-template pTemplate="rowexpansion" let-row>
@@ -246,7 +202,7 @@
     </div>
   </div>
 
-  <app-filter-dialog [(visible)]="showFilter" [filterRecordsByCategory]="filterRecordsByCategory"
+  <app-filter-dialog [(visible)]="showFilter" [filters]="filters"
     [numberResults]="$any(resultsTable)?.filteredValue?.length ?? result.total" (filterChange)="searchTable($event)"
     (clearAllFilters)="clearAllFilters()" (applyFilters)="applyFilters()">
   </app-filter-dialog>

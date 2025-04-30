@@ -52,7 +52,7 @@ export class KineticTableComponent implements OnChanges {
     data: [],
     total: 0,
   };
-  @Input() filters: Record<string, FilterConfig> = {};
+  @Input() filters: Map<string, FilterConfig> = new Map();
 
   @ViewChild(Table) resultsTable!: Table;
 
@@ -61,20 +61,8 @@ export class KineticTableComponent implements OnChanges {
   showFilter = false;
   hasFilter = false;
 
-  get filterRecordsByCategory() {
-    return Object.entries(this.filters)
-      .reduce((acc, [key, filter]) => {
-        if (!acc[filter.category]) {
-          acc[filter.category] = [filter];
-      } else {
-        acc[filter.category].push(filter);
-      }
-      return acc;
-    }, {} as Record<string, FilterConfig[]>);
-  }
-
   get filterRecords() {
-    return Object.values(this.filters);
+    return Array.from(this.filters.values());
   }
 
   constructor(
@@ -141,7 +129,7 @@ export class KineticTableComponent implements OnChanges {
       return dotPath.split('.').reduce((obj, key) => obj[key], obj);
     }
     
-    Object.entries(this.filters).forEach(([key, filter]) => {
+    Array.from(this.filters.entries()).forEach(([key, filter]) => {
       const options = response.map((row: any) => getField(row, filter.field)).flat();
       const optionsSet = new Set(options);
       if (filter instanceof MultiselectFilterConfig) {
@@ -158,7 +146,7 @@ export class KineticTableComponent implements OnChanges {
       }
     });
     
-    this.columns = Object.values(this.filters).map((filter) => ({
+    this.columns = Array.from(this.filters.values()).map((filter) => ({
       field: filter.field,
       header: filter.label.rawValue,
     }));

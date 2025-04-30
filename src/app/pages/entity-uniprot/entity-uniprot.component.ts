@@ -112,10 +112,9 @@ export class EntityUniprotComponent {
     },
   ];
 
-  filters: Record<string, FilterConfig> = {
-    compounds: new MultiselectFilterConfig({
+  filters: Map<string, FilterConfig> = new Map([
+    ['compounds', new MultiselectFilterConfig({
       category: 'parameter',
-      disabled: true,
       label: {
         value: 'Compounds',
         rawValue: 'Compounds',
@@ -124,8 +123,8 @@ export class EntityUniprotComponent {
       field: 'compound.name',
       options: [],
       value: [],
-    }),
-    organism: new MultiselectFilterConfig({
+    })],
+    ['organism', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
         value: 'Organisms',
@@ -135,20 +134,8 @@ export class EntityUniprotComponent {
       field: 'organism',
       options: [],
       value: [],
-    }),
-    uniprot_ids: new MultiselectFilterConfig({
-      category: 'parameter',
-      label: {
-        value: 'Uniprot IDs',
-        rawValue: 'Uniprot IDs',
-      },
-      placeholder: 'Select uniprot ID',
-      field: 'uniprot_id',
-      options: [],
-      value: [],
-      matchMode: 'subset',
-    }),
-    ec_numbers: new MultiselectFilterConfig({
+    })],
+    ['ec_numbers', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
         value: 'EC Numbers',
@@ -158,8 +145,8 @@ export class EntityUniprotComponent {
       field: 'ec_number',
       options: [],
       value: [],
-    }),
-    enzyme_types: new MultiselectFilterConfig({
+    })],
+    ['enzyme_types', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
         value: 'Enzyme Types',
@@ -169,8 +156,8 @@ export class EntityUniprotComponent {
       field: 'enzyme_type',
       options: [],
       value: [],
-    }),
-    ph: new RangeFilterConfig({
+    })],
+    ['ph', new RangeFilterConfig({
       category: 'parameter',
       label: {
         value: 'pH',
@@ -180,8 +167,8 @@ export class EntityUniprotComponent {
       field: 'ph',
       min: 0,
       max: 14,
-    }),
-    temperature: new RangeFilterConfig({
+    })],
+    ['temperature', new RangeFilterConfig({
       category: 'parameter',
       label: {
         value: 'Temperature (°C)',
@@ -191,8 +178,8 @@ export class EntityUniprotComponent {
       field: 'temperature',
       min: 0,
       max: 100,
-    }),
-    kcat: new RangeFilterConfig({
+    })],
+    ['kcat', new RangeFilterConfig({
       category: 'enzyme',
       label: {
         value: '<span class="italic">k</span><sub>cat</sub> (s<sup class="text-xs"> -1</sup>)',
@@ -202,8 +189,8 @@ export class EntityUniprotComponent {
       field: 'kcat',
       min: 0,
       max: 100
-    }),
-    km: new RangeFilterConfig({
+    })],
+    ['km', new RangeFilterConfig({
       category: 'enzyme',
       label: {
         value: '<span class="italic">K</span><sub>m</sub> (mM)',
@@ -213,8 +200,8 @@ export class EntityUniprotComponent {
       field: 'km',
       min: 0,
       max: 100
-    }),
-    kcat_km: new RangeFilterConfig({
+    })],
+    ['kcat_km', new RangeFilterConfig({
       category: 'enzyme',
       label: {
         value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (mM<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
@@ -224,8 +211,8 @@ export class EntityUniprotComponent {
       field: 'kcat_km',
       min: 0,
       max: 100
-    }),
-    pubmed_id: new MultiselectFilterConfig({
+    })],
+    ['pubmed_id', new MultiselectFilterConfig({
       category: 'literature',
       label: {
         value: 'PubMed',
@@ -236,8 +223,8 @@ export class EntityUniprotComponent {
       options: [],
       value: [],
       matchMode: 'subset',
-    }),
-  }
+    })],
+  ] as [string, FilterConfig][])
  
   constructor(
     public service: OpenEnzymeDBService,
