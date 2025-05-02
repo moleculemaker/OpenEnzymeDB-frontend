@@ -61,9 +61,7 @@ export class QueryInputComponent implements ControlValueAccessor {
     return acc;
   }, {} as Record<string, typeof this.searchConfigs[0]>);
 
-  constructor(
-    private service: OpenEnzymeDBService
-  ) { }
+  constructor() { }
 
   ngOnInit() {
     // Subscribe to value changes for all search configs
@@ -94,12 +92,17 @@ export class QueryInputComponent implements ControlValueAccessor {
 
   writeValue(value: QueryValue | null): void {
     if (value) {
-      this.selectedSearchOption = this.searchOptionRecords[value.selectedOption];
+      const { selectedOption, ...values } = value;
+      this.selectedSearchOption = this.searchOptionRecords[selectedOption];
       if (this.selectedSearchOption) {
-        this.selectedSearchOption.formGroup.patchValue({ value: value.value });
+        this.selectedSearchOption.formGroup.patchValue(values);
       }
     } else {
-      this.selectedSearchOption = null;
+      if (this.multiple) {
+        this.selectedSearchOption = null;
+      } else {
+        this.selectedSearchOption = this.searchConfigs[0];
+      }
     }
   }
 

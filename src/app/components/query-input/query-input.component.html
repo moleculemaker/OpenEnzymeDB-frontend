@@ -1,191 +1,150 @@
 <div class="flex flex-col gap-2">
     @if (selectedSearchOption; as option) {
-        <span class="flex justify-between mt-2 text-sm mx-2">
-            <div class="flex gap-4 items-center">
-                <small class="font-semibold leading-xl">
-                    {{ option.label }} {{ option.type === 'range' ? 'Range' : '' }}
-                </small>
-                @if (option.formGroup.contains('inputType')) {
-                    <div class="flex gap-2 items-center" [formGroup]="option.formGroup">
-                        <div class="flex items-center gap-2">
-                            <p-radioButton 
-                                name="inputType" 
-                                value="name" 
-                                formControlName="inputType"
-                                inputId="inputType1" />
-                            <label for="inputType1">Name</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <p-radioButton 
-                                name="inputType" 
-                                value="smiles" 
-                                formControlName="inputType"
-                                inputId="inputType2" />
-                            <label for="inputType2">SMILES</label>
-                        </div>
-                    </div>
-                }
-            </div>
-            <small class="leading-xl text-text-secondary">
-                Example:
-                <small class="font-semibold underline cursor-pointer"
-                    (click)="useExample(option.key)"
-                >
-                    {{ option.example['label'] }}
-                </small>
+    <span class="flex justify-between mt-2 text-sm mx-2">
+        <div class="flex gap-4 items-center">
+            <small class="font-semibold leading-xl">
+                {{ option.label }} {{ option.type === 'range' ? 'Range' : '' }}
             </small>
-        </span>
+            @if (option.formGroup.contains('inputType')) {
+            <div class="flex gap-2 items-center" [formGroup]="option.formGroup">
+                <div class="flex items-center gap-2">
+                    <p-radioButton name="inputType" value="name" formControlName="inputType" inputId="inputType1" />
+                    <label for="inputType1">Name</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <p-radioButton name="inputType" value="smiles" formControlName="inputType" inputId="inputType2" />
+                    <label for="inputType2">SMILES</label>
+                </div>
+            </div>
+            }
+        </div>
+        <small class="leading-xl text-text-secondary">
+            Example:
+            <small class="font-semibold underline cursor-pointer" (click)="useExample(option.key)">
+                {{ option.example['label'] }}
+            </small>
+        </small>
+    </span>
     }
-    <div 
-        class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]"
-        [class.border-red-500]="selectedSearchOption 
+    <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]" [class.border-red-500]="selectedSearchOption 
             && selectedSearchOption.formGroup.invalid 
-            && selectedSearchOption.formGroup.dirty"
-    >
+            && selectedSearchOption.formGroup.dirty">
         <button type="button" class="flex items-center btn-outline !bg-[--surface-b] !px-4 !py-0 !text-[--surface-700]"
             (click)="multiple ? searchMenu.toggle($event) : null">
             <span class="font-semibold leading-lg">{{
                 selectedSearchOption ? selectedSearchOption.label : "Select Search Type"
                 }}</span>
             @if (multiple) {
-                <i class="ml-2 pi pi-chevron-down"></i>
+            <i class="ml-2 pi pi-chevron-down"></i>
             }
         </button>
         <p-menu #searchMenu [model]="searchOptions" [popup]="true"></p-menu>
         @if (selectedSearchOption) {
-            <div class="grow h-8" [formGroup]="selectedSearchOption.formGroup">
-                @switch (selectedSearchOption.key) {
-                    @case ('compound') {
-                    <app-marvinjs-input 
-                        [placeholder]="selectedSearchOption.placeholder || ''"
-                        class="grow h-8"
-                        formControlName="value"
-                    >
-                    </app-marvinjs-input>
-                }
-                @case ('organism') {
-                    <input 
-                        pInputText 
-                        type="text" 
-                        title="{{selectedSearchOption.placeholder}}"
-                        [placeholder]="selectedSearchOption.placeholder"
-                        formControlName="value"
-                        class="w-full border-none h-8" />
-                }
-                @case ('ec_number') {
-                    <input 
-                        pInputText 
-                        type="text" 
-                        title="{{selectedSearchOption.placeholder}}"
-                        [placeholder]="selectedSearchOption.placeholder"
-                        formControlName="value"
-                        class="w-full border-none h-8" />
-                }
-                @case ('uniprot_id') {
-                    <input 
-                        pInputText 
-                        type="text" 
-                        title="{{selectedSearchOption.placeholder}}"
-                        [placeholder]="selectedSearchOption.placeholder"
-                        formControlName="value"
-                        class="w-full border-none h-8" />
-                }
-                @case ('ph') {
-                    <input 
-                        pInputText 
-                        type="text" 
-                        title="{{selectedSearchOption.placeholder}}"
-                        [placeholder]="selectedSearchOption.placeholder"
-                        formControlName="valueLabel"
-                        class="w-full border-none h-8" />
-                }
-                @case ('temperature') {
-                    <input 
-                        pInputText 
-                        type="text" 
-                        title="{{selectedSearchOption.placeholder}}"
-                        [placeholder]="selectedSearchOption.placeholder"
-                        formControlName="valueLabel"
-                        class="w-full border-none h-8" />
-                }
-                @default {
-                    <input pInputText type="text" placeholder="(Select a search type using the menu to the left to get started)"
-                        disabled
-                        class="grow border-none h-8" />
-                }
+        <div class="grow h-8" [formGroup]="selectedSearchOption.formGroup">
+            @switch (selectedSearchOption.key) {
+            @case ('compound') {
+            <app-marvinjs-input [placeholder]="selectedSearchOption.placeholder || ''" class="grow h-8"
+                formControlName="value">
+            </app-marvinjs-input>
             }
-            </div>
-        } @else {
+            @case ('smiles') {
+            <app-marvinjs-input [placeholder]="selectedSearchOption.placeholder || ''" class="grow h-8"
+                formControlName="inputValue">
+            </app-marvinjs-input>
+            }
+            @case ('organism') {
+            <input pInputText type="text" title="{{selectedSearchOption.placeholder}}"
+                [placeholder]="selectedSearchOption.placeholder" formControlName="value"
+                class="w-full border-none h-8" />
+            }
+            @case ('ec_number') {
+            <input pInputText type="text" title="{{selectedSearchOption.placeholder}}"
+                [placeholder]="selectedSearchOption.placeholder" formControlName="value"
+                class="w-full border-none h-8" />
+            }
+            @case ('uniprot_id') {
+            <input pInputText type="text" title="{{selectedSearchOption.placeholder}}"
+                [placeholder]="selectedSearchOption.placeholder" formControlName="value"
+                class="w-full border-none h-8" />
+            }
+            @case ('ph') {
+            <input pInputText type="text" title="{{selectedSearchOption.placeholder}}"
+                [placeholder]="selectedSearchOption.placeholder" formControlName="valueLabel"
+                class="w-full border-none h-8" />
+            }
+            @case ('temperature') {
+            <input pInputText type="text" title="{{selectedSearchOption.placeholder}}"
+                [placeholder]="selectedSearchOption.placeholder" formControlName="valueLabel"
+                class="w-full border-none h-8" />
+            }
+            @default {
             <input pInputText type="text" placeholder="(Select a search type using the menu to the left to get started)"
-                disabled
-                class="grow border-none h-8" />
+                disabled class="grow border-none h-8" />
+            }
+            }
+        </div>
+        } @else {
+        <input pInputText type="text" placeholder="(Select a search type using the menu to the left to get started)"
+            disabled class="grow border-none h-8" />
         }
     </div>
     @if (selectedSearchOption && selectedSearchOption.formGroup.invalid) {
     <div class="flex flex-col gap-2 px-2">
         @for (error of selectedSearchOption.formGroup.errors | keyvalue; track error.key) {
-            @switch (error.key) {
-            @case ('invalidName') {
-                <div class="text-red-500">Invalid <span [innerHTML]="selectedSearchOption.label"></span> Name</div>
-            }
-            @case ('invalidSmiles') {
-                <div class="text-red-500">Invalid <span [innerHTML]="selectedSearchOption.label"></span> SMILES</div>
-            }
-            @case ('required') {
-                <div class="text-red-500">Field is required</div>
-            }
-            @default {
-                {{ error.key }}
-            }
-            }
+        @switch (error.key) {
+        @case ('invalidName') {
+        <div class="text-red-500">invalid <span class="lowercase" [innerHTML]="selectedSearchOption.label"></span> name</div>
+        }
+        @case ('invalidSmiles') {
+        <div class="text-red-500">invalid <span class="lowercase" [innerHTML]="selectedSearchOption.label"></span> SMILES</div>
+        }
+        @case ('required') {
+        <div class="text-red-500">field is required</div>
+        }
+        @default {
+        {{ error.key }}
+        }
+        }
         }
     </div>
     }
 
     @if (
-        selectedSearchOption &&
-        selectedSearchOption.key === 'compound' && 
-        selectedSearchOption.formGroup.controls['value'].value &&
-        $any(selectedSearchOption.formGroup.controls)['inputType'].value === 'smiles'
+    selectedSearchOption &&
+    (selectedSearchOption.key === 'compound' || selectedSearchOption.key === 'smiles') &&
+    selectedSearchOption.formGroup.controls['value'].value &&
+    $any(selectedSearchOption.formGroup.controls)['inputType'].value === 'smiles'
     ) {
-        <div
-            class="relative grow flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
-            [class.invalid]="selectedSearchOption!.formGroup.controls['value'].errors 
-                && selectedSearchOption!.formGroup.controls['value'].dirty"
-            
-        >
-            <div class="flex items-center justify-center">
-                <i class="absolute pi left-3 top-3"
-                    [class.pi-check-circle]="selectedSearchOption!.formGroup.controls['value'].valid"
-                ></i>
-                <!-- this must be a MoleculeSearchOption -->
-                @let chemInfo = $any(selectedSearchOption!).chemInfo;
+    <div class="relative grow flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
+        [class.invalid]="selectedSearchOption!.formGroup.controls['value'].errors 
+                && selectedSearchOption!.formGroup.controls['value'].dirty">
+        <div class="flex items-center justify-center">
+            <i class="absolute pi left-3 top-3"
+                [class.pi-check-circle]="selectedSearchOption!.formGroup.controls['value'].valid"></i>
+            <!-- this must be a MoleculeSearchOption -->
+            @let chemInfo = $any(selectedSearchOption!).chemInfo;
 
-                @switch (chemInfo.status) {
-                    @case ('valid') {
-                        <app-molecule-image 
-                            [height]="300" 
-                            [width]="300"
-                            [molecule]="chemInfo.structure"
-                        ></app-molecule-image>
-                    }
-                    @case ('empty') {
-                        <div class="h-[300px] flex items-center justify-center">
-                            No image available
-                        </div>
-                    }
-                    @case ('invalid') {
-                        <div class="h-[300px] flex items-center justify-center">
-                            Input is invalid
-                        </div>
-                    }
-                    @case ('loading') {
-                        <div class="h-[300px] flex items-center justify-center">
-                            <p-progressSpinner aria-label="Loading"></p-progressSpinner>
-                        </div>
-                    }
-                }
+            @switch (chemInfo.status) {
+            @case ('valid') {
+            <app-molecule-image [height]="300" [width]="300" [molecule]="chemInfo.structure"></app-molecule-image>
+            }
+            @case ('empty') {
+            <div class="h-[300px] flex items-center justify-center">
+                No image available
             </div>
+            }
+            @case ('invalid') {
+            <div class="h-[300px] flex items-center justify-center">
+                Input is invalid
+            </div>
+            }
+            @case ('loading') {
+            <div class="h-[300px] flex items-center justify-center">
+                <p-progressSpinner aria-label="Loading"></p-progressSpinner>
+            </div>
+            }
+            }
         </div>
+    </div>
     }
 </div>

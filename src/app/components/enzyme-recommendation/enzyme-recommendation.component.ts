@@ -12,7 +12,6 @@ import { PanelModule } from "primeng/panel";
 import { MenuModule } from "primeng/menu";
 import { QueryInputComponent } from "../query-input/query-input.component";
 import { QueryValue, SearchOption, SmilesSearchOption } from "~/app/models/search-options";
-import { PubchemService } from '~/app/services/pubchem.service';
 import { CactusService } from '~/app/services/cactus.service';
 
 @Component({
@@ -41,22 +40,20 @@ export class EnzymeRecommendationComponent {
   currentPage = 'input';
 
   form = new FormGroup({
-    search: new FormControl<QueryValue>({
-      value: '',
-      selectedOption: 'compound',
-    }, [Validators.required]),
+    search: new FormControl<QueryValue | null>(null, [Validators.required]),
     email: new FormControl("", [Validators.email]),
     agreeToSubscription: new FormControl(false),
   });
 
   searchConfigs: SearchOption[] = [
     new SmilesSearchOption({
-      key: 'compound',
+      key: 'smiles',
       label: 'Substrate',
       placeholder: 'Enter a substrate',
       example: {
         label: 'Ethanol (CCO)',
         inputType: 'smiles',
+        inputValue: 'CCO',
         value: 'CCO'
       },
       smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
