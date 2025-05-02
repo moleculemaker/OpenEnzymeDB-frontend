@@ -39,6 +39,7 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     });
     this.nameToSmilesConverter = params.nameToSmilesConverter;
     this.smilesValidator = (smiles: string) => {
+      this.chemInfo.status = 'loading';
       return params.smilesValidator(smiles).pipe(
         tap((chemical) => {
           this.chemInfo.structure = chemical.structure || "";
@@ -78,7 +79,11 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
       return this.nameToSmilesConverter(control.value.value).pipe(
         switchMap(this.smilesValidator),
         map((chemical) => {
-          return chemical ? null : { invalidSmiles: true };
+          return chemical ? null : { invalidName: true };
+        }),
+        catchError((err) => {
+          this.chemInfo.status = 'invalid';
+          return of({ invalidName: true });
         })
       );
     }

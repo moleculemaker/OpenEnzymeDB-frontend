@@ -68,8 +68,8 @@ export class QueryInputComponent implements ControlValueAccessor {
   ngOnInit() {
     // Subscribe to value changes for all search configs
     this.searchConfigs.forEach(config => {
-      (config.formGroup.valueChanges as Observable<any>).subscribe((value: any) => {
-        console.log('[query-input] form group value changed', value);
+      config.formGroup.statusChanges.subscribe((status) => {
+        console.log('[query-input] form group status changed', status);
         this.emitValue();
       });
     });
@@ -88,7 +88,7 @@ export class QueryInputComponent implements ControlValueAccessor {
     }
   }
 
-  private onChange: (value: QueryValue) => void = () => { };
+  private onChange: (value: QueryValue | null) => void = () => { };
   private onTouched: () => void = () => { };
   disabled = false;
 
@@ -132,6 +132,13 @@ export class QueryInputComponent implements ControlValueAccessor {
 
   private emitValue(): void {
     if (!this.selectedSearchOption) return;
+
+    if (this.selectedSearchOption.formGroup.status !== 'VALID') {
+      console.log('[query-input] form group is invalid', this.selectedSearchOption.formGroup.errors);
+      this.onChange(null);
+      this.onTouched();
+      return;
+    }
 
     const formValue = this.selectedSearchOption.formGroup.value;
     const inputValue = formValue.value;

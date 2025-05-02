@@ -38,6 +38,7 @@ export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearc
     });
 
     this.smilesValidator = (smiles: string) => {
+      this.chemInfo.status = 'loading';
       return params.moleculeValidator(smiles).pipe(
         tap((chemical) => {
           this.chemInfo.structure = chemical.structure || "";

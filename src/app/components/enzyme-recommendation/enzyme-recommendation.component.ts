@@ -11,8 +11,9 @@ import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
 import { PanelModule } from "primeng/panel";
 import { MenuModule } from "primeng/menu";
 import { QueryInputComponent } from "../query-input/query-input.component";
-import { QueryValue, SearchOption } from "~/app/models/search-options";
-import { MoleculeSearchOption } from '~/app/models/search-options/MoleculeSearchOption';
+import { QueryValue, SearchOption, SmilesSearchOption } from "~/app/models/search-options";
+import { PubchemService } from '~/app/services/pubchem.service';
+import { CactusService } from '~/app/services/cactus.service';
 
 @Component({
   selector: 'app-enzyme-recommendation',
@@ -49,7 +50,7 @@ export class EnzymeRecommendationComponent {
   });
 
   searchConfigs: SearchOption[] = [
-    new MoleculeSearchOption({
+    new SmilesSearchOption({
       key: 'compound',
       label: 'Substrate',
       placeholder: 'Enter a substrate',
@@ -58,12 +59,14 @@ export class EnzymeRecommendationComponent {
         inputType: 'smiles',
         value: 'CCO'
       },
-      moleculeValidator: (smiles: string) => this.service.validateChemical(smiles),
+      smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
+      nameToSmilesConverter: (name: string) => this.cactusService.getSMILESFromName(name),
     })
   ];
 
   constructor(
     private service: OpenEnzymeDBService,
+    private cactusService: CactusService,
     private router: Router,
   ) { }
 
@@ -71,8 +74,6 @@ export class EnzymeRecommendationComponent {
     if (!this.form.valid) {
       return;
     }
-
-    console.log(this.form.value);
 
     this.service.createAndRunJob(
       JobType.OedCheminfo,
