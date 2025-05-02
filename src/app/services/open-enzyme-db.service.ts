@@ -43,6 +43,11 @@ export type RecommendationResult = {
     fragment: any,
     mcs: any,
   },
+  query_smiles: {
+    iupac_name: string,
+    smiles: string,
+    matches_return: number,
+  },
   tanimoto: {
     [key: string]: number,
   },

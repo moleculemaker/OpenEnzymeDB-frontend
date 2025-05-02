@@ -5,9 +5,9 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { OpenEnzymeDBService, type SubstrateRecord } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, RecommendationResult } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { combineLatestWith, map } from "rxjs/operators";
+import { combineLatestWith, map, tap } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -23,7 +23,6 @@ import { FilterConfig } from "~/app/models/filters";
 import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
 import { MoleculeImageComponent } from "~/app/components/molecule-image/molecule-image.component";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
-import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
 import { JobResult } from "~/app/models/job-result";
 import { JobType } from "~/app/api/mmli-backend/v1";
 
@@ -53,7 +52,6 @@ import { JobType } from "~/app/api/mmli-backend/v1";
 
     MoleculeImageComponent,
     KineticTableComponent,
-    ChemicalPropertyPipe,
 ],
   host: {
     class: "flex flex-col h-full"
@@ -79,7 +77,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   };
 
   // compound$: Observable<SubstrateRecord> = 
-  compound: SubstrateRecord | null = null;
+  substrate: RecommendationResult['query_smiles'];
 
   exportOptions = [
     {
@@ -204,6 +202,9 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     this.service.getData()
       .pipe(
         combineLatestWith(this.jobResultResponse$),
+        tap(([response, jobResultResponse]) => {
+          this.substrate = jobResultResponse['query_smiles'];
+        }),
         map(([response, jobResultResponse]) => 
           response
             .map((row: any, index: number) => ({

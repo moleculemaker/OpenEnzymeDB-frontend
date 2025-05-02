@@ -40,31 +40,32 @@
       <span class="grow">Input Substrate</span>
     </ng-template>
 
-    @if (compound) {
+    @if (substrate) {
     <div class="flex gap-2 p-2">
       <div class="flex flex-col gap-2 w-1/3 p-2">
         <app-molecule-image #molecule2d
           class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
-          [smiles]="compound['SMILES']" [width]="300" [height]="300"></app-molecule-image>
+          [smiles]="substrate['smiles']" [width]="200" [height]="200"></app-molecule-image>
       </div>
       <div class="flex flex-col gap-4 w-2/3 border-l border-solid border-[#DEE2E6] p-2">
         <div class="flex flex-col gap-4">
           <div class="flex justify-between">
             <span class="leading-sm text-[#495057]">Name</span>
             <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
-              compound['SUBSTRATE'] }}</span>
+              substrate['iupac_name'] }}</span>
           </div>
           <div class="flex justify-between">
             <span class="leading-sm text-[#495057]">SMILES</span>
             <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
-              compound['SMILES'] }}</span>
+              substrate['smiles'] }}</span>
           </div>
           <div class="flex justify-between">
             <span class="leading-sm text-[#495057]">Matches Returned</span>
             <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
-              compound['SMILES'] }}</span>
+              substrate['matches_return'] }}</span>
           </div>
           <hr>
+          
         </div>
       </div>
     </div>
