@@ -12,7 +12,7 @@ import { MoleculeImageComponent } from '../molecule-image/molecule-image.compone
 import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
-import { SearchOption, QueryValue } from '../../models/SearchOption';
+import { SearchOption, QueryValue } from '../../models/search-options';
 
 @Component({
   selector: 'app-query-input',

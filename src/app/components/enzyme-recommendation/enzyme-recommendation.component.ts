@@ -11,8 +11,8 @@ import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
 import { PanelModule } from "primeng/panel";
 import { MenuModule } from "primeng/menu";
 import { QueryInputComponent } from "../query-input/query-input.component";
-import { QueryValue, SearchOption } from "~/app/models/SearchOption";
-import { MoleculeSearchOption } from "~/app/models/SearchOption";
+import { QueryValue, SearchOption } from "~/app/models/search-options";
+import { MoleculeSearchOption } from '~/app/models/search-options/MoleculeSearchOption';
 
 @Component({
   selector: 'app-enzyme-recommendation',
