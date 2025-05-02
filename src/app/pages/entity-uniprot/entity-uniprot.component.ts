@@ -5,8 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService, UniprotRecord } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, UniprotRecord } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { combineLatestWith, map, switchMap } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";

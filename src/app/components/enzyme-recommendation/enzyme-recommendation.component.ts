@@ -6,7 +6,7 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
 import { PanelModule } from "primeng/panel";
 import { MenuModule } from "primeng/menu";

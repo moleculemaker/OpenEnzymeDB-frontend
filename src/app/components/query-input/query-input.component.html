@@ -119,7 +119,7 @@
 
       @switch (chemInfo.status) {
       @case ('valid') {
-      <app-molecule-image [height]="300" [width]="300" [molecule]="chemInfo.structure"></app-molecule-image>
+      <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo.structure"></app-molecule-image>
       }
       @case ('empty') {
       <div class="h-[300px] flex items-center justify-center">
@@ -157,7 +157,7 @@
 
       @switch (chemInfo.status) {
       @case ('valid') {
-      <app-molecule-image [height]="300" [width]="300" [molecule]="chemInfo.structure"></app-molecule-image>
+      <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo.structure"></app-molecule-image>
       }
       @case ('empty') {
       <div class="h-[300px] flex items-center justify-center">

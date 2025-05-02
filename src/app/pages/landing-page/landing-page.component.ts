@@ -1,8 +1,7 @@
-
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { OpenEnzymeDBService } from "~/app/services/open-enzyme-db.service";
+import { OpenEnzymeDBService } from "~/app/services/openenzymedb.service";
 import { ChartModule, UIChart } from "primeng/chart";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";

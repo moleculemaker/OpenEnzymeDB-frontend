@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 
 import { JobType } from '~/app/api/mmli-backend/v1';
 import { JobResult } from '~/app/models/job-result';
-import { OpenEnzymeDBService, RecommendationResult } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, RecommendationResult } from '~/app/services/openenzymedb.service';
 import { LoadingComponent } from '~/app/components/loading/loading.component';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';

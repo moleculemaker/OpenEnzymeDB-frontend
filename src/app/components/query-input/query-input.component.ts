@@ -9,11 +9,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 
 import { MarvinjsInputComponent } from '../marvinjs-input/marvinjs-input.component';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SearchOption, QueryValue } from '../../models/search-options';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-query-input',

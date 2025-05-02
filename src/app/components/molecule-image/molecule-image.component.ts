@@ -1,19 +1,23 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { SafePipe } from '../../pipes/safe.pipe';
-import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { of, map } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Loadable } from '~/app/services/openenzymedb.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'app-molecule-image',
     templateUrl: './molecule-image.component.html',
     styleUrls: ['./molecule-image.component.scss'],
     standalone: true,
-    imports: [NgIf, SafePipe]
+      imports: [SafePipe, ProgressSpinnerModule],
+      host: {
+        class: 'flex items-center justify-center'
+    }
 })
 export class MoleculeImageComponent implements OnInit, OnChanges {
-  @Input() molecule: string;
+  @Input() loadableImage: Loadable<string>;
   @Input() width: number = 300;
   @Input() height: number = 150;
   @Input() smiles: string = '';
@@ -21,10 +25,14 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   image = ''
   placeholderClassName = ''
 
-  chemical: {
-    data: string;
-    status: 'valid' | 'invalid' | 'loading' | 'empty' | 'na';
-  } = {
+  // chemical: {
+  //   data: string;
+  //   status: 'valid' | 'invalid' | 'loading' | 'empty' | 'na';
+  // } = {
+  //   data: '',
+  //   status: 'na'
+  // }
+  chemical: Loadable<string> = {
     data: '',
     status: 'na'
   }
@@ -33,7 +41,7 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
     this.service.validateChemical(smiles)
       .pipe(
         map((chemical) => ({
-          data: chemical.structure,
+          data: chemical,
           status: 'valid' as const
         })),
         catchError((err) => 
@@ -56,16 +64,16 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    if (this.molecule) {
-      this.init(this.molecule || '');
+    if (this.loadableImage) {
+      this.init(this.loadableImage.data || '');
     } else if (this.smiles) {
       this.getSVG(this.smiles);
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['molecule'] && changes['molecule'].currentValue) {
-      this.init(this.molecule || '');
+    if (changes['loadableImage'] && changes['loadableImage'].currentValue) {
+      this.init(this.loadableImage.data || '');
     }
     if (changes['smiles'] && changes['smiles'].currentValue) {
       this.getSVG(this.smiles);
@@ -80,7 +88,7 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
     element.querySelector('svg rect')?.setAttribute('style', 'opacity:1.0;fill:#FFFFFF00;stroke:none');
 
     this.image = element.innerHTML;
-    this.placeholderClassName = `w-[${this.width}px] h-[${this.height}px]`
+    this.placeholderClassName = `w-[${this.width}] h-[${this.height}]`
   }
 
   exportImage(type: 'svg' | 'png') {

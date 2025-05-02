@@ -5,7 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { OpenEnzymeDBService, type SubstrateRecord } from '~/app/services/open-enzyme-db.service';
+import { OpenEnzymeDBService, type SubstrateRecord } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { combineLatest, combineLatestWith, map, switchMap } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
@@ -53,7 +53,7 @@ import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
     MoleculeImageComponent,
     KineticTableComponent,
     ChemicalPropertyPipe,
-],
+  ],
   host: {
     class: "flex flex-col h-full"
   }

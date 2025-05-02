@@ -5,8 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { JobType } from "~/app/api/mmli-backend/v1";
-import { OEDRecord, OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
+import { OEDRecord, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent } from "../../components/query-input/query-input.component";
 import { QueryValue, SearchOption } from '~/app/models/search-options';
