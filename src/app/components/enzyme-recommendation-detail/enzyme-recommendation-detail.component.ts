@@ -76,7 +76,6 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     total: 0,
   };
 
-  // compound$: Observable<SubstrateRecord> = 
   substrate: RecommendationResult['query_smiles'];
 
   exportOptions = [

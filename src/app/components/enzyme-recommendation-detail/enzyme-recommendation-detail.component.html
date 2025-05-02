@@ -65,7 +65,38 @@
               substrate['matches_return'] }}</span>
           </div>
           <hr>
-          
+          @switch (algorithm) {
+            @case ('mcs') {
+              <div>
+                <div>
+                  <div class="leading-xl">What is 
+                    <span class="p-1 text-white font-semibold rounded-md bg-[#726EDE]">MCS Score</span>?
+                  </div>
+                  <div class="leading-xl italic mt-2">
+                    Maximum Common Substructure Score is a numerical value ranging from 0 to 1 representing the size of the largest shared substructure between two molecules, with higher scores indicating greater structural overlap. The top 10 matches for the input substrate are shown below.
+                  </div>
+                </div>
+              </div>
+            }
+            @case ('tanimoto') {
+              <div>
+                <div class="leading-xl">What is
+                  <span class="p-1 text-black font-semibold rounded-md bg-[#B2FDEF]">Tanimoto Score</span>?
+                </div>
+                <div class="leading-xl italic mt-2">
+                  Tanimoto Similarity Score is a metric ranging from 0 to 1 that quantifies the similarity between two molecular fingerprints, where 1 indicates identical structures. The top 10 matches for the input substrate are shown below.
+                </div>
+              </div>
+            }
+            @case ('fragment') {
+              <div>
+                <div class="leading-xl">What results are returned?</div>
+                <div class="leading-xl italic mt-2">
+                  All substrates with matching fragments are returned. Matches are listed from largest to smallest fragment.
+                </div>
+              </div>
+            }
+          }
         </div>
       </div>
     </div>
