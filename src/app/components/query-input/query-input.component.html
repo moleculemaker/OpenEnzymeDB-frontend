@@ -36,7 +36,12 @@
             </small>
         </span>
     }
-    <div class="flex p-[5px] border border-[--surface-d] rounded-lg border-solid gap-2">
+    <div 
+        class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]"
+        [class.border-red-500]="selectedSearchOption 
+            && selectedSearchOption.formGroup.invalid 
+            && selectedSearchOption.formGroup.dirty"
+    >
         <button type="button" class="flex items-center btn-outline !bg-[--surface-b] !px-4 !py-0 !text-[--surface-700]"
             (click)="multiple ? searchMenu.toggle($event) : null">
             <span class="font-semibold leading-lg">{{
@@ -51,64 +56,64 @@
             <div class="grow h-8" [formGroup]="selectedSearchOption.formGroup">
                 @switch (selectedSearchOption.key) {
                     @case ('compound') {
-                        <app-marvinjs-input 
-                            [placeholder]="selectedSearchOption.placeholder || ''"
-                            class="grow h-8"
-                            formControlName="value"
-                        >
-                        </app-marvinjs-input>
-                    }
-                    @case ('organism') {
-                        <input 
-                            pInputText 
-                            type="text" 
-                            title="{{selectedSearchOption.placeholder}}"
-                            [placeholder]="selectedSearchOption.placeholder"
-                            formControlName="value"
-                            class="w-full border-none h-8" />
-                    }
-                    @case ('ec_number') {
-                        <input 
-                            pInputText 
-                            type="text" 
-                            title="{{selectedSearchOption.placeholder}}"
-                            [placeholder]="selectedSearchOption.placeholder"
-                            formControlName="value"
-                            class="w-full border-none h-8" />
-                    }
-                    @case ('uniprot_id') {
-                        <input 
-                            pInputText 
-                            type="text" 
-                            title="{{selectedSearchOption.placeholder}}"
-                            [placeholder]="selectedSearchOption.placeholder"
-                            formControlName="value"
-                            class="w-full border-none h-8" />
-                    }
-                    @case ('ph') {
-                        <input 
-                            pInputText 
-                            type="text" 
-                            title="{{selectedSearchOption.placeholder}}"
-                            [placeholder]="selectedSearchOption.placeholder"
-                            formControlName="valueLabel"
-                            class="w-full border-none h-8" />
-                    }
-                    @case ('temperature') {
-                        <input 
-                            pInputText 
-                            type="text" 
-                            title="{{selectedSearchOption.placeholder}}"
-                            [placeholder]="selectedSearchOption.placeholder"
-                            formControlName="valueLabel"
-                            class="w-full border-none h-8" />
-                    }
-                    @default {
-                        <input pInputText type="text" placeholder="(Select a search type using the menu to the left to get started)"
-                            disabled
-                            class="grow border-none h-8" />
-                    }
+                    <app-marvinjs-input 
+                        [placeholder]="selectedSearchOption.placeholder || ''"
+                        class="grow h-8"
+                        formControlName="value"
+                    >
+                    </app-marvinjs-input>
                 }
+                @case ('organism') {
+                    <input 
+                        pInputText 
+                        type="text" 
+                        title="{{selectedSearchOption.placeholder}}"
+                        [placeholder]="selectedSearchOption.placeholder"
+                        formControlName="value"
+                        class="w-full border-none h-8" />
+                }
+                @case ('ec_number') {
+                    <input 
+                        pInputText 
+                        type="text" 
+                        title="{{selectedSearchOption.placeholder}}"
+                        [placeholder]="selectedSearchOption.placeholder"
+                        formControlName="value"
+                        class="w-full border-none h-8" />
+                }
+                @case ('uniprot_id') {
+                    <input 
+                        pInputText 
+                        type="text" 
+                        title="{{selectedSearchOption.placeholder}}"
+                        [placeholder]="selectedSearchOption.placeholder"
+                        formControlName="value"
+                        class="w-full border-none h-8" />
+                }
+                @case ('ph') {
+                    <input 
+                        pInputText 
+                        type="text" 
+                        title="{{selectedSearchOption.placeholder}}"
+                        [placeholder]="selectedSearchOption.placeholder"
+                        formControlName="valueLabel"
+                        class="w-full border-none h-8" />
+                }
+                @case ('temperature') {
+                    <input 
+                        pInputText 
+                        type="text" 
+                        title="{{selectedSearchOption.placeholder}}"
+                        [placeholder]="selectedSearchOption.placeholder"
+                        formControlName="valueLabel"
+                        class="w-full border-none h-8" />
+                }
+                @default {
+                    <input pInputText type="text" placeholder="(Select a search type using the menu to the left to get started)"
+                        disabled
+                        class="grow border-none h-8" />
+                }
+            }
             </div>
         } @else {
             <input pInputText type="text" placeholder="(Select a search type using the menu to the left to get started)"
@@ -116,6 +121,27 @@
                 class="grow border-none h-8" />
         }
     </div>
+    @if (selectedSearchOption && selectedSearchOption.formGroup.invalid) {
+    <div class="flex flex-col gap-2 px-2">
+        @for (error of selectedSearchOption.formGroup.errors | keyvalue; track error.key) {
+            @switch (error.key) {
+            @case ('invalidName') {
+                <div class="text-red-500">Invalid <span [innerHTML]="selectedSearchOption.label"></span> Name</div>
+            }
+            @case ('invalidSmiles') {
+                <div class="text-red-500">Invalid <span [innerHTML]="selectedSearchOption.label"></span> SMILES</div>
+            }
+            @case ('required') {
+                <div class="text-red-500">Field is required</div>
+            }
+            @default {
+                {{ error.key }}
+            }
+            }
+        }
+    </div>
+    }
+
     @if (
         selectedSearchOption &&
         selectedSearchOption.key === 'compound' && 
@@ -123,7 +149,7 @@
         $any(selectedSearchOption.formGroup.controls)['inputType'].value === 'smiles'
     ) {
         <div
-            class="relative mt-4 grow flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
+            class="relative grow flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
             [class.invalid]="selectedSearchOption!.formGroup.controls['value'].errors 
                 && selectedSearchOption!.formGroup.controls['value'].dirty"
             
