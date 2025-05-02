@@ -4,6 +4,11 @@
     "fragment": {},
     "mcs": {}
   },
+  "query_smiles": {
+    "iupac_name": "<EXAMPLE NAME>",
+    "smiles": "",
+    "matches_return": 10
+  },
   "tanimoto": {
     "CC(C)[C@@H](N)C(=O)O": 0.04153354632587859,
     "N=C(N)NCCC[C@H](N=C(O)[C@H](Cc1ccc(O)cc1)N=C(O)[C@@H]1CCCN1C(=O)[C@H](CO)N=C(O)[C@H](Cc1ccccc1)N=C(O)CN=C(O)[C@@H]1CCCN1C(=O)[C@@H]1CCCN1C(=O)[C@@H](N)CCCNC(=N)N)C(=O)O": 0.1634446397188049,
