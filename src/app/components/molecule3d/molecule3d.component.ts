@@ -9,8 +9,10 @@ import {
   ViewChild
 } from "@angular/core";
 import { ThreedmolLoaderService } from "src/app/services/threedmol-loader.service";
-import { combineLatest, BehaviorSubject, Subscription } from "rxjs";
-import { filter, first, map } from "rxjs/operators";
+import { combineLatest, BehaviorSubject, Subscription, Observable } from "rxjs";
+import { combineLatestWith, distinctUntilChanged, filter, first, map, mergeMap, switchMap } from "rxjs/operators";
+import { PubchemService } from "~/app/services/pubchem.service";
+import { AlphafoldService } from "~/app/services/alphafold.service";
 
 export interface ThreeDMolInputOptions {
   data: string;
@@ -52,7 +54,9 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
   moleculeToRender: FetchMoleculeResultWithViewerOptions | null = null;
 
   constructor(
-    private $3dMolLoaderService: ThreedmolLoaderService
+    private $3dMolLoaderService: ThreedmolLoaderService,
+    private pubchemService: PubchemService,
+    private alphafoldService: AlphafoldService
   ) { }
 
   ngAfterViewInit(): void {
@@ -62,21 +66,25 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
     );
 
     this.subscriptions.push(
-      combineLatest([
-        viewer$,
-        this.options$
-      ])
-      .pipe(
-        filter(([_, options]) => options !== null)
-      )
-      .subscribe(([viewer, options]) => {
-        this.fetchMolecule(viewer, options!).then(result => {
-          this.moleculeToRender = {
-            ...result,
-            viewerOptions: options!.viewerOptions
-          };
-          this.renderMolecule(viewer, this.moleculeToRender);
-        });
+      viewer$.pipe(
+        combineLatestWith(this.options$.pipe(
+          filter((options) => options !== null),
+          distinctUntilChanged()
+        )),
+        switchMap(([viewer, options]) => {
+          return this.fetchMolecule$(options!).pipe(
+            map(result => ({
+              viewer,
+              result: {
+                ...result,
+                viewerOptions: options!.viewerOptions
+              }
+            }))
+          );
+        })
+      ).subscribe(({viewer, result}) => {
+        this.moleculeToRender = result;
+        this.renderMolecule(viewer, result);
       })
     );
   }
@@ -121,43 +129,18 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
   }
 
-  fetchMolecule(viewer: any, options: ThreeDMolInputOptions): Promise<FetchMoleculeResult> {
-    
-    if (options.dataType === 'uniprot') {
-      // For UniProt IDs, fetch the PDB file from AlphaFold
-      const url = `https://alphafold.ebi.ac.uk/files/AF-${options.data}-F1-model_v4.pdb`;
+  fetchMolecule$(options: ThreeDMolInputOptions): Observable<FetchMoleculeResult> {
+    const dataType = options.dataType === 'uniprot' ? 'pdb' : 'sdf';
+    const fetcher$ = options.dataType === 'uniprot' 
+      ? this.alphafoldService.get3DProtein(options.data)
+      : this.pubchemService.get3DStructureFromSMILES(options.data);
 
-      return fetch(url)
-        .then(response => response.text())
-        .then(data => ({
-          model: data,
-          dtype: 'pdb',
-        }));
-
-    } else {
-      // For SMILES, first convert to PubChem CID and then fetch the 3D structure
-      const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${options.data}/cids/TXT`;
-
-      return fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          const cids = data.split('\n').filter(line => line.trim() !== '');
-          if (cids.length > 0) {
-            const cid = cids[0];
-            return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/record/SDF?record_type=3d`;
-          }
-          throw new Error(`No CID found for the given SMILES ${options.data}`);
-        })
-        .then(url => 
-          fetch(url)
-            .then(response => response.text())
-            .then(data => ({
-              model: data,
-              dtype: 'sdf',
-            })
-          )
-        );
-    }
+    return fetcher$.pipe(
+      map(data => ({
+        model: `${data}`,
+        dtype: dataType,
+      }))
+    );
   }
 
   private renderMolecule(

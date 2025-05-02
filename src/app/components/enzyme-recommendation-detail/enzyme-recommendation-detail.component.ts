@@ -7,7 +7,7 @@ import { CommonModule } from "@angular/common";
 
 import { OpenEnzymeDBService, type SubstrateRecord } from '~/app/services/open-enzyme-db.service';
 import { PanelModule } from "primeng/panel";
-import { map } from "rxjs/operators";
+import { combineLatestWith, map } from "rxjs/operators";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -203,7 +203,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
 
     this.service.getData()
       .pipe(
-        map((response: any) => 
+        combineLatestWith(this.jobResultResponse$),
+        map(([response, jobResultResponse]) => 
           response
             .map((row: any, index: number) => ({
               iid: index,
@@ -219,6 +220,9 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               kcat: row['KCAT VALUE'],
               kcat_km: row['KCAT/KM VALUE'],
               pubmed_id: `${row.PubMedID}`,
+              tanimoto: jobResultResponse.tanimoto[row.SMILES],
+              fragment: jobResultResponse.fragment[row.SMILES],
+              mcs: jobResultResponse.mcs[row.SMILES],
             }))
             .filter((row: any) => !!row.kcat && !!row.kcat_km)
         )
