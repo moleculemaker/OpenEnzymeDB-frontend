@@ -8,12 +8,20 @@ export interface BaseSearchOptionParams {
   placeholder: string;
   example: Record<string, any>;
 }
-export abstract class BaseSearchOption {
+
+type AdditionalControls = Record<string, FormControl<any>>;
+
+export type SearchOptionType<V, X extends AdditionalControls> = {
+  value: FormControl<V | null>;
+} & X;
+
+export abstract class BaseSearchOption<V, X extends AdditionalControls> {
+  abstract formGroup: FormGroup<SearchOptionType<V, X>>;
+
   key: string;
   label: string;
   type: SearchType;
   placeholder: string;
-  formGroup: FormGroup;
   example: Record<string, any>;
 
   constructor(params: BaseSearchOptionParams) {
@@ -22,9 +30,6 @@ export abstract class BaseSearchOption {
     this.type = params.type;
     this.placeholder = params.placeholder;
     this.example = params.example;
-    this.formGroup = new FormGroup({
-      value: new FormControl<any | null>(null),
-    });
   }
 
   reset() {

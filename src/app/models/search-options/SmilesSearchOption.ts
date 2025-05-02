@@ -1,44 +1,45 @@
 import { FormControl, Validators, AbstractControl, FormGroup } from '@angular/forms';
-import { Observable, of, map, first, catchError, tap } from 'rxjs';
+import { Observable, of, switchMap, map, first, catchError, tap } from 'rxjs';
 import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
 
-type MoleculeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
+type SmilesSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
-  moleculeValidator: (smiles: string) => Observable<any>;
+  smilesValidator: (smiles: string) => Observable<any>;
+  nameToSmilesConverter: (name: string) => Observable<string>;
 };
 
-type MoleculeSearchInputType = 'name' | 'smiles';
+type SmilesSearchInputType = 'name' | 'smiles';
 
-type MoleculeSearchAdditionalControls = {
-  inputType: FormControl<MoleculeSearchInputType | null>;
+type SmilesSearchAdditionalControls = {
+  inputType: FormControl<SmilesSearchInputType | null>;
 };
 
-type MoleculeSearchOptionType = SearchOptionType<string, MoleculeSearchAdditionalControls>;
+type SmilesSearchOptionType = SearchOptionType<string, SmilesSearchAdditionalControls>;
 
-export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearchAdditionalControls> {
-  override formGroup: FormGroup<MoleculeSearchOptionType> = new FormGroup({
-    inputType: new FormControl<MoleculeSearchInputType>('name', [Validators.required]),
+export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdditionalControls> {
+  override formGroup: FormGroup<SmilesSearchOptionType> = new FormGroup({
+    inputType: new FormControl<SmilesSearchInputType | null>(null, [Validators.required]),
     value: new FormControl<string | null>(null, [Validators.required]),
   });
 
-  chemInfo: {
+  private chemInfo: {
     structure: string;
     status: 'valid' | 'invalid' | 'loading' | 'empty' | 'na';
   } = {
       structure: '',
       status: 'na'
     };
-
+  private nameToSmilesConverter: (name: string) => Observable<string>;
   private smilesValidator: (smiles: string) => Observable<any>;
 
-  constructor(params: MoleculeSearchOptionParams) {
+  constructor(params: SmilesSearchOptionParams) {
     super({
       ...params,
-      type: 'molecule',
+      type: 'smiles',
     });
-
+    this.nameToSmilesConverter = params.nameToSmilesConverter;
     this.smilesValidator = (smiles: string) => {
-      return params.moleculeValidator(smiles).pipe(
+      return params.smilesValidator(smiles).pipe(
         tap((chemical) => {
           this.chemInfo.structure = chemical.structure || "";
           this.chemInfo.status = chemical ? 'valid' : 'invalid';
@@ -54,7 +55,8 @@ export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearc
         }
       )
     )};
-
+    this.formGroup.setControl('inputType', new FormControl<SmilesSearchInputType>('name', [Validators.required]));
+    this.formGroup.setControl('value', new FormControl<string>('', [Validators.required]));
     this.formGroup.addAsyncValidators([this.validateInput.bind(this)]);
   }
 
@@ -69,11 +71,16 @@ export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearc
   }
 
   private validateInput(control: AbstractControl<{
-    inputType: MoleculeSearchInputType;
+    inputType: SmilesSearchInputType;
     value: string;
   } | null>) {
     if (control.value?.inputType === 'name' && control.value?.value) {
-      return of(null);
+      return this.nameToSmilesConverter(control.value.value).pipe(
+        switchMap(this.smilesValidator),
+        map((chemical) => {
+          return chemical ? null : { invalidSmiles: true };
+        })
+      );
     }
 
     if (control.value?.inputType === 'smiles' && control.value?.value) {

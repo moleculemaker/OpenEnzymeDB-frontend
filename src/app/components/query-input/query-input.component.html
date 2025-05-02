@@ -5,7 +5,7 @@
                 <small class="font-semibold leading-xl">
                     {{ option.label }} {{ option.type === 'range' ? 'Range' : '' }}
                 </small>
-                @if (option.formGroup.get('inputType')) {
+                @if (option.formGroup.contains('inputType')) {
                     <div class="flex gap-2 items-center" [formGroup]="option.formGroup">
                         <div class="flex items-center gap-2">
                             <p-radioButton 
@@ -119,18 +119,18 @@
     @if (
         selectedSearchOption &&
         selectedSearchOption.key === 'compound' && 
-        selectedSearchOption.formGroup.get('value')?.value &&
-        selectedSearchOption.formGroup.get('inputType')?.value === 'smiles'
+        selectedSearchOption.formGroup.controls['value'].value &&
+        $any(selectedSearchOption.formGroup.controls)['inputType'].value === 'smiles'
     ) {
         <div
             class="relative mt-4 grow flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
-            [class.invalid]="selectedSearchOption!.formGroup.get('value')!.errors 
-                && selectedSearchOption!.formGroup.get('value')!.dirty"
+            [class.invalid]="selectedSearchOption!.formGroup.controls['value'].errors 
+                && selectedSearchOption!.formGroup.controls['value'].dirty"
             
         >
             <div class="flex items-center justify-center">
                 <i class="absolute pi left-3 top-3"
-                    [class.pi-check-circle]="selectedSearchOption!.formGroup.get('value')!.valid"
+                    [class.pi-check-circle]="selectedSearchOption!.formGroup.controls['value'].valid"
                 ></i>
                 <!-- this must be a MoleculeSearchOption -->
                 @let chemInfo = $any(selectedSearchOption!).chemInfo;

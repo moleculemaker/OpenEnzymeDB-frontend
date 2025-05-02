@@ -1,5 +1,5 @@
-import { FormControl, Validators } from '@angular/forms';
-import { BaseSearchOptionParams, BaseSearchOption } from './BaseSearchOption';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
 
 type RangeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
@@ -7,7 +7,18 @@ type RangeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   max?: number;
 };
 
-export class RangeSearchOption extends BaseSearchOption {
+type RangeSearchAdditionalControls = {
+  valueLabel: FormControl<string | null>;
+};
+
+type RangeSearchOptionType = SearchOptionType<[number, number], RangeSearchAdditionalControls>;
+
+export class RangeSearchOption extends BaseSearchOption<[number, number], RangeSearchAdditionalControls> {
+  override formGroup: FormGroup<RangeSearchOptionType> = new FormGroup({
+    value: new FormControl<[number, number] | null>(null, [Validators.required]),
+    valueLabel: new FormControl<string | null>(null, [Validators.required]),
+  });
+  
   min?: number;
   max?: number;
 

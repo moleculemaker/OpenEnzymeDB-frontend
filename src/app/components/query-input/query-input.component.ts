@@ -13,6 +13,7 @@ import { OpenEnzymeDBService } from '~/app/services/open-enzyme-db.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SearchOption, QueryValue } from '../../models/search-options';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-query-input',
@@ -67,8 +68,8 @@ export class QueryInputComponent implements ControlValueAccessor {
   ngOnInit() {
     // Subscribe to value changes for all search configs
     this.searchConfigs.forEach(config => {
-      config.formGroup.valueChanges.subscribe(() => {
-        console.log('[query-input] form group value changed', config.formGroup.value);
+      (config.formGroup.valueChanges as Observable<any>).subscribe((value: any) => {
+        console.log('[query-input] form group value changed', value);
         this.emitValue();
       });
     });
@@ -95,7 +96,7 @@ export class QueryInputComponent implements ControlValueAccessor {
     if (value) {
       this.selectedSearchOption = this.searchOptionRecords[value.selectedOption];
       if (this.selectedSearchOption) {
-        this.selectedSearchOption.formGroup.get('value')?.setValue(value.value);
+        this.selectedSearchOption.formGroup.patchValue({ value: value.value });
       }
     } else {
       this.selectedSearchOption = null;
@@ -132,10 +133,11 @@ export class QueryInputComponent implements ControlValueAccessor {
   private emitValue(): void {
     if (!this.selectedSearchOption) return;
 
-    const inputValue = this.selectedSearchOption.formGroup.get('value')?.value;
-    const others = Object.entries(this.selectedSearchOption.formGroup.controls).reduce((acc, [key, control]) => {
+    const formValue = this.selectedSearchOption.formGroup.value;
+    const inputValue = formValue.value;
+    const others = Object.entries(formValue).reduce((acc, [key, value]) => {
       if (key !== 'value') {
-        acc[key] = control.value;
+        acc[key] = value;
       }
       return acc;
     }, {} as Record<string, any>);
@@ -146,7 +148,6 @@ export class QueryInputComponent implements ControlValueAccessor {
       ...others
     };
 
-    // debugger;
     console.log('[query-input] emitting value', value);
     this.onChange(value);
     this.onTouched();
