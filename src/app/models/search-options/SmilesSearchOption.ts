@@ -20,7 +20,7 @@ type SmilesSearchOptionType = SearchOptionType<string, SmilesSearchAdditionalCon
 export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdditionalControls> {
   override formGroup: FormGroup<SmilesSearchOptionType> = new FormGroup({
     inputType: new FormControl<SmilesSearchInputType>('name', [Validators.required]),
-    inputValue: new FormControl<string>('', [Validators.required]),
+    inputValue: new FormControl<string>('', [this.validateRequired.bind(this)]),
     value: new FormControl<string>(''),
   });
 
@@ -49,10 +49,6 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
         }),
         first(),
         catchError((err) => {
-          if (err.name === "EmptyError") {
-            this.chemInfo.status = 'empty';
-            return of(null);
-          }
           this.chemInfo.status = 'invalid';
           return of({ invalidSmiles: true });
         }
@@ -74,6 +70,17 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     this.formGroup.get('inputValue')!.setValue('', { emitEvent: false });
   }
 
+  private validateRequired(control: AbstractControl<string | null>) {
+    const error = Validators.required(control);
+    if (error) {
+      this.chemInfo = {
+        structure: '',
+        status: 'loading'
+      }
+    }
+    return error;
+  }
+
   private validateInput(control: AbstractControl<{
     inputType: SmilesSearchInputType;
     value: string;
@@ -83,14 +90,19 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
       return this.nameToSmilesConverter(control.value.inputValue).pipe(
         switchMap(this.smilesValidator),
         map((chemical) => {
-          if (chemical) {
+          if (chemical.smiles) {
             control.get('value')!.setValue(chemical.smiles, { 
               emitEvent: false,
               onlySelf: true
             });
             return null;
+          } else {
+            control.get('value')!.setValue('', {
+              emitEvent: false,
+              onlySelf: true
+            });
+            return { invalidName: true };
           }
-          return { invalidName: true };
         }),
         catchError((err) => {
           this.chemInfo.status = 'invalid';
@@ -102,15 +114,24 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     if (control.value?.inputType === 'smiles' && control.value?.inputValue) {
       return this.smilesValidator(control.value.inputValue).pipe(
         map((chemical) => {
-          if (chemical) {
+          if (chemical.smiles) {
             control.get('value')!.setValue(chemical.smiles, { 
               emitEvent: false,
               onlySelf: true
             });
             return null;
+          } else {
+            control.get('value')!.setValue('', {
+              emitEvent: false,
+              onlySelf: true
+            });
+            return { invalidSmiles: true };
           }
-          return { invalidSmiles: true };
         }),
+        catchError((err) => {
+          this.chemInfo.status = 'invalid';
+          return of({ invalidSmiles: true });
+        })
       );
     }
 

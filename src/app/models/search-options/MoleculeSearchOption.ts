@@ -56,7 +56,9 @@ export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearc
       )
     )};
 
-    this.formGroup.addAsyncValidators([this.validateInput.bind(this)]);
+    this.formGroup.addAsyncValidators([
+      this.validateInput.bind(this)
+    ]);
   }
 
   override reset() {
