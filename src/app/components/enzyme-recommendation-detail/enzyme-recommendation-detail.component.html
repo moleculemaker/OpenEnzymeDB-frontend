@@ -227,6 +227,21 @@
                           ></app-external-link>
                         </td>
                       }
+                      @case ('mcs') {
+                        <td class="align-middle">
+                          <span class="p-1 text-white font-semibold rounded-md bg-[#726EDE]">{{ row[value.field] | number: '1.1-4' }}</span>
+                        </td>
+                      }
+                      @case ('fragment') {
+                        <td class="align-middle">
+                          {{ row[value.field] | number: '1.1-4' }}
+                        </td>
+                      }
+                      @case ('tanimoto') {
+                        <td class="align-middle">
+                          <span class="p-1 text-black font-semibold rounded-md bg-[#B2FDEF]">{{ row[value.field] | number: '1.1-4' }}</span>
+                        </td>
+                      }
                       @default {
                         <td class="align-middle">
                           {{ row[value.field] }}

@@ -218,7 +218,46 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
       value: [],
       matchMode: 'subset',
     })],
-  ] as [string, FilterConfig][])
+
+    this.algorithm === 'mcs' 
+    && ['mcs', new RangeFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'MCS',
+        rawValue: 'MCS',
+      },
+      placeholder: 'Enter MCS range',
+      field: 'mcs',
+      min: 0,
+      max: 1,
+    })],
+
+    this.algorithm === 'fragment'
+    && ['fragment', new RangeFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Fragment',
+        rawValue: 'Fragment',
+      },
+      placeholder: 'Enter fragment range',
+      field: 'fragment',
+      min: 0,
+      max: 1,
+    })],
+
+    this.algorithm === 'tanimoto'
+    && ['tanimoto', new RangeFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Tanimoto',
+        rawValue: 'Tanimoto',
+      },
+      placeholder: 'Enter tanimoto range',
+      field: 'tanimoto',
+      min: 0,
+      max: 1,
+    })],
+  ].filter((x) => !!x) as [string, FilterConfig][])
 
   get filterRecords() {
     return Array.from(this.filters.values());
