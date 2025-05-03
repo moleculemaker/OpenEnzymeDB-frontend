@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, catchError, first, from, map, of } from "rxjs";
+import { Observable, catchError, first, from, map, of, shareReplay } from "rxjs";
 
 import { BodyCreateJobJobTypeJobsPost, ChemicalAutoCompleteResponse, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
 import { EnvironmentService } from "./environment.service";
@@ -387,6 +387,7 @@ export class OpenEnzymeDBService {
             status: 'loaded' as LoadingStatus, 
             data: res 
           })),
+          shareReplay(1),
           catchError((error: Response) => {
             console.error('Error validating chemical:', error);
             const loadable: Loadable<string> = {

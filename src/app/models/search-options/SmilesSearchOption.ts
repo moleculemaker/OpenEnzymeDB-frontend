@@ -1,6 +1,7 @@
 import { FormControl, Validators, AbstractControl, FormGroup } from '@angular/forms';
 import { Observable, of, switchMap, map, first, catchError, tap } from 'rxjs';
 import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
+import { Loadable } from '~/app/services/openenzymedb.service';
 
 type SmilesSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
@@ -24,13 +25,11 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     value: new FormControl<string>(''),
   });
 
-  private chemInfo: {
-    structure: string;
-    status: 'valid' | 'invalid' | 'loading' | 'empty' | 'na';
-  } = {
-      structure: '',
-      status: 'na'
-    };
+  public chemInfo: Loadable<string> = {
+    data: '',
+    status: 'na'
+  };
+
   private nameToSmilesConverter: (name: string) => Observable<string>;
   private smilesValidator: (smiles: string) => Observable<any>;
 
@@ -44,8 +43,8 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
       this.chemInfo.status = 'loading';
       return params.smilesValidator(smiles).pipe(
         tap((chemical) => {
-          this.chemInfo.structure = chemical.structure || "";
-          this.chemInfo.status = chemical ? 'valid' : 'invalid';
+          this.chemInfo.data = chemical.structure || "";
+          this.chemInfo.status = chemical ? 'loaded' : 'invalid';
         }),
         first(),
         catchError((err) => {
@@ -62,7 +61,7 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
   override reset() {
     super.reset();
     this.chemInfo = {
-      structure: '',
+      data: '',
       status: 'na'
     };
     this.formGroup.get('inputType')!.setValue('name', { emitEvent: false });
@@ -74,7 +73,7 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     const error = Validators.required(control);
     if (error) {
       this.chemInfo = {
-        structure: '',
+        data: '',
         status: 'loading'
       }
     }

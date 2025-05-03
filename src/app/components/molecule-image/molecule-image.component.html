@@ -1,9 +1,9 @@
-@switch (loadableImage.status) {
+@switch (chemical.status) {
     @case ('loading') {
         <p-progressSpinner aria-label="Loading"></p-progressSpinner>
     }
     @case ('loaded') {
-        <div [innerHTML]="image | safe:'html'"></div>
+        <div [innerHTML]="chemical.data | safe:'html'"></div>
     }
     @case ('error') {
         <div [class]="placeholderClassName" 
@@ -24,6 +24,6 @@
         </div>
     }
     @default {
-        <div [innerHTML]="image | safe:'html'"></div>
+        <div [innerHTML]="chemical.data | safe:'html'"></div>
     }
 }

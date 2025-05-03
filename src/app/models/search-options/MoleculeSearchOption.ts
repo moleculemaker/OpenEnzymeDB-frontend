@@ -1,6 +1,7 @@
 import { FormControl, Validators, AbstractControl, FormGroup } from '@angular/forms';
 import { Observable, of, map, first, catchError, tap } from 'rxjs';
 import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
+import { Loadable } from '~/app/services/openenzymedb.service';
 
 type MoleculeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
@@ -21,13 +22,10 @@ export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearc
     value: new FormControl<string | null>(null, [Validators.required]),
   });
 
-  chemInfo: {
-    structure: string;
-    status: 'valid' | 'invalid' | 'loading' | 'empty' | 'na';
-  } = {
-      structure: '',
-      status: 'na'
-    };
+  public chemInfo: Loadable<string> = {
+    data: '',
+    status: 'na'
+  };
 
   private smilesValidator: (smiles: string) => Observable<any>;
 
@@ -41,15 +39,11 @@ export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearc
       this.chemInfo.status = 'loading';
       return params.moleculeValidator(smiles).pipe(
         tap((chemical) => {
-          this.chemInfo.structure = chemical.structure || "";
-          this.chemInfo.status = chemical ? 'valid' : 'invalid';
+          this.chemInfo.data = chemical.structure || "";
+          this.chemInfo.status = chemical ? 'loaded' : 'invalid';
         }),
         first(),
         catchError((err) => {
-          if (err.name === "EmptyError") {
-            this.chemInfo.status = 'empty';
-            return of(null);
-          }
           this.chemInfo.status = 'invalid';
           return of({ invalidSmiles: true });
         }
@@ -64,7 +58,7 @@ export class MoleculeSearchOption extends BaseSearchOption<string, MoleculeSearc
   override reset() {
     super.reset();
     this.chemInfo = {
-      structure: '',
+      data: '',
       status: 'na'
     };
     this.formGroup.get('inputType')!.setValue('name', { emitEvent: false });

@@ -117,26 +117,7 @@
       <!-- this must be a MoleculeSearchOption -->
       @let chemInfo = $any(selectedSearchOption!).chemInfo;
 
-      @switch (chemInfo.status) {
-      @case ('valid') {
-      <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo.structure"></app-molecule-image>
-      }
-      @case ('empty') {
-      <div class="h-[300px] flex items-center justify-center">
-        No image available
-      </div>
-      }
-      @case ('invalid') {
-      <div class="h-[300px] flex items-center justify-center">
-        Input is invalid
-      </div>
-      }
-      @case ('loading') {
-      <div class="h-[300px] flex items-center justify-center">
-        <p-progressSpinner aria-label="Loading"></p-progressSpinner>
-      </div>
-      }
-      }
+      <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo"></app-molecule-image>
     </div>
   </div>
   }
@@ -155,26 +136,7 @@
       <!-- this must be a MoleculeSearchOption -->
       @let chemInfo = $any(selectedSearchOption!).chemInfo;
 
-      @switch (chemInfo.status) {
-      @case ('valid') {
-      <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo.structure"></app-molecule-image>
-      }
-      @case ('empty') {
-      <div class="h-[300px] flex items-center justify-center">
-        No image available
-      </div>
-      }
-      @case ('invalid') {
-      <div class="h-[300px] flex items-center justify-center">
-        Input is invalid
-      </div>
-      }
-      @case ('loading') {
-      <div class="h-[300px] flex items-center justify-center">
-        <p-progressSpinner aria-label="Loading"></p-progressSpinner>
-      </div>
-      }
-      }
+      <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo"></app-molecule-image>
     </div>
   </div>
   }

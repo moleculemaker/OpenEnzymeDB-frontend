@@ -17,21 +17,15 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     }
 })
 export class MoleculeImageComponent implements OnInit, OnChanges {
-  @Input() loadableImage: Loadable<string>;
+  @Input() loadableImage: Loadable<string> = {
+    data: '',
+    status: 'na'
+  };
   @Input() width: number = 300;
   @Input() height: number = 150;
   @Input() smiles: string = '';
 
-  image = ''
   placeholderClassName = ''
-
-  // chemical: {
-  //   data: string;
-  //   status: 'valid' | 'invalid' | 'loading' | 'empty' | 'na';
-  // } = {
-  //   data: '',
-  //   status: 'na'
-  // }
   chemical: Loadable<string> = {
     data: '',
     status: 'na'
@@ -40,22 +34,16 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   getSVG = (smiles: string) => {
     this.service.validateChemical(smiles)
       .pipe(
-        map((chemical) => ({
-          data: chemical,
-          status: 'valid' as const
-        })),
         catchError((err) => 
           of({
             data: '',
-            status: err.name === "EmptyError" 
-              ? 'empty' as const
-              : 'invalid' as const
-          })
+            status: 'invalid' as const
+          } as Loadable<string>)
         )
       )
       .subscribe((chemical) => {
         this.chemical = chemical;
-        this.init(chemical.data);
+        this.init(chemical.data || '');
       });
   }
 
@@ -64,18 +52,25 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    if (this.loadableImage) {
+    if (this.loadableImage
+      && this.loadableImage.status === 'loaded'
+      && this.loadableImage.data) {
       this.init(this.loadableImage.data || '');
+
     } else if (this.smiles) {
       this.getSVG(this.smiles);
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['loadableImage'] && changes['loadableImage'].currentValue) {
-      this.init(this.loadableImage.data || '');
-    }
-    if (changes['smiles'] && changes['smiles'].currentValue) {
+    if (changes['loadableImage'] 
+      && changes['loadableImage'].currentValue.status === 'loaded'
+      && changes['loadableImage'].currentValue.data) {
+      this.init(changes['loadableImage'].currentValue.data || '');
+
+    } else if (changes['smiles'] 
+      && changes['smiles'].currentValue
+      && changes['smiles'].currentValue !== changes['smiles'].previousValue) {
       this.getSVG(this.smiles);
     }
   }
@@ -87,14 +82,14 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
     element.querySelector('svg')?.setAttribute('height', `${this.height}px`);
     element.querySelector('svg rect')?.setAttribute('style', 'opacity:1.0;fill:#FFFFFF00;stroke:none');
 
-    this.image = element.innerHTML;
+    this.chemical.data = element.innerHTML;
     this.placeholderClassName = `w-[${this.width}] h-[${this.height}]`
   }
 
   exportImage(type: 'svg' | 'png') {
     const filename = this.smiles || 'molecule';
     if (type === 'svg') {
-      const blob = new Blob([this.image], { type: 'image/svg+xml' });
+      const blob = new Blob([this.chemical.data!], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -107,7 +102,7 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
       const img = new Image();
-      const svg = new Blob([this.image], {type: 'image/svg+xml;charset=utf-8'});
+      const svg = new Blob([this.chemical.data!], {type: 'image/svg+xml;charset=utf-8'});
       const url = URL.createObjectURL(svg);
 
       canvas.height = this.height;
