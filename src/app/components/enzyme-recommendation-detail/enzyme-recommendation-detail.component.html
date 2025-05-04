@@ -143,9 +143,35 @@
           }
 
           <div class="flex w-full">
-            <p-table #resultsTable [value]="result.data" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]"
-              [paginator]="true" dataKey="iid" class="w-full h-full" tableStyleClass="w-full" styleClass="w-full"
-              [columns]="columns">
+            <p-table #resultsTable
+              [value]="result.data"
+              [rows]="10" 
+              [rowsPerPageOptions]="[10, 20, 50]"
+              [paginator]="true" 
+              dataKey="iid" 
+              class="w-full h-full" 
+              tableStyleClass="w-full" 
+              styleClass="w-full"
+              [columns]="columns"
+              rowGroupMode="subheader"
+              groupRowsBy="compound.name"
+              [expandedRowKeys]="expandedRows"
+            >
+              <ng-template pTemplate="groupheader" let-group let-expanded="expanded">
+                <tr pRowGroupHeader>
+                  <td colspan="10">
+                      <button 
+                        title="Expand"
+                        type="button" 
+                        [pRowToggler]="group"
+                        class="flex items-center gap-2">
+                        <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                        <span>{{ group.compound.name }}</span>
+                      </button>
+                  </td>
+                </tr>
+              </ng-template>
+
               <ng-template pTemplate="header">
                 <tr>
                   @for (filter of filters.entries(); track filter[0]) {
@@ -159,7 +185,8 @@
                   }
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-row let-expanded="expanded">
+
+              <ng-template pTemplate="rowexpansion" let-row>
                 <tr class="table-row">
                   @for (filter of filters.entries(); track filter[0]) {
                     @let value = filter[1];
@@ -167,8 +194,8 @@
                       @case ('compound.name') {
                         <td class="align-middle">
                           <div class="flex items-start gap-2">
-                            <button title="Expand" type="button" [pRowToggler]="row">
-                              <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                            <button title="Expand" type="button" (click)="row.showDetails = !row.showDetails">
+                              <i [class]="row.showDetails ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                             </button>
                             <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{ row.compound.name }}</a>
                           </div>
@@ -250,85 +277,92 @@
                     }
                   }
                 </tr>
-              </ng-template>
-              <ng-template pTemplate="rowexpansion" let-row>
-                <tr>
-                  <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
-                    <div [@slideIn]
-                      class="rounded-md border border-[--surface-d] border-solid bg-white p-2 w-full flex flex-col gap-3">
-                      <div class="flex flex-col gap-4">
-                        <h6 class="font-semibold">Experiment Information</h6>
-                        <div class="flex gap-16">
-                          <div class="flex flex-col gap-2">
-                            <div>Organism</div>
-                            <div class="font-semibold italic text-blue-500">{{ row.organism }}</div>
+                <ng-container *ngTemplateOutlet="rowexpansion; context: { $implicit: row }"></ng-container>
+                <ng-template #rowexpansion let-row>
+                  @if (row.showDetails) {
+                    <tr>
+                      <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
+                        <div [@slideIn]
+                          class="rounded-md border border-[--surface-d] border-solid bg-white p-2 w-full flex flex-col gap-3">
+                          <div class="flex flex-col gap-4">
+                            <h6 class="font-semibold">Experiment Information</h6>
+                            <div class="flex gap-16">
+                              <div class="flex flex-col gap-2">
+                                <div>Organism</div>
+                                <div class="font-semibold italic text-blue-500">{{ row.organism }}</div>
+                              </div>
+                              <div class="flex flex-col gap-2">
+                                <div>Uniprot ID</div>
+                                <app-external-link 
+                                  [linkItem]="{ 
+                                    url: 'https://www.uniprot.org/uniprot/' + row.uniprot_id, 
+                                    label: row.uniprot_id
+                                  }"
+                                ></app-external-link>
+                              </div>
+                              <div class="flex flex-col gap-2">
+                                <div>Enzyme Sequence</div>
+                                <div class="font-semibold italic text-blue-500">{{ row.enzyme_sequence }}</div>
+                              </div>
+                              <div class="flex flex-col gap-2">
+                                <div>EC Number</div>
+                                <app-external-link 
+                                  [linkItem]="{ 
+                                    url: 'https://enzyme.expasy.org/EC/' + row.ec_number, 
+                                    label: row.ec_number
+                                  }"
+                                ></app-external-link>
+                              </div>
+                              <div class="flex flex-col gap-2">
+                                <div>PubMed ID</div>
+                                <app-external-link
+                                  [linkItem]="{
+                                    url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                    label: row.pubmed_id
+                                  }"
+                                ></app-external-link>
+                              </div>
+                            </div>
                           </div>
-                          <div class="flex flex-col gap-2">
-                            <div>Uniprot ID</div>
-                            <app-external-link 
-                              [linkItem]="{ 
-                                url: 'https://www.uniprot.org/uniprot/' + row.uniprot_id, 
-                                label: row.uniprot_id
-                              }"
-                            ></app-external-link>
+                          <div class="grid grid-cols-2 gap-2">
+                            <h6 class="grid-cols-1 col-span-1 font-semibold">Compound Structure</h6>
+                            <h6 class="grid-cols-2 col-span-1 font-semibold">Enzyme Structure</h6>
+                            <app-molecule-image
+                              #molecule2d
+                              class="grid-cols-1 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
+                              [smiles]="row.compound.smiles"
+                              [width]="300"
+                              [height]="200"
+                            ></app-molecule-image>
+                            <app-molecule3d
+                              #molecule3d
+                              class="grid-cols-2 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-1" 
+                              [options]="{
+                                  data: row.uniprot_id[0],
+                                  dataType: 'uniprot',
+                                  viewerOptions: {
+                                      mode: 'cartoon',
+                                      modeConfig: {
+                                        color: 'spectrum'
+                                      }
+                                  }
+                              }">
+                            </app-molecule3d>
                           </div>
-                          <div class="flex flex-col gap-2">
-                            <div>Enzyme Sequence</div>
-                            <div class="font-semibold italic text-blue-500">{{ row.enzyme_sequence }}</div>
-                          </div>
-                          <div class="flex flex-col gap-2">
-                            <div>EC Number</div>
-                            <app-external-link 
-                              [linkItem]="{ 
-                                url: 'https://enzyme.expasy.org/EC/' + row.ec_number, 
-                                label: row.ec_number
-                              }"
-                            ></app-external-link>
-                          </div>
-                          <div class="flex flex-col gap-2">
-                            <div>PubMed ID</div>
-                            <app-external-link
-                              [linkItem]="{
-                                url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                                label: row.pubmed_id
-                              }"
-                            ></app-external-link>
+                          <div>
+                            <h6 class="font-semibold">Reaction Schema</h6>
+                            <p>{{ row.reaction }}</p>
                           </div>
                         </div>
-                      </div>
-                      <div class="grid grid-cols-2 gap-2">
-                        <h6 class="grid-cols-1 col-span-1 font-semibold">Compound Structure</h6>
-                        <h6 class="grid-cols-2 col-span-1 font-semibold">Enzyme Structure</h6>
-                        <app-molecule-image
-                          #molecule2d
-                          class="grid-cols-1 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
-                          [smiles]="row.compound.smiles"
-                          [width]="300"
-                          [height]="200"
-                        ></app-molecule-image>
-                        <app-molecule3d
-                          #molecule3d
-                          class="grid-cols-2 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-1" 
-                          [options]="{
-                              data: row.uniprot_id[0],
-                              dataType: 'uniprot',
-                              viewerOptions: {
-                                  mode: 'cartoon',
-                                  modeConfig: {
-                                    color: 'spectrum'
-                                  }
-                              }
-                          }">
-                        </app-molecule3d>
-                      </div>
-                      <div>
-                        <h6 class="font-semibold">Reaction Schema</h6>
-                        <p>{{ row.reaction }}</p>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
+                      </td>
+                    </tr>
+                  }
+                </ng-template>
               </ng-template>
+
+              <!-- <ng-template pTemplate="rowexpansion" let-row>
+                
+              </ng-template> -->
 
               <ng-template pTemplate="emptymessage">
                 <tr>

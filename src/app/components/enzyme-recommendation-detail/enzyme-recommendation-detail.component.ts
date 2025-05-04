@@ -114,7 +114,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
 
   columns: any[] = [];
   showFilter = false;
-  hasFilter = false;
+  expandedRows: any = {};
 
   filters: Map<string, FilterConfig> = new Map([
     ['compounds', new MultiselectFilterConfig({
@@ -262,6 +262,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   get filterRecords() {
     return Array.from(this.filters.values());
   }
+
+  get hasFilter() {
+    return this.filterRecords.some((filter) => filter.hasFilter());
+  }
  
   constructor(
     service: OpenEnzymeDBService,
@@ -296,8 +300,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               tanimoto: jobResultResponse.tanimoto[row.SMILES],
               fragment: jobResultResponse.fragment[row.SMILES],
               mcs: jobResultResponse.mcs[row.SMILES],
+              showDetails: false,
             }))
             .filter((row: any) => !!row.kcat && !!row.kcat_km)
+            .sort((a: any, b: any) => b[this.algorithm] - a[this.algorithm])
         )
       )
       .subscribe({
@@ -374,12 +380,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     this.filterRecords.forEach((filter) => {
       this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     });
-    this.hasFilter = this.filterRecords.some((filter) => filter.hasFilter());
   }
 
   searchTable(filter: FilterConfig): void {
     this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
-    this.hasFilter = this.filterRecords.some(f => f.hasFilter());
   }
 
   private updateFilterOptions(response: any[]) {
