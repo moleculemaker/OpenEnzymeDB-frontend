@@ -6,7 +6,7 @@
   <ng-container *ngTemplateOutlet="chemicalBlock; context: { 
     $implicit: { 
         name: reactant, 
-        imagePackage: images[reactant],
+        smiles: images[reactant],
     } 
   }"></ng-container>
   }
@@ -18,7 +18,7 @@
   <ng-container *ngTemplateOutlet="chemicalBlock; context: { 
       $implicit: { 
         name: product, 
-        imagePackage: images[product],
+        smiles: images[product],
       }
     }"></ng-container>
   }
@@ -29,7 +29,7 @@
     <div class="font-bold text-center">{{ data.name }}</div>
     <div class="flex flex-col gap-1">
       <app-molecule-image 
-        [loadableImage]="data.imagePackage"
+        [smiles]="data.smiles"
         [width]="80"
         [height]="80"
       />

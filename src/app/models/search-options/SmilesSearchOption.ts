@@ -1,11 +1,11 @@
-import { FormControl, Validators, AbstractControl, FormGroup } from '@angular/forms';
-import { Observable, of, switchMap, map, first, catchError, tap } from 'rxjs';
+import { FormControl, Validators, AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { Observable, of, switchMap, map, first, catchError, tap, filter } from 'rxjs';
 import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
 import { Loadable } from '~/app/services/openenzymedb.service';
 
 type SmilesSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
-  smilesValidator: (smiles: string) => Observable<any>;
+  smilesValidator: (smiles: string) => Observable<Loadable<string>>;
   nameToSmilesConverter: (name: string) => Observable<string>;
 };
 
@@ -31,7 +31,7 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
   };
 
   private nameToSmilesConverter: (name: string) => Observable<string>;
-  private smilesValidator: (smiles: string) => Observable<any>;
+  private smilesValidator: (smiles: string) => Observable<Loadable<string> | ValidationErrors>;
 
   constructor(params: SmilesSearchOptionParams) {
     super({
@@ -40,13 +40,10 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     });
     this.nameToSmilesConverter = params.nameToSmilesConverter;
     this.smilesValidator = (smiles: string) => {
-      this.chemInfo.status = 'loading';
       return params.smilesValidator(smiles).pipe(
         tap((chemical) => {
-          this.chemInfo.data = chemical.structure || "";
-          this.chemInfo.status = chemical ? 'loaded' : 'invalid';
+          this.chemInfo = chemical;
         }),
-        first(),
         catchError((err) => {
           this.chemInfo.status = 'invalid';
           return of({ invalidSmiles: true });
@@ -89,8 +86,8 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
       return this.nameToSmilesConverter(control.value.inputValue).pipe(
         switchMap(this.smilesValidator),
         map((chemical) => {
-          if (chemical.smiles) {
-            control.get('value')!.setValue(chemical.smiles, { 
+          if (chemical.status === 'loaded' && chemical.data) {
+            control.get('value')!.setValue(chemical.data, { 
               emitEvent: false,
               onlySelf: true
             });
@@ -113,8 +110,8 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     if (control.value?.inputType === 'smiles' && control.value?.inputValue) {
       return this.smilesValidator(control.value.inputValue).pipe(
         map((chemical) => {
-          if (chemical.smiles) {
-            control.get('value')!.setValue(chemical.smiles, { 
+          if (chemical.status === 'loaded' && chemical.data) {
+            control.get('value')!.setValue(chemical.data, { 
               emitEvent: false,
               onlySelf: true
             });

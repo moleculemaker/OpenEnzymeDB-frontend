@@ -312,55 +312,55 @@ export class OpenEnzymeDBService {
     );
   }
 
-  getChemicalImageFromName(
-    name: string, 
-    width: number = 200, 
-    height: number = 200
-  ): Observable<Loadable<string>> {
-    if (this.chemicalImageCache[name]) {
-      return of(this.chemicalImageCache[name]);
-    }
+  // getChemicalImageFromName(
+  //   name: string, 
+  //   width: number = 200, 
+  //   height: number = 200
+  // ): Observable<Loadable<string>> {
+  //   if (this.chemicalImageCache[name]) {
+  //     return of(this.chemicalImageCache[name]);
+  //   }
 
-    return new Observable(observer => {
-      observer.next({ status: 'loading', data: null });
+  //   return new Observable(observer => {
+  //     observer.next({ status: 'loading', data: null });
       
-      fetch(`https://cactus.nci.nih.gov/chemical/structure/${name}/smiles`)
-        .then((res: Response) => {
-          if (res.status !== 200) {
-            throw new HttpErrorResponse({
-              status: res.status,
-              statusText: res.statusText,
-            });
-          }
-          return res.text();
-        })
-        .then(smiles => {
-          this.sharedService.drawSmilesSmilesDrawGet(smiles)
-            .subscribe((res) => {
-              const loadable: Loadable<string> = {
-                status: 'loaded',
-                data: res
-              };
-              this.chemicalImageCache[name] = loadable;
-              observer.next(loadable);
-              observer.complete();
-            })
-        })
-        .catch(error => {
-          console.error('Error fetching chemical image:', error);
-          const loadable: Loadable<string> = {
-            status: 'error',
-            data: null
-          };
-          if (error instanceof HttpErrorResponse && error.status === 404) {
-            loadable.status = 'na';
-          }
-          this.chemicalImageCache[name] = loadable;
-          observer.next(loadable);
-          observer.complete();
-        });
-    });
-  }
+  //     fetch(`https://cactus.nci.nih.gov/chemical/structure/${name}/smiles`)
+  //       .then((res: Response) => {
+  //         if (res.status !== 200) {
+  //           throw new HttpErrorResponse({
+  //             status: res.status,
+  //             statusText: res.statusText,
+  //           });
+  //         }
+  //         return res.text();
+  //       })
+  //       .then(smiles => {
+  //         this.sharedService.drawSmilesSmilesDrawGet(smiles)
+  //           .subscribe((res) => {
+  //             const loadable: Loadable<string> = {
+  //               status: 'loaded',
+  //               data: res
+  //             };
+  //             this.chemicalImageCache[name] = loadable;
+  //             observer.next(loadable);
+  //             observer.complete();
+  //           })
+  //       })
+  //       .catch(error => {
+  //         console.error('Error fetching chemical image:', error);
+  //         const loadable: Loadable<string> = {
+  //           status: 'error',
+  //           data: null
+  //         };
+  //         if (error instanceof HttpErrorResponse && error.status === 404) {
+  //           loadable.status = 'na';
+  //         }
+  //         this.chemicalImageCache[name] = loadable;
+  //         observer.next(loadable);
+  //         observer.complete();
+  //       });
+  //   });
+  // }
 
   updateSubscriberEmail(jobType: JobType, jobId: string, email: string) {
     if (this.frontendOnly) {

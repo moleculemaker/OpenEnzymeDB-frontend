@@ -1,29 +1,19 @@
-@switch (chemical.status) {
+<div [class]="placeholderClassName" class="flex items-center justify-center">
+    @switch (chemical.status) {
     @case ('loading') {
-        <p-progressSpinner aria-label="Loading"></p-progressSpinner>
+    <p-progressSpinner aria-label="Loading"></p-progressSpinner>
     }
     @case ('loaded') {
-        <div [innerHTML]="chemical.data | safe:'html'"></div>
+    <div [innerHTML]="chemical.data | safe:'html'"></div>
     }
     @case ('error') {
-        <div [class]="placeholderClassName" 
-            class="flex items-center justify-center"
-            [style.width]="width"
-            [style.height]="height"
-        >
-            Error loading image
-        </div>
+    Error loading image
     }
     @case ('na') {
-        <div [class]="placeholderClassName" 
-            class="flex items-center justify-center"
-            [style.width]="width"
-            [style.height]="height"
-        >
-            No Image Available
-        </div>
+    No Image Available
     }
     @default {
-        <div [innerHTML]="chemical.data | safe:'html'"></div>
+    <div [innerHTML]="chemical.data | safe:'html'"></div>
     }
-}
+    }
+</div>

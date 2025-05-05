@@ -3,6 +3,7 @@ import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/
 import { Subscription } from 'rxjs';
 import { Loadable, OpenEnzymeDBService, ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
+import { CactusService } from '~/app/services/cactus.service';
 
 @Component({
   selector: 'app-reaction-schema',
@@ -17,11 +18,11 @@ import { MoleculeImageComponent } from '../molecule-image/molecule-image.compone
 export class ReactionSchemaComponent implements OnChanges, OnDestroy {
   @Input() reactionSchema: ReactionSchemaRecord;
 
-  images: { [key: string]: Loadable<string> } = {};
+  images: { [key: string]: string } = {};
 
   subscriptions: Subscription[] = [];
   
-  constructor(public service: OpenEnzymeDBService) {
+  constructor(public cactusService: CactusService) {
 
   }
 
@@ -34,7 +35,7 @@ export class ReactionSchemaComponent implements OnChanges, OnDestroy {
       const reactionSchema = changes['reactionSchema'].currentValue;
       [...reactionSchema.reactants, ...reactionSchema.products].forEach((chemical: string) => {
         if (!this.images[chemical]) {
-          const subscription = this.service.getChemicalImageFromName(chemical, 300, 300)
+          const subscription = this.cactusService.getSMILESFromName(chemical)
             .subscribe((result) => {
               this.images[chemical] = result;
             });

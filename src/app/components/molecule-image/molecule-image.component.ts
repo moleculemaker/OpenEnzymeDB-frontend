@@ -21,8 +21,8 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
     data: '',
     status: 'na'
   };
-  @Input() width: number = 300;
-  @Input() height: number = 150;
+  @Input() width: number;
+  @Input() height: number;
   @Input() smiles: string = '';
 
   placeholderClassName = ''
@@ -43,7 +43,7 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
       )
       .subscribe((chemical) => {
         this.chemical = chemical;
-        this.init(chemical.data || '');
+        this.init(chemical);
       });
   }
 
@@ -52,10 +52,8 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    if (this.loadableImage
-      && this.loadableImage.status === 'loaded'
-      && this.loadableImage.data) {
-      this.init(this.loadableImage.data || '');
+    if (this.loadableImage && this.loadableImage.data) {
+      this.init(this.loadableImage);
 
     } else if (this.smiles) {
       this.getSVG(this.smiles);
@@ -63,27 +61,38 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['loadableImage'] 
-      && changes['loadableImage'].currentValue.status === 'loaded'
-      && changes['loadableImage'].currentValue.data) {
-      this.init(changes['loadableImage'].currentValue.data || '');
+    if (changes['loadableImage'] && changes['loadableImage'].currentValue) {
+      this.init(changes['loadableImage'].currentValue);
 
     } else if (changes['smiles'] 
       && changes['smiles'].currentValue
       && changes['smiles'].currentValue !== changes['smiles'].previousValue) {
       this.getSVG(this.smiles);
+
+    } else if (changes['width'] || changes['height']) {
+      this.init(this.chemical);
     }
   }
 
-  init(svg: string) {
+  init(data: Loadable<string>) {
+    if (data.status !== 'loaded') {
+      return;
+    }
+
     const element = document.createElement('div');
-    element.innerHTML = svg;
+    element.innerHTML = data.data || '';
+    
+    console.log(element.querySelector('svg'));
+
     element.querySelector('svg')?.setAttribute('width', `${this.width}px`);
     element.querySelector('svg')?.setAttribute('height', `${this.height}px`);
     element.querySelector('svg rect')?.setAttribute('style', 'opacity:1.0;fill:#FFFFFF00;stroke:none');
 
-    this.chemical.data = element.innerHTML;
-    this.placeholderClassName = `w-[${this.width}] h-[${this.height}]`
+    this.chemical = {
+      ...data,
+      data: element.innerHTML
+    }
+    this.placeholderClassName = `w-[${this.width}px] h-[${this.height}px]`
   }
 
   exportImage(type: 'svg' | 'png') {
