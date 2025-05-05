@@ -32,9 +32,47 @@ import { trigger } from "@angular/animations";
 import { transition } from "@angular/animations";
 import { style } from "@angular/animations";
 import { animate } from "@angular/animations";
-import { combineLatestInit } from "rxjs/internal/observable/combineLatest";
 import { ToastModule } from "primeng/toast";
+import { EnzymeStructureDialogComponent } from "~/components/enzyme-structure-dialog/enzyme-structure-dialog.component"
+import { CompoundStructureDialogComponent } from "~/components/compound-structure-dialog/compound-structure-dialog.component";
 
+interface RecommendationResultRow {
+  iid: number,
+  ec_number: string,
+  compound: {
+    name: string,
+    smiles: string,
+  },
+  organism: string,
+  sequence: string,
+  enzyme_type: string,
+  uniprot_id: string[],
+  ph: number,
+  temperature: number,
+  kcat: number,
+  kcat_km: number,
+  pubmed_id: string,
+  tanimoto: number,
+  fragment: {
+    matches: number[][];
+  }
+  mcs: number,
+  expanded: boolean,
+}
+
+interface RecommendationResultRowGroup {
+  compound: {
+    name: string;
+    smiles: string;
+  };
+  tanimoto: number;
+  fragment: {
+    matches: number[][];
+  };
+  mcs: number;
+  expanded: boolean;
+  rows: RecommendationResultRow[];
+}
 
 @Component({
   selector: 'app-enzyme-recommendation-detail',
@@ -80,6 +118,8 @@ import { ToastModule } from "primeng/toast";
     Molecule3dComponent,
     ExternalLinkComponent,
     FilterDialogComponent,
+    EnzymeStructureDialogComponent,
+    CompoundStructureDialogComponent,
   ],
   providers: [
     MessageService,
@@ -99,7 +139,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
 
   result: {
     status: 'loading' | 'loaded' | 'error' | 'na';
-    data: any[];
+    data: RecommendationResultRowGroup[];
     total: number;
   } = {
     status: 'na',
@@ -119,9 +159,9 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   ];
 
   columns: any[] = [];
-  showFilter = false;
   expandedRows: any = {};
 
+  filterDialogVisible = false;
   filters: Map<string, FilterConfig> = new Map([
     ['compounds', new MultiselectFilterConfig({
       category: 'parameter',
@@ -265,6 +305,47 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     })],
   ].filter((x) => !!x) as [string, FilterConfig][])
 
+  enzymeStructureDialogVisible = false;
+  enzymeStructureFilters: Map<string, MultiselectFilterConfig> = new Map([
+    ['compounds', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Compounds',
+        rawValue: 'Compounds',
+      },
+      placeholder: 'Select compound',
+      field: 'compound.name',
+      options: [],
+      value: [],
+    })],
+    ['organisms', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Organisms',
+        rawValue: 'Organisms',
+      },
+      placeholder: 'Select organism',
+      field: 'organism',
+      options: [],
+      value: [],
+    })],
+    ['uniprot_ids', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Uniprot IDs',
+        rawValue: 'Uniprot IDs',
+      },
+      placeholder: 'Select uniprot ID',
+      field: 'uniprot_id',
+      options: [],
+      value: [],
+      matchMode: 'subset',
+    })],
+  ].filter((x) => !!x) as [string, MultiselectFilterConfig][]);
+
+  compoundStructureDialogVisible = false;
+  compoundStructureDialogSmiles = '';
+
   get filterRecords() {
     return Array.from(this.filters.values());
   }
@@ -334,8 +415,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               fragment,
               mcs,
               expanded: false,
-              rows: value,
-            };
+              rows: value as RecommendationResultRow[],
+            } as RecommendationResultRowGroup;
           });
         })
       )
@@ -409,7 +490,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   }
 
   clearAllFilters() {
-    this.showFilter = false;
+    this.filterDialogVisible = false;
     this.filterRecords.forEach((filter) => {
       filter.value = [...filter.defaultValue];
     });
@@ -419,7 +500,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   }
 
   applyFilters() {
-    this.showFilter = false;
+    this.filterDialogVisible = false;
     this.filterRecords.forEach((filter) => {
       this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     });
@@ -431,6 +512,25 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
 
   searchTable(filter: FilterConfig): void {
     this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
+  }
+
+  showEnzymeStructureDialog(
+    group: RecommendationResultRowGroup
+  ) {
+    this.enzymeStructureDialogVisible = !this.enzymeStructureDialogVisible;
+    this.enzymeStructureFilters.get('compounds')!.value = [group.compound.name];
+    this.enzymeStructureFilters.get('organisms')!.value = group.rows.map((row) => row.organism);
+    this.enzymeStructureFilters.get('uniprot_ids')!.value = group.rows.map((row) => row.uniprot_id).flat();
+  }
+
+  showCompoundStructureDialog(
+    compound: {
+      name: string;
+      smiles: string;
+    }
+  ) {
+    this.compoundStructureDialogVisible = !this.compoundStructureDialogVisible;
+    this.compoundStructureDialogSmiles = compound.smiles;
   }
 
   private updateFilterOptions(response: any[]) {
@@ -453,6 +553,16 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
         filter.value = [filter.min, filter.max];
         filter.defaultValue = [filter.min, filter.max];
       }
+    });
+
+    Array.from(this.enzymeStructureFilters.entries()).forEach(([key, filter]) => {
+      const options = response.map((row: any) => getField(row, filter.field)).flat();
+      const optionsSet = new Set(options);
+      filter.options = Array.from(optionsSet).map((option: any) => ({
+        label: option,
+        value: option,
+      }));
+      filter.defaultValue = [];
     });
     
     this.columns = Array.from(this.filters.values()).map((filter) => ({

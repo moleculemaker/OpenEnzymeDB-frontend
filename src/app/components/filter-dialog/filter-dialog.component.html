@@ -1,4 +1,9 @@
-<p-dialog [(visible)]="visible" [modal]="true" styleClass="w-[800px] h-[800px]">
+<p-dialog 
+    [(visible)]="visible" 
+    [modal]="true" 
+    styleClass="w-[800px] h-[800px]"
+    (onHide)="visibleChange.emit(false)"
+>
     <ng-template pTemplate="header">
         <div class="flex items-center gap-2 font-semibold">
             <i class="px-2 pi pi-filter"></i>
