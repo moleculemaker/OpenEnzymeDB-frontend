@@ -52,6 +52,7 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
   subscriptions: Subscription[] = [];
 
   moleculeToRender: FetchMoleculeResultWithViewerOptions | null = null;
+  viewer$ = new BehaviorSubject<any | null>(null);
 
   constructor(
     private $3dMolLoaderService: ThreedmolLoaderService,
@@ -60,13 +61,15 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
   ) { }
 
   ngAfterViewInit(): void {
-    const viewer$ = this.$3dMolLoaderService.get3DMol().pipe(
-      first(),
-      map($3dmol => $3dmol.createViewer(this.container.nativeElement))
+    this.subscriptions.push(
+      this.$3dMolLoaderService.get3DMol().pipe(
+        first(),
+        map($3dmol => $3dmol.createViewer(this.container.nativeElement))
+      ).subscribe(viewer => this.viewer$.next(viewer))
     );
 
     this.subscriptions.push(
-      viewer$.pipe(
+      this.viewer$.pipe(
         combineLatestWith(this.options$.pipe(
           filter((options) => options !== null),
           distinctUntilChanged()
@@ -95,6 +98,12 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+
+    // TODO: properly dispose of viewer to prevent warning Attachment has zero size
+    this.viewer$.value?.removeAllModels();
+    this.viewer$.value?.clear();
+    this.viewer$.value?.stopAnimate();
+    console.log('viewer disposed');
   }
 
   export(type: 'structure' | 'image') {

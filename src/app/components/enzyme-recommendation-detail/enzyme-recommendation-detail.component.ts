@@ -27,11 +27,13 @@ import { JobType } from "~/app/api/mmli-backend/v1";
 import { ExternalLinkComponent } from "../external-link/external-link.component";
 import { Table, TableModule } from "primeng/table";
 import { FilterDialogComponent } from "../filter-dialog/filter-dialog.component";
-import { FilterService } from "primeng/api";
+import { FilterService, MessageService } from "primeng/api";
 import { trigger } from "@angular/animations";
 import { transition } from "@angular/animations";
 import { style } from "@angular/animations";
 import { animate } from "@angular/animations";
+import { combineLatestInit } from "rxjs/internal/observable/combineLatest";
+import { ToastModule } from "primeng/toast";
 
 
 @Component({
@@ -72,12 +74,16 @@ import { animate } from "@angular/animations";
     TieredMenuModule,
     DividerModule,
     TableModule,
+    ToastModule,
 
     MoleculeImageComponent,
     Molecule3dComponent,
     ExternalLinkComponent,
     FilterDialogComponent,
-],
+  ],
+  providers: [
+    MessageService,
+  ],
   host: {
     class: "flex flex-col h-full"
   }
@@ -272,17 +278,21 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private filterService: FilterService,
+    private messageService: MessageService,
   ) {
     super(service);
 
     this.service.getData()
       .pipe(
-        combineLatestWith(this.jobResultResponse$),
-        tap(([response, jobResultResponse]) => {
+        combineLatestWith(
+          this.jobResultResponse$,
+          this.service.UNIPROT$
+        ),
+        tap(([_, jobResultResponse, _uniprot]) => {
           this.substrate = jobResultResponse['query_smiles'];
         }),
-        map(([response, jobResultResponse]) => 
-          response
+        map(([response, jobResultResponse, uniprot]) => {
+          const v = response
             .map((row: any, index: number) => ({
               iid: index,
               ec_number: row.EC,
@@ -290,6 +300,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
                 name: row.SUBSTRATE,
                 smiles: row.SMILES,
               },
+              organism: row['ORGANISM'],
+              sequence: uniprot[row.UNIPROT]?.sequence?.value,
               enzyme_type: row.EnzymeType,
               uniprot_id: row.UNIPROT.split(','),
               ph: row.PH,
@@ -300,11 +312,32 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               tanimoto: jobResultResponse.tanimoto[row.SMILES],
               fragment: jobResultResponse.fragment[row.SMILES],
               mcs: jobResultResponse.mcs[row.SMILES],
-              showDetails: false,
+              expanded: false,
             }))
-            .filter((row: any) => !!row.kcat && !!row.kcat_km)
-            .sort((a: any, b: any) => b[this.algorithm] - a[this.algorithm])
-        )
+            .filter((row: any) => !!row.kcat && !!row.kcat_km);
+
+          this.updateFilterOptions(v);
+
+          const grouped = v.reduce((acc: any, row: any) => {
+            acc[row.compound.name] = [...(acc[row.compound.name] || []), row];
+            return acc;
+          }, {});
+          
+          return Object.values(grouped).map((value) => {
+            const compound = (value as any[])[0].compound;
+            const tanimoto = jobResultResponse.tanimoto[compound.smiles];
+            const fragment = jobResultResponse.fragment[compound.smiles];
+            const mcs = jobResultResponse.mcs[compound.smiles];
+            return {
+              compound,
+              tanimoto,
+              fragment,
+              mcs,
+              expanded: false,
+              rows: value,
+            };
+          });
+        })
       )
       .subscribe({
         next: (response: any) => {
@@ -314,7 +347,6 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
             total: response.length,
           };
           this.cdr.detectChanges();
-          this.updateFilterOptions(this.result.data);
         },
         error: (err: any) => {
           console.error(err);
@@ -351,6 +383,17 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     history.back();
   }
 
+  copySequence(sequence: string) {
+    if (sequence) {
+      navigator.clipboard.writeText(sequence);
+    }
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Sequence copied to clipboard',
+    });
+  }
+
   copyAndPasteURL(): void {
     const selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
@@ -380,6 +423,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     this.filterRecords.forEach((filter) => {
       this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     });
+  }
+
+  getUniqueUniprotIds(rows: any[]) {
+    return [...new Set(rows.map((row) => row.uniprot_id).flat())];
   }
 
   searchTable(filter: FilterConfig): void {
