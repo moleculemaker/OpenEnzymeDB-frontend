@@ -11,6 +11,9 @@ import { animate } from '@angular/animations';
 import { style, transition } from '@angular/animations';
 import { trigger } from '@angular/animations';
 import { RouterLink } from '@angular/router';
+import { ReactionSchemaComponent } from '../reaction-schema/reaction-schema.component';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 
 @Component({
   selector: 'app-kinetic-table',
@@ -35,9 +38,12 @@ import { RouterLink } from '@angular/router';
     TableModule,
     CommonModule,
     RouterLink,
+    SkeletonModule,
+    ScrollPanelModule, 
 
     ExternalLinkComponent,
     FilterDialogComponent,
+    ReactionSchemaComponent,
   ],
   templateUrl: './kinetic-table.component.html',
   styleUrl: './kinetic-table.component.scss'
