@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/
 import { CommonModule } from '@angular/common';
 
 import { PanelModule } from 'primeng/panel';
-import { ExportCSVOptions, Table, TableModule } from 'primeng/table';
+import { ExportCSVOptions, Table, TableModule, TableRowExpandEvent } from 'primeng/table';
 import { ExternalLinkComponent } from '../external-link/external-link.component';
 import { FilterDialogComponent } from '../filter-dialog/filter-dialog.component';
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from '~/app/models/filters';
@@ -14,6 +14,11 @@ import { RouterLink } from '@angular/router';
 import { ReactionSchemaComponent } from '../reaction-schema/reaction-schema.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { LoadingStatus, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
+import { catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-kinetic-table',
@@ -63,6 +68,10 @@ export class KineticTableComponent implements OnChanges {
   @ViewChild(Table) resultsTable!: Table;
 
   columns: any[] = [];
+  reactionSchemaCache: Record<string, {
+    status: LoadingStatus;
+    data: ReactionSchemaRecord[];
+  }> = {};
 
   showFilter = false;
   hasFilter = false;
@@ -72,7 +81,8 @@ export class KineticTableComponent implements OnChanges {
   }
 
   constructor(
-    private filterService: FilterService
+    private filterService: FilterService,
+    private service: OpenEnzymeDBService,
   ) {
     this.filterService.register(
       "range",
@@ -128,6 +138,38 @@ export class KineticTableComponent implements OnChanges {
   searchTable(filter: FilterConfig): void {
     this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     this.hasFilter = this.filterRecords.some(f => f.hasFilter());
+  }
+
+  onRowExpand($event: TableRowExpandEvent) {
+    const { data } = $event;
+    const { ec_number, compound, organism } = data;
+    const key = `${ec_number}|${compound.name}|${organism}`;
+    if (this.reactionSchemaCache[key]) {
+      return;
+    }
+    this.reactionSchemaCache[key] = {
+      status: 'loading',
+      data: [],
+    };
+    this.service.getReactionSchemasFor(ec_number, compound.name, organism)
+      .pipe(
+        map(schemas => ({
+          status: (schemas && schemas.length > 0 
+            ? ('loaded' as const) 
+            : ('na' as const)),
+          data: schemas
+        })),
+        catchError(error => {
+          console.error('Failed to fetch reaction schemas:', error);
+          return of({
+            status: 'error' as const,
+            data: []
+          });
+        })
+      )
+      .subscribe((result) => {
+        this.reactionSchemaCache[key] = result;
+      });
   }
 
   private updateFilterOptions(response: any[]) {
