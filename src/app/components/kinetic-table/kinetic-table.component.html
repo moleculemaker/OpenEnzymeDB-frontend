@@ -40,7 +40,7 @@
         <div class="flex w-full">
           <p-table #resultsTable [value]="result.data" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]"
             [paginator]="true" dataKey="iid" class="w-full h-full" tableStyleClass="w-full" styleClass="w-full"
-            [columns]="columns" (rowExpand)="onRowExpand($any($event))">
+            [columns]="columns" (onRowExpand)="onRowExpand($event)">
             <ng-template pTemplate="header">
               <tr>
                 @for (filter of filters.entries(); track filter[0]) {
@@ -131,7 +131,7 @@
                 }
               </tr>
             </ng-template>
-            <ng-template pTemplate="rowexpansion" let-row>
+            <ng-template pTemplate="rowexpansion" let-row let-expanded="expanded">
               <tr>
                 <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
                   <div [@slideIn]
