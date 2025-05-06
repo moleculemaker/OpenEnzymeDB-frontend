@@ -51,10 +51,10 @@ export class EnzymeRecommendationComponent {
       label: 'Substrate',
       placeholder: 'Enter a substrate',
       example: {
-        label: 'Ethanol (CCO)',
+        label: '4-(2-aminoethyl)-2-methoxyphenol',
         inputType: 'smiles',
-        inputValue: 'CCO',
-        value: 'CCO'
+        inputValue: 'COC1=C(C=CC(=C1)CCN)O',
+        value: 'COC1=C(C=CC(=C1)CCN)O'
       },
       smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
       nameToSmilesConverter: (name: string) => this.cactusService.getSMILESFromName(name),
@@ -91,6 +91,6 @@ export class EnzymeRecommendationComponent {
   }
 
   useExample() {
-    this.queryInput.useExample('compound');
+    this.queryInput.useExample('smiles');
   }
 }

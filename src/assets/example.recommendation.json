@@ -5,9 +5,13 @@
     "mcs": {}
   },
   "query_smiles": {
-    "iupac_name": "<EXAMPLE NAME>",
+    "iupac_name": "4-(2-aminoethyl)-2-methoxyphenol",
     "smiles": "COC1=C(C=CC(=C1)CCN)O",
-    "matches_return": 10
+    "matches_return": {
+      "mcs": 11619,
+      "fragment": 27,
+      "tanimoto": 11619
+    }
   },
   "tanimoto": {
     "CC(C)[C@@H](N)C(=O)O": 0.04153354632587859,

@@ -47,7 +47,11 @@ export type RecommendationResult = {
   query_smiles: {
     iupac_name: string,
     smiles: string,
-    matches_return: number,
+    matches_return: {
+      mcs: number,
+      fragment: number,
+      tanimoto: number,
+    },
   },
   tanimoto: {
     [key: string]: number,
