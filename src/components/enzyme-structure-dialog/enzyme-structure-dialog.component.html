@@ -26,20 +26,25 @@
             </div>
         </div>
         <!-- 3D Structure Viewer -->
-        <div class="flex flex-wrap gap-4 mt-4">
-            @for (id of getUniprotIds(); track id) {
-                <div class="relative p-1 border border-solid border-[#DEE2E6] rounded-md" style="flex: 1 1 calc(33.333% - 1rem); min-width: calc(33.333% - 1rem);">
-                    <div class="absolute top-1 left-1 font-semibold z-[10]">{{id}}</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (uniprotId of getUniprotIds(); track uniprotId) {
+                <div class="relative border border-[--surface-border] border-solid rounded-md h-[300px] p-1">
+                    <div class="absolute top-1 left-1 font-semibold z-10">{{ uniprotId }}</div>
                     <app-molecule3d
-                        class="w-full h-[200px]"
+                        class="w-full h-full"
                         [options]="{
-                            data: id,
+                            data: uniprotId,
                             dataType: 'uniprot',
                             viewerOptions: {
                                 mode: 'cartoon',
                                 modeConfig: { color: 'spectrum' }
+                            },
+                            displayMode: {
+                                useImageDisplay: true
                             }
                         }"
+                        [isActive]="activeMoleculeId === uniprotId"
+                        (componentClick)="activeMoleculeId = uniprotId"
                     ></app-molecule3d>
                 </div>
             }

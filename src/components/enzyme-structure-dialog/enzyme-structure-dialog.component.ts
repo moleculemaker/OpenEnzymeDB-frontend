@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -78,6 +78,8 @@ export class EnzymeStructureDialogComponent {
   compoundFilter: SingleSelectFilterConfig;
   organismFilter: MultiselectFilterConfig;
   uniprotIdFilter: MultiselectFilterConfig;
+
+  activeMoleculeId: string | null = null;
 
   constructor() {
     // Initialize filters with default configurations
