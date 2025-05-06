@@ -33,9 +33,10 @@ import {
 } from "@angular/core";
 import { ThreedmolLoaderService } from "src/app/services/threedmol-loader.service";
 import { combineLatest, BehaviorSubject, Subscription, Observable } from "rxjs";
-import { combineLatestWith, distinctUntilChanged, filter, first, map, mergeMap, switchMap } from "rxjs/operators";
+import { catchError, combineLatestWith, distinctUntilChanged, filter, first, map, mergeMap, switchMap } from "rxjs/operators";
 import { PubchemService } from "~/app/services/pubchem.service";
 import { AlphafoldService } from "~/app/services/alphafold.service";
+import { OpenEnzymeDBService } from "~/app/services/openenzymedb.service";
 
 export interface ThreeDMolInputOptions {
   data: string;
@@ -51,7 +52,7 @@ export interface ThreeDMolInputOptions {
 
 interface FetchMoleculeResult {
   model: string;
-  dtype: 'sdf' | 'pdb';
+  dtype: 'sdf' | 'pdb' | 'mol';
 }
 
 interface FetchMoleculeResultWithViewerOptions extends FetchMoleculeResult {
@@ -88,9 +89,10 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
   capturedImage: string | null = null;
 
   constructor(
+    public service: OpenEnzymeDBService,
     private $3dMolLoaderService: ThreedmolLoaderService,
     private pubchemService: PubchemService,
-    private alphafoldService: AlphafoldService
+    private alphafoldService: AlphafoldService,
   ) { }
 
   ngAfterViewInit(): void {
@@ -184,17 +186,45 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   fetchMolecule$(options: ThreeDMolInputOptions): Observable<FetchMoleculeResult> {
-    const dataType = options.dataType === 'uniprot' ? 'pdb' : 'sdf';
-    const fetcher$ = options.dataType === 'uniprot' 
-      ? this.alphafoldService.get3DProtein(options.data)
-      : this.pubchemService.get3DStructureFromSMILES(options.data);
+    let fetcher$: Observable<FetchMoleculeResult>;
 
-    return fetcher$.pipe(
-      map(data => ({
-        model: `${data}`,
-        dtype: dataType,
-      }))
-    );
+    if (options.dataType === 'uniprot') {
+      fetcher$ = this.alphafoldService.get3DProtein(options.data).pipe(
+        map(protein => ({
+          model: protein,
+          dtype: 'pdb'
+        }))
+      );
+    } else if (options.dataType === 'smi') {
+      fetcher$ = this.service.getSubstrateInfoFromSMILES(options.data).pipe(
+        map(substrate => {
+          if (substrate?.MOL) {
+            return {
+              model: substrate.MOL,
+              dtype: 'mol' as const
+            };
+          }
+          throw new Error('No MOL structure found');
+        }),
+        catchError(() => {
+          return this.pubchemService.get3DStructureFromSMILES(options.data).pipe(
+            map(structure => ({
+              model: structure,
+              dtype: 'sdf' as const
+            }))
+          );
+        })
+      );
+    } else {
+      fetcher$ = this.pubchemService.get3DStructureFromSMILES(options.data).pipe(
+        map(structure => ({
+          model: structure,
+          dtype: 'sdf' as const
+        }))
+      );
+    }
+
+    return fetcher$;
   }
 
   private renderMolecule(
