@@ -81,6 +81,7 @@ export interface RecommendationResultRowGroup {
   kcat_km: number[];
   pubmed_id: string[];
   expanded: boolean;
+
   rows: RecommendationResultRow[];
 }
 
@@ -185,6 +186,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
       field: 'compound.name',
       options: [],
       value: [],
+      matchMode: 'union',
     })],
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
@@ -208,6 +210,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
       field: 'ec_number',
       options: [],
       value: [],
+      matchMode: 'union',
     })],
     ['enzyme_types', new MultiselectFilterConfig({
       category: 'parameter',
@@ -219,6 +222,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
       field: 'enzyme_type',
       options: [],
       value: [],
+      matchMode: 'union',
     })],
     ['ph', new RangeFilterConfig({
       category: 'parameter',
@@ -450,6 +454,16 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
           return filter.every((f) => value.includes(f));
         },
       );
+
+      this.filterService.register(
+        "union",
+        (value: any[], filter: any[]) => {
+          if (!filter) {
+            return true;
+          }
+          return filter.some((f) => value.includes(f));
+        },
+      );
   }
 
   backToSearch() {
@@ -568,5 +582,70 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
       field: filter.field,
       header: filter.label.rawValue,
     }));
+  }
+
+  // Add custom sorting functions
+  customSort(event: any) {
+    const { order, field } = event;
+    
+    // Sort the groups
+    this.result.data.sort((a: any, b: any) => {
+      let valueA, valueB;
+      
+      // Handle numerical fields (ph, temperature, kcat, kcat_km)
+      if (['ph', 'temperature', 'kcat', 'kcat_km'].includes(field)) {
+        // For ascending, use min value; for descending, use max value
+        valueA = order === 1 ? Math.min(...a[field]) : Math.max(...a[field]);
+        valueB = order === 1 ? Math.min(...b[field]) : Math.max(...b[field]);
+        return valueA - valueB;
+      }
+      
+      // Handle array fields (ec_number, uniprot_id, enzyme_type, pubmed_id)
+      if (['ec_number', 'uniprot_id', 'enzyme_type', 'pubmed_id'].includes(field)) {
+        // Sort arrays alphabetically and compare first elements
+        valueA = [...a[field]].sort()[0];
+        valueB = [...b[field]].sort()[0];
+        return valueA.localeCompare(valueB) * order;
+      }
+      
+      // Handle other fields
+      valueA = a[field];
+      valueB = b[field];
+      
+      if (typeof valueA === 'string') {
+        return valueA.localeCompare(valueB) * order;
+      }
+      return (valueA - valueB) * order;
+    });
+
+    // Sort rows within each group
+    this.result.data.forEach((group: any) => {
+      group.rows.sort((a: any, b: any) => {
+        let valueA, valueB;
+        
+        // Handle numerical fields
+        if (['ph', 'temperature', 'kcat', 'kcat_km'].includes(field)) {
+          valueA = a[field];
+          valueB = b[field];
+          return (valueA - valueB) * order;
+        }
+        
+        // Handle array fields
+        if (['ec_number', 'uniprot_id', 'enzyme_type', 'pubmed_id'].includes(field)) {
+          valueA = Array.isArray(a[field]) ? a[field][0] : a[field];
+          valueB = Array.isArray(b[field]) ? b[field][0] : b[field];
+          return valueA.localeCompare(valueB) * order;
+        }
+        
+        // Handle other fields
+        valueA = a[field];
+        valueB = b[field];
+        
+        if (typeof valueA === 'string') {
+          return valueA.localeCompare(valueB) * order;
+        }
+        return (valueA - valueB) * order;
+      });
+    });
   }
 }

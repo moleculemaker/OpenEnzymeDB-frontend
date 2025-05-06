@@ -9,9 +9,10 @@ export interface FilterConfigParams {
   type?: 'range' | 'multiselect' | 'singleselect';
   value?: any;
   defaultValue?: any;
-  matchMode?: 'in' | 'range' | 'subset';
+  matchMode?: 'in' | 'range' | 'subset' | 'union';
   disabled?: boolean;
   optionsField?: string;
+  sortingField?: string;
 }
 
 export abstract class FilterConfig {
@@ -24,10 +25,11 @@ export abstract class FilterConfig {
   public field: string;
   public type: 'range' | 'multiselect' | 'singleselect';
   public defaultValue: any;
-  public matchMode: 'in' | 'range' | 'subset';
+  public matchMode: 'in' | 'range' | 'subset' | 'union';
   public formattedValue: any;
   public disabled: boolean;
   public optionsField: string;
+  public sortingField: string;
   #value: any;
 
   constructor(params: FilterConfigParams) {
@@ -41,6 +43,7 @@ export abstract class FilterConfig {
     this.matchMode = params.matchMode ?? 'in';
     this.disabled = params.disabled ?? false;
     this.optionsField = params.optionsField ?? params.field;
+    this.sortingField = params.sortingField ?? params.field;
   }
 
   get value() {

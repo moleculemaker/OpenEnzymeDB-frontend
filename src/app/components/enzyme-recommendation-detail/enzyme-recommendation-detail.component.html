@@ -157,16 +157,17 @@
               [sortOrder]="-1"
               scrollable
               scrollHeight="700px"
+              (onSort)="customSort($event)"
             >
               <ng-template pTemplate="header">
                 <tr>
                   @for (filter of filters.entries(); track filter[0]) {
                     @let value = filter[1];
-                    <th class="align-middle relative group w-[10%]" [pSortableColumn]="value.field">
+                    <th class="align-middle relative group w-[10%]" [pSortableColumn]="value.sortingField">
                       <div [innerHTML]="value.label.value"></div>
                       <p-sortIcon
                         class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                        [field]="value.field" />
+                        [field]="value.sortingField" />
                     </th>  
                   }
                 </tr>
