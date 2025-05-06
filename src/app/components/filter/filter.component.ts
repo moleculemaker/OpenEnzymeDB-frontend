@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
 import { FilterConfig } from '~/app/models/filters';
 
 @Component({
@@ -11,6 +12,7 @@ import { FilterConfig } from '~/app/models/filters';
     CommonModule,
     MultiSelectModule,
     FormsModule,
+    DropdownModule,
   ],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss'

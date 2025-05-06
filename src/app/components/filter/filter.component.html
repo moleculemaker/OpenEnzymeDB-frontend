@@ -5,7 +5,6 @@
     styleClass="w-full" 
     [placeholder]="filter.placeholder" 
     [options]="$any(filter).options" 
-    appendTo="body" 
     [baseZIndex]="9999"
     [(ngModel)]="filter.value" 
     [virtualScroll]="true" 
@@ -23,6 +22,20 @@
     [value]="filter.formattedValue"
     [disabled]="filter.disabled"
     class="w-full p-3 border border-[#ced4da] rounded-md !text-base"/>
+}
+
+@case ('singleselect') {
+<p-dropdown 
+    styleClass="w-full h-[42.5px]"
+    [options]="$any(filter).options" 
+    [placeholder]="filter.placeholder" 
+    [(ngModel)]="filter.value" 
+    [disabled]="filter.disabled"
+    (onChange)="onFilterChange($event)"
+    [filter]="true"
+    [virtualScroll]="true"
+    [virtualScrollItemSize]="48"
+></p-dropdown>
 }
 
 @default {

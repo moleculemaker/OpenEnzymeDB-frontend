@@ -1,4 +1,3 @@
-
 export interface FilterConfigParams {
   category: string;
   label: {
@@ -7,11 +6,12 @@ export interface FilterConfigParams {
   };
   placeholder: string;
   field: string;
-  type?: 'range' | 'multiselect';
+  type?: 'range' | 'multiselect' | 'singleselect';
   value?: any;
   defaultValue?: any;
   matchMode?: 'in' | 'range' | 'subset';
   disabled?: boolean;
+  optionsField?: string;
 }
 
 export abstract class FilterConfig {
@@ -22,11 +22,12 @@ export abstract class FilterConfig {
   };
   public placeholder: string;
   public field: string;
-  public type: 'range' | 'multiselect';
+  public type: 'range' | 'multiselect' | 'singleselect';
   public defaultValue: any;
   public matchMode: 'in' | 'range' | 'subset';
   public formattedValue: any;
   public disabled: boolean;
+  public optionsField: string;
   #value: any;
 
   constructor(params: FilterConfigParams) {
@@ -39,6 +40,7 @@ export abstract class FilterConfig {
     this.defaultValue = params.defaultValue ?? null;
     this.matchMode = params.matchMode ?? 'in';
     this.disabled = params.disabled ?? false;
+    this.optionsField = params.optionsField ?? params.field;
   }
 
   get value() {
@@ -65,7 +67,6 @@ export interface RangeFilterParams extends FilterConfigParams {
 export class RangeFilterConfig extends FilterConfig {
   public min: number;
   public max: number;
-
   constructor(params: RangeFilterParams) {
     super({
       ...params,
@@ -118,12 +119,10 @@ export class RangeFilterConfig extends FilterConfig {
 export interface MultiselectFilterParams extends FilterConfigParams {
   options?: any[];
   value?: any[];
-  matchMode?: 'in' | 'subset';
 }
 
 export class MultiselectFilterConfig extends FilterConfig {
   public options: any[];
-
   constructor(params: MultiselectFilterParams) {
     super({
       ...params,
@@ -132,6 +131,7 @@ export class MultiselectFilterConfig extends FilterConfig {
       defaultValue: [],
     });
     this.options = params.options ?? [];
+    this.optionsField = params.optionsField ?? params.field;
   }
 
   hasFilter(): boolean {
@@ -147,5 +147,39 @@ export class MultiselectFilterConfig extends FilterConfig {
       return '';
     }
     return this.value.join(', ');
+  }
+}
+
+export interface SingleSelectFilterParams extends FilterConfigParams {
+  options?: any[];
+  value?: any;
+}
+
+export class SingleSelectFilterConfig extends FilterConfig {
+  public options: any[];
+  constructor(params: SingleSelectFilterParams) {
+    super({
+      ...params,
+      type: 'singleselect',
+      value: params.value ?? null,
+      defaultValue: null,
+    });
+    this.options = params.options ?? [];
+    this.optionsField = params.optionsField ?? params.field;
+  }
+
+  hasFilter(): boolean {
+    return !!this.value;
+  }
+
+  parseInput(value: any): any {
+    return value;
+  }
+
+  formatValue(): string {
+    if (!this.value) {
+      return '';
+    }
+    return this.value;
   }
 }

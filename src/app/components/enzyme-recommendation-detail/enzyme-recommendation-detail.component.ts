@@ -18,7 +18,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
 import { TieredMenuModule } from "primeng/tieredmenu";
 
-import { MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
+import { MultiselectFilterConfig, RangeFilterConfig, SingleSelectFilterConfig } from "~/app/models/filters";
 import { FilterConfig } from "~/app/models/filters";
 import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
 import { MoleculeImageComponent } from "~/app/components/molecule-image/molecule-image.component";
@@ -70,6 +70,16 @@ interface RecommendationResultRowGroup {
     matches: number[][];
   };
   mcs: number;
+  ec_number: string[];
+  organism: string[];
+  sequence: string[];
+  enzyme_type: string[];
+  uniprot_id: string[];
+  ph: number[];
+  temperature: number[];
+  kcat: number[];
+  kcat_km: number[];
+  pubmed_id: string[];
   expanded: boolean;
   rows: RecommendationResultRow[];
 }
@@ -307,7 +317,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
 
   enzymeStructureDialogVisible = false;
   enzymeStructureFilters: Map<string, MultiselectFilterConfig> = new Map([
-    ['compounds', new MultiselectFilterConfig({
+    ['compounds', new SingleSelectFilterConfig({
       category: 'parameter',
       label: {
         value: 'Compounds',
@@ -316,7 +326,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
       placeholder: 'Select compound',
       field: 'compound.name',
       options: [],
-      value: [],
+      value: null,
     })],
     ['organisms', new MultiselectFilterConfig({
       category: 'parameter',
@@ -397,13 +407,12 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
             }))
             .filter((row: any) => !!row.kcat && !!row.kcat_km);
 
-          this.updateFilterOptions(v);
+          const grouped: { [key: string]: RecommendationResultRow[] } 
+            = v.reduce((acc: any, row: any) => {
+              acc[row.compound.name] = [...(acc[row.compound.name] || []), row];
+              return acc;
+            }, {});
 
-          const grouped = v.reduce((acc: any, row: any) => {
-            acc[row.compound.name] = [...(acc[row.compound.name] || []), row];
-            return acc;
-          }, {});
-          
           return Object.values(grouped).map((value) => {
             const compound = (value as any[])[0].compound;
             const tanimoto = jobResultResponse.tanimoto[compound.smiles];
@@ -414,6 +423,16 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               tanimoto,
               fragment,
               mcs,
+              ec_number: value.map((row: any) => row.ec_number),
+              organism: value.map((row: any) => row.organism),
+              sequence: value.map((row: any) => row.sequence),
+              enzyme_type: value.map((row: any) => row.enzyme_type),
+              uniprot_id: value.map((row: any) => row.uniprot_id),
+              ph: value.map((row: any) => row.ph),
+              temperature: value.map((row: any) => row.temperature),
+              kcat: value.map((row: any) => row.kcat),
+              kcat_km: value.map((row: any) => row.kcat_km),
+              pubmed_id: value.map((row: any) => `${row.PubMedID}`),
               expanded: false,
               rows: value as RecommendationResultRow[],
             } as RecommendationResultRowGroup;
@@ -421,12 +440,13 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
         })
       )
       .subscribe({
-        next: (response: any) => {
+        next: (response: RecommendationResultRowGroup[]) => {
           this.result = {
             status: 'loaded',
             data: response,
             total: response.length,
           };
+          this.updateFilterOptions(response);
           this.cdr.detectChanges();
         },
         error: (err: any) => {
@@ -518,7 +538,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     group: RecommendationResultRowGroup
   ) {
     this.enzymeStructureDialogVisible = !this.enzymeStructureDialogVisible;
-    this.enzymeStructureFilters.get('compounds')!.value = [group.compound.name];
+    this.enzymeStructureFilters.get('compounds')!.value = group.compound.name;
     this.enzymeStructureFilters.get('organisms')!.value = group.rows.map((row) => row.organism);
     this.enzymeStructureFilters.get('uniprot_ids')!.value = group.rows.map((row) => row.uniprot_id).flat();
   }
@@ -533,13 +553,32 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     this.compoundStructureDialogSmiles = compound.smiles;
   }
 
-  private updateFilterOptions(response: any[]) {
-    function getField(obj: any, dotPath: string) {
-      return dotPath.split('.').reduce((obj, key) => obj[key], obj);
+  private updateFilterOptions(response: RecommendationResultRowGroup[]) {
+    function getField(obj: any, dotPath: string): any {
+      const keys = dotPath.split('.');
+    
+      function traverse(current: any, keys: string[]): any {
+        if (!current || keys.length === 0) return current;
+    
+        const [key, ...restKeys] = keys;
+    
+        if (key === 'all' && Array.isArray(current)) {
+          return current.map(item => traverse(item, restKeys));
+        } else if (/^\d+$/.test(key)) {
+          return traverse(current[Number(key)], restKeys);
+        } else {
+          return traverse(current[key], restKeys);
+        }
+      }
+    
+      return traverse(obj, keys);
     }
     
     Array.from(this.filters.entries()).forEach(([key, filter]) => {
-      const options = response.map((row: any) => getField(row, filter.field)).flat();
+      const options = response.flatMap((row: any) => {
+        const value = getField(row, filter.optionsField);
+        return Array.isArray(value) ? value.flat() : [value];
+      });
       const optionsSet = new Set(options);
       if (filter instanceof MultiselectFilterConfig) {
         filter.options = Array.from(optionsSet).map((option: any) => ({
@@ -556,7 +595,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     });
 
     Array.from(this.enzymeStructureFilters.entries()).forEach(([key, filter]) => {
-      const options = response.map((row: any) => getField(row, filter.field)).flat();
+      const options = response.flatMap((row: any) => {
+        const value = getField(row, filter.optionsField);
+        return Array.isArray(value) ? value.flat() : [value];
+      });
       const optionsSet = new Set(options);
       filter.options = Array.from(optionsSet).map((option: any) => ({
         label: option,

@@ -81,8 +81,6 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
 
     const element = document.createElement('div');
     element.innerHTML = data.data || '';
-    
-    console.log(element.querySelector('svg'));
 
     element.querySelector('svg')?.setAttribute('width', `${this.width}px`);
     element.querySelector('svg')?.setAttribute('height', `${this.height}px`);
