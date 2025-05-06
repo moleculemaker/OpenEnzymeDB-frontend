@@ -34,7 +34,7 @@ import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
 })
 export class EnzymeRecommendationResultComponent extends JobResult {
   override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
-  override jobType: JobType; //TODO: use the correct job type
+  override jobType: JobType = JobType.OedCheminfo;
   
   response$ = this.jobResultResponse$;
 
