@@ -430,12 +430,10 @@
   (clearAllFilters)="clearAllFilters()" (applyFilters)="applyFilters()">
 </app-filter-dialog>
 
-<app-enzyme-structure-dialog 
-  [(visible)]="enzymeStructureDialogVisible" 
-  [compoundFilter]="enzymeStructureFilters.get('compounds')!" 
-  [organismFilter]="enzymeStructureFilters.get('organisms')!" 
-  [uniprotIdFilter]="enzymeStructureFilters.get('uniprot_ids')!"
-></app-enzyme-structure-dialog>
+<app-enzyme-structure-dialog
+  [(visible)]="enzymeStructureDialogVisible"
+  [dataset]="result.ungroupedData">
+</app-enzyme-structure-dialog>
 
 @if (compoundStructureDialogSmiles) {
   <app-compound-structure-dialog
