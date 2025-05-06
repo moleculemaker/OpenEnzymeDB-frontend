@@ -432,8 +432,9 @@
 
 <app-enzyme-structure-dialog
   [(visible)]="enzymeStructureDialogVisible"
-  [dataset]="result.ungroupedData">
-</app-enzyme-structure-dialog>
+  [dataset]="result.ungroupedData"
+  [group]="selectedGroup"
+></app-enzyme-structure-dialog>
 
 @if (compoundStructureDialogSmiles) {
   <app-compound-structure-dialog

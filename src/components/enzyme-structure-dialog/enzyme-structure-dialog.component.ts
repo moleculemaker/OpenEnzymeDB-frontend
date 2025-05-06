@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
-import { RecommendationResultRow } from '~/app/components/enzyme-recommendation-detail/enzyme-recommendation-detail.component';
+import { RecommendationResultRowGroup, RecommendationResultRow } from '~/app/components/enzyme-recommendation-detail/enzyme-recommendation-detail.component';
 import { MultiselectFilterConfig, SingleSelectFilterConfig } from '~/app/models/filters';
 import { FilterComponent } from '~/app/components/filter/filter.component';
 import { Molecule3dComponent } from '~/app/components/molecule3d/molecule3d.component';
@@ -16,20 +16,27 @@ import { Molecule3dComponent } from '~/app/components/molecule3d/molecule3d.comp
  * This component displays a dialog for viewing enzyme structures with filtering capabilities.
  * The dialog implements a cascading filter system with the following business rules:
  * 
+ * Input Handling:
+ * - dataset: Array of RecommendationResultRow containing all available data
+ * - group: Optional RecommendationResultRowGroup that, when provided, initializes filter values
+ * 
  * Filter Initialization:
  * - All filter values are initialized using the input dataset
+ * - If group is provided, filter values are set to match the group's values
  * - Compound filter contains all unique compound names from the input dataset
  * - Organism and Uniprot ID filters start with no options until a compound is selected
  * 
  * Compound Filter:
  * - Single select filter that shows all unique compound names from the dataset
  * - When a compound is selected, it triggers updates to both organism and uniprot ID filters
+ * - If group is provided, initializes with the group's compound name
  * 
  * Organism Filter:
  * - Multi-select filter that is dependent on the compound filter
  * - By default has no options if no compound is selected
  * - When a compound is selected, shows all unique organisms associated with that compound
  * - Selection changes trigger updates to the uniprot ID filter
+ * - If group is provided, initializes with the group's organisms
  * 
  * Uniprot ID Filter:
  * - Multi-select filter that is dependent on both compound and organism filters
@@ -38,6 +45,7 @@ import { Molecule3dComponent } from '~/app/components/molecule3d/molecule3d.comp
  * - If organisms are selected, further filters to show only uniprot IDs that are associated with
  *   both the selected compound and the selected organisms
  * - Filter values are cleared whenever compound or organism selections change
+ * - If group is provided, initializes with the group's uniprot IDs
  * 
  * Filter Dependencies:
  * - Compound selection -> Updates organism and uniprot ID options
@@ -63,6 +71,7 @@ import { Molecule3dComponent } from '~/app/components/molecule3d/molecule3d.comp
 export class EnzymeStructureDialogComponent {
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
+  @Input() group: RecommendationResultRowGroup | null = null;
   @Input() dataset: RecommendationResultRow[] = [];
 
   // Internal filter management
@@ -113,6 +122,27 @@ export class EnzymeStructureDialogComponent {
   ngOnChanges() {
     // Update filter options whenever dataset changes
     this.updateFilterOptions();
+
+    // If group is provided, initialize filter values
+    if (this.group) {
+      // Set compound filter value
+      if (this.group.compound?.name) {
+        this.compoundFilter.value = this.group.compound.name;
+      }
+
+      // Set organism filter values
+      if (this.group.organism) {
+        this.organismFilter.value = [...this.group.organism];
+      }
+
+      // Set uniprot ID filter values
+      if (this.group.uniprot_id) {
+        this.uniprotIdFilter.value = [...this.group.uniprot_id];
+      }
+
+      // Update filter options based on group values
+      this.updateFilterOptions();
+    }
   }
 
   /**
