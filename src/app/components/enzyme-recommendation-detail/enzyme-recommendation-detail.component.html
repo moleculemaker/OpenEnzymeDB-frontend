@@ -206,7 +206,10 @@
                           @case ('compound.name') {
                             <td class="align-middle">
                               <div class="flex items-start gap-2">
-                                <button title="Expand" type="button" (click)="row.expanded = !row.expanded">
+                                <button title="Expand" type="button" (click)="
+                                  row.expanded = !row.expanded; 
+                                  watchRowExpansion(row)
+                                ">
                                   <i [class]="row.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                                 </button>
                                 <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{ row.compound.name }}</a>
@@ -381,9 +384,31 @@
                                   }">
                                 </app-molecule3d>
                               </div>
-                              <div>
+                              <div class="flex flex-col gap-2">
                                 <h6 class="font-semibold">Reaction Schema</h6>
-                                <p>{{ row.reaction }}</p>
+                                @let schemas = reactionSchemaCache[getCacheKey(row)];
+                                <div class="border border-solid border-[#DEE2E6] rounded-md p-2">
+                                  @switch (schemas?.status) {
+                                    @case ('loaded') {
+                                      @if (schemas.data.length > 0) {
+                                        <p-scrollPanel [style]="{ height: '200px', width: '100%' }">
+                                          @for (schema of schemas.data; track schema) {
+                                            <app-reaction-schema [reactionSchema]="schema" />
+                                            <hr class="my-2" />
+                                          }
+                                        </p-scrollPanel>
+                                      } @else {
+                                        <p class="text-[#6C757D] italic">No reaction schema available</p>
+                                      }
+                                    }
+                                    @case ('loading') {
+                                      <p class="text-[#6C757D] italic">Loading reaction schema...</p>
+                                    }
+                                    @case ('error') {
+                                      <p class="text-[#6C757D] italic">Error loading reaction schema</p>
+                                    }
+                                  }
+                                </div>
                               </div>
                             </div>
                           </td>

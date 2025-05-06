@@ -5,9 +5,10 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { OpenEnzymeDBService, RecommendationResult, OEDRecord } from '~/app/services/openenzymedb.service';
+import { OpenEnzymeDBService, RecommendationResult, OEDRecord, ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
-import { combineLatestWith, map, tap } from "rxjs/operators";
+import { combineLatestWith, map, tap, first, catchError } from "rxjs/operators";
+import { of } from "rxjs";
 import { ChipModule } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -17,6 +18,7 @@ import { DropdownModule } from "primeng/dropdown";
 import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
 import { TieredMenuModule } from "primeng/tieredmenu";
+import { ScrollPanelModule } from "primeng/scrollpanel";
 
 import { MultiselectFilterConfig, RangeFilterConfig, SingleSelectFilterConfig } from "~/app/models/filters";
 import { FilterConfig } from "~/app/models/filters";
@@ -35,6 +37,7 @@ import { animate } from "@angular/animations";
 import { ToastModule } from "primeng/toast";
 import { EnzymeStructureDialogComponent } from "~/components/enzyme-structure-dialog/enzyme-structure-dialog.component"
 import { CompoundStructureDialogComponent } from "~/components/compound-structure-dialog/compound-structure-dialog.component";
+import { ReactionSchemaComponent } from "~/app/components/reaction-schema/reaction-schema.component";
 
 export interface RecommendationResultRow {
   iid: number,
@@ -58,6 +61,7 @@ export interface RecommendationResultRow {
   }
   mcs: number,
   expanded: boolean,
+  reaction_schema?: ReactionSchemaRecord[],
 }
 
 export interface RecommendationResultRowGroup {
@@ -124,6 +128,7 @@ export interface RecommendationResultRowGroup {
     DividerModule,
     TableModule,
     ToastModule,
+    ScrollPanelModule,
 
     MoleculeImageComponent,
     Molecule3dComponent,
@@ -131,6 +136,7 @@ export interface RecommendationResultRowGroup {
     FilterDialogComponent,
     EnzymeStructureDialogComponent,
     CompoundStructureDialogComponent,
+    ReactionSchemaComponent,
   ],
   providers: [
     MessageService,
@@ -327,6 +333,12 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   compoundStructureDialogVisible = false;
   compoundStructureDialogSmiles = '';
 
+  // Add reaction schema cache
+  reactionSchemaCache: Record<string, {
+    status: 'loading' | 'loaded' | 'error';
+    data: ReactionSchemaRecord[];
+  }> = {};
+
   get filterRecords() {
     return Array.from(this.filters.values());
   }
@@ -375,6 +387,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               fragment: jobResultResponse.fragment[row.SMILES],
               mcs: jobResultResponse.mcs[row.SMILES],
               expanded: false,
+              reaction_schema: undefined,
             }))
             .filter((row: any) => !!row.kcat && !!row.kcat_km);
 
@@ -647,5 +660,58 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
         return (valueA - valueB) * order;
       });
     });
+  }
+
+  getCacheKey(row: RecommendationResultRow): string {
+    return `${row.ec_number}|${row.compound.name}|${row.organism}`.toLowerCase();
+  }
+
+  // Update method to fetch reaction schema using Observable
+  private fetchReactionSchema(row: RecommendationResultRow) {
+    const cacheKey = this.getCacheKey(row);
+    
+    if (this.reactionSchemaCache[cacheKey]) {
+      return;
+    }
+
+    this.reactionSchemaCache[cacheKey] = {
+      status: 'loading',
+      data: []
+    };
+
+    this.service.getReactionSchemasFor(
+      row.ec_number,
+      row.compound.name,
+      row.organism
+    ).pipe(
+      first(),
+      catchError(error => {
+        console.error('Error fetching reaction schema:', error);
+        this.reactionSchemaCache[cacheKey] = {
+          status: 'error',
+          data: []
+        };
+        return of([]);
+      })
+    ).subscribe(response => {
+      this.reactionSchemaCache[cacheKey] = {
+        status: 'loaded',
+        data: response || []
+      };
+      this.cdr.detectChanges();
+    });
+  }
+
+  // Update method to load reaction schema
+  loadReactionSchema(row: RecommendationResultRow) {
+    if (!row.reaction_schema) {
+      this.fetchReactionSchema(row);
+    }
+  }
+
+  watchRowExpansion(row: RecommendationResultRow) {
+    if (row.expanded) {
+      this.loadReactionSchema(row);
+    }
   }
 }
