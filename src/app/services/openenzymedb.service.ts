@@ -95,6 +95,10 @@ export type UniprotRecordDict = {
 export type UniprotRecord = {
   entryType: string,
   status: "active" | "inactive",
+  names: Array<{
+    value: string,
+    type: 'recommended' | 'submission' | 'alternative',
+  }>,
   primaryAccession: string,
   organism: {
     scientificName: string,
@@ -103,20 +107,53 @@ export type UniprotRecord = {
     lineage: Array<string>,
   },
   proteinDescription: {
-    recommendedName: {
+    recommendedName?: {
       fullName: {
-        evidences: Array<UniprotEvidence>,
+        evidences?: Array<UniprotEvidence>,
         value: string
       },
-      ecNumbers: Array<{
-        evidences: Array<UniprotEvidence>,
+      ecNumbers?: Array<{
+        evidences?: Array<UniprotEvidence>,
         value: string
       }>,
-    }
+      shortNames?: Array<{
+        evidences?: Array<UniprotEvidence>,
+        value: string
+      }>,
+    },
+    submissionNames?: Array<{
+      fullName: {
+        evidences?: Array<UniprotEvidence>,
+        value: string
+      },
+      ecNumbers?: Array<{
+        evidences?: Array<UniprotEvidence>,
+        value: string
+      }>,
+      shortNames?: Array<{
+        evidences?: Array<UniprotEvidence>,
+        value: string
+      }>,
+    }>,
+    alternativeNames?: Array<{
+      fullName: {
+        evidences?: Array<UniprotEvidence>,
+        value: string
+      },
+      ecNumbers?: Array<{
+        evidences?: Array<UniprotEvidence>,
+        value: string
+      }>,
+      shortNames?: Array<{
+        evidences?: Array<UniprotEvidence>,
+        value: string
+      }>,
+    }>,
   },
   genes: Array<{
-    geneName: { value: string },
-    orderedLocusNames: Array<{ value: string }>,
+    geneName?: { value: string },
+    orderedLocusNames?: Array<{ value: string }>,
+    orfNames?: Array<{ value: string }>,
   }>,
   sequence: {
     value: string,
@@ -290,6 +327,20 @@ export class OpenEnzymeDBService {
       map((uniprotData) => ({
         ...uniprotData[uniprot],
         status: uniprotData[uniprot].entryType === "Inactive" ? "inactive" : "active",
+        names: [
+          ...(uniprotData[uniprot].proteinDescription.recommendedName?.fullName?.value ? [{
+            value: uniprotData[uniprot].proteinDescription!.recommendedName!.fullName.value,
+            type: 'recommended' as const
+          }] : []),
+          ...(uniprotData[uniprot].proteinDescription.alternativeNames?.map(n => ({
+            value: n.fullName.value,
+            type: 'alternative' as const
+          })) || []),
+          ...(uniprotData[uniprot].proteinDescription.submissionNames?.map(n => ({
+            value: n.fullName.value,
+            type: 'submission' as const
+          })) || []),
+        ],
       })));
   }
 
