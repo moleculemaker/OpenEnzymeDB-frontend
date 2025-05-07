@@ -150,7 +150,7 @@ export type UniprotRecord = {
       }>,
     }>,
   },
-  genes: Array<{
+  genes?: Array<{
     geneName?: { value: string },
     orderedLocusNames?: Array<{ value: string }>,
     orfNames?: Array<{ value: string }>,

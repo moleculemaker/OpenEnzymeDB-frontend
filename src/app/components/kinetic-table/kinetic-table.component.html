@@ -77,8 +77,12 @@
                 }
                 @case ('uniprot_id') {
                 <td class="align-middle">
-                  <a [routerLink]="['/query/uniprot', row.uniprot_id[0]]" class="text-blue-500 cursor-pointer">{{
-                    row.uniprot_id }}</a>
+                  <div class="flex flex-col gap-1">
+                    @for (id of row.uniprot_id; track id) {
+                    <a class="block" [routerLink]="['/query/uniprot', id]" class="text-blue-500 cursor-pointer">{{ id
+                      }}</a>
+                    }
+                  </div>
                 </td>
                 }
                 @case ('ec_number') {
