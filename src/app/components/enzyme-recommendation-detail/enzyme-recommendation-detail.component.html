@@ -40,7 +40,34 @@
       <span class="grow">Input Substrate</span>
     </ng-template>
 
-    @if (substrate) {
+    @if (result.status === 'loading') {
+      <div class="flex gap-2 p-2">
+        <div class="flex flex-col gap-2 w-1/3 p-2">
+          <p-skeleton shape="rectangle" width="200px" height="200px"></p-skeleton>
+        </div>
+        <div class="flex flex-col gap-4 w-2/3 border-l border-solid border-[#DEE2E6] p-2">
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-between">
+              <p-skeleton width="100px" height="1.5rem"></p-skeleton>
+              <p-skeleton width="200px" height="1.5rem"></p-skeleton>
+            </div>
+            <div class="flex justify-between">
+              <p-skeleton width="100px" height="1.5rem"></p-skeleton>
+              <p-skeleton width="200px" height="1.5rem"></p-skeleton>
+            </div>
+            <div class="flex justify-between">
+              <p-skeleton width="150px" height="1.5rem"></p-skeleton>
+              <p-skeleton width="100px" height="1.5rem"></p-skeleton>
+            </div>
+            <hr>
+            <div class="flex flex-col gap-2">
+              <p-skeleton width="300px" height="1.5rem"></p-skeleton>
+              <p-skeleton width="100%" height="3rem"></p-skeleton>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else if (substrate) {
     <div class="flex gap-2 p-2">
       <div class="flex flex-col gap-2 w-1/3 p-2">
         <app-molecule-image #molecule2d
@@ -142,293 +169,324 @@
           }
 
           <div class="flex w-full">
-            <p-table #resultsTable
-              [value]="result.data"
-              [rows]="10" 
-              [rowsPerPageOptions]="[10, 20, 50]"
-              [paginator]="true" 
-              dataKey="iid" 
-              class="w-full h-full" 
-              tableStyleClass="w-full" 
-              styleClass="w-full"
-              [columns]="columns"
-              [sortField]="algorithm"
-              [sortOrder]="-1"
-              scrollable
-              scrollHeight="700px"
-              (onSort)="customSort($event)"
-            >
-              <ng-template pTemplate="header">
-                <tr>
-                  @for (filter of filters.entries(); track filter[0]) {
-                    @let value = filter[1];
-                    <th class="align-middle relative group w-[10%]" [pSortableColumn]="value.sortingField">
-                      <div [innerHTML]="value.label.value"></div>
-                      <p-sortIcon
-                        class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                        [field]="value.sortingField" />
-                    </th>  
+            @switch (result.status) {
+              @case ('loading') {
+                <div class="w-full">
+                  <!-- Table header skeleton -->
+                  <div class="flex gap-2 mb-4">
+                    @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
+                      <p-skeleton width="10%" height="2rem"></p-skeleton>
+                    }
+                  </div>
+                  
+                  <!-- Table rows skeleton -->
+                  @for (i of [1,2,3,4,5]; track i) {
+                    <div class="flex gap-2 mb-2">
+                      <p-skeleton width="100%" height="3rem"></p-skeleton>
+                    </div>
                   }
-                </tr>
-              </ng-template>
-
-              <ng-template pTemplate="body" let-group>
-                <tr>
-                  <td colspan="11">
-                    <button 
-                      title="Expand"
-                      type="button" 
-                      (click)="group.expanded = !group.expanded"
-                      class="inline-flex items-center gap-2">
-                      <i [class]="group.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-                      <span class="font-semibold">Compound: </span>
-                      <span>{{ group.compound.name }}</span>
-                      <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
-                        $implicit: algorithm, 
-                        label: group[algorithm] | number:'1.1-4'
-                      }"></ng-container>
-                    </button>
-                    <button class="float-right inline-flex items-center gap-2 bg-[--surface-100] text-[#6c757d] rounded-sm px-2 py-1" (click)="showEnzymeStructureDialog(group)">
-                      <i class="pi pi-eye"></i>
-                      @let uniqueUniprotIds = getUniqueUniprotIds(group.rows);
-                      <h6>View Enzyme Structure{{ uniqueUniprotIds.length > 1 ? 's' : '' }} ({{ uniqueUniprotIds.length }})</h6>
-                    </button>
-                  </td>
-                </tr>
-
-                @if (group.expanded) {
-                  @for (row of group.rows; track row.iid) {
-                    <tr class="table-row">
-                      @for (filter of filters.entries(); track filter[0]) {
-                        @let value = filter[1];
-                        @switch (value.field) {
-                          @case ('compound.name') {
-                            <td class="align-middle">
-                              <div class="flex items-start gap-2">
-                                <button title="Expand" type="button" (click)="
-                                  row.expanded = !row.expanded; 
-                                  watchRowExpansion(row)
-                                ">
-                                  <i [class]="row.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-                                </button>
-                                <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{ row.compound.name }}</a>
-                              </div>
-                            </td>
-                          }
-                          @case ('organism') {
-                            <td class="align-middle italic">
-                              {{ row[value.field] }}
-                            </td>
-                          }
-                          @case ('uniprot_id') {
-                            <td class="align-middle">
-                              <a [routerLink]="['/query/uniprot', row.uniprot_id[0]]" class="text-blue-500 cursor-pointer">{{ row.uniprot_id }}</a>
-                            </td>
-                          }
-                          @case ('ec_number') {
-                            <td class="align-middle">
-                              <a [routerLink]="['/query/ec', row.ec_number]" class="text-blue-500 cursor-pointer">{{ row.ec_number }}</a>
-                            </td>
-                          }
-                          @case ('kcat') {
-                            <td class="align-middle">
-                              @if (row.kcat) {
-                              {{ row.kcat | number: '1.1-4' }}
-                              } @else {
-                              <span class="opacity-25">N/A</span>
-                              }
-                            </td>
-                          }
-                          @case ('km') {
-                            <td class="align-middle">
-                              @if (row.km) {
-                              {{ row.km | number: '1.1-4' }}
-                              } @else {
-                              <span class="opacity-25">N/A</span>
-                              }
-                            </td>
-                          }
-                          @case ('kcat_km') {
-                            <td class="align-middle">
-                              @if (row.kcat_km) {
-                              {{ row.kcat_km | number: '1.1-4' }}
-                              } @else {
-                              <span class="opacity-25">N/A</span>
-                              }
-                            </td>
-                          }
-                          @case ('pubmed_id') {
-                            <td class="text-end align-middle">
-                              <app-external-link
-                                class="justify-end"
-                                [linkItem]="{
-                                  url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                                  label: row.pubmed_id
-                                }"
-                              ></app-external-link>
-                            </td>
-                          }
-                          @case ('mcs') {
-                            <td class="align-middle">
-                              <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
-                                $implicit: algorithm, 
-                                label: row[value.field] | number: '1.1-4'
-                              }"></ng-container>
-                            </td>
-                          }
-                          @case ('fragment') {
-                            <td class="align-middle">
-                              <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
-                                $implicit: algorithm, 
-                                label: row[value.field] | number: '1.1-4'
-                              }"></ng-container>
-                            </td>
-                          }
-                          @case ('tanimoto') {
-                            <td class="align-middle">
-                              <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
-                                $implicit: algorithm, 
-                                label: row[value.field] | number: '1.1-4'
-                              }"></ng-container>
-                            </td>
-                          }
-                          @default {
-                            <td class="align-middle">
-                              {{ row[value.field] }}
-                            </td>
-                          }
+                </div>
+              }
+              @case ('error') {
+                <div class="flex items-center justify-center w-full h-[700px]">
+                  <div class="flex flex-col items-center gap-4">
+                    <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
+                    <span class="text-lg">Error loading results. Please try again.</span>
+                  </div>
+                </div>
+              }
+              @case ('loaded') {
+                @if (result.data) {
+                  <p-table #resultsTable
+                    [value]="result.data.data"
+                    [rows]="10" 
+                    [rowsPerPageOptions]="[10, 20, 50]"
+                    [paginator]="true" 
+                    dataKey="iid" 
+                    class="w-full h-full" 
+                    tableStyleClass="w-full" 
+                    styleClass="w-full"
+                    [columns]="columns"
+                    [sortField]="algorithm"
+                    [sortOrder]="-1"
+                    scrollable
+                    scrollHeight="700px"
+                    (onSort)="customSort($event)"
+                  >
+                    <ng-template pTemplate="header">
+                      <tr>
+                        @for (filter of filters.entries(); track filter[0]) {
+                          @let value = filter[1];
+                          <th class="align-middle relative group w-[10%]" [pSortableColumn]="value.sortingField">
+                            <div [innerHTML]="value.label.value"></div>
+                            <p-sortIcon
+                              class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
+                              [field]="value.sortingField" />
+                          </th>  
                         }
-                      }
-                    </tr>
-                    <ng-container *ngTemplateOutlet="rowexpansion; context: { $implicit: row }"></ng-container>
-                    <ng-template #rowexpansion let-row>
-                      @if (row.expanded) {
-                        <tr>
-                          <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
-                            <div [@slideIn]
-                              class="rounded-md border border-[--surface-d] border-solid bg-white p-2 w-full flex flex-col gap-3">
-                              <div class="flex flex-col gap-4">
-                                <h6 class="font-semibold">Experiment Information</h6>
-                                <div class="flex gap-16">
-                                  <div class="flex flex-col gap-2">
-                                    <div>Organism</div>
-                                    <div class="font-semibold italic text-blue-500">{{ row.organism }}</div>
-                                  </div>
-                                  <div class="flex flex-col gap-2">
-                                    <div>Uniprot ID</div>
-                                    <app-external-link 
-                                      [linkItem]="{ 
-                                        url: 'https://www.uniprot.org/uniprot/' + row.uniprot_id, 
-                                        label: row.uniprot_id
-                                      }"
-                                    ></app-external-link>
-                                  </div>
-                                  <div class="flex flex-col gap-2">
-                                    <div>Enzyme Sequence</div>
-                                    <button class="flex items-center gap-1 text-[#64748B] font-semibold" title="Download Sequence" (click)="copySequence(row.sequence)">
-                                      <i class="pi pi-copy"></i>
-                                      <h6>Copy to Clipboard</h6>
-                                    </button>
-                                  </div>
-                                  <div class="flex flex-col gap-2">
-                                    <div>EC Number</div>
-                                    <app-external-link 
-                                      [linkItem]="{ 
-                                        url: 'https://enzyme.expasy.org/EC/' + row.ec_number, 
-                                        label: row.ec_number
-                                      }"
-                                    ></app-external-link>
-                                  </div>
-                                  <div class="flex flex-col gap-2">
-                                    <div>PubMed ID</div>
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-group>
+                      <tr>
+                        <td colspan="11">
+                          <button 
+                            title="Expand"
+                            type="button" 
+                            (click)="group.expanded = !group.expanded"
+                            class="inline-flex items-center gap-2">
+                            <i [class]="group.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                            <span class="font-semibold">Compound: </span>
+                            <span>{{ group.compound.name }}</span>
+                            <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
+                              $implicit: algorithm, 
+                              label: group[algorithm] | number:'1.1-4'
+                            }"></ng-container>
+                          </button>
+                          <button class="float-right inline-flex items-center gap-2 bg-[--surface-100] text-[#6c757d] rounded-sm px-2 py-1" (click)="showEnzymeStructureDialog(group)">
+                            <i class="pi pi-eye"></i>
+                            @let uniqueUniprotIds = getUniqueUniprotIds(group.rows);
+                            <h6>View Enzyme Structure{{ uniqueUniprotIds.length > 1 ? 's' : '' }} ({{ uniqueUniprotIds.length }})</h6>
+                          </button>
+                        </td>
+                      </tr>
+
+                      @if (group.expanded) {
+                        @for (row of group.rows; track row.iid) {
+                          <tr class="table-row">
+                            @for (filter of filters.entries(); track filter[0]) {
+                              @let value = filter[1];
+                              @switch (value.field) {
+                                @case ('compound.name') {
+                                  <td class="align-middle">
+                                    <div class="flex items-start gap-2">
+                                      <button title="Expand" type="button" (click)="
+                                        row.expanded = !row.expanded; 
+                                        watchRowExpansion(row)
+                                      ">
+                                        <i [class]="row.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                                      </button>
+                                      <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{ row.compound.name }}</a>
+                                    </div>
+                                  </td>
+                                }
+                                @case ('organism') {
+                                  <td class="align-middle italic">
+                                    {{ row[value.field] }}
+                                  </td>
+                                }
+                                @case ('uniprot_id') {
+                                  <td class="align-middle">
+                                    <a [routerLink]="['/query/uniprot', row.uniprot_id[0]]" class="text-blue-500 cursor-pointer">{{ row.uniprot_id }}</a>
+                                  </td>
+                                }
+                                @case ('ec_number') {
+                                  <td class="align-middle">
+                                    <a [routerLink]="['/query/ec', row.ec_number]" class="text-blue-500 cursor-pointer">{{ row.ec_number }}</a>
+                                  </td>
+                                }
+                                @case ('kcat') {
+                                  <td class="align-middle">
+                                    @if (row.kcat) {
+                                    {{ row.kcat | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                  </td>
+                                }
+                                @case ('km') {
+                                  <td class="align-middle">
+                                    @if (row.km) {
+                                    {{ row.km | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                  </td>
+                                }
+                                @case ('kcat_km') {
+                                  <td class="align-middle">
+                                    @if (row.kcat_km) {
+                                    {{ row.kcat_km | number: '1.1-4' }}
+                                    } @else {
+                                    <span class="opacity-25">N/A</span>
+                                    }
+                                  </td>
+                                }
+                                @case ('pubmed_id') {
+                                  <td class="text-end align-middle">
                                     <app-external-link
+                                      class="justify-end"
                                       [linkItem]="{
                                         url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
                                         label: row.pubmed_id
                                       }"
                                     ></app-external-link>
+                                  </td>
+                                }
+                                @case ('mcs') {
+                                  <td class="align-middle">
+                                    <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
+                                      $implicit: algorithm, 
+                                      label: row[value.field] | number: '1.1-4'
+                                    }"></ng-container>
+                                  </td>
+                                }
+                                @case ('fragment') {
+                                  <td class="align-middle">
+                                    <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
+                                      $implicit: algorithm, 
+                                      label: row[value.field] | number: '1.1-4'
+                                    }"></ng-container>
+                                  </td>
+                                }
+                                @case ('tanimoto') {
+                                  <td class="align-middle">
+                                    <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
+                                      $implicit: algorithm, 
+                                      label: row[value.field] | number: '1.1-4'
+                                    }"></ng-container>
+                                  </td>
+                                }
+                                @default {
+                                  <td class="align-middle">
+                                    {{ row[value.field] }}
+                                  </td>
+                                }
+                              }
+                            }
+                          </tr>
+                          <ng-container *ngTemplateOutlet="rowexpansion; context: { $implicit: row }"></ng-container>
+                          <ng-template #rowexpansion let-row>
+                            @if (row.expanded) {
+                              <tr>
+                                <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
+                                  <div [@slideIn]
+                                    class="rounded-md border border-[--surface-d] border-solid bg-white p-2 w-full flex flex-col gap-3">
+                                    <div class="flex flex-col gap-4">
+                                      <h6 class="font-semibold">Experiment Information</h6>
+                                      <div class="flex gap-16">
+                                        <div class="flex flex-col gap-2">
+                                          <div>Organism</div>
+                                          <div class="font-semibold italic text-blue-500">{{ row.organism }}</div>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                          <div>Uniprot ID</div>
+                                          <app-external-link 
+                                            [linkItem]="{ 
+                                              url: 'https://www.uniprot.org/uniprot/' + row.uniprot_id, 
+                                              label: row.uniprot_id
+                                            }"
+                                          ></app-external-link>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                          <div>Enzyme Sequence</div>
+                                          <button class="flex items-center gap-1 text-[#64748B] font-semibold" title="Download Sequence" (click)="copySequence(row.sequence)">
+                                            <i class="pi pi-copy"></i>
+                                            <h6>Copy to Clipboard</h6>
+                                          </button>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                          <div>EC Number</div>
+                                          <app-external-link 
+                                            [linkItem]="{ 
+                                              url: 'https://enzyme.expasy.org/EC/' + row.ec_number, 
+                                              label: row.ec_number
+                                            }"
+                                          ></app-external-link>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                          <div>PubMed ID</div>
+                                          <app-external-link
+                                            [linkItem]="{
+                                              url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                              label: row.pubmed_id
+                                            }"
+                                          ></app-external-link>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                      <h6 class="grid-cols-1 col-span-1 font-semibold">Compound Structure</h6>
+                                      <h6 class="grid-cols-2 col-span-1 font-semibold">Enzyme Structure</h6>
+                                      <div class="grid-cols-1 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center relative">
+                                        <button 
+                                          class="absolute top-1 right-1 inline-flex items-center gap-2 bg-[--surface-100] text-[#6c757d] rounded-sm p-1"
+                                          title="View Compound Structure"
+                                          (click)="showCompoundStructureDialog(row.compound)"
+                                        >
+                                          <i class="pi pi-window-maximize"></i>
+                                        </button>
+                                        <app-molecule-image
+                                          #molecule2d
+                                          [smiles]="row.compound.smiles"
+                                          [width]="300"
+                                          [height]="200"
+                                        ></app-molecule-image>
+                                      </div>
+                                      <app-molecule3d
+                                        #molecule3d
+                                        class="grid-cols-2 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-1" 
+                                        [options]="{
+                                            data: row.uniprot_id[0],
+                                            dataType: 'uniprot',
+                                            viewerOptions: {
+                                                mode: 'cartoon',
+                                                modeConfig: {
+                                                  color: 'spectrum'
+                                                }
+                                            }
+                                        }">
+                                      </app-molecule3d>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                      <h6 class="font-semibold">Reaction Schema</h6>
+                                      @let schemas = reactionSchemaCache[getCacheKey(row)];
+                                      <div class="border border-solid border-[#DEE2E6] rounded-md p-2">
+                                        @switch (schemas?.status) {
+                                          @case ('loaded') {
+                                            @if (schemas.data.length > 0) {
+                                              <p-scrollPanel [style]="{ height: '200px', width: '100%' }">
+                                                @for (schema of schemas.data; track schema) {
+                                                  <app-reaction-schema [reactionSchema]="schema" />
+                                                  <hr class="my-2" />
+                                                }
+                                              </p-scrollPanel>
+                                            } @else {
+                                              <p class="text-[#6C757D] italic">No reaction schema available</p>
+                                            }
+                                          }
+                                          @case ('loading') {
+                                            <p class="text-[#6C757D] italic">Loading reaction schema...</p>
+                                          }
+                                          @case ('error') {
+                                            <p class="text-[#6C757D] italic">Error loading reaction schema</p>
+                                          }
+                                        }
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
-                              <div class="grid grid-cols-2 gap-2">
-                                <h6 class="grid-cols-1 col-span-1 font-semibold">Compound Structure</h6>
-                                <h6 class="grid-cols-2 col-span-1 font-semibold">Enzyme Structure</h6>
-                                <div class="grid-cols-1 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center relative">
-                                  <button 
-                                    class="absolute top-1 right-1 inline-flex items-center gap-2 bg-[--surface-100] text-[#6c757d] rounded-sm p-1"
-                                    title="View Compound Structure"
-                                    (click)="showCompoundStructureDialog(row.compound)"
-                                  >
-                                    <i class="pi pi-window-maximize"></i>
-                                  </button>
-                                  <app-molecule-image
-                                    #molecule2d
-                                    [smiles]="row.compound.smiles"
-                                    [width]="300"
-                                    [height]="200"
-                                  ></app-molecule-image>
-                                </div>
-                                <app-molecule3d
-                                  #molecule3d
-                                  class="grid-cols-2 col-span-1 h-full rounded-md border border-solid border-[#DEE2E6] p-1" 
-                                  [options]="{
-                                      data: row.uniprot_id[0],
-                                      dataType: 'uniprot',
-                                      viewerOptions: {
-                                          mode: 'cartoon',
-                                          modeConfig: {
-                                            color: 'spectrum'
-                                          }
-                                      }
-                                  }">
-                                </app-molecule3d>
-                              </div>
-                              <div class="flex flex-col gap-2">
-                                <h6 class="font-semibold">Reaction Schema</h6>
-                                @let schemas = reactionSchemaCache[getCacheKey(row)];
-                                <div class="border border-solid border-[#DEE2E6] rounded-md p-2">
-                                  @switch (schemas?.status) {
-                                    @case ('loaded') {
-                                      @if (schemas.data.length > 0) {
-                                        <p-scrollPanel [style]="{ height: '200px', width: '100%' }">
-                                          @for (schema of schemas.data; track schema) {
-                                            <app-reaction-schema [reactionSchema]="schema" />
-                                            <hr class="my-2" />
-                                          }
-                                        </p-scrollPanel>
-                                      } @else {
-                                        <p class="text-[#6C757D] italic">No reaction schema available</p>
-                                      }
-                                    }
-                                    @case ('loading') {
-                                      <p class="text-[#6C757D] italic">Loading reaction schema...</p>
-                                    }
-                                    @case ('error') {
-                                      <p class="text-[#6C757D] italic">Error loading reaction schema</p>
-                                    }
-                                  }
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
+                                </td>
+                              </tr>
+                            }
+                          </ng-template>
+                        }
                       }
                     </ng-template>
-                  }
-                }
-              </ng-template>
 
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td colspan="11" class="text-center">
-                    <div class="flex flex-col items-center justify-center h-full gap-4 p-8">
-                      <h5 class="font-semibold text-center">Empty</h5>
-                      <p class="text-center">No kinetic data found. Please try a new search.</p>
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="11" class="text-center">
+                          <div class="flex flex-col items-center justify-center h-full gap-4 p-8">
+                            <h5 class="font-semibold text-center">Empty</h5>
+                            <p class="text-center">No kinetic data found. Please try a new search.</p>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                }
+              }
+            }
           </div>
         </div>
       </p-panel>
@@ -451,13 +509,13 @@
 </ng-template>
 
 <app-filter-dialog [(visible)]="filterDialogVisible" [filters]="filters"
-  [numberResults]="$any(resultsTable)?.filteredValue?.length ?? result.total" (filterChange)="searchTable($event)"
+  [numberResults]="$any(resultsTable)?.filteredValue?.length ?? result.data?.total ?? 0" (filterChange)="searchTable($event)"
   (clearAllFilters)="clearAllFilters()" (applyFilters)="applyFilters()">
 </app-filter-dialog>
 
 <app-enzyme-structure-dialog
   [(visible)]="enzymeStructureDialogVisible"
-  [dataset]="result.ungroupedData"
+  [dataset]="result.data?.ungroupedData || []"
   [group]="selectedGroup"
 ></app-enzyme-structure-dialog>
 

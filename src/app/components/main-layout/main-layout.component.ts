@@ -81,6 +81,8 @@ export class MainLayoutComponent {
 
   private checkScreenSize() {
     let shouldCollapse = window.innerWidth < this.COLLAPSE_BREAKPOINT;
-    this.sidebar.collapsed = shouldCollapse;
+    if (this.sidebar) {
+      this.sidebar.collapsed = shouldCollapse;
+    }
   }
 }

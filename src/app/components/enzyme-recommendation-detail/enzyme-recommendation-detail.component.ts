@@ -5,7 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { OpenEnzymeDBService, RecommendationResult, OEDRecord, ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
+import { OpenEnzymeDBService, RecommendationResult, OEDRecord, ReactionSchemaRecord, Loadable } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { combineLatestWith, map, tap, first, catchError } from "rxjs/operators";
 import { of } from "rxjs";
@@ -19,8 +19,9 @@ import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
 import { TieredMenuModule } from "primeng/tieredmenu";
 import { ScrollPanelModule } from "primeng/scrollpanel";
+import { SkeletonModule } from 'primeng/skeleton';
 
-import { MultiselectFilterConfig, RangeFilterConfig, SingleSelectFilterConfig } from "~/app/models/filters";
+import { MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
 import { FilterConfig } from "~/app/models/filters";
 import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
 import { MoleculeImageComponent } from "~/app/components/molecule-image/molecule-image.component";
@@ -129,6 +130,7 @@ export interface RecommendationResultRowGroup {
     TableModule,
     ToastModule,
     ScrollPanelModule,
+    SkeletonModule,
 
     MoleculeImageComponent,
     Molecule3dComponent,
@@ -154,16 +156,13 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   @ViewChild(Molecule3dComponent) molecule3d!: Molecule3dComponent;
   @ViewChild(Table) resultsTable!: Table;
 
-  result: {
-    status: 'loading' | 'loaded' | 'error' | 'na';
+  result: Loadable<{
     data: RecommendationResultRowGroup[];
     ungroupedData: RecommendationResultRow[];
     total: number;
-  } = {
-    status: 'na',
-    data: [],
-    ungroupedData: [],
-    total: 0,
+  }> = {
+    status: 'loading',
+    data: null
   };
 
   substrate: RecommendationResult['query_smiles'];
@@ -430,9 +429,11 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
           
           this.result = {
             status: 'loaded',
-            data: response,
-            ungroupedData: ungroupedData,
-            total: response.length,
+            data: {
+              data: response,
+              ungroupedData: ungroupedData,
+              total: response.length,
+            }
           };
           this.updateFilterOptions(response);
           this.cdr.detectChanges();
@@ -441,9 +442,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
           console.error(err);
           this.result = {
             status: 'error',
-            data: [],
-            ungroupedData: [],
-            total: 0,
+            data: null
           };
         }
       });
@@ -601,8 +600,12 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   customSort(event: any) {
     const { order, field } = event;
     
+    if (!this.result.data) {
+      return;
+    }
+    
     // Sort the groups
-    this.result.data.sort((a: any, b: any) => {
+    this.result.data.data.sort((a: any, b: any) => {
       let valueA, valueB;
       
       // Handle numerical fields (ph, temperature, kcat, kcat_km)
@@ -632,7 +635,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     });
 
     // Sort rows within each group
-    this.result.data.forEach((group: any) => {
+    this.result.data.data.forEach((group: any) => {
       group.rows.sort((a: any, b: any) => {
         let valueA, valueB;
         
