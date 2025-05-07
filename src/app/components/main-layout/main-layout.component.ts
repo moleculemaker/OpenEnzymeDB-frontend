@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { SidebarComponent, Tool } from '../sidebar/sidebar.component';
 import { RouterOutlet } from '@angular/router';
 import { ToolStatus } from '~/app/enums/tool-status';
@@ -14,7 +14,21 @@ import { ToolStatus } from '~/app/enums/tool-status';
     imports: [SidebarComponent, RouterOutlet]
 })
 export class MainLayoutComponent {
-  sidebarCollapsed = false;
+  @ViewChild('sidebar') sidebar!: SidebarComponent;
+  private readonly COLLAPSE_BREAKPOINT = 1380;
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  ngOnInit() {
+    this.checkScreenSize();
+  }
+
+  get sidebarCollapsed() {
+    return this.sidebar.collapsed;
+  }
 
   sidebarTools: Tool[] = [
     {
@@ -65,7 +79,8 @@ export class MainLayoutComponent {
     `
   }
 
-  onSidebarCollapsedChange(collapsed: boolean) {
-    this.sidebarCollapsed = collapsed;
+  private checkScreenSize() {
+    let shouldCollapse = window.innerWidth < this.COLLAPSE_BREAKPOINT;
+    this.sidebar.collapsed = shouldCollapse;
   }
 }
