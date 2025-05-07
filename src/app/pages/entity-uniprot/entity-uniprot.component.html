@@ -35,37 +35,68 @@
             <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
               uniprot['primaryAccession'] }}</span>
           </div>
-          <div class="flex justify-between">
-            <span class="leading-sm text-[#495057]">NCBI Taxonomy ID</span>
-            <app-external-link [linkItem]="{
-                url: 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + uniprot['organism']['taxonId'],
-                label: '' + uniprot['organism']['taxonId']
-              }"></app-external-link>
-          </div>
-          <div class="flex justify-between">
-            <span class="leading-sm text-[#495057]">Protein Common Name</span>
-            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
-              uniprot['proteinDescription']['recommendedName']['fullName']['value'] }}</span>
-          </div>
 
-          @if (uniprot['genes'][0]['geneName']) {
-          <div class="flex justify-between">
-            <span class="leading-sm text-[#495057]">Gene Common Name</span>
-            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
-              uniprot['genes'][0]['geneName']['value']
-              }}</span>
-          </div>
+          @if (uniprot['status'] === 'inactive') {
+            <div class="flex flex-col gap-2 p-3 bg-red-50 border border-red-200 rounded">
+              <div class="flex items-center gap-2 text-red-700">
+                <i class="pi pi-exclamation-triangle"></i>
+                <span class="font-semibold">Inactive Entry</span>
+              </div>
+              <div class="text-red-600 leading-xl">
+                <span class="font-medium">Reason: </span>
+                @if (uniprot['inactiveReason']) {
+                  <span>{{ uniprot['inactiveReason'].inactiveReasonType }}</span>
+                  @if (uniprot['inactiveReason'].mergeDemergeTo.length) {
+                    <span> to: </span>
+                    <ul class="list-disc ml-4">
+                    @for (id of uniprot['inactiveReason'].mergeDemergeTo; track id) {
+                      <li>
+                        <app-external-link 
+                          [linkItem]="{ 
+                          url: 'https://www.uniprot.org/entry/' + id,
+                          label: id
+                        }"></app-external-link>
+                      </li>
+                    }
+                    </ul>
+                  }
+                } @else {
+                  <span>No reason provided</span>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="flex justify-between">
+              <span class="leading-sm text-[#495057]">NCBI Taxonomy ID</span>
+              <app-external-link [linkItem]="{
+                  url: 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + uniprot['organism']['taxonId'],
+                  label: '' + uniprot['organism']['taxonId']
+                }"></app-external-link>
+            </div>
+            <div class="flex justify-between">
+              <span class="leading-sm text-[#495057]">Protein Common Name</span>
+              <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+                uniprot['proteinDescription']['recommendedName']['fullName']['value'] }}</span>
+            </div>
+
+            @if (uniprot['genes'][0]['geneName']) {
+            <div class="flex justify-between">
+              <span class="leading-sm text-[#495057]">Gene Common Name</span>
+              <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+                uniprot['genes'][0]['geneName']['value']
+                }}</span>
+            </div>
+            }
+
+            <div class="flex justify-between">
+              <span class="leading-sm text-[#495057]">Enzyme Sequence</span>
+              <button class="flex items-center gap-1 text-[#64748B] font-semibold" title="Download Sequence"
+                (click)="copySequence()">
+                <i class="pi pi-copy"></i>
+                <h6>Copy to Clipboard</h6>
+              </button>
+            </div>
           }
-
-          <div class="flex justify-between">
-            <span class="leading-sm text-[#495057]">Enzyme Sequence</span>
-            <button class="flex items-center gap-1 text-[#64748B] font-semibold" title="Download Sequence"
-              (click)="copySequence()">
-              <i class="pi pi-copy"></i>
-              <h6>Copy to Clipboard</h6>
-            </button>
-          </div>
-
         </div>
         <hr>
         <div class="grid grid-cols-2 gap-4">
@@ -78,27 +109,32 @@
               url: 'http://bigg.ucsd.edu/search?query=' + uniprot['primaryAccession'], 
               label: 'BiGG'
             }"></app-external-link>
-          <!-- TODO: add more DB links -->
         </div>
-
       </div>
-      <div class="flex flex-col gap-2 w-2/3 p-2">
-        <p class="font-bold">Structure</p>
-        <div class="flex gap-2 h-full">
-          <app-molecule3d #molecule3d class="w-full h-[300px] rounded-md border border-solid border-[#DEE2E6] p-1"
-            [options]="{
-                  data: uniprot['primaryAccession'],
-                  dataType: 'uniprot',
-                  viewerOptions: {
-                    mode: 'cartoon',
-                    modeConfig: {
-                      color: 'spectrum'
+        <div class="flex flex-col gap-2 w-2/3 p-2">
+          <p class="font-bold">Structure</p>
+          <div class="flex gap-2 h-full">
+            @if (uniprot['status'] !== 'inactive') {
+            <app-molecule3d #molecule3d class="w-full h-[300px] rounded-md border border-solid border-[#DEE2E6] p-1"
+              [options]="{
+                    data: uniprot['primaryAccession'],
+                    dataType: 'uniprot',
+                    viewerOptions: {
+                      mode: 'cartoon',
+                      modeConfig: {
+                        color: 'spectrum'
+                      }
                     }
-                  }
-              }">
-          </app-molecule3d>
+                }">
+            </app-molecule3d>
+            } @else {
+              <div class="w-full h-[300px] rounded-md border border-solid border-[#DEE2E6] p-1 bg-gray-50 flex flex-col justify-center items-center">
+                <h1><i class="pi pi-exclamation-triangle text-gray-400"></i></h1>
+                <span class="text-gray-400">This entry is inactive and cannot be visualized.</span>
+              </div>
+            }
+          </div>
         </div>
-      </div>
     </div>
     }
   </p-panel>

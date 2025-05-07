@@ -94,6 +94,7 @@ export type UniprotRecordDict = {
 
 export type UniprotRecord = {
   entryType: string,
+  status: "active" | "inactive",
   primaryAccession: string,
   organism: {
     scientificName: string,
@@ -134,6 +135,10 @@ export type UniprotRecord = {
     uniParcId: string,
   },
   structure_url: string,
+  inactiveReason?: {
+    inactiveReasonType: "MERGED" | "DELETED" | "DEMERGED",
+    mergeDemergeTo: string[],
+  },
 };
 
 export type ECRecordDict = {
@@ -281,7 +286,11 @@ export class OpenEnzymeDBService {
   }
 
   getUniprotInfo(uniprot: string): Observable<UniprotRecord> {
-    return this.UNIPROT$.pipe(map((uniprotData) => uniprotData[uniprot]));
+    return this.UNIPROT$.pipe(
+      map((uniprotData) => ({
+        ...uniprotData[uniprot],
+        status: uniprotData[uniprot].entryType === "Inactive" ? "inactive" : "active",
+      })));
   }
 
   getECInfo(ec: string): Observable<ECRecord> {
