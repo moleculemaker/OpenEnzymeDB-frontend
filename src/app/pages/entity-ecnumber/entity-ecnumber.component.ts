@@ -5,7 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { ECRecord, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { ECRecord, OpenEnzymeDBService, ReactionSchemaRecordWithKeyInfo } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { TableModule } from "primeng/table";
 import { combineLatestWith, map, switchMap } from "rxjs/operators";
@@ -27,6 +27,8 @@ import { FilterConfig } from "~/app/models/filters";
 import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
 import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
+import { ReactionSchemaComponent } from "~/app/components/reaction-schema/reaction-schema.component";
+import { ScrollPanelModule } from "primeng/scrollpanel";
 
 
 @Component({
@@ -67,10 +69,12 @@ import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-ta
     DividerModule,
     TieredMenuModule,
     DividerModule,
-
+    ScrollPanelModule,
+    
     Molecule3dComponent,
     KineticTableComponent,
     ExternalLinkComponent,
+    ReactionSchemaComponent,
 ],
   host: {
     class: "flex flex-col h-full"
@@ -97,6 +101,7 @@ export class EntityECNumberComponent {
   };
 
   ec: ECRecord | null = null;
+  reactionSchema: ReactionSchemaRecordWithKeyInfo | null = null;
 
   exportOptions = [
     {
@@ -288,6 +293,18 @@ export class EntityECNumberComponent {
       switchMap((ecNumber) => this.service.getECInfo(ecNumber))
     ).subscribe((ec) => {
       this.ec = ec;
+    });
+
+    ecNumber$.pipe(
+      switchMap((ecNumber) => this.service.getSingleReactionSchemaByEC(ecNumber))
+    ).subscribe({
+      next: (schema) => {
+        this.reactionSchema = schema;
+      },
+      error: (error) => {
+        console.error('Error fetching reaction schema:', error);
+        this.reactionSchema = null;
+      }
     });
 
     ecNumber$.pipe(

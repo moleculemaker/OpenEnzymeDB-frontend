@@ -235,6 +235,12 @@ export type ReactionSchemaRecord = {
   ligandStructureId: number
 }
 
+export type ReactionSchemaRecordWithKeyInfo = ReactionSchemaRecord & {
+  ecNumber: string,
+  substrate: string,
+  organism: string,
+}
+
 export type LoadingStatus = 'loading' | 'loaded' | 'error' | 'na' | 'invalid';
 
 export type Loadable<T> = {
@@ -385,6 +391,25 @@ export class OpenEnzymeDBService {
   getReactionSchemasFor(ecNumber: string, substrate: string, organism: string): Observable<ReactionSchemaRecord[]> {
     return from(reaction_schema).pipe(
       map((records) => records[`${ecNumber}|${substrate}|${organism}`.toLowerCase()]),
+      first()
+    );
+  }
+
+  getSingleReactionSchemaByEC(ecNumber: string): Observable<ReactionSchemaRecordWithKeyInfo> {
+    return from(reaction_schema).pipe(
+      map((records) => {
+        for (const [key, value] of Object.entries(records)) {
+          if (key.startsWith(`${ecNumber}|`.toLowerCase())) {
+            return {
+              ...value[0],
+              ecNumber,
+              substrate: value[0].reactants.find(r => r.toLowerCase() === key.split('|')[1]) || '',
+              organism: key.split('|')[2],
+            };
+          }
+        }
+        throw new Error(`No reaction schema found for EC number ${ecNumber}`);
+      }),
       first()
     );
   }

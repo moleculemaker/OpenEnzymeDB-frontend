@@ -115,15 +115,24 @@
         </div>
 
       </div>
-      <div class="grid grid-cols-2 gap-2 w-2/3 p-2 grid-rows-[auto,1fr]">
-        <p class="col-span-1 col-start-1 font-bold">Reaction Schema</p>
-        <p class="col-start-2 col-span-1 font-bold">Representative Structure</p>
+      <div class="grid grid-cols-3 gap-2 w-2/3 p-2 grid-rows-[auto,1fr]">
+        <p class="col-span-2 col-start-1 font-bold">Representative Reaction Schema</p>
+        <p class="col-start-3 col-span-1 font-bold">Representative Structure</p>
 
-        <div class="col-span-1 col-start-1 w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2">
-          <p>{{ ec['reaction'][0] }}</p>
-        </div>
+        @if (reactionSchema) {
+          <div class="col-span-2 col-start-1 w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2">
+            <p-scrollPanel [style]="{width: '100%', height: '100%'}">
+              <app-reaction-schema [reactionSchema]="reactionSchema"></app-reaction-schema>
+            </p-scrollPanel>
+          </div>
+        } @else {
+          <div class="col-span-2 col-start-1 w-full h-full rounded-md border border-solid border-[#DEE2E6] bg-gray-50 flex flex-col justify-center items-center">
+            <h1><i class="pi pi-exclamation-triangle text-gray-400"></i></h1>
+            <span class="text-gray-400">No reaction schema available</span>
+          </div>
+        }
         <app-molecule3d 
-          class="col-start-2 col-span-1 w-full h-full rounded-md border border-solid border-[#DEE2E6] p-1" 
+          class="col-start-3 col-span-1 w-full h-full rounded-md border border-solid border-[#DEE2E6] p-1" 
           [options]="{
               data: ec['uniprots'][0]['uniprot_id'],
               dataType: 'uniprot',
