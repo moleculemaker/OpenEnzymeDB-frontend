@@ -8,7 +8,6 @@ api/files.service.ts
 api/jobs.service.ts
 api/molli.service.ts
 api/novostoic.service.ts
-api/reactionMiner.service.ts
 api/shared.service.ts
 api/somn.service.ts
 configuration.ts
@@ -32,7 +31,6 @@ model/jobUpdate.ts
 model/locationInner.ts
 model/models.ts
 model/molecule.ts
-model/reactionMinerSearchResponse.ts
 model/savedMolecule.ts
 model/savedMoleculeDelete.ts
 model/validationError.ts
