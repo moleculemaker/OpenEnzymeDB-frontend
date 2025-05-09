@@ -82,22 +82,33 @@
                       @for (match of row.topSubstratesMatches; track match[0]) {
                         <div class="relative flex">
                           <!-- TODO: add highlighted idx -->
-                          <app-molecule-image 
-                            class="top-0 left-0 border border-solid border-[#DEE2E6] rounded-md"
-                            [width]="120"
-                            [height]="120"
-                            [smiles]="match[0]">
-                          </app-molecule-image>
                           @switch (row.algorithm) {
-                            <!-- @case ('fragment') {
-                              <span class="absolute top-1 left-1 text-xs text-white bg-black rounded-full px-2 py-1">
-                                {{ match[1].matches.length }}
-                              </span>
-                            } -->
+                            @case ('fragment') {
+                              <app-molecule-image 
+                                class="top-0 left-0 border border-solid border-[#DEE2E6] rounded-md"
+                                [width]="120"
+                                [height]="120"
+                                [smiles]="match[0]"
+                                [highlightAtoms]="match[1].matches"
+                              >
+                              </app-molecule-image>
+                            }
                             @case ('tanimoto') {
+                              <app-molecule-image 
+                                class="top-0 left-0 border border-solid border-[#DEE2E6] rounded-md"
+                                [width]="120"
+                                [height]="120"
+                                [smiles]="match[0]">
+                              </app-molecule-image>
                               <span class="absolute top-1 left-1 text-black font-semibold rounded-md bg-[#B2FDEF] px-2 py-1">{{ match[1] | chemicalProperty: 'default' }}</span>
                             }
                             @case ('mcs') {
+                              <app-molecule-image 
+                                class="top-0 left-0 border border-solid border-[#DEE2E6] rounded-md"
+                                [width]="120"
+                                [height]="120"
+                                [smiles]="match[0]">
+                              </app-molecule-image>
                               <span class="absolute top-1 left-1 text-white font-semibold rounded-md bg-[#726EDE] px-2 py-1">{{ match[1] | chemicalProperty: 'default' }}</span>
                             }
                           }

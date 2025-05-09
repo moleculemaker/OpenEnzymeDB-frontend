@@ -1,10 +1,10 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { SafePipe } from '../../pipes/safe.pipe';
-import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { of, map } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Loadable } from '~/app/services/openenzymedb.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CommonService } from '~/app/services/common.service';
 
 @Component({
     selector: 'app-molecule-image',
@@ -20,15 +20,16 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   @Input() loadableImage: Loadable<string>;
   @Input() width: number;
   @Input() height: number;
-  @Input() smiles: string = '';
+  @Input() smiles: string;
+  @Input() highlightAtoms: number[];
 
   chemical: Loadable<string> = {
     data: '',
     status: 'na'
   }
 
-  getSVG = (smiles: string) => {
-    this.service.validateChemical(smiles)
+  getSVG = (smiles: string, highlightAtoms: number[] = []) => {
+    this.commonService.drawSMILES(smiles, highlightAtoms)
       .pipe(
         catchError((err) => 
           of({
@@ -44,7 +45,7 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
   }
 
   constructor(
-    private service: OpenEnzymeDBService
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +54,7 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
       this.init();
 
     } else if (this.smiles) {
-      this.getSVG(this.smiles);
+      this.getSVG(this.smiles, this.highlightAtoms);
     }
   }
 
@@ -65,7 +66,12 @@ export class MoleculeImageComponent implements OnInit, OnChanges {
     } else if (changes['smiles'] 
       && changes['smiles'].currentValue
       && changes['smiles'].currentValue !== changes['smiles'].previousValue) {
-      this.getSVG(this.smiles);
+      this.getSVG(this.smiles, this.highlightAtoms);
+
+    } else if (changes['highlightAtoms'] 
+      && changes['highlightAtoms'].currentValue
+      && changes['highlightAtoms'].currentValue !== changes['highlightAtoms'].previousValue) {
+      this.getSVG(this.smiles, this.highlightAtoms);
 
     } else if (changes['width'] || changes['height']) {
       this.init();

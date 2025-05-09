@@ -8,6 +8,7 @@ import { EnvironmentService } from "./environment.service";
 
 import { ungzip } from 'pako';
 import { HttpErrorResponse } from "@angular/common/http";
+import { CommonService } from "./common.service";
 
 async function loadGzippedJson<T>(path: string): Promise<T> {
   try {
@@ -302,6 +303,7 @@ export class OpenEnzymeDBService {
     private filesService: FilesService,
     private environmentService: EnvironmentService,
     private sharedService: SharedService,
+    private commonService: CommonService
 
     // private apiService: OpenEnzymeDBApiService,
   ) {
@@ -425,32 +427,6 @@ export class OpenEnzymeDBService {
   }
 
   validateChemical(smiles: string): Observable<Loadable<string>> {
-    return new Observable(observer => {
-      observer.next({ status: 'loading', data: null });
-
-      const subscription = this.sharedService.drawSmilesSmilesDrawGet(smiles)
-        .pipe(
-          map((res: string) => ({ 
-            status: 'loaded' as LoadingStatus, 
-            data: res 
-          })),
-          catchError((error: Response) => {
-            console.error('Error validating chemical:', error);
-            const loadable: Loadable<string> = {
-              status: 'invalid',
-              data: null
-            };
-            return of(loadable);
-          })
-        )
-        .subscribe((res) => {
-          observer.next(res);
-          observer.complete();
-        });
-
-      return () => {
-        subscription.unsubscribe()
-      };
-    });
+    return this.commonService.drawSMILES(smiles);
   }
 }

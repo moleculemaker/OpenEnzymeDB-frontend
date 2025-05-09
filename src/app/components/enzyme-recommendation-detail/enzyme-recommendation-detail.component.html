@@ -241,10 +241,10 @@
                               <i [class]="group.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                               <span class="font-semibold">Compound: </span>
                               <span>{{ group.compound.name }}</span>
-                              <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
+                              <!-- <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
                                 $implicit: algorithm, 
                                 label: group[algorithm] | number:'1.1-4'
-                              }"></ng-container>
+                              }"></ng-container> -->
                             </button>
                             <button class="float-right inline-flex items-center gap-2 bg-[--surface-100] text-[#6c757d] rounded-sm px-2 py-1" (click)="showEnzymeStructureDialog(group)">
                               <i class="pi pi-eye"></i>
@@ -340,12 +340,7 @@
                                     </td>
                                   }
                                   @case ('fragment') {
-                                    <td class="align-middle">
-                                      <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
-                                        $implicit: algorithm, 
-                                        label: row[value.field] | number: '1.1-4'
-                                      }"></ng-container>
-                                    </td>
+
                                   }
                                   @case ('tanimoto') {
                                     <td class="align-middle">
@@ -424,12 +419,22 @@
                                           >
                                             <i class="pi pi-window-maximize"></i>
                                           </button>
-                                          <app-molecule-image
-                                            #molecule2d
-                                            [smiles]="row.compound.smiles"
-                                            [width]="300"
-                                            [height]="200"
-                                          ></app-molecule-image>
+                                          @if (algorithm === 'fragment') {
+                                            <app-molecule-image
+                                              #molecule2d
+                                              [smiles]="row.compound.smiles"
+                                              [width]="300"
+                                              [height]="200"
+                                              [highlightAtoms]="row.fragment?.flattenedMatches ?? []"
+                                            ></app-molecule-image>
+                                          } @else {
+                                            <app-molecule-image
+                                              #molecule2d
+                                              [smiles]="row.compound.smiles"
+                                              [width]="300"
+                                              [height]="200"
+                                            ></app-molecule-image>
+                                          }
                                         </div>
                                         <app-molecule3d
                                           #molecule3d

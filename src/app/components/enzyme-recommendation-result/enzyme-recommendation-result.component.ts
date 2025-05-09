@@ -94,7 +94,10 @@ export class EnzymeRecommendationResultComponent extends JobResult {
         let topSubstrates = [];
         if (algorithm === 'fragment') {
           // find top 3 substrates with the most fragment matches
-          topSubstrates = Object.entries(results).sort((a, b) => b[1].matches.length - a[1].matches.length).slice(0, 3);
+          topSubstrates = Object.entries(results)
+            .sort((a, b) => b[1].matches.length - a[1].matches.length)
+            .slice(0, 3)
+            .map(([smiles, values]) => [smiles, { matches: values.matches.flat() }]) as [string, any][];
         }
 
         else {

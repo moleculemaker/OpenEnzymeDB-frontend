@@ -59,8 +59,9 @@ export interface RecommendationResultRow {
   kcat_km: number,
   pubmed_id: string,
   tanimoto: number,
-  fragment: {
+  fragment?: {
     matches: number[][];
+    flattenedMatches: number[];
   }
   mcs: number,
   expanded: boolean,
@@ -75,6 +76,7 @@ export interface RecommendationResultRowGroup {
   tanimoto: number;
   fragment: {
     matches: number[][];
+    flattenedMatches: number[];
   };
   mcs: number;
   ec_number: string[];
@@ -305,19 +307,6 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
       max: 1,
     })],
 
-    this.algorithm === 'fragment'
-    && ['fragment', new RangeFilterConfig({
-      category: 'parameter',
-      label: {
-        value: 'Fragment',
-        rawValue: 'Fragment',
-      },
-      placeholder: 'Enter fragment range',
-      field: 'fragment',
-      min: 0,
-      max: 1,
-    })],
-
     this.algorithm === 'tanimoto'
     && ['tanimoto', new RangeFilterConfig({
       category: 'parameter',
@@ -390,7 +379,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               kcat_km: row['KCAT/KM VALUE'],
               pubmed_id: `${row.PubMedID}`,
               tanimoto: jobResultResponse.tanimoto[row.SMILES],
-              fragment: jobResultResponse.fragment[row.SMILES],
+              fragment: {
+                matches: jobResultResponse.fragment[row.SMILES]?.matches ?? [],
+                flattenedMatches: jobResultResponse.fragment[row.SMILES]?.matches.flat() ?? []
+              },
               mcs: jobResultResponse.mcs[row.SMILES],
               expanded: false,
               reaction_schema: undefined,
@@ -403,7 +395,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               return acc;
             }, {});
 
-          return Object.values(grouped).map((value) => {
+          const retVal = Object.values(grouped).map((value) => {
             const compound = (value as any[])[0].compound;
             const tanimoto = jobResultResponse.tanimoto[compound.smiles];
             const fragment = jobResultResponse.fragment[compound.smiles];
@@ -411,7 +403,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
             return {
               compound,
               tanimoto,
-              fragment,
+              fragment: {
+                matches: fragment?.matches ?? [],
+                flattenedMatches: fragment?.matches.flat() ?? []
+              },
               mcs,
               ec_number: Array.from(new Set(value.map((row: any) => row.ec_number))),
               organism: Array.from(new Set(value.map((row: any) => row.organism))),
@@ -427,6 +422,12 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               rows: value as RecommendationResultRow[],
             } as RecommendationResultRowGroup;
           });
+
+          if (this.algorithm === 'fragment') {
+            retVal.sort((a, b) => (b.fragment?.flattenedMatches.length ?? 0) - (a.fragment?.flattenedMatches.length ?? 0))
+          }
+
+          return retVal;
         })
       )
       .subscribe({
