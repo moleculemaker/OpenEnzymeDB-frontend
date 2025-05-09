@@ -28,13 +28,13 @@
 
     <div class="spacer"></div>
 
-    <p-menu #menu class="user_menu" [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
+    <!-- <p-menu #menu class="user_menu" [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
     <div class="user_menu_button" *ngIf="userInfo" (click)="menu.toggle($event)">
         {{ userInfo.email }}
     </div>
 
     <a class="login_button" href="#" *ngIf="!userInfo"
-        (click)="$event.preventDefault();$event.stopPropagation();login()">Sign In</a>
+        (click)="$event.preventDefault();$event.stopPropagation();login()">Sign In</a> -->
 
     <div class="coming_soon" [class.show_popup]="showComingSoonPopup">
         <div class="coming_soon_button" (click)="autocloseComingSoonPopup=false;toggleComingSoonPopup();">
