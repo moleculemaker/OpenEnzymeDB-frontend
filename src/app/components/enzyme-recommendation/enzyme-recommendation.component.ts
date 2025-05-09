@@ -78,10 +78,10 @@ export class EnzymeRecommendationComponent {
     if (changes['formValue'] && changes['formValue'].currentValue) {
       this.form.patchValue({
         search: this.formValue.query_value ?? {
-          inputValue: this.formValue.query_smiles,
-          value: this.formValue.query_smiles,
-          inputType: 'smiles',
           selectedOption: 'smiles',
+          inputValue: this.formValue.query_smiles,
+          inputType: 'smiles',
+          value: this.formValue.query_smiles,
         },
         email: this.formValue.email,
       });
@@ -103,7 +103,14 @@ export class EnzymeRecommendationComponent {
         email: this.form.controls["email"].value || '',
       }
     ).subscribe((response) => {
-      this.router.navigate(['enzyme-recommendation', 'result', response.job_id]);
+      if (this.router.url.search(/\/.*\/result\//) !== -1) {
+        window.open(
+          this.router.url.replace(/\/result\/.*/g, `/result/${response.job_id}`), 
+          '_blank'
+        );
+      } else {
+        this.router.navigate(['enzyme-recommendation', 'result', response.job_id]);
+      }
     })
   }
 

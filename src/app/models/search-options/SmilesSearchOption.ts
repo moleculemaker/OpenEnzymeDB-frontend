@@ -48,7 +48,7 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
         filter((chemical) => chemical.status !== 'loading'),
         map((chemical) => {
           if (chemical.status === 'loaded') {
-            this.formGroup.get('value')!.patchValue(chemical.data);
+            this.formGroup.get('value')!.setValue(chemical.data, { emitEvent: false });
             console.log('[smiles-search-option] smiles validated', chemical);
             return null;
           }
