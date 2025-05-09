@@ -1,0 +1,4322 @@
+[
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Thermobacillus xylanilyticus",
+    "compound": "4-nitrophenyl-alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "1.8.3.2",
+    "organism": "Autographa californica nucleopolyhedrovirus",
+    "compound": "5,5'-dithiobis(2-nitrobenzoic acid)"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Mus musculus",
+    "compound": "Propioin"
+  },
+  {
+    "ec_number": "2.1.1.365",
+    "organism": "Mycolicibacterium hassiacum",
+    "compound": "3,3'-di-o-methyl-4alpha-mannobiose"
+  },
+  {
+    "ec_number": "3.5.1.14",
+    "organism": "Sus scrofa",
+    "compound": "2-acetylamino-3-((3s,4s)-2-hydroxycyclooctylsulfanyl)-propionic acid"
+  },
+  {
+    "ec_number": "3.6.1.40",
+    "organism": "Helicobacter pylori",
+    "compound": "Guanosine 5'-triphosphate 3'-diphosphate"
+  },
+  {
+    "ec_number": "2.3.1.82",
+    "organism": "Acinetobacter baumannii",
+    "compound": "2'-n-ethyl netilmicin"
+  },
+  {
+    "ec_number": "3.1.4.17",
+    "organism": "Thermotoga maritima",
+    "compound": "5'-papa"
+  },
+  {
+    "ec_number": "1.1.1.25",
+    "organism": "Vitis vinifera",
+    "compound": "3-dehydroshikimate"
+  },
+  {
+    "ec_number": "2.5.1.18",
+    "organism": "Homo sapiens",
+    "compound": "Iodobutane"
+  },
+  {
+    "ec_number": "1.11.1.13",
+    "organism": "Irpex lacteus",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Thermoplasma acidophilum",
+    "compound": "4-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "3.7.1.13",
+    "organism": "Pseudomonas resinovorans",
+    "compound": "2-hydroxy-6-oxo-6-phenylhexa-2,4-dienoate"
+  },
+  {
+    "ec_number": "3.6.4.13",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "Poly(da)"
+  },
+  {
+    "ec_number": "2.7.1.90",
+    "organism": "Pseudoclostridium thermosuccinogenes",
+    "compound": "D-fructose 6-phosphate"
+  },
+  {
+    "ec_number": "2.1.1.356",
+    "organism": "Paramecium bursaria Chlorella virus 1",
+    "compound": "(+/-)-2',3'-dibenzyl-s-adenosyl-l-methionine"
+  },
+  {
+    "ec_number": "1.1.1.248",
+    "organism": "Papaver bracteatum",
+    "compound": "(7s)-salutaridinol"
+  },
+  {
+    "ec_number": "3.2.1.3",
+    "organism": "Aspergillus tritici",
+    "compound": "Starch"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Coprinopsis cinerea",
+    "compound": "2,2'-azino-bis-(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.1.1.261",
+    "organism": "Aeropyrum pernix",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "2.7.1.185",
+    "organism": "Picrophilus torridus",
+    "compound": "(r)-mevalonate"
+  },
+  {
+    "ec_number": "3.2.1.23",
+    "organism": "Alicyclobacillus acidocaldarius",
+    "compound": "2-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "4.3.2.2",
+    "organism": "Plasmodium falciparum",
+    "compound": "Amp"
+  },
+  {
+    "ec_number": "1.11.1.19",
+    "organism": "Vibrio cholerae",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.1.1.44",
+    "organism": "Trypanosoma brucei",
+    "compound": "6-phosphono-d-gluconate"
+  },
+  {
+    "ec_number": "3.5.1.19",
+    "organism": "uncultured Acidobacteria bacterium",
+    "compound": "5-methylnicotinamide"
+  },
+  {
+    "ec_number": "1.1.1.62",
+    "organism": "Homo sapiens",
+    "compound": "Delta4-3,17-androstendione"
+  },
+  {
+    "ec_number": "1.8.4.11",
+    "organism": "Caenorhabditis elegans",
+    "compound": "Dabsyl l-methionine-(s)-sulfoxide"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Cefuroxime"
+  },
+  {
+    "ec_number": "2.7.7.102",
+    "organism": "Saccharolobus solfataricus",
+    "compound": "Ntp"
+  },
+  {
+    "ec_number": "3.5.4.40",
+    "organism": "Streptomyces avermitilis",
+    "compound": "5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "3.5.1.4",
+    "organism": "Saccharolobus solfataricus",
+    "compound": "Indol-3-acetamide"
+  },
+  {
+    "ec_number": "3.2.1.86",
+    "organism": "Streptococcus pyogenes",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside 6-phosphate"
+  },
+  {
+    "ec_number": "1.14.19.50",
+    "organism": "Narcissus aff. pseudonarcissus MK-2014",
+    "compound": "4'-o-methyl-n-methylnorbelladine"
+  },
+  {
+    "ec_number": "1.4.1.9",
+    "organism": "Exiguobacterium sibiricum",
+    "compound": "L-leucine"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Amoxicillin"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Cephalothin"
+  },
+  {
+    "ec_number": "5.1.3.2",
+    "organism": "Hordeum vulgare",
+    "compound": "Udp-glcnac"
+  },
+  {
+    "ec_number": "1.1.1.71",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "Pentanal"
+  },
+  {
+    "ec_number": "4.2.1.46",
+    "organism": "Escherichia coli",
+    "compound": "Udp-glucose"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "2-fluoroethylamine"
+  },
+  {
+    "ec_number": "2.4.2.28",
+    "organism": "Brucella melitensis",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "2.7.3.3",
+    "organism": "Myxococcus xanthus",
+    "compound": "Nomega-phospho-l-arg"
+  },
+  {
+    "ec_number": "6.2.1.5",
+    "organism": "Acetobacter aceti",
+    "compound": "Succinyl-coa"
+  },
+  {
+    "ec_number": "2.5.1.94",
+    "organism": "Salinispora tropica CNB-440",
+    "compound": "5'-chloro-5'-deoxyadenosine"
+  },
+  {
+    "ec_number": "1.2.4.1 2.3.1.12 1.8.1.4",
+    "organism": "Escherichia coli",
+    "compound": "Pyruvate"
+  },
+  {
+    "ec_number": "2.8.1.5",
+    "organism": "Phanerodontia chrysosporium",
+    "compound": "Dithiothreitol"
+  },
+  {
+    "ec_number": "2.5.1.55",
+    "organism": "Aquifex pyrophilus",
+    "compound": "Cd2+"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Homo sapiens",
+    "compound": "Trans,trans-farnesol"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Neisseria meningitidis",
+    "compound": "Alpha-ketobutyrate"
+  },
+  {
+    "ec_number": "1.14.14.20",
+    "organism": "Parageobacillus thermoglucosidasius",
+    "compound": "Riboflavin"
+  },
+  {
+    "ec_number": "5.4.2.7",
+    "organism": "Bacillus cereus",
+    "compound": "D-ribose 5-phosphate"
+  },
+  {
+    "ec_number": "2.3.2.5",
+    "organism": "Solanum tuberosum",
+    "compound": "H-gln-gly-oh"
+  },
+  {
+    "ec_number": "3.5.4.31",
+    "organism": "Pseudomonas aeruginosa",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "2.7.4.9",
+    "organism": "Homo sapiens",
+    "compound": "3'-amino-3'-deoxythymidine 5'-monophosphate"
+  },
+  {
+    "ec_number": "4.1.3.39",
+    "organism": "Thermus thermophilus",
+    "compound": "Ca2+"
+  },
+  {
+    "ec_number": "2.4.1.281",
+    "organism": "Ruminococcus albus",
+    "compound": "N,n'-diacetylchitobiose"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-[4-(trifluoromethyl)phenyl]prop-2-enoic acid"
+  },
+  {
+    "ec_number": "2.4.2.1",
+    "organism": "Homo sapiens",
+    "compound": "2',3'-dideoxyinosine"
+  },
+  {
+    "ec_number": "1.14.14.20",
+    "organism": "Parageobacillus thermoglucosidasius",
+    "compound": "Fmn"
+  },
+  {
+    "ec_number": "3.8.1.5",
+    "organism": "Alcanivorax dieselolei",
+    "compound": "3-chloro-2-methylprop-1-ene"
+  },
+  {
+    "ec_number": "3.1.3.74",
+    "organism": "Mus musculus",
+    "compound": "Pyridoxal 5'-phosphate"
+  },
+  {
+    "ec_number": "3.1.1.42",
+    "organism": "Ustilago maydis",
+    "compound": "Chlorogenate"
+  },
+  {
+    "ec_number": "3.1.3.11",
+    "organism": "Sus scrofa",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "4.1.3.39",
+    "organism": "Thermus thermophilus",
+    "compound": "Ni2+"
+  },
+  {
+    "ec_number": "1.11.1.13",
+    "organism": "Gelatoporia subvermispora",
+    "compound": "Mn(ii)"
+  },
+  {
+    "ec_number": "3.5.1.18",
+    "organism": "Salmonella typhimurium",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "Ethylamine"
+  },
+  {
+    "ec_number": "2.5.1.18",
+    "organism": "Homo sapiens",
+    "compound": "Iodohexane"
+  },
+  {
+    "ec_number": "2.7.1.237",
+    "organism": "Thermococcus kodakarensis",
+    "compound": "3'-dephospho-coa"
+  },
+  {
+    "ec_number": "1.1.1.205",
+    "organism": "Bacillus anthracis",
+    "compound": "Inosine 5'-diphosphate"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Medicago sativa",
+    "compound": "4,2',4'-trihydrochalcone"
+  },
+  {
+    "ec_number": "3.1.3.5",
+    "organism": "Bacillus subtilis",
+    "compound": "5'-gmp"
+  },
+  {
+    "ec_number": "2.3.1.274",
+    "organism": "Bacillus subtilis",
+    "compound": "Holo-[acyl-carrier protein]"
+  },
+  {
+    "ec_number": "3.6.1.17",
+    "organism": "Myxococcus xanthus",
+    "compound": "P1,p4-bis(5'-adenosyl)tetraphosphate"
+  },
+  {
+    "ec_number": "1.1.1.71",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "4.6.1.18",
+    "organism": "Homo sapiens",
+    "compound": "Cyclic 2',3'-cytidine monophosphate"
+  },
+  {
+    "ec_number": "3.2.1.37",
+    "organism": "Geobacillus thermoleovorans",
+    "compound": "4-nitrophenyl-beta-d-xylopyranoside"
+  },
+  {
+    "ec_number": "2.8.2.37",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3'-phosphoadenylyl sulfate"
+  },
+  {
+    "ec_number": "1.1.1.25",
+    "organism": "Camellia sinensis",
+    "compound": "3-dehydroshikimate"
+  },
+  {
+    "ec_number": "3.6.1.17",
+    "organism": "Caenorhabditis elegans",
+    "compound": "Diadenosine 5',5''''-p1,p4-tetraphosphate"
+  },
+  {
+    "ec_number": "3.6.1.17",
+    "organism": "Aquifex aeolicus",
+    "compound": "P1,p6-bis(5'-adenosyl) hexaphosphate"
+  },
+  {
+    "ec_number": "1.1.1.237",
+    "organism": "Wickerhamia fluorescens",
+    "compound": "Hydroxyphenylpyruvate"
+  },
+  {
+    "ec_number": "2.4.1.352",
+    "organism": "Meiothermus silvanus",
+    "compound": "Alpha-d-glucopyranose 1-phosphate"
+  },
+  {
+    "ec_number": "3.4.22.40",
+    "organism": "Homo sapiens",
+    "compound": "6'-deoxy tallysomycin h1"
+  },
+  {
+    "ec_number": "1.1.1.203",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "Beta-d-glucuronate"
+  },
+  {
+    "ec_number": "2.7.7.48",
+    "organism": "Hepacivirus C",
+    "compound": "Ctp"
+  },
+  {
+    "ec_number": "3.5.1.135",
+    "organism": "Escherichia coli",
+    "compound": "N4-isobutyryl-2'-deoxycytidine"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Nh4+"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Coprinus comatus",
+    "compound": "2,2'-azino-bis-(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "2.7.7.7",
+    "organism": "Saccharolobus solfataricus",
+    "compound": "7-deaza-2'-deoxyadenosine 5'-triphosphate"
+  },
+  {
+    "ec_number": "2.7.1.40",
+    "organism": "Homo sapiens",
+    "compound": "Fructose 1,6-bisphosphate"
+  },
+  {
+    "ec_number": "3.6.1.59",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "7-methylguanosine 5'-diphosphate"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "Uridine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "1.1.1.B19",
+    "organism": "Aeribacillus pallidus",
+    "compound": "L-xylulose"
+  },
+  {
+    "ec_number": "1.1.1.B38",
+    "organism": "Archaeoglobus fulgidus",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "2.7.2.3",
+    "organism": "Methanothermus fervidus",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "3.6.1.17",
+    "organism": "Plasmodium falciparum",
+    "compound": "5',5''-diadenosine tetraphosphate"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Glycine max",
+    "compound": "2',4'-dihydroxychalcone"
+  },
+  {
+    "ec_number": "1.11.1.16",
+    "organism": "Pleurotus eryngii",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.1.4.37",
+    "organism": "Escherichia coli",
+    "compound": "Cyclic 2',3'-gmp"
+  },
+  {
+    "ec_number": "1.14.13.236",
+    "organism": "Pseudomonas mendocina",
+    "compound": "Chlorobenzene"
+  },
+  {
+    "ec_number": "1.1.1.22",
+    "organism": "Caenorhabditis elegans",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Caldicellulosiruptor saccharolyticus",
+    "compound": "4-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "2.4.1.B62",
+    "organism": "Paeniclostridium sordellii",
+    "compound": "Udp-alpha-d-glucose"
+  },
+  {
+    "ec_number": "3.1.3.97",
+    "organism": "Chromobacterium violaceum",
+    "compound": "Uridine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "2.4.2.6",
+    "organism": "Lactobacillus leichmannii",
+    "compound": "2'-deoxycytidine"
+  },
+  {
+    "ec_number": "4.1.2.51",
+    "organism": "Picrophilus torridus",
+    "compound": "2-dehydro-3-deoxy-d-gluconate 6-phosphate"
+  },
+  {
+    "ec_number": "1.1.1.40",
+    "organism": "Columba livia",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "1.8.3.2",
+    "organism": "Aspergillus oryzae",
+    "compound": "Glutathione"
+  },
+  {
+    "ec_number": "1.14.15.30",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-oxo-23,24-bisnorchol-4-en-22-oic acid-coa"
+  },
+  {
+    "ec_number": "1.14.15.30",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-oxo-23,24-bisnorchola-1,4-dien-22-oic acid"
+  },
+  {
+    "ec_number": "2.4.2.4",
+    "organism": "Escherichia coli",
+    "compound": "5'-amino-5'-deoxythymidine"
+  },
+  {
+    "ec_number": "6.1.1.3",
+    "organism": "Mesomycoplasma mobile",
+    "compound": "L-threonine"
+  },
+  {
+    "ec_number": "2.7.7.7",
+    "organism": "Saccharolobus solfataricus",
+    "compound": "2-aminopurine-2'-deoxy-d-ribose 5'-triphosphate"
+  },
+  {
+    "ec_number": "1.1.1.62",
+    "organism": "Curvularia lunata",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "2.4.1.B85",
+    "organism": "Nemophila menziesii",
+    "compound": "Apigenin 4'-o-beta-d-glucoside"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Sus scrofa",
+    "compound": "Succinate"
+  },
+  {
+    "ec_number": "1.14.13.236",
+    "organism": "Pseudomonas mendocina",
+    "compound": "Toluene"
+  },
+  {
+    "ec_number": "3.2.1.52",
+    "organism": "uncultured Bacteroidetes bacterium",
+    "compound": "4-nitrophenyl n-acetyl-beta-d-glucosaminide"
+  },
+  {
+    "ec_number": "3.5.4.5",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "2'-deoxycytidine"
+  },
+  {
+    "ec_number": "2.4.2.1",
+    "organism": "Thermus thermophilus",
+    "compound": "2'-deoxyguanosine"
+  },
+  {
+    "ec_number": "2.7.1.74",
+    "organism": "Homo sapiens",
+    "compound": "2',2'-difluorodeoxycytidine"
+  },
+  {
+    "ec_number": "3.8.1.5",
+    "organism": "Alcanivorax dieselolei",
+    "compound": "2,3-dichloroprop-1-ene"
+  },
+  {
+    "ec_number": "4.2.1.53",
+    "organism": "Macrococcus caseolyticus",
+    "compound": "Palmitoleic acid"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Phanerodontia chrysosporium",
+    "compound": "4-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "1.1.1.42",
+    "organism": "Plasmodium falciparum",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "5.1.3.30",
+    "organism": "Clostridium sp.",
+    "compound": "D-fructose"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Geobacillus stearothermophilus",
+    "compound": "3',4'-dinitrophenyl alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "3.4.21.4",
+    "organism": "Saccharopolyspora erythraea",
+    "compound": "N-alpha-benzoyl-l-arg-p-nitroanilide"
+  },
+  {
+    "ec_number": "1.1.1.405",
+    "organism": "Haemophilus influenzae",
+    "compound": "(2r,3r)-2,3-dihydroxy-4-oxobutyl-phosphate"
+  },
+  {
+    "ec_number": "3.1.1.81",
+    "organism": "Muricauda olearia",
+    "compound": "N-3-oxooctanoyl-l-homoserine lactone"
+  },
+  {
+    "ec_number": "6.3.4.2",
+    "organism": "Escherichia coli",
+    "compound": "Gln-oh"
+  },
+  {
+    "ec_number": "1.8.4.11",
+    "organism": "Alkaliphilus oremlandii",
+    "compound": "Dithiothreitol"
+  },
+  {
+    "ec_number": "3.5.4.46",
+    "organism": "Leptospira interrogans serovar Copenhageni str. Fiocruz L1-130",
+    "compound": "3',5'-cyclic amp"
+  },
+  {
+    "ec_number": "3.5.1.13",
+    "organism": "Paracoccus sp. M1-1",
+    "compound": "3',4'-dichloropropionanilide"
+  },
+  {
+    "ec_number": "3.4.17.23",
+    "organism": "Homo sapiens",
+    "compound": "Angiotensin 4-8"
+  },
+  {
+    "ec_number": "3.1.1.42",
+    "organism": "Ustilago maydis",
+    "compound": "Methyl caffeate"
+  },
+  {
+    "ec_number": "1.1.1.39",
+    "organism": "Homo sapiens",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "2.7.1.24",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3'-dephospho-coa"
+  },
+  {
+    "ec_number": "2.6.1.7",
+    "organism": "Mus musculus",
+    "compound": "Indo-3-pyruvate"
+  },
+  {
+    "ec_number": "5.1.1.18",
+    "organism": "Roseobacter litoralis",
+    "compound": "D-serine"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Listeria innocua",
+    "compound": "4-nitrophenyl n,n'-diacetyl-beta-d-chitobioside"
+  },
+  {
+    "ec_number": "1.3.1.102",
+    "organism": "Nicotiana tabacum",
+    "compound": "(s)-carvone"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Glycine max",
+    "compound": "4,2'-dihydroxychalcone"
+  },
+  {
+    "ec_number": "2.7.1.224",
+    "organism": "Campylobacter jejuni subsp. jejuni serotype O:2",
+    "compound": "Cytidine 5'-diphosphoramidate"
+  },
+  {
+    "ec_number": "1.2.4.2",
+    "organism": "Synechococcus sp. PCC 7002",
+    "compound": "2-oxoglutarate"
+  },
+  {
+    "ec_number": "2.5.1.21",
+    "organism": "Mortierella alpina",
+    "compound": "(2e,6e)-farnesyl diphosphate"
+  },
+  {
+    "ec_number": "2.5.1.91",
+    "organism": "Cereibacter sphaeroides",
+    "compound": "Geranyl geranyl diphosphate"
+  },
+  {
+    "ec_number": "2.5.1.94",
+    "organism": "Salinispora tropica CNB-440",
+    "compound": "5'-deoxy-5'-iodoadenosine"
+  },
+  {
+    "ec_number": "3.4.21.98",
+    "organism": "Hepacivirus C",
+    "compound": "Ac-dtedvvp(nva)-o-4-phenylazophenyl ester"
+  },
+  {
+    "ec_number": "1.5.1.3",
+    "organism": "Schistosoma mansoni",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Cerrena sp. WR1",
+    "compound": "2,2'-azino-bis(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.1.1.81",
+    "organism": "Muricauda olearia",
+    "compound": "N-butyryl-l-homoserine lactone"
+  },
+  {
+    "ec_number": "3.1.1.106",
+    "organism": "Homo sapiens",
+    "compound": "2''-o-acetyl-adp-d-ribose"
+  },
+  {
+    "ec_number": "2.7.1.21",
+    "organism": "Leishmania major",
+    "compound": "2'-deoxyuridine"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Glycine max",
+    "compound": "4,2',4'-trihydroxychalcone"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Benzylpenicillin"
+  },
+  {
+    "ec_number": "6.4.1.1",
+    "organism": "Rhizobium etli",
+    "compound": "Oxaloacetate"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Piperacillin"
+  },
+  {
+    "ec_number": "2.7.1.35",
+    "organism": "Homo sapiens",
+    "compound": "4'-o-methylpyridoxine"
+  },
+  {
+    "ec_number": "2.7.7.64",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Udp-glucose"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "Methylallyl diphosphate"
+  },
+  {
+    "ec_number": "2.8.3.5",
+    "organism": "Sus scrofa",
+    "compound": "Acetoacetyl-coa"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Thermoplasma acidophilum",
+    "compound": "4-nitrophenyl-beta-d-mannopyranoside"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Ticarcillin"
+  },
+  {
+    "ec_number": "3.2.1.37",
+    "organism": "Prevotella ruminicola",
+    "compound": "4-nitrophenyl-beta-d-xylopyranoside"
+  },
+  {
+    "ec_number": "3.4.17.23",
+    "organism": "Homo sapiens",
+    "compound": "Angiotensin 5-8"
+  },
+  {
+    "ec_number": "2.4.2.44",
+    "organism": "Pseudomonas aeruginosa",
+    "compound": "Adenine"
+  },
+  {
+    "ec_number": "6.2.1.5",
+    "organism": "Acetobacter aceti",
+    "compound": "Acetyl-coa"
+  },
+  {
+    "ec_number": "1.6.2.4",
+    "organism": "Gossypium hirsutum",
+    "compound": "Ferricytochrome c"
+  },
+  {
+    "ec_number": "1.8.3.3",
+    "organism": "Aspergillus oryzae",
+    "compound": "L-cys"
+  },
+  {
+    "ec_number": "2.7.1.35",
+    "organism": "Homo sapiens",
+    "compound": "4'-deoxypyridoxine"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Pasteurella multocida",
+    "compound": "3'-amp"
+  },
+  {
+    "ec_number": "3.2.1.86",
+    "organism": "Streptococcus pneumoniae",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside 6-phosphate"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Aztreonam"
+  },
+  {
+    "ec_number": "2.3.1.5",
+    "organism": "Mesocricetus auratus",
+    "compound": "4-aminobenzoyl glutamic acid"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Escherichia coli",
+    "compound": "2,2'-azinobis(3-ethylbenzthiazoline-6-sulfonate)"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Penicillium brasilianum",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "1.1.1.22",
+    "organism": "Sphingomonas sanxanigenens",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "1.14.14.17",
+    "organism": "Homo sapiens",
+    "compound": "Protein"
+  },
+  {
+    "ec_number": "5.4.3.10",
+    "organism": "Taxus canadensis",
+    "compound": "3'-methyl-alpha-phenylalanine"
+  },
+  {
+    "ec_number": "1.1.1.24",
+    "organism": "Eucalyptus camaldulensis",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Geobacillus stearothermophilus",
+    "compound": "2',5'-dinitrophenyl alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "2.7.7.7",
+    "organism": "Saccharolobus solfataricus",
+    "compound": "N1-methyl-2'-deoxyadenosine 5'-triphosphate"
+  },
+  {
+    "ec_number": "1.3.1.102",
+    "organism": "Nicotiana tabacum",
+    "compound": "(1r,4s)-isodihydrocarvone"
+  },
+  {
+    "ec_number": "3.1.1.73",
+    "organism": "Aspergillus awamori",
+    "compound": "Alpha-naphthylcaprylate"
+  },
+  {
+    "ec_number": "2.7.4.6",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "8-bromoinosine 5'-diphosphate"
+  },
+  {
+    "ec_number": "2.7.4.25",
+    "organism": "Escherichia coli",
+    "compound": "2',3'-dideoxy-cmp"
+  },
+  {
+    "ec_number": "1.5.7.3",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "Sarcosine"
+  },
+  {
+    "ec_number": "3.6.1.17",
+    "organism": "Aquifex aeolicus",
+    "compound": "P1,p4-bis(5'-adenosyl) tetraphosphate"
+  },
+  {
+    "ec_number": "1.11.1.19",
+    "organism": "Amycolatopsis sp. ATCC 39116",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.13.2.1",
+    "organism": "Trypanosoma cruzi",
+    "compound": "Dl-homocysteine"
+  },
+  {
+    "ec_number": "3.4.21.83",
+    "organism": "Trypanosoma evansi",
+    "compound": "Arg-arg-arg"
+  },
+  {
+    "ec_number": "1.5.1.5",
+    "organism": "Escherichia coli",
+    "compound": "5,10-methenyltetrahydrofolate"
+  },
+  {
+    "ec_number": "3.6.1.73",
+    "organism": "Escherichia coli",
+    "compound": "Inosine 5'-triphosphate"
+  },
+  {
+    "ec_number": "4.3.2.2",
+    "organism": "Plasmodium falciparum",
+    "compound": "Fumarate"
+  },
+  {
+    "ec_number": "4.1.1.71",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "1.1.1.41",
+    "organism": "Homo sapiens",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "2.4.2.4",
+    "organism": "Escherichia coli",
+    "compound": "3'-amino-3'-deoxythymidine"
+  },
+  {
+    "ec_number": "4.1.3.39",
+    "organism": "Thermus thermophilus",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "3.2.1.51",
+    "organism": "Homo sapiens",
+    "compound": "P-nitrophenyl alpha-l-fucopyranoside"
+  },
+  {
+    "ec_number": "2.7.7.1",
+    "organism": "Francisella tularensis",
+    "compound": "Adp-ribose"
+  },
+  {
+    "ec_number": "1.5.1.40",
+    "organism": "Archaeoglobus fulgidus",
+    "compound": "Oxidized coenzyme f420"
+  },
+  {
+    "ec_number": "3.6.1.73",
+    "organism": "Escherichia coli",
+    "compound": "Xanthosine 5'-triphosphate"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Trametes versicolor",
+    "compound": "2,2'-azinobis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.4.1.4",
+    "organism": "Thermococcus waiotapuensis",
+    "compound": "Nh3"
+  },
+  {
+    "ec_number": "3.6.1.40",
+    "organism": "Escherichia coli",
+    "compound": "Guanosine 5'-triphosphate 3'-diphosphate"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Ca2+"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Humicola insolens",
+    "compound": "4-nitrophenyl beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "3.6.1.17",
+    "organism": "Aquifex aeolicus",
+    "compound": "P1,p5-bis(5'-adenosyl) pentaphosphate"
+  },
+  {
+    "ec_number": "2.7.7.12",
+    "organism": "Escherichia coli",
+    "compound": "Udp-galactose"
+  },
+  {
+    "ec_number": "1.1.5.2",
+    "organism": "Thermus thermophilus",
+    "compound": "D-glucosamine"
+  },
+  {
+    "ec_number": "1.1.1.B38",
+    "organism": "Archaeoglobus fulgidus",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "2.1.1.B126",
+    "organism": "Rhaphiolepis bibas",
+    "compound": "4-methoxybenzoate"
+  },
+  {
+    "ec_number": "1.13.11.27",
+    "organism": "Picrophilus torridus",
+    "compound": "4-hydroxyphenylpyruvate"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Ni2+"
+  },
+  {
+    "ec_number": "3.4.19.9",
+    "organism": "Arabidopsis thaliana",
+    "compound": "P-aminobenzoylpentaglutamate"
+  },
+  {
+    "ec_number": "5.1.1.5",
+    "organism": "uncultured bacterium",
+    "compound": "D-lysine"
+  },
+  {
+    "ec_number": "1.14.14.47",
+    "organism": "Bacillus subtilis",
+    "compound": "5,6,7,8-tetrahydrofolate"
+  },
+  {
+    "ec_number": "1.6.2.4",
+    "organism": "Andrographis paniculata",
+    "compound": "Ferricyanide"
+  },
+  {
+    "ec_number": "1.5.1.40",
+    "organism": "Thermobifida fusca",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "2.4.2.1",
+    "organism": "Escherichia coli",
+    "compound": "2-fluoro-2'-deoxyadenosine"
+  },
+  {
+    "ec_number": "1.13.11.65",
+    "organism": "Sphingopyxis alaskensis",
+    "compound": "Apo-8'-carotenal"
+  },
+  {
+    "ec_number": "1.11.1.19",
+    "organism": "Thermomonospora curvata",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.1.4.55",
+    "organism": "Escherichia coli",
+    "compound": "Thymidine 5'-monophosphate p-nitrophenyl ester"
+  },
+  {
+    "ec_number": "2.7.4.9",
+    "organism": "Homo sapiens",
+    "compound": "3'-fluoro-3'-deoxythymidine 5'-monophosphate"
+  },
+  {
+    "ec_number": "1.1.1.395",
+    "organism": "[Clostridium] scindens",
+    "compound": "3-oxocholoyl-coa"
+  },
+  {
+    "ec_number": "2.6.1.1",
+    "organism": "Geobacillus sp. MAS1",
+    "compound": "2-oxoglutarate"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Ceftazidime"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Medicago sativa",
+    "compound": "4,2',4',6'-tetrahydrochalcone"
+  },
+  {
+    "ec_number": "2.4.1.37",
+    "organism": "Homo sapiens",
+    "compound": "Alpha-l-fucp-(1,2)-beta-d-galp-(1,4)-beta-d-glcnacp-o(ch2)8co2ch3"
+  },
+  {
+    "ec_number": "1.14.13.84",
+    "organism": "Pseudomonas putida",
+    "compound": "2'-hydroxyacetophenone"
+  },
+  {
+    "ec_number": "5.4.2.11",
+    "organism": "Gallus gallus",
+    "compound": "2-phosphoglycolate"
+  },
+  {
+    "ec_number": "1.1.1.282",
+    "organism": "Corynebacterium glutamicum",
+    "compound": "3-dehydroshikimate"
+  },
+  {
+    "ec_number": "2.4.2.1",
+    "organism": "Thermus thermophilus",
+    "compound": "2'-deoxyinosine"
+  },
+  {
+    "ec_number": "2.7.1.1",
+    "organism": "Entamoeba histolytica",
+    "compound": "Glucose 6-phosphate"
+  },
+  {
+    "ec_number": "3.5.1.19",
+    "organism": "uncultured Acidobacteria bacterium",
+    "compound": "Ethylnicotinate"
+  },
+  {
+    "ec_number": "3.5.1.135",
+    "organism": "Escherichia coli",
+    "compound": "N4-benzoyl-2'-deoxycytidine"
+  },
+  {
+    "ec_number": "1.7.1.16",
+    "organism": "Gluconobacter oxydans",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "4.1.2.34",
+    "organism": "Nocardioides sp.",
+    "compound": "(e)-2'-carboxybenzylidenepyruvate"
+  },
+  {
+    "ec_number": "2.7.1.78",
+    "organism": "Acetivibrio thermocellus",
+    "compound": "5'-ho-ccgaccaacgaaggt"
+  },
+  {
+    "ec_number": "1.13.11.75",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Beta-apo-8'-carotenal"
+  },
+  {
+    "ec_number": "2.4.1.10",
+    "organism": "Streptococcus salivarius",
+    "compound": "D-glucose"
+  },
+  {
+    "ec_number": "5.3.1.1",
+    "organism": "Gallus gallus",
+    "compound": "Dihydroxyacetone 3-phosphate"
+  },
+  {
+    "ec_number": "1.2.98.1",
+    "organism": "Methylobacterium sp. FD1",
+    "compound": "Formaldehyde"
+  },
+  {
+    "ec_number": "3.8.1.5",
+    "organism": "Alcanivorax dieselolei",
+    "compound": "1-chlorobutane"
+  },
+  {
+    "ec_number": "3.2.1.133",
+    "organism": "Alkalihalobacillus lehensis",
+    "compound": "Beta-cyclodextrin"
+  },
+  {
+    "ec_number": "2.4.1.211",
+    "organism": "Cutibacterium acnes",
+    "compound": "N-acetyl-d-galactosamine"
+  },
+  {
+    "ec_number": "1.14.11.55",
+    "organism": "Streptomyces cattleya",
+    "compound": "L-proline"
+  },
+  {
+    "ec_number": "3.4.21.98",
+    "organism": "Hepacivirus C",
+    "compound": "Ac-l-asp-l-glu-l-asp-(edans)-l-glu-l-glu-alpha-aminobutyric acid-psi[coo]-l-ala-l-ser-l-lys-(dabcyl)-nh2"
+  },
+  {
+    "ec_number": "1.4.1.9",
+    "organism": "Exiguobacterium sibiricum",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "1.14.14.20",
+    "organism": "Parageobacillus thermoglucosidasius",
+    "compound": "Fad"
+  },
+  {
+    "ec_number": "4.2.1.11",
+    "organism": "Oryctolagus cuniculus",
+    "compound": "Co2+"
+  },
+  {
+    "ec_number": "5.3.3.1",
+    "organism": "Homo sapiens",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "4.2.1.53",
+    "organism": "Macrococcus caseolyticus",
+    "compound": "Alpha-linolenic acid"
+  },
+  {
+    "ec_number": "1.4.1.4",
+    "organism": "Thermococcus waiotapuensis",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "2.3.1.249",
+    "organism": "Arabidopsis thaliana",
+    "compound": "4-coumaroyl-coa"
+  },
+  {
+    "ec_number": "2.7.7.3",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Pantetheine 4'-phosphate"
+  },
+  {
+    "ec_number": "2.7.4.26",
+    "organism": "Methanothermobacter thermautotrophicus",
+    "compound": "Isopentenyl diphosphate"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Thermus thermophilus",
+    "compound": "4-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "2.7.7.69",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Gdp-alpha-l-galactose"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Rattus norvegicus",
+    "compound": "D-threitol"
+  },
+  {
+    "ec_number": "2.4.2.4",
+    "organism": "Escherichia coli",
+    "compound": "3'-deoxy-2',3'-didehydrothymidine"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "2'-deoxycytidine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "3.5.4.40",
+    "organism": "Nitratiruptor sp. SB155-2",
+    "compound": "5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "1.8.3.2",
+    "organism": "Aspergillus oryzae",
+    "compound": "2-mercaptoethanol"
+  },
+  {
+    "ec_number": "3.1.4.55",
+    "organism": "Escherichia coli",
+    "compound": "2',3'-cgmp"
+  },
+  {
+    "ec_number": "3.6.1.29",
+    "organism": "Arabidopsis thaliana",
+    "compound": "5'-o-[amino(hydroxy)phosphoryl]adenosine"
+  },
+  {
+    "ec_number": "3.1.3.97",
+    "organism": "Chromobacterium violaceum",
+    "compound": "2'-deoxy-uridine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Imipenem"
+  },
+  {
+    "ec_number": "3.1.3.97",
+    "organism": "Chromobacterium violaceum",
+    "compound": "N6-methyl adenosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "1.1.1.195",
+    "organism": "Nicotiana tabacum",
+    "compound": "Coniferyl alcohol"
+  },
+  {
+    "ec_number": "3.2.1.167",
+    "organism": "Scutellaria baicalensis",
+    "compound": "5,6,7-trihydroxyflavone 7-o-beta-d-glucoronate"
+  },
+  {
+    "ec_number": "3.6.1.60",
+    "organism": "Arabidopsis thaliana",
+    "compound": "P1,p6-bis(5'-adenosyl)hexaphosphate"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Proteus mirabilis",
+    "compound": "Ampicillin"
+  },
+  {
+    "ec_number": "2.6.1.42",
+    "organism": "Escherichia coli",
+    "compound": "Pyruvate"
+  },
+  {
+    "ec_number": "1.6.2.4",
+    "organism": "Andrographis paniculata",
+    "compound": "Ferricytochrome c"
+  },
+  {
+    "ec_number": "1.2.4.1 2.3.1.12 1.8.1.4",
+    "organism": "Escherichia coli",
+    "compound": "Thiamine diphosphate"
+  },
+  {
+    "ec_number": "3.2.2.9",
+    "organism": "Helicobacter pylori",
+    "compound": "5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "3.6.1.B16",
+    "organism": "Arabidopsis thaliana",
+    "compound": "P1,p4-bis(5'-adenosyl) tetraphosphate"
+  },
+  {
+    "ec_number": "3.1.4.1",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "(5'-gatctaaaagactt-3')-phosphotyrosine"
+  },
+  {
+    "ec_number": "3.1.4.59",
+    "organism": "Mycolicibacterium smegmatis",
+    "compound": "Cyclic di-3',5'-adenylate"
+  },
+  {
+    "ec_number": "1.14.13.39",
+    "organism": "Rattus norvegicus",
+    "compound": "Nitric oxide"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Oryza sativa",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "2.7.2.7",
+    "organism": "Desulfovibrio vulgaris",
+    "compound": "Atp"
+  },
+  {
+    "ec_number": "6.3.4.16",
+    "organism": "Methanobrevibacter smithii",
+    "compound": "Atp"
+  },
+  {
+    "ec_number": "1.4.1.2",
+    "organism": "Halobacterium salinarum",
+    "compound": "Nh3"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Glycine max",
+    "compound": "Daidzein 7'-o-(6''-o-beta-d-malonyl-beta-d-glucoside)"
+  },
+  {
+    "ec_number": "1.1.3.47",
+    "organism": "Trametes cinnabarina",
+    "compound": "5-formyl-2-furan carboxylic acid"
+  },
+  {
+    "ec_number": "1.2.1.89",
+    "organism": "Picrophilus torridus",
+    "compound": "D-glyceraldehyde"
+  },
+  {
+    "ec_number": "1.1.1.287",
+    "organism": "Gluconobacter oxydans",
+    "compound": "D-fructose"
+  },
+  {
+    "ec_number": "7.1.1.4",
+    "organism": "Sulfolobus acidocaldarius",
+    "compound": "N,n,n',n'-tetramethyl-1,4-phenylenediamine"
+  },
+  {
+    "ec_number": "2.3.1.9",
+    "organism": "Aspergillus fumigatus",
+    "compound": "Acetyl-coa"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Haemophilus influenzae",
+    "compound": "5'-amp"
+  },
+  {
+    "ec_number": "2.4.1.315",
+    "organism": "Mycoplasma genitalium",
+    "compound": "Udp-alpha-d-galactose"
+  },
+  {
+    "ec_number": "1.1.1.71",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "Propanal"
+  },
+  {
+    "ec_number": "1.14.18.1",
+    "organism": "Agaricus bisporus",
+    "compound": "Dopamine quinone"
+  },
+  {
+    "ec_number": "1.2.7.5",
+    "organism": "Aromatoleum aromaticum",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "2.1.1.B126",
+    "organism": "Rhaphiolepis bibas",
+    "compound": "S-adenosyl-l-methionine"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Pleurotus ostreatus",
+    "compound": "4-nitrophenyl-alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "2.7.7.64",
+    "organism": "Leishmania major",
+    "compound": "Diphosphate"
+  },
+  {
+    "ec_number": "1.1.1.2",
+    "organism": "Geobacillus thermodenitrificans",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "2.3.1.274",
+    "organism": "Bacillus subtilis",
+    "compound": "Palmitoyl phosphate"
+  },
+  {
+    "ec_number": "2.2.1.1",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "Thiamine diphosphate"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Toxicodendron vernicifluum",
+    "compound": "2,2'-azino-bis(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.11.1.16",
+    "organism": "Rhodococcus jostii",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.5.1.135",
+    "organism": "Escherichia coli",
+    "compound": "N4-acetyl-2'-deoxycytidine"
+  },
+  {
+    "ec_number": "1.4.1.9",
+    "organism": "Exiguobacterium sibiricum",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "4.2.1.1",
+    "organism": "Mesorhizobium loti",
+    "compound": "H2co3"
+  },
+  {
+    "ec_number": "3.2.2.26",
+    "organism": "Campylobacter jejuni subsp. jejuni",
+    "compound": "5'-deoxyadenosine"
+  },
+  {
+    "ec_number": "3.6.1.60",
+    "organism": "Homo sapiens",
+    "compound": "P1,p6-bis(5'-adenosyl)hexaphosphate"
+  },
+  {
+    "ec_number": "3.4.22.1",
+    "organism": "Homo sapiens",
+    "compound": "N,n'-diboc-dityrosine-lys-(isoniazid)2"
+  },
+  {
+    "ec_number": "1.11.1.19",
+    "organism": "Irpex lacteus",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.2.2.16",
+    "organism": "Brucella melitensis",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "2.5.1.67",
+    "organism": "Tanacetum cinerariifolium",
+    "compound": "Dimethylallyl diphosphate"
+  },
+  {
+    "ec_number": "1.14.20.1",
+    "organism": "Acremonium chrysogenum",
+    "compound": "Penicillin g"
+  },
+  {
+    "ec_number": "1.11.1.19",
+    "organism": "Pleurotus sapidus",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.6.3.2",
+    "organism": "Thermococcus profundus",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Cefotaxime"
+  },
+  {
+    "ec_number": "1.1.2.3",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "Fad"
+  },
+  {
+    "ec_number": "3.1.3.84",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "Adp-ribose 1''-phosphate"
+  },
+  {
+    "ec_number": "1.14.13.163",
+    "organism": "Pseudomonas putida",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "1.1.1.184",
+    "organism": "Homo sapiens",
+    "compound": "Menadiol"
+  },
+  {
+    "ec_number": "2.4.1.10",
+    "organism": "Pseudomonas chlororaphis subsp. aurantiaca",
+    "compound": "Sucrose"
+  },
+  {
+    "ec_number": "1.1.1.37",
+    "organism": "Rasamsonia emersonii",
+    "compound": "L-malate"
+  },
+  {
+    "ec_number": "2.7.4.9",
+    "organism": "Homo sapiens",
+    "compound": "2',3'-didehydro-2',3'-dideoxythymidine 5'-monophosphate"
+  },
+  {
+    "ec_number": "4.2.1.115",
+    "organism": "Helicobacter pylori",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "3.1.1.73",
+    "organism": "Aspergillus awamori",
+    "compound": "Alpha-naphthylbutyrate"
+  },
+  {
+    "ec_number": "4.6.1.18",
+    "organism": "Bos taurus",
+    "compound": "Cyclic 2',3'-cytidine monophosphate"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Moxalactam"
+  },
+  {
+    "ec_number": "1.1.99.29",
+    "organism": "Agaricus bisporus",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.6.1.B11",
+    "organism": "Schizosaccharomyces pombe",
+    "compound": "P1,p6-bis(5'-adenosyl)hexaphosphate"
+  },
+  {
+    "ec_number": "1.18.1.2",
+    "organism": "Leptospira interrogans",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Rattus norvegicus",
+    "compound": "Propioin"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Na+"
+  },
+  {
+    "ec_number": "1.1.1.192",
+    "organism": "Geobacillus thermodenitrificans",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "1.8.1.9",
+    "organism": "Babesia bovis",
+    "compound": "5,5'-dithio-bis(2-nitrobenzoic acid)"
+  },
+  {
+    "ec_number": "1.11.1.13",
+    "organism": "Irpex lacteus",
+    "compound": "Mn(ii)"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Trichoderma harzianum",
+    "compound": "4-nitrophenyl beta-d-n,n',n''-triacetylchitotrioside"
+  },
+  {
+    "ec_number": "1.14.13.236",
+    "organism": "Pseudomonas mendocina",
+    "compound": "Norcarane"
+  },
+  {
+    "ec_number": "3.6.4.13",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "Rna"
+  },
+  {
+    "ec_number": "3.2.2.16",
+    "organism": "Helicobacter pylori",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "2.6.1.30",
+    "organism": "Mesorhizobium loti",
+    "compound": "Pyridoxamine 5'-phosphate"
+  },
+  {
+    "ec_number": "4.1.2.51",
+    "organism": "Picrophilus torridus",
+    "compound": "2-dehydro-3-deoxy-d-gluconate"
+  },
+  {
+    "ec_number": "2.7.7.64",
+    "organism": "Leishmania major",
+    "compound": "Udp-beta-l-arabinopyranose"
+  },
+  {
+    "ec_number": "2.7.4.9",
+    "organism": "Homo sapiens",
+    "compound": "3'-azido-3'-deoxythymidine 5'-monophosphate"
+  },
+  {
+    "ec_number": "3.4.22.40",
+    "organism": "Homo sapiens",
+    "compound": "6'-deoxy bleomycin a2"
+  },
+  {
+    "ec_number": "1.14.13.163",
+    "organism": "Ochrobactrum sp.",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "1.4.1.1",
+    "organism": "Shewanella sp.",
+    "compound": "Pyruvate"
+  },
+  {
+    "ec_number": "3.1.3.36",
+    "organism": "Schizosaccharomyces pombe",
+    "compound": "Ni2+"
+  },
+  {
+    "ec_number": "1.5.1.38",
+    "organism": "Bacillus cereus",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "5.4.2.6",
+    "organism": "Lactococcus lactis subsp. lactis",
+    "compound": "Acetyl phosphate"
+  },
+  {
+    "ec_number": "2.4.1.234",
+    "organism": "Petunia x hybrida",
+    "compound": "Quercetin 3-o-galactoside"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Podospora anserina",
+    "compound": "4-nitrophenyl-alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "2.7.2.7",
+    "organism": "Desulfovibrio vulgaris",
+    "compound": "Isovalerate"
+  },
+  {
+    "ec_number": "5.1.1.18",
+    "organism": "Crassostrea gigas",
+    "compound": "L-serine"
+  },
+  {
+    "ec_number": "3.1.1.106",
+    "organism": "Escherichia coli",
+    "compound": "2''-o-acetyl-adp-d-ribose"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-(pyridin-4-yl)prop-2-enoic acid"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Thermus thermophilus",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "4.4.1.9",
+    "organism": "Pieris rapae",
+    "compound": "Hydrogen sulfide"
+  },
+  {
+    "ec_number": "2.4.2.10",
+    "organism": "Plasmodium falciparum",
+    "compound": "Orotidine 5'-phosphate"
+  },
+  {
+    "ec_number": "2.3.1.248",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Coa"
+  },
+  {
+    "ec_number": "3.2.1.22",
+    "organism": "Thermotoga maritima",
+    "compound": "4-o-methylphenyl alpha-d-galactoside"
+  },
+  {
+    "ec_number": "3.6.1.29",
+    "organism": "Homo sapiens",
+    "compound": "P1,p3-bis(5'-adenosyl)triphosphate"
+  },
+  {
+    "ec_number": "2.7.7.65",
+    "organism": "Xanthomonas citri pv. citri",
+    "compound": "Gtp"
+  },
+  {
+    "ec_number": "4.2.1.8",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "D-mannonate"
+  },
+  {
+    "ec_number": "3.4.13.22",
+    "organism": "Enterococcus faecium",
+    "compound": "Zn2+"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Cefpirome"
+  },
+  {
+    "ec_number": "2.4.1.315",
+    "organism": "Mycoplasma genitalium",
+    "compound": "1,2-diacyl-sn-glycerol"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Melanocarpus albomyces",
+    "compound": "2,2'-azino-bis(3-ethyl-benzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.1.4.17",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "3',5'-camp"
+  },
+  {
+    "ec_number": "1.14.18.1",
+    "organism": "Agaricus bisporus",
+    "compound": "4-methyl-o-benzoquinone"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "(2e)-5-methylhexa-2,4-dien-1-yl diphosphate"
+  },
+  {
+    "ec_number": "1.14.13.251",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Agrobacterium sp. S5-1",
+    "compound": "2,2'-azino-bis-(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "4.2.1.53",
+    "organism": "Macrococcus caseolyticus",
+    "compound": "Oleic acid"
+  },
+  {
+    "ec_number": "1.18.1.5",
+    "organism": "Pseudomonas putida",
+    "compound": "Oxidized 2,6-dichlorophenolindolphenol"
+  },
+  {
+    "ec_number": "4.1.1.7",
+    "organism": "Pseudomonas putida",
+    "compound": "2-ketobutanoate"
+  },
+  {
+    "ec_number": "2.4.1.315",
+    "organism": "Mycoplasma genitalium",
+    "compound": "Udp-alpha-d-glucose"
+  },
+  {
+    "ec_number": "3.2.1.177",
+    "organism": "Escherichia coli",
+    "compound": "4-nitrophenyl-alpha-d-glucopyranoside"
+  },
+  {
+    "ec_number": "1.5.7.3",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "N,n-dimethylglycine"
+  },
+  {
+    "ec_number": "3.2.1.25",
+    "organism": "Hordeum vulgare",
+    "compound": "4-nitrophenyl-beta-d-mannopyranose"
+  },
+  {
+    "ec_number": "4.1.1.23",
+    "organism": "Methanothermobacter thermautotrophicus",
+    "compound": "Orotidine 5'-phosphate"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "2'-deoxythymidine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "2.3.1.220",
+    "organism": "Garcinia mangostana",
+    "compound": "Malonyl-coa"
+  },
+  {
+    "ec_number": "3.8.1.5",
+    "organism": "Alcanivorax dieselolei",
+    "compound": "4-bromobutyronitrile"
+  },
+  {
+    "ec_number": "5.6.2.4",
+    "organism": "Geobacillus stearothermophilus",
+    "compound": "2'(3')-o-(n-methylanthraniloyl)atp"
+  },
+  {
+    "ec_number": "6.3.4.16",
+    "organism": "Homo sapiens",
+    "compound": "N-carbamyl-l-glutamate"
+  },
+  {
+    "ec_number": "3.2.1.53",
+    "organism": "Paenibacillus sp.",
+    "compound": "4-nitrophenyl beta-n-acetylgalactosaminide"
+  },
+  {
+    "ec_number": "2.7.8.7",
+    "organism": "Homo sapiens",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "Ethanolamine"
+  },
+  {
+    "ec_number": "2.7.1.145",
+    "organism": "Drosophila melanogaster",
+    "compound": "6-amino-5-nitro-3-(1'-beta-d-2'-deoxyribofuranosyl)-2(1h)-pyridone"
+  },
+  {
+    "ec_number": "2.7.7.5",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Adenosine 5'-phosphosulfate"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Phanerodontia chrysosporium",
+    "compound": "4-nitrophenyl-beta-d-xylopyranoside"
+  },
+  {
+    "ec_number": "1.1.1.6",
+    "organism": "Weizmannia coagulans",
+    "compound": "Glycerol"
+  },
+  {
+    "ec_number": "1.8.3.3",
+    "organism": "Aspergillus oryzae",
+    "compound": "Glutathione"
+  },
+  {
+    "ec_number": "1.1.3.17",
+    "organism": "Arthrobacter globiformis",
+    "compound": "Betaine-aldehyde"
+  },
+  {
+    "ec_number": "2.7.2.7",
+    "organism": "Desulfovibrio vulgaris",
+    "compound": "2-methylbutyrate"
+  },
+  {
+    "ec_number": "3.1.1.81",
+    "organism": "Muricauda olearia",
+    "compound": "N-hexanoyl-l-homoserine lactone"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "2.7.1.74",
+    "organism": "Homo sapiens",
+    "compound": "D-thymidine"
+  },
+  {
+    "ec_number": "3.6.1.B11",
+    "organism": "Schizosaccharomyces pombe",
+    "compound": "P1,p5-bis(5'-adenosyl)pentaphosphate"
+  },
+  {
+    "ec_number": "5.1.1.19",
+    "organism": "Streptomyces lavendulae subsp. lavendulae",
+    "compound": "O-ureido-d-serine"
+  },
+  {
+    "ec_number": "2.4.2.6",
+    "organism": "Limosilactobacillus reuteri",
+    "compound": "2'-deoxyuridine"
+  },
+  {
+    "ec_number": "3.2.2.30",
+    "organism": "Campylobacter jejuni subsp. jejuni serotype O:2",
+    "compound": "S-5'-adenosyl-l-homocysteine"
+  },
+  {
+    "ec_number": "2.7.6.2",
+    "organism": "Homo sapiens",
+    "compound": "Thiamin"
+  },
+  {
+    "ec_number": "3.2.2.30",
+    "organism": "Campylobacter jejuni subsp. jejuni serotype O:2",
+    "compound": "5'-deoxyadenosine"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Geobacillus stearothermophilus",
+    "compound": "2',4',6'-trichlorophenyl alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "2.3.1.253",
+    "organism": "Pseudomonas fluorescens",
+    "compound": "Malonyl-coa"
+  },
+  {
+    "ec_number": "1.5.8.4",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "Sarcosine"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "Propargylamine"
+  },
+  {
+    "ec_number": "2.5.1.90",
+    "organism": "Thermotoga maritima",
+    "compound": "Isopentenyl diphosphate"
+  },
+  {
+    "ec_number": "1.1.1.6",
+    "organism": "Weizmannia coagulans",
+    "compound": "D-2,3-butanediol"
+  },
+  {
+    "ec_number": "4.1.3.39",
+    "organism": "Thermus thermophilus",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "5.3.3.1",
+    "organism": "Homo sapiens",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "5.3.1.6",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "D-ribulose 5-phosphate"
+  },
+  {
+    "ec_number": "3.1.4.17",
+    "organism": "Thermotoga maritima",
+    "compound": "5'-papg"
+  },
+  {
+    "ec_number": "2.4.1.315",
+    "organism": "Mycoplasma genitalium",
+    "compound": "1,2-diacyl-3-o-(alpha-d-glucopyranosyl)-sn-glycerol"
+  },
+  {
+    "ec_number": "1.11.1.19",
+    "organism": "Dictyostelium discoideum",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "4.1.1.71",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Thiamine diphosphate"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Pasteurella multocida",
+    "compound": "5'-amp"
+  },
+  {
+    "ec_number": "2.7.1.21",
+    "organism": "Leishmania major",
+    "compound": "5-hydroxymethyl-2'-deoxyuridine"
+  },
+  {
+    "ec_number": "3.6.1.16",
+    "organism": "Rattus norvegicus",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "1.1.1.9",
+    "organism": "Blastobotrys adeninivorans",
+    "compound": "D-xylulose"
+  },
+  {
+    "ec_number": "1.1.1.6",
+    "organism": "Weizmannia coagulans",
+    "compound": "Pyruvate"
+  },
+  {
+    "ec_number": "3.4.22.1",
+    "organism": "Meretrix meretrix",
+    "compound": "Nalpha-carbobenzoxy-l-arg-l-arg-7-amido-4-trifluoromethylcoumarin"
+  },
+  {
+    "ec_number": "2.4.2.4",
+    "organism": "Escherichia coli",
+    "compound": "1-(2',6'-dideoxy-beta-d-ribohexafuranosyl)thymine"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Escherichia coli",
+    "compound": "3'-dcmp"
+  },
+  {
+    "ec_number": "4.2.1.114",
+    "organism": "Methanocaldococcus jannaschii",
+    "compound": "Cis-homoaconitate"
+  },
+  {
+    "ec_number": "2.7.2.7",
+    "organism": "Desulfovibrio vulgaris",
+    "compound": "Butanoate"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Pyrococcus furiosus",
+    "compound": "4-nitrophenyl beta-n,n'-diacetylchitobioside"
+  },
+  {
+    "ec_number": "1.4.1.1",
+    "organism": "Shewanella sp.",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "1.14.15.30",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-oxo-23,24-bisnorchola-1,4-dien-22-oic acid-coa"
+  },
+  {
+    "ec_number": "3.6.1.61",
+    "organism": "Thermus thermophilus",
+    "compound": "P1,p6-bis(5'-adenosyl)hexaphosphate"
+  },
+  {
+    "ec_number": "3.1.4.53",
+    "organism": "Homo sapiens",
+    "compound": "3',5'-camp"
+  },
+  {
+    "ec_number": "3.5.1.19",
+    "organism": "uncultured Acidobacteria bacterium",
+    "compound": "Nicotinamide"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Bacillus licheniformis",
+    "compound": "4-nitrophenyl beta-n,n'-diacetylchitobioside"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Yersinia ruckeri",
+    "compound": "Cephaloridin"
+  },
+  {
+    "ec_number": "2.7.7.65",
+    "organism": "Leptospira interrogans serogroup Icterohaemorrhagiae serovar copenhageni Fiocruz L1-130",
+    "compound": "Gtp"
+  },
+  {
+    "ec_number": "3.6.1.67",
+    "organism": "Arabidopsis thaliana",
+    "compound": "7,8-dihydroneopterin 3'-triphosphate"
+  },
+  {
+    "ec_number": "3.4.13.22",
+    "organism": "Enterococcus faecium",
+    "compound": "Ni2+"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "Adenosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "(2e)-penta-2,4-dien-1-yl diphosphate"
+  },
+  {
+    "ec_number": "3.1.4.52",
+    "organism": "Pseudomonas aeruginosa",
+    "compound": "Cyclic di-3',5'-guanylate"
+  },
+  {
+    "ec_number": "2.6.1.19",
+    "organism": "Arabidopsis thaliana",
+    "compound": "L-alanine"
+  },
+  {
+    "ec_number": "3.2.1.20",
+    "organism": "Apis cerana japonica",
+    "compound": "4-nitrophenyl-alpha-d-glucopyranoside"
+  },
+  {
+    "ec_number": "3.4.22.40",
+    "organism": "Homo sapiens",
+    "compound": "6'-deoxy bleomycin z"
+  },
+  {
+    "ec_number": "5.4.2.10",
+    "organism": "Escherichia coli",
+    "compound": "Glucose 1,6-diphosphate"
+  },
+  {
+    "ec_number": "3.6.1.71",
+    "organism": "Homo sapiens",
+    "compound": "Adenosine-5'-monophosphoramidate"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "Cyclohex-1-en-1-ylmethyl diphosphate"
+  },
+  {
+    "ec_number": "4.1.3.3",
+    "organism": "Limosilactobacillus antri",
+    "compound": "N-acetyl-d-mannosamine"
+  },
+  {
+    "ec_number": "2.5.1.55",
+    "organism": "Aquifex pyrophilus",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "1.11.2.1",
+    "organism": "Cyclocybe aegerita",
+    "compound": "2,2'-azinobis(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "6.1.1.5",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "Amp"
+  },
+  {
+    "ec_number": "5.1.3.4",
+    "organism": "Escherichia coli",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "2.3.1.81",
+    "organism": "Escherichia coli",
+    "compound": "Gentamycin"
+  },
+  {
+    "ec_number": "3.6.1.9",
+    "organism": "Oryza sativa",
+    "compound": "Adenosine 5'-phosphosulfate"
+  },
+  {
+    "ec_number": "3.4.13.22",
+    "organism": "Enterococcus faecium",
+    "compound": "Fe2+"
+  },
+  {
+    "ec_number": "4.2.1.53",
+    "organism": "Macrococcus caseolyticus",
+    "compound": "Myristoleic acid"
+  },
+  {
+    "ec_number": "1.1.1.62",
+    "organism": "Pseudomonas putida",
+    "compound": "Estrone"
+  },
+  {
+    "ec_number": "1.14.19.50",
+    "organism": "Narcissus aff. pseudonarcissus MK-2014",
+    "compound": "4'-o-methylnorbelladine"
+  },
+  {
+    "ec_number": "3.1.3.89",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "5'-dtmp"
+  },
+  {
+    "ec_number": "4.1.1.23",
+    "organism": "Methanobacterium thermoautotrophicus",
+    "compound": "Orotidine 5'-phosphate"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "K+"
+  },
+  {
+    "ec_number": "4.2.1.11",
+    "organism": "Oryctolagus cuniculus",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "3.2.1.37",
+    "organism": "Thermoanaerobacterium saccharolyticum",
+    "compound": "4-nitrophenyl-beta-d-xylopyranoside"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Glycine max",
+    "compound": "2',4'-dihydroxy-4-methylchalcone"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Bacillus thuringiensis",
+    "compound": "4-methylumbelliferyl beta-d-n,n',n''-triacetylchitotrioside"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Caldicellulosiruptor saccharolyticus",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "4.2.3.124",
+    "organism": "Bacillus circulans",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "2.7.4.26",
+    "organism": "Thermoplasma acidophilum",
+    "compound": "Isopentenyl diphosphate"
+  },
+  {
+    "ec_number": "2.3.1.248",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Sinapoyl-coa"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Haemophilus influenzae",
+    "compound": "3'-amp"
+  },
+  {
+    "ec_number": "1.14.11.55",
+    "organism": "Streptomyces cattleya",
+    "compound": "Ectoine"
+  },
+  {
+    "ec_number": "3.6.1.71",
+    "organism": "Homo sapiens",
+    "compound": "P1,p4-bis(5'-adenosyl)tetraphosphate"
+  },
+  {
+    "ec_number": "2.4.1.65",
+    "organism": "Helicobacter pylori",
+    "compound": "Galbeta-(1-3)-glcnac-o-(ch2)8cooch3"
+  },
+  {
+    "ec_number": "1.1.1.62",
+    "organism": "Homo sapiens",
+    "compound": "5alpha-androstane 3alpha,17beta-diol"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Mesocricetus auratus",
+    "compound": "D-threitol"
+  },
+  {
+    "ec_number": "1.6.3.1",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "Fad"
+  },
+  {
+    "ec_number": "1.1.3.10",
+    "organism": "Phanerodontia chrysosporium",
+    "compound": "2,2'-azinobis(3-ethylbenzthiazolinesulfonic acid) cation radical"
+  },
+  {
+    "ec_number": "2.7.1.21",
+    "organism": "Leishmania major",
+    "compound": "3'-azido-3'-deoxythymidine"
+  },
+  {
+    "ec_number": "1.1.1.85",
+    "organism": "Sulfurisphaera tokodaii",
+    "compound": "3-isopropylmalate"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-(4-fluorophenyl)prop-2-enoic acid"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Rb+"
+  },
+  {
+    "ec_number": "5.1.3.4",
+    "organism": "Escherichia coli",
+    "compound": "Zn2+"
+  },
+  {
+    "ec_number": "1.14.13.236",
+    "organism": "Pseudomonas mendocina",
+    "compound": "Nitrobenzene"
+  },
+  {
+    "ec_number": "3.6.1.11",
+    "organism": "Trypanosoma cruzi",
+    "compound": "Guanosine 5'-tetraphosphate"
+  },
+  {
+    "ec_number": "4.2.1.114",
+    "organism": "Methanocaldococcus jannaschii",
+    "compound": "Cis-homo3aconitate"
+  },
+  {
+    "ec_number": "2.7.1.224",
+    "organism": "Campylobacter jejuni subsp. jejuni serotype O:2",
+    "compound": "2'-deoxycytidine 5'-diphosphoramidate"
+  },
+  {
+    "ec_number": "1.4.1.2",
+    "organism": "Halobacterium salinarum",
+    "compound": "2-oxoglutarate"
+  },
+  {
+    "ec_number": "3.6.1.67",
+    "organism": "Escherichia coli",
+    "compound": "7,8-dihydroneopterin 3'-triphosphate"
+  },
+  {
+    "ec_number": "2.7.1.29",
+    "organism": "Escherichia coli",
+    "compound": "Glycerone phosphate"
+  },
+  {
+    "ec_number": "3.1.3.5",
+    "organism": "Bacillus subtilis",
+    "compound": "5'-xmp"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Cyathus bulleri",
+    "compound": "2,2'-azinobis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "2.7.7.64",
+    "organism": "Leishmania major",
+    "compound": "Udp-d-galactose"
+  },
+  {
+    "ec_number": "3.1.3.89",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "5'-dgmp"
+  },
+  {
+    "ec_number": "3.8.1.5",
+    "organism": "Alcanivorax dieselolei",
+    "compound": "1,3-dibromopropane"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Phanerodontia chrysosporium",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "3.5.2.B2",
+    "organism": "Microbacterium hydrocarbonoxydans",
+    "compound": "(+)-2-azabicyclo[2.2.1]hept-5-en-3-one"
+  },
+  {
+    "ec_number": "1.1.1.28",
+    "organism": "Weizmannia coagulans",
+    "compound": "(r)-lactate"
+  },
+  {
+    "ec_number": "3.6.1.17",
+    "organism": "Myxococcus xanthus",
+    "compound": "P1,p5-bis(5'-adenosyl)pentaphosphate"
+  },
+  {
+    "ec_number": "3.5.4.40",
+    "organism": "Nitratiruptor sp. SB155-2",
+    "compound": "5'-deoxyadenosine"
+  },
+  {
+    "ec_number": "3.6.1.B16",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Guanosine 3',5'-bis(diphosphate)"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Legionella pneumophila",
+    "compound": "5'-amp"
+  },
+  {
+    "ec_number": "1.3.3.5",
+    "organism": "Bacillus pumilus",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Cavia porcellus",
+    "compound": "Propioin"
+  },
+  {
+    "ec_number": "1.2.1.99",
+    "organism": "Escherichia coli",
+    "compound": "3-hydroxypropionate"
+  },
+  {
+    "ec_number": "1.7.1.17",
+    "organism": "Alkalihalobacillus wakoensis",
+    "compound": "1,4-naphthoquinone"
+  },
+  {
+    "ec_number": "5.4.2.6",
+    "organism": "Lactococcus lactis subsp. lactis",
+    "compound": "Alpha-d-glucose 1,6-bisphosphate"
+  },
+  {
+    "ec_number": "1.13.11.60",
+    "organism": "Colletotrichum gloeosporioides",
+    "compound": "(8r,9z,12z)-8-hydroperoxyoctadeca-9,12-dienoate"
+  },
+  {
+    "ec_number": "3.2.2.9",
+    "organism": "Campylobacter jejuni",
+    "compound": "5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "1.1.1.35",
+    "organism": "Cupriavidus necator",
+    "compound": "Acetoacetyl-coa"
+  },
+  {
+    "ec_number": "5.1.1.18",
+    "organism": "Crassostrea gigas",
+    "compound": "D-serine"
+  },
+  {
+    "ec_number": "3.4.21.59",
+    "organism": "Equus caballus",
+    "compound": "N-(p-tosyl)-gly-pro-lys-p-nitroanilide"
+  },
+  {
+    "ec_number": "1.8.3.2",
+    "organism": "Aspergillus oryzae",
+    "compound": "L-cys"
+  },
+  {
+    "ec_number": "2.7.1.24",
+    "organism": "Entamoeba histolytica",
+    "compound": "3'-dephospho-coa"
+  },
+  {
+    "ec_number": "3.4.17.23",
+    "organism": "Homo sapiens",
+    "compound": "Angiotensin 3-8"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "2-cyclohexylideneethyl diphosphate"
+  },
+  {
+    "ec_number": "3.1.4.17",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "3',5'-cgmp"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "Nh3"
+  },
+  {
+    "ec_number": "3.6.1.71",
+    "organism": "Homo sapiens",
+    "compound": "P1,p3-bis(5'-adenosyl)triphosphate"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Caldicellulosiruptor saccharolyticus",
+    "compound": "4-nitrophenyl-beta-d-fucopyranoside"
+  },
+  {
+    "ec_number": "2.1.1.164",
+    "organism": "Lentzea aerocolonigenes",
+    "compound": "Dechlorinated 4'-demethyl-rebeccamycin"
+  },
+  {
+    "ec_number": "1.1.1.41",
+    "organism": "Ostreococcus sp. 'lucimarinus'",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "1.1.1.22",
+    "organism": "Burkholderia cepacia",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Glycine max",
+    "compound": "2'-hydroxychalcone"
+  },
+  {
+    "ec_number": "1.8.3.2",
+    "organism": "Aspergillus oryzae",
+    "compound": "D-cys"
+  },
+  {
+    "ec_number": "5.99.1.4",
+    "organism": "Pseudomonas putida",
+    "compound": "(3e)-4-(2-hydroxyphenyl)-2-oxobut-3-enoate"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "Benzyl diphosphate"
+  },
+  {
+    "ec_number": "3.2.1.23",
+    "organism": "Lactobacillus delbrueckii",
+    "compound": "2-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "3.1.3.89",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "5'-damp"
+  },
+  {
+    "ec_number": "2.7.7.102",
+    "organism": "Sulfolobus islandicus",
+    "compound": "5'-cttcttctgtgc-3'"
+  },
+  {
+    "ec_number": "3.1.3.97",
+    "organism": "Chromobacterium violaceum",
+    "compound": "2'-deoxy-guanosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-(pyridin-3-yl)prop-2-enoic acid"
+  },
+  {
+    "ec_number": "3.2.1.70",
+    "organism": "Streptococcus mutans",
+    "compound": "P-nitrophenyl alpha-d-glucoside"
+  },
+  {
+    "ec_number": "1.8.3.3",
+    "organism": "Aspergillus oryzae",
+    "compound": "Dithiothreitol"
+  },
+  {
+    "ec_number": "1.11.1.19",
+    "organism": "Auricularia auricula-judae",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "4.1.1.23",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "5-fluoroorotidine 5'-phosphate"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "L-tryptophan"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "(2e)-but-2-en-1-yl diphosphate"
+  },
+  {
+    "ec_number": "2.7.7.15",
+    "organism": "Streptococcus pneumoniae",
+    "compound": "Phosphocholine"
+  },
+  {
+    "ec_number": "1.1.1.270",
+    "organism": "Homo sapiens",
+    "compound": "17beta-hydroxy-5alpha-androstan-3-one"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Ostrinia furnacalis",
+    "compound": "4-methylumbelliferyl beta-d-n,n'-diacetylchitobioside"
+  },
+  {
+    "ec_number": "1.1.1.37",
+    "organism": "Malus domestica",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "4.1.3.39",
+    "organism": "Thermus thermophilus",
+    "compound": "Co2+"
+  },
+  {
+    "ec_number": "5.1.3.4",
+    "organism": "Escherichia coli",
+    "compound": "Co2+"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Trametes cinnabarina",
+    "compound": "2,2'-azinobis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Homo sapiens",
+    "compound": "D-threitol"
+  },
+  {
+    "ec_number": "1.1.1.1",
+    "organism": "Aeropyrum pernix",
+    "compound": "Cyclohexanone"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Homo sapiens",
+    "compound": "1-hexanol"
+  },
+  {
+    "ec_number": "3.6.1.61",
+    "organism": "Escherichia coli",
+    "compound": "P1,p5-bis(5'-adenosyl)pentaphosphate"
+  },
+  {
+    "ec_number": "2.6.1.19",
+    "organism": "Arabidopsis thaliana",
+    "compound": "4-oxobutanoate"
+  },
+  {
+    "ec_number": "1.13.11.65",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Beta-apo-8'-carotenal"
+  },
+  {
+    "ec_number": "3.2.2.26",
+    "organism": "Campylobacter jejuni subsp. jejuni",
+    "compound": "S-5'-adenosyl-l-homocysteine"
+  },
+  {
+    "ec_number": "2.1.1.234",
+    "organism": "Streptomyces venezuelae",
+    "compound": "Dtdp-3-amino-3,4,6-trideoxy-alpha-d-glucose"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Desulfovibrio sp. A2",
+    "compound": "2,2'-azinobis(3-ethylbenzthiazoline-6-sulfonate)"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Cephaloridine"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Saccharolobus solfataricus",
+    "compound": "N,n'-diacetyl-beta-chitobiose"
+  },
+  {
+    "ec_number": "1.14.14.1",
+    "organism": "Rhodococcus ruber",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "2.4.1.292",
+    "organism": "Campylobacter jejuni",
+    "compound": "(galnac-alpha1,4)4-galnac-alpha1,3-bac-alpha1-pp-undecaprenyl"
+  },
+  {
+    "ec_number": "1.1.1.27",
+    "organism": "Geobacillus stearothermophilus",
+    "compound": "4-amino-2-hydroxybutanoate"
+  },
+  {
+    "ec_number": "2.4.1.37",
+    "organism": "Homo sapiens",
+    "compound": "Alpha-l-fucp-(1,2)-beta-d-galp-(1,3)-beta-d-glcnacp-o(ch2)7ch3"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Mus musculus",
+    "compound": "D-threitol"
+  },
+  {
+    "ec_number": "5.1.3.2",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "Udp-alpha-d-glucose"
+  },
+  {
+    "ec_number": "3.1.3.11",
+    "organism": "Methanocaldococcus jannaschii",
+    "compound": "Fructose 6-phosphate"
+  },
+  {
+    "ec_number": "3.5.1.1",
+    "organism": "Dickeya chrysanthemi",
+    "compound": "Nalpha-acetyl-asn"
+  },
+  {
+    "ec_number": "3.5.1.135",
+    "organism": "Escherichia coli",
+    "compound": "N4-hexanoyl-2'-deoxycytidine"
+  },
+  {
+    "ec_number": "5.4.2.6",
+    "organism": "Lactococcus lactis subsp. lactis",
+    "compound": "Alpha-d-fructose 1,6-bisphosphate"
+  },
+  {
+    "ec_number": "1.5.1.40",
+    "organism": "Archaeoglobus fulgidus",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "2.1.1.356",
+    "organism": "Paramecium bursaria Chlorella virus 1",
+    "compound": "(+/-)-3'-benzyl-s-adenosyl-l-methionine"
+  },
+  {
+    "ec_number": "5.3.1.1",
+    "organism": "Trypanosoma brucei",
+    "compound": "Dihydroxyacetone phosphate"
+  },
+  {
+    "ec_number": "1.13.12.16",
+    "organism": "Pseudomonas aeruginosa",
+    "compound": "Propionate-3-nitronate"
+  },
+  {
+    "ec_number": "2.7.7.1",
+    "organism": "Homo sapiens",
+    "compound": "Tiazofurin riboside 5'-monophosphate"
+  },
+  {
+    "ec_number": "1.13.11.63",
+    "organism": "uncultured marine bacterium",
+    "compound": "Beta-apo-4'-carotenal"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Cerrena sp. WR1",
+    "compound": "Catechol"
+  },
+  {
+    "ec_number": "2.7.1.90",
+    "organism": "Pseudoclostridium thermosuccinogenes",
+    "compound": "Sedoheptulose 7-phosphate"
+  },
+  {
+    "ec_number": "1.4.1.1",
+    "organism": "Shewanella sp.",
+    "compound": "Nh4+"
+  },
+  {
+    "ec_number": "3.4.19.9",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Pteroylpentaglutamate"
+  },
+  {
+    "ec_number": "6.2.1.B11",
+    "organism": "Archaeoglobus fulgidus",
+    "compound": "Acetyl-coa"
+  },
+  {
+    "ec_number": "5.1.1.4",
+    "organism": "Ferroplasma acidarmanus",
+    "compound": "D-proline"
+  },
+  {
+    "ec_number": "1.11.2.1",
+    "organism": "Hypoxylon sp. EC38",
+    "compound": "2,2'-azinobis(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Glycine max",
+    "compound": "Daidzein 7'-o-beta-d-glucoside"
+  },
+  {
+    "ec_number": "1.1.1.313",
+    "organism": "Klebsiella oxytoca",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Medicago sativa",
+    "compound": "4,2'-dihydrochalcone"
+  },
+  {
+    "ec_number": "3.2.2.16",
+    "organism": "Escherichia coli",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "3.1.1.42",
+    "organism": "Ustilago maydis",
+    "compound": "Methyl p-coumarate"
+  },
+  {
+    "ec_number": "1.6.5.10",
+    "organism": "Kluyveromyces marxianus",
+    "compound": "Hydroquinone"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Streptomyces griseoflavus",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.1.1.1",
+    "organism": "Sulfolobus acidocaldarius",
+    "compound": "2',3',4',5',6'-pentafluoroacetophenone"
+  },
+  {
+    "ec_number": "3.8.1.5",
+    "organism": "Alcanivorax dieselolei",
+    "compound": "1,2-dibromoethane"
+  },
+  {
+    "ec_number": "2.4.1.211",
+    "organism": "Cutibacterium acnes",
+    "compound": "N-acetyl-d-glucosamine"
+  },
+  {
+    "ec_number": "1.8.3.3",
+    "organism": "Aspergillus oryzae",
+    "compound": "2-mercaptoethanol"
+  },
+  {
+    "ec_number": "2.7.7.102",
+    "organism": "Sulfolobus islandicus",
+    "compound": "Datp"
+  },
+  {
+    "ec_number": "3.1.4.53",
+    "organism": "Homo sapiens",
+    "compound": "3',5'-cgmp"
+  },
+  {
+    "ec_number": "4.2.1.53",
+    "organism": "Macrococcus caseolyticus",
+    "compound": "Linoleic acid"
+  },
+  {
+    "ec_number": "4.1.1.23",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "2'-deoxyorotidine 5'-phosphate"
+  },
+  {
+    "ec_number": "1.1.1.71",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "Butanal"
+  },
+  {
+    "ec_number": "2.4.2.4",
+    "organism": "Escherichia coli",
+    "compound": "1-(2',6'-dideoxy-alpha-l-lyxo-hexafuranosyl)thymine"
+  },
+  {
+    "ec_number": "1.2.1.89",
+    "organism": "Picrophilus torridus",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "2.6.1.1",
+    "organism": "Geobacillus sp. MAS1",
+    "compound": "L-aspartate"
+  },
+  {
+    "ec_number": "2.5.1.151",
+    "organism": "Homo sapiens",
+    "compound": "5'-deoxyadenosylcobalamin"
+  },
+  {
+    "ec_number": "3.6.1.13",
+    "organism": "Homo sapiens",
+    "compound": "2',3'-camp"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Glycine max",
+    "compound": "4,2',5'-trihydroxychalcone"
+  },
+  {
+    "ec_number": "3.6.1.B16",
+    "organism": "Arabidopsis thaliana",
+    "compound": "P1,p5-di(adenosine-5')pentaphosphate"
+  },
+  {
+    "ec_number": "1.8.3.2",
+    "organism": "Aspergillus oryzae",
+    "compound": "Dithiothreitol"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Pleurotus eryngii",
+    "compound": "2,2'-azino-bis(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "2.6.1.30",
+    "organism": "Mesorhizobium loti",
+    "compound": "L-alanine"
+  },
+  {
+    "ec_number": "3.5.1.105",
+    "organism": "Shewanella baltica",
+    "compound": "N,n'-diacetylchitobiose"
+  },
+  {
+    "ec_number": "1.1.1.B38",
+    "organism": "Archaeoglobus fulgidus",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Homo sapiens",
+    "compound": "1-octanal"
+  },
+  {
+    "ec_number": "3.2.2.16",
+    "organism": "Vibrio cholerae",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "1.1.1.313",
+    "organism": "Klebsiella oxytoca",
+    "compound": "Isethionate"
+  },
+  {
+    "ec_number": "3.5.1.4",
+    "organism": "Saccharolobus solfataricus",
+    "compound": "Metacrylamide"
+  },
+  {
+    "ec_number": "1.16.3.4",
+    "organism": "Desulfovibrio sp. A2",
+    "compound": "[cu(i)(bicinchoninate)2]3-"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Sus scrofa",
+    "compound": "Indole-3-acetaldehyde"
+  },
+  {
+    "ec_number": "1.8.3.3",
+    "organism": "Aspergillus oryzae",
+    "compound": "D-cys"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Homo sapiens",
+    "compound": "Geranylgeraniol"
+  },
+  {
+    "ec_number": "2.3.1.82",
+    "organism": "Acinetobacter haemolyticus",
+    "compound": "2'-n-ethylnetilmicin"
+  },
+  {
+    "ec_number": "5.4.3.10",
+    "organism": "Taxus canadensis",
+    "compound": "4'-methyl-alpha-phenylalanine"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Thermus thermophilus",
+    "compound": "2-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "5.4.99.13",
+    "organism": "Streptomyces virginiae",
+    "compound": "Butanoyl-coa"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Toxicodendron vernicifluum",
+    "compound": "Catechol"
+  },
+  {
+    "ec_number": "1.4.1.16",
+    "organism": "Thermosyntropha lipolytica",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "5.3.99.2",
+    "organism": "Rattus norvegicus",
+    "compound": "Reduced glutathione"
+  },
+  {
+    "ec_number": "1.11.1.16",
+    "organism": "Rhodococcus jostii",
+    "compound": "Mn(ii)"
+  },
+  {
+    "ec_number": "2.3.1.30",
+    "organism": "Thermus thermophilus HB8",
+    "compound": "L-serine"
+  },
+  {
+    "ec_number": "2.7.2.1",
+    "organism": "Shewanella sp.",
+    "compound": "Adp"
+  },
+  {
+    "ec_number": "1.7.1.17",
+    "organism": "Alkalihalobacillus wakoensis",
+    "compound": "Orange i"
+  },
+  {
+    "ec_number": "3.2.1.176",
+    "organism": "Acremonium thermophilum",
+    "compound": "2-chloro-4-nitrophenyl-beta-d-lactoside"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-(3-fluorophenyl)prop-2-enoic acid"
+  },
+  {
+    "ec_number": "2.6.1.7",
+    "organism": "Mus musculus",
+    "compound": "Alpha-oxo-gamma-methiol-butyric acid"
+  },
+  {
+    "ec_number": "3.2.2.16",
+    "organism": "Streptococcus pneumoniae",
+    "compound": "5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "1.1.1.24",
+    "organism": "Eucalyptus camaldulensis",
+    "compound": "3-dehydroquinate"
+  },
+  {
+    "ec_number": "5.1.1.4",
+    "organism": "Clostridioides difficile",
+    "compound": "D-proline"
+  },
+  {
+    "ec_number": "1.2.1.89",
+    "organism": "Picrophilus torridus",
+    "compound": "D-glycerate"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-phenylprop-2-enoic acid"
+  },
+  {
+    "ec_number": "4.2.1.114",
+    "organism": "Methanocaldococcus jannaschii",
+    "compound": "(r)-homocitrate"
+  },
+  {
+    "ec_number": "4.1.1.102",
+    "organism": "Streptomyces cattleya",
+    "compound": "4-hydroxycinnamic acid"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Fomitopsis pinicola",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "2.7.7.3",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3'-dephospho-coa"
+  },
+  {
+    "ec_number": "2.7.2.7",
+    "organism": "Desulfovibrio vulgaris",
+    "compound": "Isobutyrate"
+  },
+  {
+    "ec_number": "3.1.3.36",
+    "organism": "Schizosaccharomyces pombe",
+    "compound": "Co2+"
+  },
+  {
+    "ec_number": "6.3.4.2",
+    "organism": "Lactococcus lactis subsp. lactis",
+    "compound": "Gtp"
+  },
+  {
+    "ec_number": "2.3.1.233",
+    "organism": "Streptomyces coelicolor",
+    "compound": "Malonyl-coa"
+  },
+  {
+    "ec_number": "5.1.1.13",
+    "organism": "Crassostrea gigas",
+    "compound": "D-aspartate"
+  },
+  {
+    "ec_number": "2.4.2.4",
+    "organism": "Homo sapiens",
+    "compound": "5-nitro-2'-deoxyuridine"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "2.7.1.146",
+    "organism": "Methanococcus maripaludis",
+    "compound": "D-glucose 6-phosphate"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Pleurotus ostreatus",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Coprinus comatus",
+    "compound": "2,2'-azino-bis(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.1.1.28",
+    "organism": "Weizmannia coagulans",
+    "compound": "Pyruvate"
+  },
+  {
+    "ec_number": "2.1.1.356",
+    "organism": "Paramecium bursaria Chlorella virus 1",
+    "compound": "(+/-)-2'-benzyl-s-adenosyl-l-methionine"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Mesocricetus auratus",
+    "compound": "Propioin"
+  },
+  {
+    "ec_number": "2.5.1.58",
+    "organism": "Rattus norvegicus",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "2.6.1.7",
+    "organism": "Homo sapiens",
+    "compound": "3-hydroxy-l-kynurenine"
+  },
+  {
+    "ec_number": "3.1.4.52",
+    "organism": "Pseudomonas aeruginosa",
+    "compound": "5'-phosphoguanylyl(3'->5')guanosine"
+  },
+  {
+    "ec_number": "2.7.7.72",
+    "organism": "Exiguobacterium sibiricum",
+    "compound": "Atp"
+  },
+  {
+    "ec_number": "3.1.1.42",
+    "organism": "Ustilago maydis",
+    "compound": "Methyl ferulate"
+  },
+  {
+    "ec_number": "3.2.2.26",
+    "organism": "Campylobacter jejuni subsp. jejuni",
+    "compound": "5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "1.1.1.38",
+    "organism": "Homo sapiens",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "1.1.1.192",
+    "organism": "Geobacillus thermodenitrificans",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Oryza sativa",
+    "compound": "4-nitrophenyl-beta-d-fucopyranoside"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Cerrena sp. WR1",
+    "compound": "Guaiacol"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Cavia porcellus",
+    "compound": "D-threitol"
+  },
+  {
+    "ec_number": "1.14.13.236",
+    "organism": "Pseudomonas mendocina",
+    "compound": "Benzene"
+  },
+  {
+    "ec_number": "1.5.1.11",
+    "organism": "Pecten maximus",
+    "compound": "2-oxobutanoate"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "2'-deoxyuridine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "1.7.1.17",
+    "organism": "Alkalihalobacillus wakoensis",
+    "compound": "Menadione"
+  },
+  {
+    "ec_number": "1.13.11.75",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-hydroxy-beta-apo-10'-carotenal"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "2'-deoxyadenosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "2.3.1.81",
+    "organism": "Pseudomonas aeruginosa",
+    "compound": "Neomycin e"
+  },
+  {
+    "ec_number": "3.5.1.19",
+    "organism": "uncultured Acidobacteria bacterium",
+    "compound": "Methylnicotinate"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Thermus thermophilus",
+    "compound": "2,2'-azinobis(3-ethylbenzthiazoline-6-sulfonate)"
+  },
+  {
+    "ec_number": "1.14.13.236",
+    "organism": "Pseudomonas mendocina",
+    "compound": "Anisole"
+  },
+  {
+    "ec_number": "5.4.2.10",
+    "organism": "Escherichia coli",
+    "compound": "Glucosamine 1,6-diphosphate"
+  },
+  {
+    "ec_number": "1.4.1.9",
+    "organism": "Exiguobacterium sibiricum",
+    "compound": "Trimethylpyruvate"
+  },
+  {
+    "ec_number": "1.11.1.6",
+    "organism": "Oryza sativa",
+    "compound": "H2o2"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "L-tyrosine"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "2'-deoxyguanosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "5.1.1.18",
+    "organism": "Penaeus monodon",
+    "compound": "D-serine"
+  },
+  {
+    "ec_number": "3.4.13.22",
+    "organism": "Enterococcus faecium",
+    "compound": "Co2+"
+  },
+  {
+    "ec_number": "1.4.1.2",
+    "organism": "Halobacterium salinarum",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "3.1.3.89",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "5'-dcmp"
+  },
+  {
+    "ec_number": "1.11.1.14",
+    "organism": "Rhodococcus jostii",
+    "compound": "2,2'-azino-bis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "4.1.3.4",
+    "organism": "Homo sapiens",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "3.6.1.61",
+    "organism": "Escherichia coli",
+    "compound": "P1,p4-bis(5'-adenosyl)tetraphosphate"
+  },
+  {
+    "ec_number": "1.2.1.89",
+    "organism": "Picrophilus torridus",
+    "compound": "Glycolaldehyde"
+  },
+  {
+    "ec_number": "1.1.1.267",
+    "organism": "Arabidopsis thaliana",
+    "compound": "2-c-methyl-d-erythritol 4-phosphate"
+  },
+  {
+    "ec_number": "3.4.22.1",
+    "organism": "Homo sapiens",
+    "compound": "N,n'-diboc-dityrosine-gly-(isoniazid)2"
+  },
+  {
+    "ec_number": "2.4.2.28",
+    "organism": "Schistosoma mansoni",
+    "compound": "5'-deoxy-5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Bacillus sp. (in: Bacteria)",
+    "compound": "2,2'-azino-bis-(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "4.1.2.38",
+    "organism": "Pseudomonas fluorescens",
+    "compound": "(r)-3,3',5,5'-tetramethoxy-benzoin"
+  },
+  {
+    "ec_number": "3.2.1.176",
+    "organism": "Acremonium thermophilum",
+    "compound": "4-methylumbelliferyl-beta-d-lactoside"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-(4-nitrophenyl)prop-2-enoic acid"
+  },
+  {
+    "ec_number": "1.4.1.4",
+    "organism": "Thermococcus waiotapuensis",
+    "compound": "2-oxoglutarate"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Paenibacillus sp.",
+    "compound": "4-nitrophenyl n,n'-diacetylchitobiose"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Glycine max",
+    "compound": "Genistein 7-o-(6''-o-malonyl-beta-d-glucoside)"
+  },
+  {
+    "ec_number": "1.1.1.295",
+    "organism": "Oryza sativa",
+    "compound": "Oryzalexin a"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Phoma sp.",
+    "compound": "2,2'-azino-bis(3-ethyl-benzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.1.1.71",
+    "organism": "Pyrococcus horikoshii",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "(2e)-2-methylpenta-2,4-dien-1-yl diphosphate"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Geobacillus stearothermophilus",
+    "compound": "4-nitrophenyl-alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "(2e)-3-methylpent-2-en-1-yl diphosphate"
+  },
+  {
+    "ec_number": "1.1.1.292",
+    "organism": "Mus musculus",
+    "compound": "1,5-anhydro-d-fructose"
+  },
+  {
+    "ec_number": "2.7.7.64",
+    "organism": "Leishmania major",
+    "compound": "Udp-d-galacturonate"
+  },
+  {
+    "ec_number": "1.13.11.75",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-hydroxy-beta-apo-8'-carotenal"
+  },
+  {
+    "ec_number": "3.1.4.55",
+    "organism": "Escherichia coli",
+    "compound": "2',3'-camp"
+  },
+  {
+    "ec_number": "3.1.1.73",
+    "organism": "Neurospora crassa",
+    "compound": "O-[2-o-(transferuloyl)-alpha-l-arabinofuranosyl]-(1,5)-l-arabinose"
+  },
+  {
+    "ec_number": "1.13.11.65",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-hydroxy-beta-apo-8'-carotenal"
+  },
+  {
+    "ec_number": "1.1.1.1",
+    "organism": "Aeropyrum pernix",
+    "compound": "Benzaldehyde"
+  },
+  {
+    "ec_number": "3.1.4.59",
+    "organism": "Mycolicibacterium smegmatis",
+    "compound": "Cyclic di-3',5'-guanylate"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Thermoplasma acidophilum",
+    "compound": "4-nitrophenyl-beta-d-glucopyranoside"
+  },
+  {
+    "ec_number": "3.6.1.63",
+    "organism": "Escherichia coli",
+    "compound": "D-ribose 5-phosphate"
+  },
+  {
+    "ec_number": "1.3.8.1",
+    "organism": "Clostridioides difficile",
+    "compound": "Nadh"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Ceftriaxone"
+  },
+  {
+    "ec_number": "1.14.18.1",
+    "organism": "Juglans regia",
+    "compound": "L-dopa"
+  },
+  {
+    "ec_number": "2.7.2.7",
+    "organism": "Desulfovibrio vulgaris",
+    "compound": "Propionate"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Homo sapiens",
+    "compound": "D-lactoaldehyde"
+  },
+  {
+    "ec_number": "1.2.1.44",
+    "organism": "Arabidopsis thaliana",
+    "compound": "5-hydroxyferuloyl-coa"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "Methylamine"
+  },
+  {
+    "ec_number": "5.4.99.1",
+    "organism": "Clostridium cochlearium",
+    "compound": "Coenzyme b12"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Acetivibrio thermocellus",
+    "compound": "4-nitrophenyl-alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "5.1.1.13",
+    "organism": "Crassostrea gigas",
+    "compound": "L-aspartate"
+  },
+  {
+    "ec_number": "3.2.1.23",
+    "organism": "Kluyveromyces marxianus",
+    "compound": "4-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "6.3.1.2",
+    "organism": "Trichormus azollae",
+    "compound": "L-glutamate"
+  },
+  {
+    "ec_number": "3.6.1.67",
+    "organism": "Lactococcus lactis",
+    "compound": "7,8-dihydroneopterin 3'-triphosphate"
+  },
+  {
+    "ec_number": "1.1.1.38",
+    "organism": "Homo sapiens",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "3.6.1.73",
+    "organism": "Escherichia coli",
+    "compound": "2'-deoxyinosine 5'-triphosphate"
+  },
+  {
+    "ec_number": "3.4.21.4",
+    "organism": "Saccharopolyspora erythraea",
+    "compound": "N-alpha-benzoyl-l-lys-4-nitroanilide"
+  },
+  {
+    "ec_number": "3.1.3.89",
+    "organism": "Escherichia coli",
+    "compound": "5'-damp"
+  },
+  {
+    "ec_number": "2.7.1.21",
+    "organism": "Leishmania major",
+    "compound": "5-bromo-2'-deoxyuridine"
+  },
+  {
+    "ec_number": "2.5.1.85",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Isopentenyl diphosphate"
+  },
+  {
+    "ec_number": "1.1.1.6",
+    "organism": "Weizmannia coagulans",
+    "compound": "1,2-butanediol"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Cerrena sp. WR1",
+    "compound": "2,6-dimethoxyphenol"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "Dimethylallyl diphosphate"
+  },
+  {
+    "ec_number": "1.1.1.22",
+    "organism": "Campylobacter jejuni subsp. jejuni",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "1.7.1.17",
+    "organism": "Alkalihalobacillus wakoensis",
+    "compound": "1,2-naphthoquinone"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Cefoxitin"
+  },
+  {
+    "ec_number": "2.7.1.21",
+    "organism": "Leishmania major",
+    "compound": "2'-deoxythymidine"
+  },
+  {
+    "ec_number": "2.4.1.10",
+    "organism": "Streptococcus salivarius",
+    "compound": "D-fructose"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Coprinopsis cinerea",
+    "compound": "2,2'-azino-bis(3-ethylbenzthiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "1.11.1.13",
+    "organism": "Gelatoporia subvermispora",
+    "compound": "2,2'-azino-bis(3-ethylbenzthiazole-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "3.1.3.5",
+    "organism": "Mus musculus",
+    "compound": "5'-ump"
+  },
+  {
+    "ec_number": "6.3.2.4",
+    "organism": "Thermus thermophilus",
+    "compound": "D-alanine"
+  },
+  {
+    "ec_number": "4.2.3.133",
+    "organism": "Phyla dulcis",
+    "compound": "(2e,6e)-farnesyl diphosphate"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Alkalihalobacillus clausii",
+    "compound": "Cefepime"
+  },
+  {
+    "ec_number": "3.1.1.81",
+    "organism": "Muricauda olearia",
+    "compound": "N-octanoyl-l-homoserine lactone"
+  },
+  {
+    "ec_number": "1.6.3.1",
+    "organism": "Sulfolobus solfataricus",
+    "compound": "Fad"
+  },
+  {
+    "ec_number": "3.6.1.53",
+    "organism": "Homo sapiens",
+    "compound": "2',3'-camp"
+  },
+  {
+    "ec_number": "3.6.1.59",
+    "organism": "Saccharomyces cerevisiae",
+    "compound": "M7g5'ppp5'g"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "Guanosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "3.5.1.129",
+    "organism": "Campylobacter jejuni subsp. jejuni serotype O:2",
+    "compound": "N5-(cytidine 5'-diphosphoramidyl)-l-glutamine"
+  },
+  {
+    "ec_number": "2.3.1.160",
+    "organism": "Rauvolfia serpentina x Rhazya stricta",
+    "compound": "Vinorine"
+  },
+  {
+    "ec_number": "3.6.1.11",
+    "organism": "Chlorobaculum tepidum",
+    "compound": "Guanosine 5'-tetraphosphate"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Pasteurella multocida",
+    "compound": "2'-amp"
+  },
+  {
+    "ec_number": "2.2.1.6",
+    "organism": "Enterococcus faecalis",
+    "compound": "Pyruvate"
+  },
+  {
+    "ec_number": "1.1.1.25",
+    "organism": "Camellia sinensis",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "2.7.1.74",
+    "organism": "Homo sapiens",
+    "compound": "(-)-beta-2',3'-dideoxy-3'-thiacytidine"
+  },
+  {
+    "ec_number": "4.2.1.11",
+    "organism": "Oryctolagus cuniculus",
+    "compound": "Zn2+"
+  },
+  {
+    "ec_number": "3.1.3.97",
+    "organism": "Chromobacterium violaceum",
+    "compound": "Guanosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "1.13.11.65",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-hydroxy-beta-apo-10'-carotenal"
+  },
+  {
+    "ec_number": "1.2.1.89",
+    "organism": "Thermoplasma acidophilum",
+    "compound": "D-glycerate"
+  },
+  {
+    "ec_number": "3.6.1.53",
+    "organism": "Rattus norvegicus",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "2.2.1.6",
+    "organism": "Escherichia coli",
+    "compound": "Thiamine diphosphate"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "(2e,4z)-2-methylhexa-2,4-dien-1-yl diphosphate"
+  },
+  {
+    "ec_number": "3.1.1.81",
+    "organism": "Muricauda olearia",
+    "compound": "N-3-oxododecanoyl-l-homoserine lactone"
+  },
+  {
+    "ec_number": "3.1.3.36",
+    "organism": "Schizosaccharomyces pombe",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "1.5.8.4",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "N,n-dimethylglycine"
+  },
+  {
+    "ec_number": "3.1.1.102",
+    "organism": "Ideonella sakaiensis",
+    "compound": "Ethylene terephthalate"
+  },
+  {
+    "ec_number": "1.1.1.37",
+    "organism": "Malus domestica",
+    "compound": "Oxaloacetate"
+  },
+  {
+    "ec_number": "3.2.2.16",
+    "organism": "Staphylococcus aureus",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "2,2,2-trifluoroethylamine"
+  },
+  {
+    "ec_number": "5.5.1.4",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "1.1.1.248",
+    "organism": "Papaver bracteatum",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "2.4.2.10",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Orotidine 5'-phosphate"
+  },
+  {
+    "ec_number": "3.5.4.31",
+    "organism": "Methanocaldococcus jannaschii",
+    "compound": "S-methyl-5'-thioadenosine"
+  },
+  {
+    "ec_number": "1.11.1.14",
+    "organism": "Rhodococcus jostii",
+    "compound": "Mn(ii)"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Bos taurus",
+    "compound": "6-deoxy-d-sorbitol"
+  },
+  {
+    "ec_number": "3.5.4.40",
+    "organism": "Deinococcus radiodurans",
+    "compound": "2'-deoxyadenosine"
+  },
+  {
+    "ec_number": "3.2.1.23",
+    "organism": "Kluyveromyces marxianus",
+    "compound": "2-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "3.6.1.73",
+    "organism": "Escherichia coli",
+    "compound": "Guanosine 5'-triphosphate"
+  },
+  {
+    "ec_number": "3.1.3.97",
+    "organism": "Chromobacterium violaceum",
+    "compound": "Inosine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "2-pentenyl diphosphate"
+  },
+  {
+    "ec_number": "5.1.3.4",
+    "organism": "Escherichia coli",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "2.3.1.151",
+    "organism": "Garcinia mangostana",
+    "compound": "Malonyl-coa"
+  },
+  {
+    "ec_number": "1.11.1.13",
+    "organism": "Gelatoporia subvermispora",
+    "compound": "Veratryl alcohol"
+  },
+  {
+    "ec_number": "3.2.1.23",
+    "organism": "Alicyclobacillus acidocaldarius",
+    "compound": "4-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "4.3.1.24",
+    "organism": "Trichormus variabilis",
+    "compound": "(2e)-3-(3-hydroxyphenyl)prop-2-enoic acid"
+  },
+  {
+    "ec_number": "2.6.1.85",
+    "organism": "Escherichia coli",
+    "compound": "Acetate"
+  },
+  {
+    "ec_number": "1.13.11.65",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Beta-apo-10'-carotenal"
+  },
+  {
+    "ec_number": "1.14.13.84",
+    "organism": "Pseudomonas putida",
+    "compound": "3'-hydroxyacetophenone"
+  },
+  {
+    "ec_number": "2.4.2.28",
+    "organism": "Schistosoma mansoni",
+    "compound": "2'-deoxyadenosine"
+  },
+  {
+    "ec_number": "1.1.1.44",
+    "organism": "Ovis aries",
+    "compound": "6-phosphono-d-gluconate"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "(2z)-3-chlorobut-2-en-1-yl diphosphate"
+  },
+  {
+    "ec_number": "3.2.2.30",
+    "organism": "Campylobacter jejuni subsp. jejuni serotype O:2",
+    "compound": "5'-methylthioadenosine"
+  },
+  {
+    "ec_number": "4.4.1.9",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Na2s"
+  },
+  {
+    "ec_number": "4.2.1.53",
+    "organism": "Macrococcus caseolyticus",
+    "compound": "Gamma-linolenic acid"
+  },
+  {
+    "ec_number": "1.13.11.75",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Beta-apo-10'-carotenal"
+  },
+  {
+    "ec_number": "3.2.1.37",
+    "organism": "Geobacillus thermoleovorans",
+    "compound": "4-nitrophenyl-alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "1.10.3.2",
+    "organism": "Trametes sp.",
+    "compound": "2,2'-azinobis(3-ethylbenzothiazoline-6-sulfonic acid)"
+  },
+  {
+    "ec_number": "2.7.1.21",
+    "organism": "Leishmania major",
+    "compound": "5-fluoro-2'-deoxyuridine"
+  },
+  {
+    "ec_number": "5.5.1.6",
+    "organism": "Glycine max",
+    "compound": "4,2',4',6'-tetrahydroxychalcone"
+  },
+  {
+    "ec_number": "3.1.2.20",
+    "organism": "Haemophilus influenzae",
+    "compound": "N-butyrylpantethiene phosphate"
+  },
+  {
+    "ec_number": "2.2.1.6",
+    "organism": "Oryza sativa Indica Group",
+    "compound": "Pyruvate"
+  },
+  {
+    "ec_number": "2.5.1.85",
+    "organism": "Arabidopsis thaliana",
+    "compound": "Farnesyl diphosphate"
+  },
+  {
+    "ec_number": "1.1.1.205",
+    "organism": "Escherichia coli",
+    "compound": "K+"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Li+"
+  },
+  {
+    "ec_number": "1.1.1.42",
+    "organism": "Plasmodium falciparum",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "3.2.1.21",
+    "organism": "Thermoplasma acidophilum",
+    "compound": "4-nitrophenyl-beta-d-fucopyranoside"
+  },
+  {
+    "ec_number": "3.1.3.106",
+    "organism": "Homo sapiens",
+    "compound": "1-stearyl-2-lyso-sn-glycerol 3-phosphate"
+  },
+  {
+    "ec_number": "1.1.1.B38",
+    "organism": "Archaeoglobus fulgidus",
+    "compound": "Nad+"
+  },
+  {
+    "ec_number": "3.5.2.3",
+    "organism": "Staphylococcus aureus",
+    "compound": "N-carbamoyl-l-aspartate"
+  },
+  {
+    "ec_number": "1.1.1.10",
+    "organism": "Homo sapiens",
+    "compound": "Propioin"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Moritella marina",
+    "compound": "4-nitrophenyl-beta-1,4-n,n'-diacetyl-chitobiose"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Haemophilus influenzae",
+    "compound": "2'-amp"
+  },
+  {
+    "ec_number": "1.14.15.30",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "3-oxo-23,24-bisnorchol-4-en-22-oic acid"
+  },
+  {
+    "ec_number": "3.1.3.7",
+    "organism": "Chromobacterium violaceum",
+    "compound": "Thymidine 3',5'-bisphosphate"
+  },
+  {
+    "ec_number": "4.2.1.11",
+    "organism": "Oryctolagus cuniculus",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "5.1.3.2",
+    "organism": "Pisum sativum",
+    "compound": "Udp-glucose"
+  },
+  {
+    "ec_number": "3.2.1.14",
+    "organism": "Chromobacterium sp.",
+    "compound": "4-methylumbelliferyl-n,n'-diacetylchitobiose"
+  },
+  {
+    "ec_number": "3.1.3.2",
+    "organism": "Legionella pneumophila",
+    "compound": "3'-amp"
+  },
+  {
+    "ec_number": "3.1.3.36",
+    "organism": "Schizosaccharomyces pombe",
+    "compound": "Mn2+"
+  },
+  {
+    "ec_number": "1.3.1.102",
+    "organism": "Nicotiana tabacum",
+    "compound": "(r)-carvone"
+  },
+  {
+    "ec_number": "2.4.2.4",
+    "organism": "Escherichia coli",
+    "compound": "5'-deoxythymidine"
+  },
+  {
+    "ec_number": "2.3.2.5",
+    "organism": "Solanum tuberosum",
+    "compound": "H-gln-gln-oh"
+  },
+  {
+    "ec_number": "3.5.2.6",
+    "organism": "Proteus mirabilis",
+    "compound": "Carbenicillin"
+  },
+  {
+    "ec_number": "3.1.1.81",
+    "organism": "Muricauda olearia",
+    "compound": "N-3-oxohexanoyl-l-homoserine lactone"
+  },
+  {
+    "ec_number": "1.6.3.2",
+    "organism": "Thermococcus profundus",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "1.13.11.67",
+    "organism": "Candidatus Nitrosotalea devanaterra",
+    "compound": "All-trans-8'-apo-beta-carotenal"
+  },
+  {
+    "ec_number": "1.14.13.251",
+    "organism": "Chromohalobacter salexigens",
+    "compound": "Nadph"
+  },
+  {
+    "ec_number": "2.4.1.4",
+    "organism": "Deinococcus geothermalis",
+    "compound": "4'-hydroxyflavanone"
+  },
+  {
+    "ec_number": "2.1.1.B84",
+    "organism": "Carapichea ipecacuanha",
+    "compound": "S-adenosyl-l-homocysteine"
+  },
+  {
+    "ec_number": "2.7.7.64",
+    "organism": "Leishmania major",
+    "compound": "Udp-d-glucose"
+  },
+  {
+    "ec_number": "1.1.1.6",
+    "organism": "Weizmannia coagulans",
+    "compound": "D-1,2-propanediol"
+  },
+  {
+    "ec_number": "2.7.2.7",
+    "organism": "Desulfovibrio vulgaris",
+    "compound": "Valerate"
+  },
+  {
+    "ec_number": "2.7.2.1",
+    "organism": "Lactococcus lactis",
+    "compound": "Acetyl phosphate"
+  },
+  {
+    "ec_number": "2.5.1.21",
+    "organism": "Methylococcus capsulatus",
+    "compound": "(2e,6e)-farnesyl diphosphate"
+  },
+  {
+    "ec_number": "3.2.1.23",
+    "organism": "Arthrobacter psychrolactophilus",
+    "compound": "2-nitrophenyl-beta-d-galactopyranoside"
+  },
+  {
+    "ec_number": "3.6.1.60",
+    "organism": "Homo sapiens",
+    "compound": "P1,p5-bis(5'-adenosyl)pentaphosphate"
+  },
+  {
+    "ec_number": "1.8.4.11",
+    "organism": "Arabidopsis thaliana",
+    "compound": "9-fluorenylmethyl chloroformate-labeled l-methionine-(s)-s-oxide"
+  },
+  {
+    "ec_number": "2.5.1.122",
+    "organism": "Leptosphaeria maculans",
+    "compound": "3-ethylpent-2-en-1-yl diphosphate"
+  },
+  {
+    "ec_number": "3.6.1.1",
+    "organism": "Bacillus subtilis",
+    "compound": "Imidodiphosphoric acid"
+  },
+  {
+    "ec_number": "1.1.1.21",
+    "organism": "Candida tenuis",
+    "compound": "Propylamine"
+  },
+  {
+    "ec_number": "2.7.1.24",
+    "organism": "Thermococcus kodakarensis",
+    "compound": "3'-dephospho-coa"
+  },
+  {
+    "ec_number": "5.4.2.6",
+    "organism": "Lactococcus lactis subsp. lactis",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "1.2.1.25",
+    "organism": "Homo sapiens",
+    "compound": "Thiamine diphosphate"
+  },
+  {
+    "ec_number": "6.1.1.3",
+    "organism": "Mesomycoplasma mobile",
+    "compound": "L-serine"
+  },
+  {
+    "ec_number": "2.5.1.85",
+    "organism": "Trypanosoma cruzi",
+    "compound": "Isopentenyl diphosphate"
+  },
+  {
+    "ec_number": "1.1.1.41",
+    "organism": "Ostreococcus sp. 'lucimarinus'",
+    "compound": "Nadp+"
+  },
+  {
+    "ec_number": "3.2.1.55",
+    "organism": "Ustilago maydis",
+    "compound": "4-nitrophenyl-alpha-l-arabinofuranoside"
+  },
+  {
+    "ec_number": "2.6.1.30",
+    "organism": "Mesorhizobium loti",
+    "compound": "Pyridoxal"
+  },
+  {
+    "ec_number": "2.3.3.13",
+    "organism": "Mycobacterium tuberculosis",
+    "compound": "Co2+"
+  },
+  {
+    "ec_number": "2.7.7.64",
+    "organism": "Leishmania major",
+    "compound": "Udp-l-arabinopyranose"
+  },
+  {
+    "ec_number": "3.1.4.55",
+    "organism": "Escherichia coli",
+    "compound": "2',3'-ccmp"
+  },
+  {
+    "ec_number": "1.1.99.29",
+    "organism": "Leucoagaricus meleagris",
+    "compound": "2,2'-azino-bis[3-ethylbenzothiazoline]-6-sulfonic acid"
+  },
+  {
+    "ec_number": "4.2.1.114",
+    "organism": "Methanocaldococcus jannaschii",
+    "compound": "Cis-homo4aconitate"
+  },
+  {
+    "ec_number": "3.13.2.1",
+    "organism": "Trypanosoma cruzi",
+    "compound": "Adenosine"
+  },
+  {
+    "ec_number": "3.5.1.19",
+    "organism": "uncultured Acidobacteria bacterium",
+    "compound": "Pyrazinamide"
+  },
+  {
+    "ec_number": "2.5.1.47",
+    "organism": "Streptomyces lavendulae",
+    "compound": "H2s"
+  },
+  {
+    "ec_number": "4.2.1.114",
+    "organism": "Methanocaldococcus jannaschii",
+    "compound": "Cis-homo2aconitate"
+  },
+  {
+    "ec_number": "1.1.1.205",
+    "organism": "Trypanosoma brucei",
+    "compound": "Inosine 5'-diphosphate"
+  },
+  {
+    "ec_number": "3.1.3.25",
+    "organism": "Homo sapiens",
+    "compound": "Mg2+"
+  },
+  {
+    "ec_number": "3.2.1.25",
+    "organism": "Hordeum vulgare",
+    "compound": "4-nitrophenyl-beta-d-glucopyranose"
+  }
+]
