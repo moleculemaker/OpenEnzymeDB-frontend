@@ -11,6 +11,8 @@ import { TableModule } from 'primeng/table';
 import { SafePipe } from '~/app/pipes/safe.pipe';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
+import { JobTabComponent } from '../job-tab/job-tab.component';
+import { EnzymeRecommendationComponent } from '../enzyme-recommendation/enzyme-recommendation.component';
 
 @Component({
   selector: 'app-enzyme-recommendation-result',
@@ -25,8 +27,10 @@ import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
     
     LoadingComponent,
     MoleculeImageComponent,
+    JobTabComponent,
     ChemicalPropertyPipe,
-    SafePipe
+    EnzymeRecommendationComponent,
+    SafePipe,
   ],
   host: {
     class: 'flex flex-col h-full',
@@ -35,7 +39,8 @@ import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
 export class EnzymeRecommendationResultComponent extends JobResult {
   override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
   override jobType: JobType = JobType.OedCheminfo;
-  
+
+  currentPage = 'result';
   response$ = this.jobResultResponse$;
 
   results: Array<{

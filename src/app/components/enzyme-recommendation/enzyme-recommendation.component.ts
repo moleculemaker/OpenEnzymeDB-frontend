@@ -1,4 +1,4 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, Input, SimpleChanges, ViewChild } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
@@ -35,6 +35,13 @@ import { CactusService } from '~/app/services/cactus.service';
   }
 })
 export class EnzymeRecommendationComponent {
+  @Input() formValue!: {
+    query_smiles: string;
+    query_value: QueryValue;
+    email: string;
+  };
+  @Input() showJobTab = true;
+
   @ViewChild(QueryInputComponent) queryInput!: QueryInputComponent;
 
   currentPage = 'input';
@@ -67,6 +74,20 @@ export class EnzymeRecommendationComponent {
     private router: Router,
   ) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formValue'] && changes['formValue'].currentValue) {
+      this.form.patchValue({
+        search: this.formValue.query_value ?? {
+          inputValue: this.formValue.query_smiles,
+          value: this.formValue.query_smiles,
+          inputType: 'smiles',
+          selectedOption: 'smiles',
+        },
+        email: this.formValue.email,
+      });
+    }
+  }
+
   onSubmit() {
     if (!this.form.valid) {
       return;
@@ -77,6 +98,7 @@ export class EnzymeRecommendationComponent {
       {
         job_info: JSON.stringify({
           query_smiles: this.form.controls["search"].value?.value,
+          query_value: this.form.controls["search"].value, // for result page
         }),
         email: this.form.controls["email"].value || '',
       }

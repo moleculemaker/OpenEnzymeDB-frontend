@@ -12,6 +12,7 @@ import { MoleculeImageComponent } from '../molecule-image/molecule-image.compone
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SearchOption, QueryValue } from '../../models/search-options';
+import { startWith } from 'rxjs';
 
 @Component({
   selector: 'app-query-input',
@@ -89,6 +90,7 @@ export class QueryInputComponent implements ControlValueAccessor {
   disabled = false;
 
   writeValue(value: QueryValue | null): void {
+    console.log('[query-input] write value', value);
     if (value) {
       const { selectedOption, ...values } = value;
       this.selectedSearchOption = this.searchOptionRecords[selectedOption];
@@ -135,7 +137,7 @@ export class QueryInputComponent implements ControlValueAccessor {
     if (!this.selectedSearchOption) return;
 
     if (this.selectedSearchOption.formGroup.status !== 'VALID') {
-      console.log('[query-input] form group is invalid', this.selectedSearchOption.formGroup.errors);
+      // console.log('[query-input] clear input when status isn\'t valid');
       this.onChange(null);
       this.onTouched();
       return;

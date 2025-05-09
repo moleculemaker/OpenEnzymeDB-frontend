@@ -6,7 +6,9 @@
         (ngSubmit)="onSubmit()"
     >
         <div>
-            <app-job-tab [tab]="currentPage"></app-job-tab>
+            @if (showJobTab) {
+                <app-job-tab [tab]="currentPage"></app-job-tab>
+            }
             
             <div>
                 <div class="my-6 flex items-center justify-between">

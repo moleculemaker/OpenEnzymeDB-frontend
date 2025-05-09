@@ -42,7 +42,7 @@
       @switch (selectedSearchOption.key) {
       @case ('compound') {
       <app-marvinjs-input [placeholder]="selectedSearchOption.placeholder || ''" class="grow h-8"
-        formControlName="value">
+        formControlName="inputValue">
       </app-marvinjs-input>
       }
       @case ('smiles') {
@@ -81,52 +81,32 @@
       disabled class="grow border-none h-8" />
     }
   </div>
-  @if (selectedSearchOption && selectedSearchOption.formGroup.invalid) {
-  <div class="flex flex-col gap-2 px-2">
-    @for (error of selectedSearchOption.formGroup.errors | keyvalue; track error.key) {
-    @switch (error.key) {
-    @case ('invalidName') {
+
+  @if (selectedSearchOption 
+    && selectedSearchOption.formGroup.invalid
+    && selectedSearchOption.formGroup.dirty
+  ) {
+  <div class="flex flex-col gap-1">
+    @if (selectedSearchOption.formGroup.hasError('invalidName', 'inputValue')) {
     <div class="text-red-500">invalid <span class="lowercase" [innerHTML]="selectedSearchOption.label"></span> name
     </div>
     }
-    @case ('invalidSmiles') {
+    @if (selectedSearchOption.formGroup.hasError('invalidSmiles', 'inputValue')) {
     <div class="text-red-500">invalid <span class="lowercase" [innerHTML]="selectedSearchOption.label"></span>
       SMILES</div>
     }
-    @case ('required') {
+    @if (selectedSearchOption.formGroup.hasError('required', 'inputValue')) {
     <div class="text-red-500">field is required</div>
     }
-    @default {
-    {{ error.key }}
-    }
-    }
-    }
-  </div>
-  }
-
-  @if (
-  selectedSearchOption
-  && selectedSearchOption.key === 'compound'
-  && selectedSearchOption.formGroup.controls['value'].value
-  && $any(selectedSearchOption.formGroup.controls)['inputType'].value === 'smiles'
-  ) {
-  <div class="relative grow flex flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]">
-    <div class="flex items-center justify-center">
-      <i class="absolute pi left-3 top-3"
-        [class.pi-check-circle]="selectedSearchOption!.formGroup.controls['value'].valid"></i>
-      <!-- this must be a MoleculeSearchOption -->
-      @let chemInfo = $any(selectedSearchOption!).chemInfo;
-
-      <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo"></app-molecule-image>
-    </div>
   </div>
   }
 
   @let inputValueControl = $any(selectedSearchOption?.formGroup?.controls)['inputValue'];
   @if (
   selectedSearchOption
-  && selectedSearchOption.key === 'smiles'
+  && (selectedSearchOption.key === 'smiles' || selectedSearchOption.key === 'compound')
   && inputValueControl.value
+  && !inputValueControl.invalid
   ) {
   <div class="relative grow flex flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
     [class.invalid]="inputValueControl.errors 

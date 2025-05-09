@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Loadable, OpenEnzymeDBService, ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
+import { filter, Subscription } from 'rxjs';
+import { ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { CactusService } from '~/app/services/cactus.service';
 
@@ -36,8 +36,13 @@ export class ReactionSchemaComponent implements OnChanges, OnDestroy {
       [...reactionSchema.reactants, ...reactionSchema.products].forEach((chemical: string) => {
         if (!this.images[chemical]) {
           const subscription = this.cactusService.getSMILESFromName(chemical)
+            .pipe(
+              filter((result) => result.status !== 'loading'),
+            )
             .subscribe((result) => {
-              this.images[chemical] = result;
+              if (result.status === 'loaded' && result.data) {
+                this.images[chemical] = result.data;
+              }
             });
           this.subscriptions.push(subscription);
         }

@@ -1,12 +1,12 @@
 import { FormControl, Validators, AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
-import { Observable, of, switchMap, map, first, catchError, tap, filter } from 'rxjs';
+import { Observable, of, switchMap, map, first, catchError, tap, filter, distinctUntilChanged, debounceTime, startWith } from 'rxjs';
 import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
 import { Loadable } from '~/app/services/openenzymedb.service';
 
 type SmilesSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
   smilesValidator: (smiles: string) => Observable<Loadable<string>>;
-  nameToSmilesConverter: (name: string) => Observable<string>;
+  nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
 };
 
 type SmilesSearchInputType = 'name' | 'smiles';
@@ -21,8 +21,11 @@ type SmilesSearchOptionType = SearchOptionType<string, SmilesSearchAdditionalCon
 export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdditionalControls> {
   override formGroup: FormGroup<SmilesSearchOptionType> = new FormGroup({
     inputType: new FormControl<SmilesSearchInputType>('name', [Validators.required]),
-    inputValue: new FormControl<string>('', [this.validateRequired.bind(this)]),
-    value: new FormControl<string>(''),
+    inputValue: new FormControl<string>('', 
+      [Validators.required],
+      [this.validateInput.bind(this)]
+    ),
+    value: new FormControl<string>('', [Validators.required]),
   });
 
   public chemInfo: Loadable<string> = {
@@ -30,8 +33,8 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     status: 'na'
   };
 
-  private nameToSmilesConverter: (name: string) => Observable<string>;
-  private smilesValidator: (smiles: string) => Observable<Loadable<string> | ValidationErrors>;
+  private nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
+  private smilesValidator: (smiles: string) => Observable<ValidationErrors | null>;
 
   constructor(params: SmilesSearchOptionParams) {
     super({
@@ -41,18 +44,19 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     this.nameToSmilesConverter = params.nameToSmilesConverter;
     this.smilesValidator = (smiles: string) => {
       return params.smilesValidator(smiles).pipe(
-        tap((chemical) => {
-          this.chemInfo = chemical;
+        tap((chemical) => this.chemInfo = chemical),
+        filter((chemical) => chemical.status !== 'loading'),
+        map((chemical) => {
+          if (chemical.status === 'loaded') {
+            this.formGroup.get('value')!.patchValue(chemical.data);
+            console.log('[smiles-search-option] smiles validated', chemical);
+            return null;
+          }
+          console.log('[smiles-search-option] smiles validation error', chemical);
+          return { invalidSmiles: true };
         }),
-        catchError((err) => {
-          this.chemInfo.status = 'invalid';
-          return of({ invalidSmiles: true });
-        }
       )
-    )};
-    this.formGroup.addAsyncValidators([
-      this.validateInput.bind(this),
-    ]);
+    };
   }
 
   override reset() {
@@ -66,71 +70,44 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
     this.formGroup.get('inputValue')!.setValue('', { emitEvent: false });
   }
 
-  private validateRequired(control: AbstractControl<string | null>) {
-    const error = Validators.required(control);
-    if (error) {
-      this.chemInfo = {
-        data: '',
-        status: 'loading'
-      }
-    }
-    return error;
-  }
+  private validateInput(control: AbstractControl<string | null>) {
+    return control.valueChanges.pipe(
+      startWith(control.value),
+      tap(() => this.chemInfo.status = 'loading'),
+      distinctUntilChanged(),
+      tap((v) => console.log('[smiles-search-option] inputValue changed', v)),
+      debounceTime(300),
+      switchMap((value) => {
+        if (!value) {
+          return of({ required: true });
+        }
 
-  private validateInput(control: AbstractControl<{
-    inputType: SmilesSearchInputType;
-    value: string;
-    inputValue: string;
-  } | null>) {
-    if (control.value?.inputType === 'name' && control.value?.inputValue) {
-      return this.nameToSmilesConverter(control.value.inputValue).pipe(
-        switchMap(this.smilesValidator),
-        map((chemical) => {
-          if (chemical.status === 'loaded' && chemical.data) {
-            control.get('value')!.setValue(chemical.data, { 
-              emitEvent: false,
-              onlySelf: true
-            });
-            return null;
-          } else {
-            control.get('value')!.setValue('', {
-              emitEvent: false,
-              onlySelf: true
-            });
-            return { invalidName: true };
-          }
-        }),
-        catchError((err) => {
-          this.chemInfo.status = 'invalid';
-          return of({ invalidName: true });
-        })
-      );
-    }
+        const inputType = this.formGroup.get('inputType')!.value;
+        switch (inputType) {
+          case 'name':
+            return this.nameToSmilesConverter(value).pipe(
+              filter((smiles) => smiles.status !== 'loading'),
+              first(),
+              switchMap((smiles) => {
+                switch (smiles.status) {
+                  case 'loaded':
+                    return this.smilesValidator(smiles.data || '');
+                  default: // only error and invalid are possible
+                    this.chemInfo = {
+                      status: 'invalid' as const,
+                      data: ''
+                    };
+                    return of({ invalidName: true });
+                }
+              }),
+            )
+          case 'smiles':
+            return this.smilesValidator(value)
+        }
 
-    if (control.value?.inputType === 'smiles' && control.value?.inputValue) {
-      return this.smilesValidator(control.value.inputValue).pipe(
-        map((chemical) => {
-          if (chemical.status === 'loaded' && chemical.data) {
-            control.get('value')!.setValue(chemical.data, { 
-              emitEvent: false,
-              onlySelf: true
-            });
-            return null;
-          } else {
-            control.get('value')!.setValue('', {
-              emitEvent: false,
-              onlySelf: true
-            });
-            return { invalidSmiles: true };
-          }
-        }),
-        catchError((err) => {
-          this.chemInfo.status = 'invalid';
-          return of({ invalidSmiles: true });
-        })
-      );
-    }
-
-    return of({ required: true });
+        return of({ unknownInputType: true });
+      }),
+      first()
+    )
   }
 }

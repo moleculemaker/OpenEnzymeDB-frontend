@@ -1,7 +1,16 @@
-<!-- Model Results -->
-<div class="flex flex-col h-full gap-8">
-  <div class="flex items-center justify-between">
-    <div *ngIf="statusResponse$ | async as status">
+<app-job-tab [tab]="currentPage" (onTabChange)="currentPage = $event"></app-job-tab>
+
+@if (currentPage === 'input') {
+  <app-enzyme-recommendation 
+    [formValue]="jobInfo"
+    [showJobTab]="false"
+  ></app-enzyme-recommendation>
+
+} @else {
+  <!-- Model Results -->
+  <div class="flex flex-col h-full gap-8">
+    <div class="flex items-center justify-between">
+      <div *ngIf="statusResponse$ | async as status">
       <h5 class="flex items-center gap-2 mb-2 font-bold opacity-100 leading-xl">
         Job ID: {{ status.job_id || "loading" }}
         <button
@@ -113,3 +122,4 @@
     </ng-container>
   </div>
 </div>
+}

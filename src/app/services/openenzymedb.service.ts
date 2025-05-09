@@ -280,7 +280,6 @@ export class OpenEnzymeDBService {
   private _VISION_URL = '';
   private _FEEDBACK_URL = '';
   private _RELEASE_NOTES_URL = '';
-  private chemicalImageCache: Record<string, Loadable<string>> = {};
 
   public get WHITE_PAPER_URL() {
     return this._WHITE_PAPER_URL;
@@ -426,10 +425,6 @@ export class OpenEnzymeDBService {
   }
 
   validateChemical(smiles: string): Observable<Loadable<string>> {
-    if (this.chemicalImageCache[smiles]) {
-      return of(this.chemicalImageCache[smiles]);
-    }
-
     return new Observable(observer => {
       observer.next({ status: 'loading', data: null });
 
@@ -439,19 +434,16 @@ export class OpenEnzymeDBService {
             status: 'loaded' as LoadingStatus, 
             data: res 
           })),
-          shareReplay(1),
           catchError((error: Response) => {
             console.error('Error validating chemical:', error);
             const loadable: Loadable<string> = {
-              status: error.status >= 500 ? 'error' : 'invalid',
+              status: 'invalid',
               data: null
             };
             return of(loadable);
           })
         )
         .subscribe((res) => {
-          console.log('validateChemical: ', res);
-          this.chemicalImageCache[smiles] = res;
           observer.next(res);
           observer.complete();
         });

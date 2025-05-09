@@ -8,7 +8,7 @@ import { CommonModule } from "@angular/common";
 import { OEDRecord, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent } from "../../components/query-input/query-input.component";
-import { QueryValue, SearchOption } from '~/app/models/search-options';
+import { QueryValue, SearchOption, SmilesSearchOption } from '~/app/models/search-options';
 import { MoleculeSearchOption } from '~/app/models/search-options/MoleculeSearchOption';
 import { RangeSearchOption } from '~/app/models/search-options/RangeSearchOption';
 import { StringSearchOption } from '~/app/models/search-options/StringSearchOption';
@@ -27,6 +27,7 @@ import { DividerModule } from "primeng/divider";
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
 import { Subscription, map } from "rxjs";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
+import { CactusService } from "~/app/services/cactus.service";
 
 @Component({
   selector: 'app-query',
@@ -234,16 +235,18 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
   ] as [string, FilterConfig][])
 
   searchConfigs: SearchOption[] = [
-    new MoleculeSearchOption({
-      key: 'compound',
+    new SmilesSearchOption({
+      key: 'smiles',
       label: 'Compound',
       placeholder: 'Enter a compound',
       example: {
         label: 'Ethanol (CCO)',
         inputType: 'smiles',
-        value: 'CCO'
+        inputValue: 'CCO',
+        value: 'CCO',
       },
-      moleculeValidator: (smiles: string) => this.service.validateChemical(smiles),
+      smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
+      nameToSmilesConverter: (name: string) => this.cactusService.getSMILESFromName(name),
     }),
     new StringSearchOption({
       key: 'organism',
@@ -316,6 +319,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
+    private cactusService: CactusService,
   ) {}
 
   ngOnInit(): void {
