@@ -179,12 +179,19 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     {
       label: 'Table Results',
       command: () => {
-        this.resultsTable.exportCSV();
+        if (this.algorithm === 'fragment') {
+          this.exportFragmentResults();
+        } else {
+          this.resultsTable.exportCSV();
+        }
       },
     },
   ];
 
-  columns: any[] = [];
+  columns: any[] = [
+    { field: 'compound.name', header: 'compound' },
+    { field: this.algorithm, header: this.algorithm },
+  ];
   expandedRows: any = {};
 
   filterDialogVisible = false;
@@ -387,7 +394,17 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
               expanded: false,
               reaction_schema: undefined,
             }))
-            .filter((row: any) => !!row.kcat && !!row.kcat_km);
+            .filter((row: any) => {
+              // Always filter by kcat and kcat_km
+              if (!row.kcat || !row.kcat_km) return false;
+              
+              // For fragment algorithm, also filter out compounds without fragment matches
+              if (this.algorithm === 'fragment') {
+                return row.fragment?.matches?.length > 0;
+              }
+              
+              return true;
+            });
 
           const grouped: { [key: string]: RecommendationResultRow[] } 
             = v.reduce((acc: any, row: any) => {
@@ -597,11 +614,6 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
         filter.defaultValue = [filter.min, filter.max];
       }
     });
-    
-    this.columns = Array.from(this.filters.values()).map((filter) => ({
-      field: filter.field,
-      header: filter.label.rawValue,
-    }));
   }
 
   // Add custom sorting functions
@@ -724,5 +736,54 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     if (row.expanded) {
       this.loadReactionSchema(row);
     }
+  }
+
+  private exportFragmentResults() {
+    if (!this.result.data) return;
+
+    const headers = ['Compound Name', 'Number of Substructure Matches', 'Number of Atom Matches'];
+    const rows = this.result.data.data.map(group => {
+      const numSubStructureMatches = group.fragment?.matches?.length || 0;
+      const numAtomMatches = group.fragment?.flattenedMatches?.length || 0;
+      return [
+        `"${group.compound.name}"`,
+        numSubStructureMatches,
+        numAtomMatches
+      ];
+    });
+
+    // Create CSV content
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+
+    // Create and trigger download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'fragment_results.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  getAlgorithmLabel(algorithm: 'mcs' | 'fragment' | 'tanimoto', value: any, group?: RecommendationResultRowGroup): string {
+    if (algorithm === 'fragment' && group) {
+      const numSubStructureMatches = group.fragment?.matches?.length || 0;
+      const numAtomMatches = group.fragment?.flattenedMatches?.length || 0;
+      return `${numSubStructureMatches} substructure ${numSubStructureMatches === 1 ? 'match' : 'matches'}, ${numAtomMatches} atom ${numAtomMatches === 1 ? 'match' : 'matches'}`;
+    }
+    return typeof value === 'number' ? value.toFixed(4) : value;
+  }
+
+  getStats(data: RecommendationResultRow[]): { totalCompounds: number } {
+    // Count unique compounds - all compounds in data should have matches for fragment algorithm
+    const uniqueCompounds = new Set(data.map(row => row.compound.name));
+    return {
+      totalCompounds: uniqueCompounds.size
+    };
   }
 }

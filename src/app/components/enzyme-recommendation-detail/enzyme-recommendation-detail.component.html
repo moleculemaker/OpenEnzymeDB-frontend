@@ -89,7 +89,14 @@
             </div>
             <div class="flex justify-between">
               <span class="leading-sm text-[#495057]">Matches Returned</span>
-              <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ substrate['matches_return'][algorithm] }}</span>
+              <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">
+                @if (result.data && result.data.ungroupedData) {
+                  @let stats = getStats(result.data.ungroupedData);
+                  {{ stats.totalCompounds }} compounds
+                } @else {
+                  loading ...
+                }
+              </span>
             </div>
             <hr>
             @switch (algorithm) {
@@ -173,7 +180,6 @@
               @switch (result.status) {
                 @case ('loading') {
                   <div class="w-full p-2 flex flex-col gap-2">
-                    <!-- Table header skeleton -->
                     <div class="flex gap-2">
                       @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
                         <div class="w-[10%]"> 
@@ -182,11 +188,8 @@
                       }
                     </div>
                     
-                    <!-- Table rows skeleton -->
-                    @for (i of [1,2,3,4,5]; track i) {
-                      <!-- <div class="flex gap-2 mb-2 w-full"> -->
-                        <p-skeleton width="100%" height="2rem"></p-skeleton>
-                      <!-- </div> -->
+                    @for (i of [11,12,13,14,15]; track i) {
+                      <p-skeleton width="100%" height="2rem"></p-skeleton>
                     }
                   </div>
                 }
@@ -241,10 +244,10 @@
                               <i [class]="group.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                               <span class="font-semibold">Compound: </span>
                               <span>{{ group.compound.name }}</span>
-                              <!-- <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
+                              <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
                                 $implicit: algorithm, 
-                                label: group[algorithm] | number:'1.1-4'
-                              }"></ng-container> -->
+                                label: getAlgorithmLabel(algorithm, group[algorithm], group)
+                              }"></ng-container>
                             </button>
                             <button class="float-right inline-flex items-center gap-2 bg-[--surface-100] text-[#6c757d] rounded-sm px-2 py-1" (click)="showEnzymeStructureDialog(group)">
                               <i class="pi pi-eye"></i>
@@ -335,7 +338,7 @@
                                     <td class="align-middle">
                                       <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
                                         $implicit: algorithm, 
-                                        label: row[value.field] | number: '1.1-4'
+                                        label: getAlgorithmLabel(algorithm, row[value.field])
                                       }"></ng-container>
                                     </td>
                                   }
@@ -346,7 +349,7 @@
                                     <td class="align-middle">
                                       <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
                                         $implicit: algorithm, 
-                                        label: row[value.field] | number: '1.1-4'
+                                        label: getAlgorithmLabel(algorithm, row[value.field])
                                       }"></ng-container>
                                     </td>
                                   }
@@ -516,7 +519,7 @@
       <span class="p-1 text-white font-semibold rounded-md bg-[#726EDE]">{{ label }}</span>
     }
     @case ('fragment') {
-      Fragment
+      <span class="text-gray-400">{{ label }}</span>
     }
     @case ('tanimoto') {
       <span class="p-1 text-black font-semibold rounded-md bg-[#B2FDEF]">{{ label }}</span>
