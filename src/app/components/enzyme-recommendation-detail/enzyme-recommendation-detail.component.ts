@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
@@ -39,6 +39,8 @@ import { ToastModule } from "primeng/toast";
 import { EnzymeStructureDialogComponent } from "~/components/enzyme-structure-dialog/enzyme-structure-dialog.component"
 import { CompoundStructureDialogComponent } from "~/components/compound-structure-dialog/compound-structure-dialog.component";
 import { ReactionSchemaComponent } from "~/app/components/reaction-schema/reaction-schema.component";
+import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
+import { EnzymeRecommendationComponent } from "../enzyme-recommendation/enzyme-recommendation.component";
 
 export interface RecommendationResultRow {
   iid: number,
@@ -139,6 +141,8 @@ export interface RecommendationResultRowGroup {
     EnzymeStructureDialogComponent,
     CompoundStructureDialogComponent,
     ReactionSchemaComponent,
+    JobTabComponent,
+    EnzymeRecommendationComponent,
   ],
   providers: [
     MessageService,
@@ -151,6 +155,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
   override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
   override jobType: JobType = JobType.OedCheminfo;
   algorithm: 'mcs' | 'fragment' | 'tanimoto' = this.route.snapshot.paramMap.get("algorithm") as 'mcs' | 'fragment' | 'tanimoto';
+
+  currentPage = 'result';
 
   @ViewChild(MoleculeImageComponent) molecule2d!: MoleculeImageComponent;
   @ViewChild(Molecule3dComponent) molecule3d!: Molecule3dComponent;
@@ -352,6 +358,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult {
     private route: ActivatedRoute,
     private filterService: FilterService,
     private messageService: MessageService,
+    private router: Router,
   ) {
     super(service);
 
