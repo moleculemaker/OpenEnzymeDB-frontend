@@ -11,6 +11,10 @@ import { MainLayoutComponent } from "./components/main-layout/main-layout.compon
 import { EnzymeRecommendationComponent } from "./components/enzyme-recommendation/enzyme-recommendation.component";
 import { EnzymeRecommendationResultComponent } from "./components/enzyme-recommendation-result/enzyme-recommendation-result.component";
 import { EnzymeRecommendationDetailComponent } from "./components/enzyme-recommendation-detail/enzyme-recommendation-detail.component";
+import { PropertyPredictionComponent } from "src/app/components/property-prediction/property-prediction.component";
+import { PropertyPredictionResultComponent } from "src/app/components/property-prediction-result/property-prediction-result.component";
+import { PropertyPredictionDetailComponent } from "./components/property-prediction-detail/property-prediction-detail.component";
+
 
 const routes: Routes = [
   { path: "", pathMatch: "full", redirectTo: "home" },
@@ -27,6 +31,10 @@ const routes: Routes = [
       { path: 'enzyme-recommendation', component: EnzymeRecommendationComponent },
       { path: 'enzyme-recommendation/result/:id', component: EnzymeRecommendationResultComponent },
       { path: 'enzyme-recommendation/result/:id/:algorithm', component: EnzymeRecommendationDetailComponent },
+
+      { path: 'property-prediction', component: PropertyPredictionComponent },
+      { path: 'property-prediction/result/:id', component: PropertyPredictionResultComponent },
+      { path: 'property-prediction/result/:id/:algorithm', component: PropertyPredictionDetailComponent },
     ]
   },
   { path: "font-match", component: FontMatchComponent },

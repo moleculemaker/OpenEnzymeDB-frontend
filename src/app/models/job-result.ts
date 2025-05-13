@@ -3,14 +3,10 @@ import { JobStatus, JobType } from "~/app/api/mmli-backend/v1";
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { QueryValue } from "./search-options";
 
-export class JobResult {
+export class JobResult<T> {
     jobId: string;
     jobType: JobType;
-    jobInfo: {
-        query_smiles: string;
-        query_value: QueryValue;
-        email: string;
-    };
+    jobInfo: T;
 
     isLoading$ = new BehaviorSubject(true);
     resultLoaded$ = new BehaviorSubject(false);

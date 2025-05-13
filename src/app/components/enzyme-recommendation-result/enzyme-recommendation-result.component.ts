@@ -13,6 +13,13 @@ import { MoleculeImageComponent } from '../molecule-image/molecule-image.compone
 import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
 import { JobTabComponent } from '../job-tab/job-tab.component';
 import { EnzymeRecommendationComponent } from '../enzyme-recommendation/enzyme-recommendation.component';
+import { QueryValue } from '~/app/models/search-options';
+
+export type EnzymeRecommendationJobInfo = {
+  query_smiles: string;
+  query_value: QueryValue;
+  email: string;
+}
 
 @Component({
   selector: 'app-enzyme-recommendation-result',
@@ -36,7 +43,7 @@ import { EnzymeRecommendationComponent } from '../enzyme-recommendation/enzyme-r
     class: 'flex flex-col h-full',
   }
 })
-export class EnzymeRecommendationResultComponent extends JobResult {
+export class EnzymeRecommendationResultComponent extends JobResult<EnzymeRecommendationJobInfo> {
   override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
   override jobType: JobType = JobType.OedCheminfo;
 

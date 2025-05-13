@@ -1,0 +1,24 @@
+[
+    {
+        "algorithm": "dlkcat",
+        "values": {
+            "kcat": 0.072
+        }
+    },
+    {
+        "algorithm": "unikp",
+        "values": {
+            "kcat": 0.072,
+            "km": 0.694,
+            "kcat_km": 0.104
+        }
+    },
+    {
+        "algorithm": "catpred",
+        "values": {
+            "kcat": 0.072,
+            "km": 0.694,
+            "ki": 0.123
+        }
+    }
+]

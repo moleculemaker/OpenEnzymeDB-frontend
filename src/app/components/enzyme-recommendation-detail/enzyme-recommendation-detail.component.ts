@@ -36,11 +36,12 @@ import { transition } from "@angular/animations";
 import { style } from "@angular/animations";
 import { animate } from "@angular/animations";
 import { ToastModule } from "primeng/toast";
-import { EnzymeStructureDialogComponent } from "~/components/enzyme-structure-dialog/enzyme-structure-dialog.component"
-import { CompoundStructureDialogComponent } from "~/components/compound-structure-dialog/compound-structure-dialog.component";
+import { EnzymeStructureDialogComponent } from "~/app/components/enzyme-structure-dialog/enzyme-structure-dialog.component"
+import { CompoundStructureDialogComponent } from "~/app/components/compound-structure-dialog/compound-structure-dialog.component";
 import { ReactionSchemaComponent } from "~/app/components/reaction-schema/reaction-schema.component";
 import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
 import { EnzymeRecommendationComponent } from "../enzyme-recommendation/enzyme-recommendation.component";
+import { EnzymeRecommendationJobInfo } from "../enzyme-recommendation-result/enzyme-recommendation-result.component";
 
 export interface RecommendationResultRow {
   iid: number,
@@ -153,7 +154,7 @@ export interface RecommendationResultRowGroup {
     class: "flex flex-col h-full"
   }
 })
-export class EnzymeRecommendationDetailComponent extends JobResult {
+export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecommendationJobInfo> {
   override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
   override jobType: JobType = JobType.OedCheminfo;
   algorithm: 'mcs' | 'fragment' | 'tanimoto' = this.route.snapshot.paramMap.get("algorithm") as 'mcs' | 'fragment' | 'tanimoto';

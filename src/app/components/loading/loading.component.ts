@@ -23,7 +23,7 @@ import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
         AsyncPipe,
     ],
 })
-export class LoadingComponent extends JobResult implements OnInit {
+export class LoadingComponent extends JobResult<any> implements OnInit {
   @Input() override jobType: JobType;
   override jobId: string = this.route.snapshot.paramMap.get("id") || "";
 
