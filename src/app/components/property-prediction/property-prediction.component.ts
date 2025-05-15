@@ -13,6 +13,7 @@ import { MoleculeImageComponent } from "../molecule-image/molecule-image.compone
 import { MarvinjsInputComponent } from "../marvinjs-input/marvinjs-input.component";
 import { SmilesValidatorDirective } from "~/app/directives/smiles-validator.directive";
 import { InputTextModule } from "primeng/inputtext";
+import { InputTextareaModule } from "primeng/inputtextarea";
 @Component({
   selector: 'app-property-prediction',
   templateUrl: './property-prediction.component.html',
@@ -25,6 +26,7 @@ import { InputTextModule } from "primeng/inputtext";
     ButtonModule,
     PanelModule,
     InputTextModule,
+    InputTextareaModule,
     
     JobTabPredictionComponent,
     MarvinjsInputComponent,
@@ -78,7 +80,7 @@ export class PropertyPredictionComponent {
 
   useExample() {
     this.form.patchValue({
-      enzyme: 'WP_063460136',
+      enzyme: '>WP_063460136\nMAIPPYPDFRSAAFLRQHLRATMAFYDPVATDASGGQFHFFLDDGTVYNTHTRHLVSATRFVVTHAMLYRTTGEARYQVGMRHALEFLRTAFLDPATGGYAWLIDWQDGRATVQDTTRHCYGMAFVMLAYARAYEAGVPEARVWLAEAFDTAEQHFWQPAAGLYADEASPDWQLTSYRGQNANMHACEAMISAFRATGERRYIERAEQLAQGICQRQAALSDRTHAPAAEGWVWEHFHADWSVDWDYNRHDRSNIFRPWGYQVGHQTEWAKLLLQLDALLPADWHLPCAQRLFDTAVERGWDAEHGGLYYGMAPDGSICDDGKYHWVQAESMAAAAVLAVRTGDARYWQWYDRIWAYCWAHFVDHEHGAWFRILHRDNRNTTREKSNAGKVDYHNMGACYDVLLWALDAPGFSKESRSAALGRP',
       substrate: 'COC1=C(C=CC(=C1)CCN)O',
     });
   }
