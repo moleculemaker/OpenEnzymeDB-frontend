@@ -1,103 +1,119 @@
 <!-- Request Configuration -->
 <div class="flex flex-col h-full">
   <form class="flex flex-col justify-between h-full gap-4" [formGroup]="form" (ngSubmit)="onSubmit()">
-    @if (showJobTab) {
-    <app-job-tab-prediction [tab]="currentPage"></app-job-tab-prediction>
-    }
+    <div class="flex flex-col gap-4">
+      @if (showJobTab) {
+      <app-job-tab-prediction [tab]="currentPage"></app-job-tab-prediction>
+      }
 
-    <p-panel>
-      <ng-template pTemplate="header">
-        <h6 class="grow">Input</h6>
-        <div class="flex gap-2 -my-1">
-          <button type="button" class="flex items-center btn-outline" (click)="useExample()">
-            <i class="mr-2 pi pi-box"></i>
-            Use an Example
-          </button>
-          <button type="button" class="flex items-center btn-outline" (click)="clearAll()">
-            Reset Input
-          </button>
-        </div>
-      </ng-template>
-      <ng-template pTemplate="content">
-        <div class="p-4 flex flex-col gap-4">
-          <div class="flex flex-col gap-2">
-            <span class="flex justify-between mt-2 text-sm mx-2">
-              <div class="flex gap-4 items-center">
-                <small class="font-semibold leading-xl">
-                  Enzyme (FASTA or Uniprot)
-                </small>
-              </div>
-              <small class="leading-xl text-text-secondary">
-                Example:
-                <!-- <small class="font-semibold underline cursor-pointer" (click)="useExample()">
-                  4-(2-aminoethyl)-2-methoxyphenol
-                </small> -->
-              </small>
-            </span>
-            <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
-              <div class="grow h-8">
-                <app-marvinjs-input placeholder="Enter a Substrate SMILES or “Draw / Upload” another format"
-                  class="grow h-8" formControlName="inputValue">
-                </app-marvinjs-input>
-              </div>
-            </div>
-
-            @let enzymeControl = form.controls['enzyme'];
-            <div class="flex flex-col gap-1">
-              @if (enzymeControl.hasError('invalid')) {
-              <div class="text-red-500">invalid name</div>
-              }
-              @if (enzymeControl.hasError('required')) {
-              <div class="text-red-500">field is required</div>
-              }
-            </div>
-
+      <p-panel>
+        <ng-template pTemplate="header">
+          <h6 class="grow">Input</h6>
+          <div class="flex gap-2 -my-1">
+            <button type="button" class="flex items-center btn-outline" (click)="useExample()">
+              <i class="mr-2 pi pi-box"></i>
+              Use an Example
+            </button>
+            <button type="button" class="flex items-center btn-outline" (click)="clearAll()">
+              Reset Input
+            </button>
           </div>
-          <div class="flex flex-col gap-2">
-            <span class="flex justify-between mt-2 text-sm mx-2">
-              <div class="flex gap-4 items-center">
-                <small class="font-semibold leading-xl">
-                  Substate (SMILES or Structure)
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="p-4 flex flex-col gap-4">
+            <div class="flex flex-col gap-2">
+              <span class="flex justify-between mt-2 text-sm">
+                <div class="flex gap-4 items-center">
+                  <small class="font-semibold leading-xl">
+                    Enzyme (FASTA or Uniprot)
+                  </small>
+                </div>
+                <small class="leading-xl text-text-secondary">
+                  Example:
+                  <small class="font-semibold underline cursor-pointer" (click)="form.controls['enzyme'].setValue('WP_063460136')">
+                    WP_063460136
+                  </small>,
+                  <small class="font-semibold underline cursor-pointer" (click)="form.controls['enzyme'].setValue('A2BC19')">
+                    A2BC19
+                  </small>
                 </small>
+              </span>
+              <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
+                <input
+                  pInputText
+                  class="w-full border-none h-8"
+                  type="text" 
+                  formControlName="enzyme" 
+                  title="Enter an Enzyme Sequence (FASTA or Uniprot)"
+                  placeholder="Enter an Enzyme Sequence (FASTA or Uniprot)"
+                />
               </div>
-              <small class="leading-xl text-text-secondary">
-                Example:
-                <small class="font-semibold underline cursor-pointer" (click)="useExample()">
-                  4-(2-aminoethyl)-2-methoxyphenol
+
+              @let enzymeControl = form.controls['enzyme'];
+              @if (enzymeControl.invalid && enzymeControl.dirty) {
+              <div class="flex flex-col gap-1 px-1">
+                @if (enzymeControl.hasError('invalid')) {
+                <div class="text-red-500">invalid name</div>
+                }
+                @if (enzymeControl.hasError('required')) {
+                <div class="text-red-500">field is required</div>
+                }
+              </div>
+              }
+
+            </div>
+            <div class="flex flex-col gap-2">
+              <span class="flex justify-between mt-2 text-sm">
+                <div class="flex gap-4 items-center">
+                  <small class="font-semibold leading-xl">
+                    Substate (SMILES or Structure)
+                  </small>
+                </div>
+                <small class="leading-xl text-text-secondary">
+                  Example:
+                  <small class="font-semibold underline cursor-pointer" (click)="form.controls['substrate'].setValue('COC1=C(C=CC(=C1)CCN)O')">
+                    4-(2-aminoethyl)-2-methoxyphenol
+                  </small>
                 </small>
-              </small>
-            </span>
-            <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
-              <div class="grow h-8">
-                <app-marvinjs-input placeholder="Enter a Substrate SMILES or “Draw / Upload” another format"
-                  class="grow h-8" formControlName="inputValue">
-                </app-marvinjs-input>
+              </span>
+              <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
+                <div class="grow h-8">
+                  <app-marvinjs-input placeholder="Enter a Substrate SMILES or “Draw / Upload” another format"
+                    class="grow h-8" formControlName="substrate"
+                    appSmilesValidator
+                    (onSmilesValidationStatusChange)="chemInfo = $event"
+                  >
+                  </app-marvinjs-input>
+                </div>
               </div>
-            </div>
 
-            @let substrateControl = form.controls['substrate'];
-            <div class="flex flex-col gap-1">
-              @if (substrateControl.hasError('invalid')) {
-              <div class="text-red-500">invalid SMILES</div>
+              @let substrateControl = form.controls['substrate'];
+              @if (substrateControl.invalid && substrateControl.dirty) {
+                <div class="flex flex-col gap-1 px-1">
+                  @if (substrateControl.hasError('invalid')) {
+                  <div class="text-red-500">invalid SMILES</div>
+                  }
+                  @if (substrateControl.hasError('required')) {
+                  <div class="text-red-500">field is required</div>
+                  }
+                </div>
               }
-              @if (substrateControl.hasError('required')) {
-              <div class="text-red-500">field is required</div>
-              }
-            </div>
 
-            <div
-              class="relative grow flex flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
-              [class.invalid]="substrateControl.errors && substrateControl.dirty">
-              <div class="flex items-center justify-center">
-                <i class="absolute pi left-3 top-3" [class.pi-check-circle]="substrateControl.valid"></i>
-
-                <!-- <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo"></app-molecule-image> -->
+              @if (chemInfo.status !== 'na') {
+              <div
+                class="relative grow flex flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
+                [class.invalid]="substrateControl.errors && substrateControl.dirty">
+                <div class="flex items-center justify-center">
+                  <i class="absolute pi left-3 top-3" [class.pi-check-circle]="substrateControl.valid"></i>
+                    <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo"></app-molecule-image>
+                </div>
               </div>
+              }
             </div>
           </div>
-        </div>
-      </ng-template>
-    </p-panel>
+        </ng-template>
+      </p-panel>
+    </div>
 
     <!-- Subscription Email Input -->
     <div class="sticky bottom-0 flex justify-between rounded-t-md bg-[#F3F5FB] px-10 pt-8">
@@ -124,8 +140,7 @@
             [formControl]="form.controls['agreeToSubscription']"></p-checkbox>
         </div>
       </div>
-      <!-- TODO: update button -->
-      <p-button label="Generating routes using ACERetro" type="submit" styleClass="bg-[#224063]"
+      <p-button label="Get Enzyme Property Prediction" type="submit" styleClass="bg-[#224063]"
         [disabled]="form.invalid" iconPos="right" icon="pi pi-arrow-right"></p-button>
     </div>
   </form>

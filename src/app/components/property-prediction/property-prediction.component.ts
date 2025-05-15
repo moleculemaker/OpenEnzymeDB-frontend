@@ -6,12 +6,13 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { JobType } from "~/app/api/mmli-backend/v1";
-import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { Loadable, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { JobTabPredictionComponent } from "../job-tab-prediction/job-tab-prediction.component";
 import { PanelModule } from "primeng/panel";
 import { MoleculeImageComponent } from "../molecule-image/molecule-image.component";
 import { MarvinjsInputComponent } from "../marvinjs-input/marvinjs-input.component";
-
+import { SmilesValidatorDirective } from "~/app/directives/smiles-validator.directive";
+import { InputTextModule } from "primeng/inputtext";
 @Component({
   selector: 'app-property-prediction',
   templateUrl: './property-prediction.component.html',
@@ -23,10 +24,12 @@ import { MarvinjsInputComponent } from "../marvinjs-input/marvinjs-input.compone
     CheckboxModule,
     ButtonModule,
     PanelModule,
-
+    InputTextModule,
+    
     JobTabPredictionComponent,
     MarvinjsInputComponent,
     MoleculeImageComponent,
+    SmilesValidatorDirective,
   ],
   host: {
     class: "flex flex-col h-full"
@@ -38,10 +41,15 @@ export class PropertyPredictionComponent {
   
   form = new FormGroup({
     enzyme: new FormControl("", [Validators.required]),
-    substrate: new FormControl("", [Validators.required]),
+    substrate: new FormControl(""),
     email: new FormControl("", [Validators.email]),
     agreeToSubscription: new FormControl(false),
   });
+
+  chemInfo: Loadable<string> = { 
+    status: 'na',
+    data: null,
+  };
  
   constructor(
     private service: OpenEnzymeDBService,
@@ -69,10 +77,14 @@ export class PropertyPredictionComponent {
   }
 
   useExample() {
-    // TODO: add example
+    this.form.patchValue({
+      enzyme: 'WP_063460136',
+      substrate: 'COC1=C(C=CC(=C1)CCN)O',
+    });
   }
 
   clearAll() {
-    // TODO: add clear all
+    this.form.reset();
+    this.chemInfo = { status: 'na', data: null };
   }
 }
