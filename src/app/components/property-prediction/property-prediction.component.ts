@@ -8,7 +8,9 @@ import { CommonModule } from "@angular/common";
 import { JobType } from "~/app/api/mmli-backend/v1";
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { JobTabPredictionComponent } from "../job-tab-prediction/job-tab-prediction.component";
-import { SkeletonModule } from "primeng/skeleton";
+import { PanelModule } from "primeng/panel";
+import { MoleculeImageComponent } from "../molecule-image/molecule-image.component";
+import { MarvinjsInputComponent } from "../marvinjs-input/marvinjs-input.component";
 
 @Component({
   selector: 'app-property-prediction',
@@ -20,9 +22,11 @@ import { SkeletonModule } from "primeng/skeleton";
     ReactiveFormsModule,
     CheckboxModule,
     ButtonModule,
-    
+    PanelModule,
 
     JobTabPredictionComponent,
+    MarvinjsInputComponent,
+    MoleculeImageComponent,
   ],
   host: {
     class: "flex flex-col h-full"
@@ -33,6 +37,8 @@ export class PropertyPredictionComponent {
   currentPage: 'input' | 'result' = 'input';
   
   form = new FormGroup({
+    enzyme: new FormControl("", [Validators.required]),
+    substrate: new FormControl("", [Validators.required]),
     email: new FormControl("", [Validators.email]),
     agreeToSubscription: new FormControl(false),
   });
@@ -60,5 +66,13 @@ export class PropertyPredictionComponent {
     ).subscribe((response) => {
       this.router.navigate(['property-prediction', 'result', response.job_id]);
     })
+  }
+
+  useExample() {
+    // TODO: add example
+  }
+
+  clearAll() {
+    // TODO: add clear all
   }
 }
