@@ -59,8 +59,14 @@
                   </small>
                 </span>
                 <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
-                  <textarea pInputTextarea autoResize class="w-full border-none h-8" type="text" formControlName="enzyme"
+                  <textarea 
+                    pInputTextarea
+                    autoResize 
+                    class="w-full border-none h-8"
+                    type="text" 
+                    formControlName="enzyme"
                     title="Enter an Enzyme Sequence (FASTA or Uniprot)"
+                    appSequenceOrUniprotValidator
                     placeholder="Enter an Enzyme Sequence (FASTA or Uniprot)"></textarea>
                 </div>
 
@@ -73,6 +79,22 @@
                   @if (enzymeControl.hasError('required')) {
                   <div class="text-red-500">field is required</div>
                   }
+                  @if (enzymeControl.hasError('invalidUniprotId')) {
+                  <div class="text-red-500">invalid UniProt ID</div>
+                  }
+                  @if (enzymeControl.hasError('headerCannotBeEmpty')) {
+                  <div class="text-red-500">header cannot be empty</div>
+                  }
+                  @if (enzymeControl.hasError('invalidSequence')) {
+                  <div class="text-red-500">invalid sequence</div>
+                  }
+                  @if (enzymeControl.hasError('sequenceLengthGreaterThan1022')) {
+                  <div class="text-red-500">sequence length greater than 1022</div>
+                  }
+                  @if (enzymeControl.hasError('sequenceLengthIs0')) {
+                  <div class="text-red-500">sequence length is 0</div>
+                  }
+
                 </div>
                 }
 

@@ -14,6 +14,8 @@ import { MarvinjsInputComponent } from "../marvinjs-input/marvinjs-input.compone
 import { SmilesValidatorDirective } from "~/app/directives/smiles-validator.directive";
 import { InputTextModule } from "primeng/inputtext";
 import { InputTextareaModule } from "primeng/inputtextarea";
+import { SequenceOrUniprotValidatorDirective } from "~/app/directives/sequence-or-uniprot-validator.directive";
+
 @Component({
   selector: 'app-property-prediction',
   templateUrl: './property-prediction.component.html',
@@ -32,6 +34,7 @@ import { InputTextareaModule } from "primeng/inputtextarea";
     MarvinjsInputComponent,
     MoleculeImageComponent,
     SmilesValidatorDirective,
+    SequenceOrUniprotValidatorDirective,
   ],
   host: {
     class: "flex flex-col h-full"
