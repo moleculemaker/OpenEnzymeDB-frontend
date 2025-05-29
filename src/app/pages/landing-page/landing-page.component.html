@@ -3,7 +3,11 @@
     <div class="max-w-screen-md inline-block">
       <h1 class="font-bold leading-xl">Welcome to Open Enzyme Database!</h1>
       <h5 class="mt-5 leading-xl pr-[76px]">
-        We're building toward a community-driven resource for researchers and professionals in biochemistry, molecular biology, enzymology, protein and metabolic engineering, and related fields. In this pre-release version, Open Enzyme Database offers curated data on enzyme kinetics and experimental parameters, with ongoing algorithm development, an expanding knowledge base of enzyme solubility, stability, specificity, structures, functions and associated enzymatic reactions. We hope you'll join us in this collaboration!
+        We're building toward a community-driven resource for researchers and professionals in biochemistry, molecular
+        biology, enzymology, protein and metabolic engineering, and related fields. In this pre-release version, Open
+        Enzyme Database offers curated data on enzyme kinetics and experimental parameters, with ongoing algorithm
+        development, an expanding knowledge base of enzyme solubility, stability, specificity, structures, functions and
+        associated enzymatic reactions. We hope you'll join us in this collaboration!
       </h5>
       <!-- <h5 class="mt-5 leading-xl">
         A community-driven resource for researchers and professionals in biochemistry, molecular biology, enzymology,
@@ -18,13 +22,12 @@
     <div class="inline-block flex flex-col gap-4 bg-[#FFEDF4] p-4 mt-5" id="container_feedback">
       <div>
         <h5 class="font-bold leading-xl mt-0 mb-2">Help Us Improve OED!</h5>
-        <p class="leading-xl">We're looking for input on features, bugs, and user feedback in order to improve on our pre-release for future versions. Share your thoughts with us by filling out a short form below (you can do this multiple times). We’re excited to hear from you!</p>
+        <p class="leading-xl">We're looking for input on features, bugs, and user feedback in order to improve on our
+          pre-release for future versions. Share your thoughts with us by filling out a short form below (you can do
+          this multiple times). We’re excited to hear from you!</p>
       </div>
       <div class="flex justify-center">
-        <a
-          [href]="feedbackUrl"
-          target="_blank"
-          rel="noopener noreferrer"
+        <a [href]="feedbackUrl" target="_blank" rel="noopener noreferrer"
           class="bg-[#D5618C] text-white px-5 py-3 rounded-md inline-block">
           <h6 class="text-white font-semibold">Share Your Thoughts</h6>
         </a>
@@ -147,301 +150,215 @@
   </div> -->
 </div>
 
-
-<div #dataSnapshot class="bg-[#F3F5FB] w-full flex flex-col justify-center items-center py-16">
-  <div class="xl:w-full w-content-xl pt-6 pb-8 px-4">
-    <h4>Data Snapshot</h4>
-    @if (summary.status === 'loaded') {
-    <h5 class="max-w-screen-md mt-5 leading-xl">
-      The first release of Open Enzyme Database includes quantities of dataset, featuring
-      {{ summary.kcat.total | number }} entries for enzyme turnover number (<span
-          class="italic text-lg">k</span><sub>cat</sub>),
-      {{ summary.km.total | number }} entries for Michaelis constants (<span class="italic text-lg">K</span><sub>m</sub>), and
-      {{ summary.kcat_km.total | number }} entries for enzyme catalytic efficiency (<span
-          class="italic text-lg">k</span><sub>cat</sub> / <span class="italic text-lg">K</span><sub>m</sub>)
-    </h5>
-    <h5 class="max-w-screen-md mt-5 leading-xl">
-      Learn more about our curated data below, or by visiting our statistics page for more information.
-    </h5>
-    }
-  </div>
-
-  <div class="xl:w-full w-content-xl px-4">
-    @if (summary.status === 'loaded'
-    && chartConfigs['pieChart']['data']['kcat'].status === 'loaded'
-    && chartConfigs['pieChart']['data']['km'].status === 'loaded'
-    && chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded'
-    && chartConfigs['barChart']['data'].status === 'loaded') {
-    <p-panel>
-      <ng-template pTemplate="header">
-        <span class="grow">Data Snapshot</span>
-      </ng-template>
-
-      <div class="flex flex-col">
-        <div class="relative"></div>
-        <div class="flex gap-2 bg-[#F7F8F9] p-2">
-          <div>
-            <div class="rounded-md border border-solid border-[--surface-d] py-2 flex flex-col gap-2 bg-white min-w-[100px]">
-              <div class="font-semibold px-2">EC Classes</div>
-              <hr>
-              <div class="flex flex-col">
-                @for (color of chartConfigs['pieChart']['styleConfig']['backgroundColor']; track color; let i = $index) {
-                <button title="EC {{ i + 1 }}" type="button" class="flex items-center gap-2 cursor-pointer px-2 py-1"
-                  [class.bg-[#F5F9FF]]="chartState.state === 'focused' && chartState.payload === i"
-                  (click)="chartState = { state: 'focused', payload: i }; $event.stopPropagation()"
-                  (mouseover)="chartState = { state: 'hovering-ec', payload: i }; $event.stopPropagation()"
-                  (mouseout)="chartState = { state: 'mouseout-ec', payload: i }; $event.stopPropagation()">
-                  @if (currentChart === 'pieChart') {
-                  <div class="w-4 h-4 rounded-full" [style.background-color]="color"></div>
-                  }
-                  <div>{{ ecSummary[i].label }}</div>
-                </button>
-                }
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 w-full">
-            <div class="flex justify-end w-full pr-8 gap-2">
-              @if (chartState.state === 'focused' || chartState.state === 'hovering-ec') {
-              <div class="rounded-md border border-solid border-[--surface-d] p-2 flex flex-col gap-2 bg-white grow">
-                @switch (currentChart) {
-                @case ('pieChart') {
-                <div class="font-semibold flex items-center gap-2">
-                  <div class="w-4 h-4 rounded-full"
-                    [style.background-color]="chartConfigs[currentChart]['styleConfig']['backgroundColor'][chartState.payload]">
-                  </div>
-                  <div class="font-semibold">{{ ecSummary[chartState.payload].longLabel }}:<span
-                      class="font-normal ml-1">{{ ecSummary[chartState.payload].description }}</span></div>
-                </div>
-                <hr>
-                <div class="flex justify-between">
-                  <div class="flex flex-col gap-2">
-                    <div class="font-semibold"><span class="italic">k</span><sub>cat</sub></div>
-                    <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                        chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[chartState.payload] | number
-                      }}</span></div>
-                    <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
-                        (chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[chartState.payload] /
-                        chartConfigs['pieChart']['data']['kcat'].data.datasets[0].total * 100).toFixed(1) }}%</span>
-                    </div>
-                  </div>
-                  <div class="flex flex-col gap-2">
-                    <div class="font-semibold"><span class="italic">K</span><sub>m</sub></div>
-                    <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                        chartConfigs['pieChart']['data']['km'].data.datasets[0].data[chartState.payload] | number
-                        }}</span></div>
-                    <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
-                        (chartConfigs['pieChart']['data']['km'].data.datasets[0].data[chartState.payload] /
-                        chartConfigs['pieChart']['data']['km'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
-                  </div>
-                  <div class="flex flex-col gap-2">
-                    <div class="font-semibold"><span class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></div>
-                    <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                        chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[chartState.payload] | number
-                        }}</span></div>
-                    <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
-                        (chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[chartState.payload] /
-                        chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].total * 100).toFixed(1) }}%</span>
-                    </div>
-                  </div>
-                </div>
-                }
-                @case ('barChart') {
-                <div class="font-semibold flex items-center gap-2">
-                  <div class="font-semibold">{{ ecSummary[chartState.payload].longLabel }}:<span
-                      class="font-normal ml-1">{{ ecSummary[chartState.payload].description }}</span></div>
-                </div>
-                <hr>
-                <div class="flex justify-between">
-                  <div class="flex flex-col gap-2">
-                    <div class="font-semibold flex items-center gap-2">
-                      <div class="w-4 h-4 rounded-full"
-                        [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][0]">
-                      </div>
-                      <div><span class="italic">k</span><sub>cat</sub></div>
-                    </div>
-                    <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                        chartConfigs['barChart']['data'].data.datasets[0].data[chartState.payload] | number }}</span>
-                    </div>
-                    <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
-                        (chartConfigs['barChart']['data'].data.datasets[0].data[chartState.payload] /
-                        chartConfigs['barChart']['data'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
-                  </div>
-                  <div class="flex flex-col gap-2">
-                    <div class="font-semibold flex items-center gap-2">
-                      <div class="w-4 h-4 rounded-full"
-                        [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][1]">
-                      </div>
-                      <div><span class="italic">K</span><sub>m</sub></div>
-                    </div>
-                    <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                        chartConfigs['barChart']['data'].data.datasets[1].data[chartState.payload] | number }}</span>
-                    </div>
-                    <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
-                        (chartConfigs['barChart']['data'].data.datasets[1].data[chartState.payload] /
-                        chartConfigs['barChart']['data'].data.datasets[1].total * 100).toFixed(1) }}%</span></div>
-                  </div>
-                  <div class="flex flex-col gap-2">
-                    <div class="font-semibold flex items-center gap-2">
-                      <div class="w-4 h-4 rounded-full"
-                        [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][2]">
-                      </div>
-                      <div><span class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></div>
-                    </div>
-                    <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
-                        chartConfigs['barChart']['data'].data.datasets[2].data[chartState.payload] | number }}</span>
-                    </div>
-                    <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
-                        (chartConfigs['barChart']['data'].data.datasets[2].data[chartState.payload] /
-                        chartConfigs['barChart']['data'].data.datasets[2].total * 100).toFixed(1) }}%</span></div>
-                  </div>
-                </div>
-                }
-                }
-              </div>
-              } @else {
-              <div class="h-[116px] w-full"></div>
-              }
-              <p-dropdown [options]="dropdownOptions" [(ngModel)]="currentChart" optionValue="value"
-                (onChange)="currentChart = $event.value"></p-dropdown>
-            </div>
-            @switch (currentChart) {
-            <!-- Pie Charts -->
-            @case ('pieChart') {
-            <div class="flex justify-center gap-4 p-8">
-              @if (chartConfigs['pieChart']['data']['kcat'].status === 'loaded') {
-              <div>
-                <div class="font-semibold"><span
-                    class="pb-1"><span class="italic">k</span><sub>cat</sub></span></div>
-                <p-chart type="pie" #kcatChart [data]="chartConfigs['pieChart']['data']['kcat'].data"
-                  [options]="chartConfigs['pieChart']['data']['kcat'].options"
-                  [plugins]="chartConfigs['pieChart']['data']['kcat'].plugins"></p-chart>
-              </div>
-              } @else {
-              <div class="flex justify-center items-center h-full">
-                <p-skeleton width="100px" height="100px"></p-skeleton>
-              </div>
-              }
-
-              @if (chartConfigs['pieChart']['data']['km'].status === 'loaded') {
-              <div>
-                <div class="font-semibold"><span
-                    class="pb-1"><span class="italic">K</span><sub>m</sub></span></div>
-                <p-chart type="pie" #kmChart [data]="chartConfigs['pieChart']['data']['km'].data"
-                  [options]="chartConfigs['pieChart']['data']['km'].options"
-                  [plugins]="chartConfigs['pieChart']['data']['km'].plugins"></p-chart>
-              </div>
-              } @else {
-              <div class="flex justify-center items-center h-full">
-                <p-skeleton width="100px" height="100px"></p-skeleton>
-              </div>
-              }
-
-              @if (chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded') {
-              <div>
-                <div class="font-semibold"><span class="pb-1"><span
-                    class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span></div>
-                <p-chart type="pie" #kcatKmChart [data]="chartConfigs['pieChart']['data']['kcat_km'].data"
-                  [options]="chartConfigs['pieChart']['data']['kcat_km'].options"
-                  [plugins]="chartConfigs['pieChart']['data']['kcat_km'].plugins"></p-chart>
-              </div>
-              } @else {
-              <div class="flex justify-center items-center h-full">
-                <p-skeleton width="100px" height="100px"></p-skeleton>
-              </div>
-              }
-            </div>
-            }
-
-            <!-- Bar Charts -->
-            @case ('barChart') {
-            @if (chartConfigs['barChart']['data'].status === 'loaded') {
-            <div class="p-8">
-              <div class="flex justify-center w-full">
-                <div id="legend-container"></div>
-              </div>
-              <p-chart type="bar" #histogramChart styleClass="w-full" [data]="chartConfigs['barChart']['data'].data"
-                [options]="chartConfigs['barChart']['data'].options" [plugins]="chartConfigs['barChart']['data'].plugins">
-              </p-chart>
-            </div>
-            }
-            }
-            }
-          </div>
-        </div>
-      </div>
-
-      <hr />
-
-      <div class="flex w-full">
-        <p-table #resultsTable [value]="summary.dataset" dataKey="label" class="w-full h-full" tableStyleClass="w-full"
-          styleClass="w-full">
-          <ng-template pTemplate="header">
-            <tr>
-              <!-- <th class="align-middle">Reaction</th> -->
-              <th class="align-middle"></th>
-              <th class="align-middle">
-                <span class="font-semibold mr-2"><span class="italic">k</span><sub>cat</sub></span> Dataset
-              </th>
-              <th class="align-middle">
-                <span class="font-semibold mr-2"><span class="italic">K</span><sub>m</sub></span> Dataset
-              </th>
-              <th class="align-middle">
-                <span class="font-semibold mr-2"><span class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span> Dataset
-              </th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-row let-expanded="expanded">
-            <tr>
-              <td class="align-middle w-[300px]">{{ row.label }}</td>
-              <td class="align-middle">{{ row.kcat | number }}</td>
-              <td class="align-middle">{{ row.km | number }}</td>
-              <td class="align-middle">{{ row.kcat_km | number }}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-    </p-panel>
-    }
-
-    @else {
-    <div class="flex justify-center items-center h-full">
-      <p-progressSpinner ariaLabel="loading" />
-    </div>
-    }
+<div class="flex flex-col items-center col-span-12 py-8 mt-16 bg-gray-50 w-full">
+  <h4 class="my-4 text-bold">Which tool should I use?</h4>
+  <div class="flex items-center justify-between gap-4">
+    <h5 class="mt-0 italic">I want to...</h5>
+    <p-dropdown class="dropdown-intention text-center md:w-[480px]" styleClass="md:w-[480px]" [options]="researchNeeds"
+      [ngModel]="selectedResearchNeed$.value" (onChange)="selectedResearchNeed$.next($event.value)"
+      placeholder="(Select a goal)"></p-dropdown>
+    <p-button label="Recommend" styleClass="bg-[#224063] pl-10 pr-10" iconPos="right" icon="pi pi-arrow-down"
+      (onClick)="displayedResearchNeed$.next(selectedResearchNeed$.value)"></p-button>
   </div>
 </div>
 
-<p-dialog
-    #tutorialDialog
-    header="Welcome to our pre-release!"
-    [(visible)]="displayTutorial" 
-    [modal]="true" 
-    [style]="{ width: '400px' }" 
-    [draggable]="false" 
-    [resizable]="false"
->
-    <div class="flex flex-col gap-6 -mb-2">
-        <p class="leading-xl">
-          Welcome to Open Enzyme Database, a growing repository for enzymatic data and predictions. 
-          We've created an early "pre-release" version of the tool to showcase some core functionalities, 
-          but we have a much bigger vision for the future. You can read more this vision 
-          in our <a [href]="whitePaperUrl" target="_blank" rel="noopener noreferrer" class="text-[#0080FF]">white paper</a> or 
-          <a [href]="visionUrl" target="_blank" rel="noopener noreferrer" class="text-[#0080FF]">feature documentation</a>.
-        </p>
-        <p class="leading-xl">
-          We're looking for suggestions and feedback from you that we'll use to guide future versions of this tool. Share your input with us by submitting a short form (or multiple)! You may access this form at any time using one of the “Share Your Thoughts” buttons.
-        </p>
-        <div class="flex items-center gap-2">
-            <p-checkbox [(ngModel)]="tutorialService.showTutorial" [binary]="true"></p-checkbox>
-            <label for="show-tour">Don't show this message again</label>
-        </div>
-        <div class="flex justify-center">
-            <p-button
-                (onClick)="displayTutorial = false; tutorialService.driver.drive()"
-                label="Continue to Tool"
-                styleClass="bg-[#224063]"
-            ></p-button>
-        </div>
+<div class="flex justify-center mt-16">
+  <div class="lg:w-screen-lg">
+    <h4 class="pb-6 text-bold">Common Workflow</h4>
+    <div class="pb-10 flex gap-2 justify-between">
+      <a [href]="ODBTools.DB_SEARCH" class="w-[30%]">
+        <p-card [styleClass]="
+                        'rounded-none shadow-none border-2 border-solid border-bluegray-100 cursor-pointer '
+                        + (displayedResearchNeed$.value === ODBTools.DB_SEARCH ? 'bg-gray-50': '')
+                    " (mouseenter)="displayedResearchNeed$.next(ODBTools.DB_SEARCH)"
+          (mouseleave)="displayedResearchNeed$.next(ODBTools.NA)">
+          <ng-template pTemplate="header">
+            <div class="flex items-center justify-center p-2 pb-0">
+              <div class="relative flex grow">
+                <div class="bg-[#9592EE] h-[200px] w-full flex items-center justify-center">
+                  <svg width="65" height="64" viewBox="0 0 65 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M25.5957 10.4971C28.9746 9.82496 32.4693 10.1062 35.6904 11.3027L36.3311 11.5537C39.5138 12.8721 42.2629 15.0477 44.2764 17.832L44.6689 18.3975C46.7105 21.4529 47.8008 25.045 47.8008 28.7197C47.8008 31.0072 47.3778 33.2735 46.5557 35.4053L46.3867 35.8301C45.453 38.0843 44.0837 40.1321 42.3584 41.8574C40.7409 43.4749 38.8398 44.779 36.751 45.7051L36.3311 45.8857C34.0769 46.8195 31.6606 47.2998 29.2207 47.2998C25.7757 47.2998 22.4032 46.3419 19.4775 44.54L18.8984 44.168C16.034 42.254 13.7616 39.5845 12.3301 36.4609L12.0547 35.8301C10.6484 32.435 10.2811 28.6989 10.998 25.0947C11.6702 21.7159 13.2674 18.5951 15.6055 16.0771L16.083 15.582C18.6814 12.9836 21.9916 11.214 25.5957 10.4971ZM29.2207 11.166C25.976 11.166 22.7996 12.0685 20.0439 13.7656L19.498 14.1152C16.8001 15.9179 14.6599 18.4329 13.3115 21.375L13.0527 21.9697C11.8111 24.9674 11.429 28.2471 11.9424 31.4424L12.0566 32.0801C12.6897 35.2626 14.1943 38.2026 16.3965 40.5742L16.8467 41.041C19.1411 43.3353 22.0252 44.943 25.1738 45.6914L25.8066 45.8301C28.9891 46.4631 32.2806 46.1983 35.3145 45.0713L35.918 44.834C38.9156 43.5922 41.505 41.5433 43.4014 38.9209L43.7715 38.3887C45.6943 35.5108 46.7207 32.1271 46.7207 28.666C46.7206 24.17 44.9901 19.8526 41.8984 16.6035L41.5947 16.292C38.3129 13.0102 33.8619 11.166 29.2207 11.166Z"
+                      stroke="white" stroke-opacity="0.54" stroke-width="3" />
+                    <path
+                      d="M53.8345 55.3326C53.5718 55.3338 53.3114 55.2826 53.0687 55.1818C52.826 55.0811 52.6059 54.9329 52.4212 54.7459L41.4079 43.7326C41.0546 43.3534 40.8623 42.852 40.8714 42.3339C40.8805 41.8157 41.0904 41.3214 41.4569 40.9549C41.8233 40.5885 42.3177 40.3786 42.8358 40.3695C43.3539 40.3603 43.8554 40.5526 44.2345 40.9059L55.2479 51.9192C55.6224 52.2942 55.8328 52.8026 55.8328 53.3326C55.8328 53.8626 55.6224 54.3709 55.2479 54.7459C55.0632 54.9329 54.8431 55.0811 54.6004 55.1818C54.3577 55.2826 54.0973 55.3338 53.8345 55.3326Z"
+                      fill="white" fill-opacity="0.54" />
+                    <path
+                      d="M42.8623 41.8691C42.988 41.8669 43.1094 41.9127 43.2031 41.9961L54.1865 52.9785V52.9795C54.2801 53.0732 54.333 53.2006 54.333 53.333C54.3329 53.4321 54.3031 53.5281 54.249 53.6094L54.1865 53.6855L54.1807 53.6914C54.1586 53.7138 54.1344 53.7345 54.1084 53.752L54.0254 53.7969C53.9673 53.821 53.9047 53.8333 53.8418 53.833H53.8271C53.7956 53.8331 53.7642 53.8293 53.7334 53.8232L53.6436 53.7969C53.6144 53.7848 53.5866 53.7695 53.5605 53.752L53.4883 53.6914L53.4814 53.6855L42.498 42.7012C42.4361 42.6315 42.3949 42.5468 42.3789 42.4561L42.3711 42.3604C42.3728 42.2632 42.4026 42.1693 42.4561 42.0898L42.5176 42.0156C42.5863 41.9469 42.6729 41.8999 42.7666 41.8799L42.8623 41.8691Z"
+                      stroke="white" stroke-opacity="0.54" stroke-width="3" />
+                  </svg>
+
+                </div>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <div class="flex">
+              <button pButton class="justify-center mt-2 -mb-2 grow" @fadeIn
+                *ngIf="displayedResearchNeed$.value === ODBTools.DB_SEARCH">
+                Start Using
+              </button>
+            </div>
+          </ng-template>
+
+          <h5 class="mt-0 font-bold opacity-100 leading-lg">Database Search</h5>
+          <ul class="mt-2 ml-6 list-disc">
+            <li class="pl-2 leading-normal">
+              Search an entity to find relevant experimental data in OED
+            </li>
+            <li class="pt-2 pl-2 leading-normal">
+              Explore details for specific compounds, EC numbers, Uniprot IDs, and organisms
+            </li>
+          </ul>
+        </p-card>
+      </a>
+
+
+      <a [href]="ODBTools.ENZYME_PREDICTION" class="w-[30%]">
+        <p-card [styleClass]="
+                            'rounded-none shadow-none border-2 border-solid border-bluegray-100 cursor-pointer '
+                            + (displayedResearchNeed$.value === ODBTools.ENZYME_PREDICTION ? 'bg-gray-50': '')
+                        " (mouseenter)="displayedResearchNeed$.next(ODBTools.ENZYME_PREDICTION)"
+          (mouseleave)="displayedResearchNeed$.next(ODBTools.NA)">
+          <ng-template pTemplate="header">
+            <div class="flex items-center justify-center p-2 pb-0">
+              <div class="bg-[#10B8F9] h-[200px] w-full flex items-center justify-center">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_1034_69912)">
+                    <path
+                      d="M38.427 36.4337C36.6625 38.4451 34.5139 40.0908 32.0956 41.284V48.1411C32.0956 48.7473 31.8548 49.3287 31.4262 49.7574C30.9975 50.186 30.4161 50.4268 29.8099 50.4268H16.0956C15.4894 50.4268 14.908 50.186 14.4794 49.7574C14.0507 49.3287 13.8099 48.7473 13.8099 48.1411V41.284C8.99321 38.8797 5.3109 34.6831 3.5532 29.5947C1.79549 24.5064 2.10246 18.9317 4.40823 14.0671C6.714 9.2025 10.8348 5.43557 15.8864 3.57471C20.9379 1.71386 26.5177 1.90735 31.4282 4.11368M13.8099 61.7137H32.0956"
+                      stroke="white" stroke-opacity="0.54" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <path
+                      d="M33.805 17.9839C32.2004 17.705 32.2004 15.401 33.805 15.1222C36.6461 14.6277 39.2755 13.2984 41.3581 11.3037C43.4408 9.30898 44.8822 6.73928 45.4987 3.92217L45.5947 3.47417C45.9421 1.88788 48.2004 1.87874 48.5616 3.46046L48.6804 3.97703C49.3206 6.78138 50.7751 9.33407 52.8613 11.3145C54.9475 13.2949 57.5723 14.6148 60.4061 15.1085C62.0198 15.3919 62.0198 17.705 60.4061 17.9885C57.5731 18.4829 54.9493 19.8031 52.864 21.7835C50.7787 23.7639 49.3249 26.3162 48.685 29.1199L48.5661 29.6365C48.205 31.2182 45.9467 31.209 45.5993 29.6227L45.5078 29.1793C44.8907 26.361 43.4479 23.7904 41.3636 21.7955C39.2792 19.8007 36.6477 18.4767 33.805 17.9839Z"
+                      stroke="white" stroke-opacity="0.54" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_1034_69912">
+                      <rect width="64" height="64" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <div @fadeIn *ngIf="displayedResearchNeed$.value === ODBTools.ENZYME_PREDICTION" class="mt-[-12px]">
+              <ul class="ml-6 list-disc">
+                <li class="pl-2 leading-normal">
+                  <b class="font-bold italic">DLKcat</b> provides an integrated deep learning approach for kcat
+                  predictions
+                </li>
+                <li class="pt-2 pl-2 leading-normal">
+                  <b class="font-bold italic">UniKP</b> is a unified framework for predicting<span
+                    class="italic">k<sub>cat</sub></span>, <span class="italic">K<sub>M</sub></span> and <span
+                    class="italic">k<sub>cat</sub>/K<sub>M</sub></span> based on pre-trained language models
+                </li>
+                <li class="pt-2 pl-2 leading-normal">
+                  <b class="font-bold italic">CatPred</b> leverages protein sequence embeddings and neural networks to
+                  predict <span class="italic">k<sub>cat</sub></span>, <span class="italic">K<sub>M</sub></span>, and
+                  <span class="italic">K<sub>i</sub></span>
+                </li>
+              </ul>
+              <div class="flex">
+                <button pButton class="justify-center mt-2 -mx-1 -mb-2 grow">
+                  Start Using
+                </button>
+              </div>
+            </div>
+          </ng-template>
+
+          <h5 class="mt-0 font-bold opacity-100 leading-lg">Enzyme Property Prediction</h5>
+          <small class="opacity-60">DLKcat, UniKP, CatPred</small>
+          <p class="mt-2 leading-normal">
+            Predict <span class="italic">k<sub>cat</sub></span>, <span class="italic">K<sub>M</sub></span>, <span
+              class="italic">k<sub>cat</sub>/K<sub>M</sub></span> (catalytic efficiency), or <span
+              class="italic">K<sub>i</sub></span> (inhibitory constant) values for enzyme-substrate
+            pairs using 3 novel ML algorithms: <b class="font-bold italic">DLKcat</b>, <b
+              class="font-bold italic">UniKP</b>, and <b class="font-bold italic">CatPred</b>.
+          </p>
+
+        </p-card>
+      </a>
+
+      <a [href]="ODBTools.ENZYME_RECOMMENDATION" class="w-[30%]">
+        <p-card [styleClass]="
+                            'rounded-none shadow-none border-2 border-solid border-bluegray-100 cursor-pointer '
+                            + (displayedResearchNeed$.value === ODBTools.ENZYME_RECOMMENDATION ? 'bg-gray-50': '')
+                        " (mouseenter)="displayedResearchNeed$.next(ODBTools.ENZYME_RECOMMENDATION)"
+          (mouseleave)="displayedResearchNeed$.next(ODBTools.NA)">
+          <ng-template pTemplate="header">
+            <div class="flex items-center justify-center p-2 pb-0">
+              <div class="bg-[#41D8BC] h-[200px] w-full flex items-center justify-center">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M43.4282 31.9999C46.4127 31.9995 49.3156 31.0255 51.6963 29.2259C54.0771 27.4262 55.8059 24.899 56.6202 22.0278C57.4346 19.1566 57.2901 16.0981 56.2088 13.3164C55.1274 10.5348 53.1682 8.18179 50.6283 6.61453C48.0885 5.04727 45.1068 4.35128 42.1356 4.63219C39.1644 4.9131 36.3659 6.15556 34.1648 8.17105C31.9637 10.1865 30.4801 12.865 29.9392 15.8C29.3983 18.7351 29.8296 21.7665 31.1677 24.4342L23.4899 29.8353C22.3107 28.0141 20.5858 26.6124 18.5619 25.8307C16.5379 25.049 14.3186 24.9273 12.2213 25.4831C10.124 26.0388 8.25622 27.2436 6.88498 28.925C5.51374 30.6064 4.70931 32.6783 4.58674 34.8445C4.46418 37.0107 5.02974 39.1602 6.20256 40.9856C7.37538 42.8109 9.09538 44.2187 11.1166 45.0075C13.1378 45.7963 15.3566 45.9257 17.4559 45.3773C19.5551 44.8289 21.4271 43.6307 22.8042 41.9542L34.6968 48.8913C34.0703 50.7616 34.1568 52.7975 34.9397 54.6079C35.7227 56.4183 37.1469 57.8757 38.9388 58.7001C40.7307 59.5245 42.7641 59.6579 44.6483 59.0746C46.5326 58.4913 48.1349 57.2324 49.1476 55.5397C50.1603 53.8471 50.512 51.84 50.1351 49.9038C49.7582 47.9677 48.6793 46.239 47.1057 45.0498C45.532 43.8606 43.5744 43.2947 41.609 43.4608C39.6435 43.6269 37.8086 44.5132 36.4568 45.9496L24.5117 38.9804C25.211 37.0845 25.335 35.0243 24.8682 33.0582L33.0785 27.2844C34.3646 28.7667 35.9544 29.9549 37.7402 30.7685C39.526 31.5821 41.4659 32.0021 43.4282 31.9999ZM43.4282 28.5713C40.7003 28.5713 38.0841 27.4876 36.1551 25.5587C34.2262 23.6297 33.1425 21.0135 33.1425 18.2856C33.1425 15.5576 34.2262 12.9414 36.1551 11.0125C38.0841 9.08355 40.7003 7.99988 43.4282 7.99988C46.1562 7.99988 48.7724 9.08355 50.7013 11.0125C52.6303 12.9414 53.7139 15.5576 53.7139 18.2856C53.7139 21.0135 52.6303 23.6297 50.7013 25.5587C48.7724 27.4876 46.1562 28.5713 43.4282 28.5713ZM14.8568 42.2856C13.0382 42.2856 11.294 41.5631 10.0081 40.2772C8.72211 38.9912 7.99966 37.2471 7.99966 35.4284C7.99966 33.6098 8.72211 31.8657 10.0081 30.5797C11.294 29.2937 13.0382 28.5713 14.8568 28.5713C16.6754 28.5713 18.4196 29.2937 19.7055 30.5797C20.9915 31.8657 21.7139 33.6098 21.7139 35.4284C21.7139 37.2471 20.9915 38.9912 19.7055 40.2772C18.4196 41.5631 16.6754 42.2856 14.8568 42.2856ZM46.8568 51.4284C46.8568 52.6409 46.3752 53.8036 45.5179 54.6609C44.6605 55.5182 43.4978 55.9999 42.2854 55.9999C41.073 55.9999 39.9102 55.5182 39.0529 54.6609C38.1956 53.8036 37.7139 52.6409 37.7139 51.4284C37.7139 50.216 38.1956 49.0533 39.0529 48.196C39.9102 47.3386 41.073 46.857 42.2854 46.857C43.4978 46.857 44.6605 47.3386 45.5179 48.196C46.3752 49.0533 46.8568 50.216 46.8568 51.4284Z"
+                    fill="white" fill-opacity="0.54" />
+                </svg>
+
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <div @fadeIn *ngIf="displayedResearchNeed$.value === ODBTools.ENZYME_RECOMMENDATION" class="mt-[-12px]">
+              <ul class="ml-6 list-disc">
+                <li class="pl-2 leading-normal">
+                  <b class="font-bold italic">MCS</b> identifies the largest shared substructure between two molecules
+                </li>
+                <li class="pt-2 pl-2 leading-normal">
+                  <b class="font-bold italic">Tanimoto
+              Similarity</b> calculates similarity based on molecular fingerprints
+                </li>
+                <li class="pt-2 pl-2 leading-normal">
+                  <b class="font-bold italic">Fragment Algorithm</b> compares molecules by breaking them into smaller chemical fragments and assessing overlap
+                </li>
+              </ul>
+              <div class="flex">
+                <button pButton class="justify-center mt-2 -mx-1 -mb-2 grow">
+                  Start Using
+                </button>
+              </div>
+            </div>
+          </ng-template>
+
+          <h5 class="mt-0 font-bold opacity-100 leading-lg">Enzyme Recommendation</h5>
+          <small class="opacity-60">MCS, Tanimoto Similarity, Fragment Algorithm</small>
+          <p class="mt-2 leading-normal">
+            Discover enzyme recommendations for a specific substrate using 3 structure search algorithms: <b
+              class="font-bold italic">MCS</b>, <b class="font-bold italic">Tanimoto
+              Similarity</b>, and <b class="font-bold italic">Fragment Algorithm</b>.
+          </p>
+        </p-card>
+      </a>
     </div>
+  </div>
+</div>
+
+<p-dialog #tutorialDialog header="Welcome to our pre-release!" [(visible)]="displayTutorial" [modal]="true"
+  [style]="{ width: '400px' }" [draggable]="false" [resizable]="false">
+  <div class="flex flex-col gap-6 -mb-2">
+    <p class="leading-xl">
+      Welcome to Open Enzyme Database, a growing repository for enzymatic data and predictions.
+      We've created an early "pre-release" version of the tool to showcase some core functionalities,
+      but we have a much bigger vision for the future. You can read more this vision
+      in our <a [href]="whitePaperUrl" target="_blank" rel="noopener noreferrer" class="text-[#0080FF]">white paper</a>
+      or
+      <a [href]="visionUrl" target="_blank" rel="noopener noreferrer" class="text-[#0080FF]">feature documentation</a>.
+    </p>
+    <p class="leading-xl">
+      We're looking for suggestions and feedback from you that we'll use to guide future versions of this tool. Share
+      your input with us by submitting a short form (or multiple)! You may access this form at any time using one of the
+      “Share Your Thoughts” buttons.
+    </p>
+    <div class="flex items-center gap-2">
+      <p-checkbox [(ngModel)]="tutorialService.showTutorial" [binary]="true"></p-checkbox>
+      <label for="show-tour">Don't show this message again</label>
+    </div>
+    <div class="flex justify-center">
+      <p-button (onClick)="displayTutorial = false; tutorialService.driver.drive()" label="Continue to Tool"
+        styleClass="bg-[#224063]"></p-button>
+    </div>
+  </div>
 </p-dialog>
