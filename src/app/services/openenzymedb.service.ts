@@ -9,6 +9,8 @@ import { EnvironmentService } from "./environment.service";
 import { ungzip } from 'pako';
 import { HttpErrorResponse } from "@angular/common/http";
 import { CommonService } from "./common.service";
+import { Loadable } from "../models/Loadable";
+import { ReactionSchemaRecord, ReactionSchemaRecordWithKeyInfo } from "../models/ReactionSchemaRecord";
 
 async function loadGzippedJson<T>(path: string): Promise<T> {
   try {
@@ -227,26 +229,6 @@ export type SubstrateRecord = {
   H_BOND_ACCEPTOR: number,
   N_RINGS: number,
   MOL: string,
-}
-
-export type ReactionSchemaRecord = {
-  reactionPartners: string,
-  reactants: string[],
-  products: string[],
-  ligandStructureId: number
-}
-
-export type ReactionSchemaRecordWithKeyInfo = ReactionSchemaRecord & {
-  ecNumber: string,
-  substrate: string,
-  organism: string,
-}
-
-export type LoadingStatus = 'loading' | 'loaded' | 'error' | 'na' | 'invalid';
-
-export type Loadable<T> = {
-  status: LoadingStatus;
-  data: T | null;
 }
 
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');

@@ -9,7 +9,6 @@ import { OEDRecord, OpenEnzymeDBService } from '~/app/services/openenzymedb.serv
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent } from "../../components/query-input/query-input.component";
 import { QueryValue, SearchOption, SmilesSearchOption } from '~/app/models/search-options';
-import { MoleculeSearchOption } from '~/app/models/search-options/MoleculeSearchOption';
 import { RangeSearchOption } from '~/app/models/search-options/RangeSearchOption';
 import { StringSearchOption } from '~/app/models/search-options/StringSearchOption';
 import { TableModule } from "primeng/table";

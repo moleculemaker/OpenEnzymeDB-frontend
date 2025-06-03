@@ -2,7 +2,7 @@ import { Directive, EventEmitter, Output } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable, of, tap, startWith, distinctUntilChanged, debounceTime, switchMap, filter, map, first } from 'rxjs';
 import { CommonService } from '../services/common.service';
-import { Loadable } from '../services/openenzymedb.service';
+import { Loadable } from "../models/Loadable";
 import { CactusService } from '../services/cactus.service';
 
 @Directive({

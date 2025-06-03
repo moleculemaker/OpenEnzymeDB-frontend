@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { SafePipe } from '../../pipes/safe.pipe';
 import { of, map } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Loadable } from '~/app/services/openenzymedb.service';
+import { Loadable } from "~/app/models/Loadable";
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonService } from '~/app/services/common.service';
 

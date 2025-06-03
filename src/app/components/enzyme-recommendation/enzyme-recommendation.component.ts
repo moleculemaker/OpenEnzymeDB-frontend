@@ -1,4 +1,4 @@
-import { Component, Input, SimpleChanges, ViewChild } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, ViewChild } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
@@ -34,7 +34,7 @@ import { CactusService } from '~/app/services/cactus.service';
     class: "flex flex-col h-full"
   }
 })
-export class EnzymeRecommendationComponent {
+export class EnzymeRecommendationComponent implements OnChanges {
   @Input() formValue!: {
     query_smiles: string;
     query_value: QueryValue;

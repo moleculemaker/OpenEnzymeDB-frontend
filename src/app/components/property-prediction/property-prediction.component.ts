@@ -6,7 +6,8 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { JobType } from "~/app/api/mmli-backend/v1";
-import { Loadable, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { Loadable } from "~/app/models/Loadable";
 import { JobTabPredictionComponent } from "../job-tab-prediction/job-tab-prediction.component";
 import { PanelModule } from "primeng/panel";
 import { MoleculeImageComponent } from "../molecule-image/molecule-image.component";

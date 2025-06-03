@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { filter, Subscription } from 'rxjs';
-import { ReactionSchemaRecord } from '~/app/services/openenzymedb.service';
+import { ReactionSchemaRecord } from "~/app/models/ReactionSchemaRecord";
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { CactusService } from '~/app/services/cactus.service';
 

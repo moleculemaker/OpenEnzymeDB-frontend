@@ -1,7 +1,7 @@
 import { Directive, EventEmitter, forwardRef, Output } from '@angular/core';
 import { AbstractControl, AsyncValidator, NG_ASYNC_VALIDATORS, ValidationErrors } from '@angular/forms';
 import { Observable, of, tap, startWith, distinctUntilChanged, debounceTime, switchMap, filter, map, first } from 'rxjs';
-import { Loadable } from '../services/openenzymedb.service';
+import { Loadable } from "../models/Loadable";
 import { CommonService } from '../services/common.service';
 
 @Directive({

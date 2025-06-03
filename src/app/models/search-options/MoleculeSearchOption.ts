@@ -1,7 +1,7 @@
 import { FormControl, Validators, AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { Observable, of, map, first, catchError, tap, filter, switchMap, debounceTime, startWith, distinctUntilChanged } from 'rxjs';
 import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
-import { Loadable } from '~/app/services/openenzymedb.service';
+import { Loadable } from "~/app/models/Loadable";
 
 type MoleculeSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;

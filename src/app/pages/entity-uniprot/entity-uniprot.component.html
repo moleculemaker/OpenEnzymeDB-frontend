@@ -125,8 +125,18 @@
           <p class="font-bold">Structure</p>
           <div class="flex gap-2 h-full">
             @if (uniprot['status'] !== 'inactive') {
-            <app-molecule3d #molecule3d class="w-full h-[300px] rounded-md border border-solid border-[#DEE2E6] p-1"
-              [options]="{
+              <div class="relative h-full w-full p-1 rounded-md border border-solid border-[#DEE2E6]">
+                <div class="absolute top-1 left-1 font-semibold z-10">
+                  <app-external-link 
+                    [linkItem]="{ 
+                      url: 'https://www.uniprot.org/uniprotkb/' + uniprot['primaryAccession'], 
+                      label: uniprot['primaryAccession']
+                    }"
+                  ></app-external-link>
+                </div>
+                <app-molecule3d 
+                class="w-full h-full" 
+                [options]="{
                     data: uniprot['primaryAccession'],
                     dataType: 'uniprot',
                     viewerOptions: {
@@ -135,8 +145,8 @@
                         color: 'spectrum'
                       }
                     }
-                }">
-            </app-molecule3d>
+                }"></app-molecule3d>
+              </div>
             } @else {
               <div class="w-full h-[300px] rounded-md border border-solid border-[#DEE2E6] p-1 bg-gray-50 flex flex-col justify-center items-center">
                 <h1><i class="pi pi-exclamation-triangle text-gray-400"></i></h1>

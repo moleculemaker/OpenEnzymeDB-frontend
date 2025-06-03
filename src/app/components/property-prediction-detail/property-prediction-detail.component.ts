@@ -3,7 +3,7 @@ import { JobTabComponent } from '../job-tab/job-tab.component';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { JobResult } from '~/app/models/job-result';
-import { Loadable } from '~/app/services/openenzymedb.service';
+import { Loadable } from "~/app/models/Loadable";
 import { FilterService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';

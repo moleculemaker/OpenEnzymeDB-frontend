@@ -5,7 +5,8 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { ECRecord, OpenEnzymeDBService, ReactionSchemaRecordWithKeyInfo } from '~/app/services/openenzymedb.service';
+import { ECRecord, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { ReactionSchemaRecordWithKeyInfo } from "~/app/models/ReactionSchemaRecord";
 import { PanelModule } from "primeng/panel";
 import { TableModule } from "primeng/table";
 import { combineLatestWith, map, switchMap } from "rxjs/operators";
