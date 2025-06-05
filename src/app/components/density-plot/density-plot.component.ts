@@ -281,8 +281,8 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
           .attr("fill", "#495057")
           .style("mix-blend-mode", "difference")
           .attr('transform', `translate(0, ${-this.height - 25})`)
-          .text((d > 1000 || d < 0.0001) 
-            ? d.toExponential(2) 
+          .html((d > 1000 || d < 0.0001)  
+            ? d.toExponential(2).replace(/e+?([+|-])?(\d+)/, '&times;10<tspan baseline-shift="super" font-size="0.5rem">$1$2</tspan>')
             : d.toFixed(4));
       });
 
@@ -300,8 +300,8 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
           .attr("fill", "#495057")
           .style("mix-blend-mode", "difference")
           .attr('transform', `translate(0, ${-this.height - 25})`)
-          .text((d > 1000 || d < 0.0001) 
-            ? d.toExponential(2) 
+          .html((d > 1000 || d < 0.0001)  
+            ? d.toExponential(2).replace(/e\+?(-)?(\d+)/, '&times;10<tspan baseline-shift="super" font-size="0.5rem">$1$2</tspan>')
             : d.toFixed(4));
       });
 
