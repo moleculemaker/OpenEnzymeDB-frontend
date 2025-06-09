@@ -50,6 +50,8 @@ export class EnzymeRecommendationResultComponent extends JobResult<EnzymeRecomme
   currentPage = 'result';
   response$ = this.jobResultResponse$;
 
+  substrate: RecommendationResult['query_smiles'];
+
   results: Array<{
     model: string,
     algorithm: 'mcs' | 'tanimoto' | 'fragment',
@@ -95,6 +97,7 @@ export class EnzymeRecommendationResultComponent extends JobResult<EnzymeRecomme
     super(service);
 
     this.response$.subscribe((resp: RecommendationResult) => {
+      this.substrate = resp.query_smiles;
       this.results.forEach((resultObj) => {
         const algorithm = resultObj['algorithm'];
         const results = resp[algorithm];
