@@ -37,7 +37,7 @@ const routes: Routes = [
     children: [
       { path: 'query', component: QueryComponent },
       { path: 'query/compound/:name', component: EntityCompoundComponent },
-      { path: 'query/ec/:number', component: EntityECNumberComponent },
+      { path: 'query/ec/:ec', component: EntityECNumberComponent },
       { path: 'query/uniprot/:id', component: EntityUniprotComponent },
       
       { path: 'enzyme-recommendation', component: EnzymeRecommendationComponent },

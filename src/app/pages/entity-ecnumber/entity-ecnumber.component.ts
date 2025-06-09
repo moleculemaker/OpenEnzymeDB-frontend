@@ -288,7 +288,7 @@ export class EntityECNumberComponent {
     public service: OpenEnzymeDBService,
     private route: ActivatedRoute,
   ) {
-    const ecNumber$ = this.route.params.pipe(map((params) => params['number']));
+    const ecNumber$ = this.route.params.pipe(map((params) => params['ec']));
 
     ecNumber$.pipe(
       switchMap((ecNumber) => this.service.getECInfo(ecNumber))
