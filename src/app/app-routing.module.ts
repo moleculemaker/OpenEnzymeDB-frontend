@@ -14,17 +14,23 @@ import { EnzymeRecommendationDetailComponent } from "./components/enzyme-recomme
 import { PropertyPredictionComponent } from "src/app/components/property-prediction/property-prediction.component";
 import { PropertyPredictionResultComponent } from "src/app/components/property-prediction-result/property-prediction-result.component";
 import { PropertyPredictionDetailComponent } from "./components/property-prediction-detail/property-prediction-detail.component";
-import { CenterLayoutComponent } from "./components/center-layout/center-layout.component";
 import { AboutPageComponent } from "./about-page/about-page.component";
 import { TutorialPageComponent } from "./tutorial-page/tutorial-page.component";
+import { CenterLayoutComponent } from "./components/center-layout/center-layout.component";
 
 
 
 const routes: Routes = [
   { path: "", pathMatch: "full", redirectTo: "home" },
-  { path: "home", component: LandingPageComponent },
-  { path: 'about', component: AboutPageComponent },
-  { path: 'tutorial', component: TutorialPageComponent },
+  { 
+    path: "", 
+    component: CenterLayoutComponent, 
+    children: [
+      { path: "home", component: LandingPageComponent },
+      { path: 'about', component: AboutPageComponent },
+      { path: 'tutorial', component: TutorialPageComponent },
+    ]
+  },
   {
     path: "",
     component: MainLayoutComponent,
