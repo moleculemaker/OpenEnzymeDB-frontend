@@ -175,7 +175,8 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
       .attr("stroke", "#DEE2E6aa")
       .attr("stroke-dasharray", "5")
       .attr("transform", "scale(1, 0.8)")
-      .attr("stroke-width", "2");
+      .attr("stroke-width", "2")
+      .attr("opacity", 0);
 
     xAxis.select<SVGPathElement>(".domain").attr("stroke", "transparent");
 
@@ -204,15 +205,14 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
         .each((d: any, i, g) => {
           const [f, ...rest] = Array.from(g);
           d3.select(f).select("line")
-            .attr("stroke", "white")
+            .attr("stroke", "#DEE2E6")
             .attr("stroke-width", "2")
-            .attr("transform", "scale(1, 1.3)")
-            .style("mix-blend-mode", "difference");
+            .attr("opacity", 1)
+            .attr("transform", "scale(1, 1.3)");
           d3.select(f).select("text")
             .attr("font-weight", "bold")
             .attr("font-size", ".8rem")
-            .attr("fill", "white")
-            .style("mix-blend-mode", "difference")
+            .attr("fill", "black")
             .attr('transform', `translate(0, ${-this.height - 25})`)
             .text(
               (this.highlightValue! > 1000 || this.highlightValue! < 0.0001)
@@ -231,15 +231,13 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
       .filter((d: any) => d === min)
       .each((d: any, i, g: any) => {
         d3.select(g[0]).select("line")
-          .attr("stroke", "#495057")
+          .attr("stroke", "#DEE2E6")
           .attr("stroke-width", "2")
-          .style("mix-blend-mode", "difference")
+          .attr("opacity", 1)
           .attr("transform", "scale(1, 1.2)");
         d3.select(g[0]).select("text")
-          .attr("font-weight", "bold")
           .attr("font-size", ".8rem")
-          .attr("fill", "#495057")
-          .style("mix-blend-mode", "difference")
+          .attr("fill", "#6C757D")
           .attr('transform', `translate(0, ${-this.height - 25})`)
           .html((d > 1000 || d < 0.0001)  
             ? d.toExponential(2).replace(/e+?([+|-])?(\d+)/, '&times;10<tspan baseline-shift="super" font-size="0.5rem">$1$2</tspan>')
@@ -250,15 +248,13 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
       .filter((d: any) => d === max)
       .each((d: any, i, g: any) => {
         d3.select(g[0]).select("line")
-          .attr("stroke", "#495057")
+          .attr("stroke", "#DEE2E6")
           .attr("stroke-width", "2")
-          .style("mix-blend-mode", "difference")
+          .attr("opacity", 1)
           .attr("transform", "scale(1, 1.2)");
         d3.select(g[0]).select("text")
-          .attr("font-weight", "bold")
           .attr("font-size", ".8rem")
-          .attr("fill", "#495057")
-          .style("mix-blend-mode", "difference")
+          .attr("fill", "#6C757D")
           .attr('transform', `translate(0, ${-this.height - 25})`)
           .html((d > 1000 || d < 0.0001)  
             ? d.toExponential(2).replace(/e\+?(-)?(\d+)/, '&times;10<tspan baseline-shift="super" font-size="0.5rem">$1$2</tspan>')
