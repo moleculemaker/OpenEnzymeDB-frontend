@@ -48,8 +48,6 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
         filter((chemical) => chemical.status !== 'loading'),
         map((chemical) => {
           if (chemical.status === 'loaded') {
-            this.formGroup.get('value')!.setValue(chemical.data, { emitEvent: false });
-            console.log('[smiles-search-option] smiles validated', chemical);
             return null;
           }
           console.log('[smiles-search-option] smiles validation error', chemical);
@@ -91,6 +89,8 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
               switchMap((smiles) => {
                 switch (smiles.status) {
                   case 'loaded':
+                    this.formGroup.get('value')!.setValue(value, { emitEvent: false });
+                    console.log('[smiles-search-option] name validated', value);
                     return this.smilesValidator(smiles.data || '');
                   default: // only error and invalid are possible
                     this.chemInfo = {
@@ -102,7 +102,15 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
               }),
             )
           case 'smiles':
-            return this.smilesValidator(value)
+            return this.smilesValidator(value).pipe(
+              map((errors) => {
+                if (!errors) {
+                  this.formGroup.get('value')!.setValue(value, { emitEvent: false });
+                  return null;
+                }
+                return errors;
+              })
+            )
         }
 
         return of({ unknownInputType: true });

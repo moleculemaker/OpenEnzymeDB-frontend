@@ -235,7 +235,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
 
   searchConfigs: SearchOption[] = [
     new SmilesSearchOption({
-      key: 'smiles',
+      key: 'compound',
       label: 'Compound',
       placeholder: 'Enter a compound',
       example: {
