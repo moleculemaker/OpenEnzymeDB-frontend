@@ -41,30 +41,7 @@ export class PropertyPredictionResultComponent extends JobResult<PropertyPredict
 
   ];
 
-  results = [
-    {
-      "algorithm": "dlkcat",
-      "values": {
-        "kcat": 0.072
-      }
-    },
-    {
-      "algorithm": "unikp",
-      "values": {
-        "kcat": 0.072,
-        "km": 0.694,
-        "kcat_km": 0.104
-      }
-    },
-    {
-      "algorithm": "catpred",
-      "values": {
-        "kcat": 0.072,
-        "km": 0.694,
-        "ki": 0.123
-      }
-    }
-  ]
+  results = null;
 
   data$ = this.service.getData();
 
@@ -73,6 +50,10 @@ export class PropertyPredictionResultComponent extends JobResult<PropertyPredict
     private route: ActivatedRoute,
   ) {
     super(service);
+
+    this.service.getPredictionResult(this.jobId).subscribe((results) => {
+      this.results = results;
+    });
   }
 
   copyAndPasteURL(): void {

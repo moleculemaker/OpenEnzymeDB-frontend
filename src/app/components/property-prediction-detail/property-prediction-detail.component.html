@@ -39,34 +39,7 @@
       <span class="grow">Predictions</span>
     </ng-template>
 
-    @if (result.status === 'loading') {
-    <!-- <div class="flex gap-2 p-2">
-          <p-skeleton shape="rectangle" width="217px" height="217px"></p-skeleton>
-          <div class="flex flex-col gap-4 grow border-l border-solid border-[#DEE2E6] pl-2">
-            <div class="flex flex-col gap-4">
-              <div class="flex justify-between">
-                <p-skeleton width="100px" height="1.5rem"></p-skeleton>
-                <p-skeleton width="200px" height="1.5rem"></p-skeleton>
-              </div>
-              <div class="flex justify-between">
-                <p-skeleton width="100px" height="1.5rem"></p-skeleton>
-                <p-skeleton width="200px" height="1.5rem"></p-skeleton>
-              </div>
-              <div class="flex justify-between">
-                <p-skeleton width="150px" height="1.5rem"></p-skeleton>
-                <p-skeleton width="100px" height="1.5rem"></p-skeleton>
-              </div>
-              <hr>
-              <div class="flex flex-col gap-2">
-                <p-skeleton width="300px" height="1.5rem"></p-skeleton>
-                <p-skeleton width="100%" height="3rem"></p-skeleton>
-              </div>
-            </div>
-          </div>
-        </div> -->
-    }
-
-    <!-- @else if (jobInfo) { -->
+    @if (result.status === 'loaded') {
     @switch (algorithm) {
     @case ('dlkcat') {
     <div class="flex flex-col gap-2 p-2">
@@ -85,36 +58,35 @@
           </div>
           <app-molecule-image #molecule2d
             class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
-            [smiles]="jobInfo.substrate" [width]="200" [height]="150"
-          ></app-molecule-image>
+            [smiles]="jobInfo.substrate" [width]="200" [height]="150"></app-molecule-image>
         </div>
       </div>
       <div class="flex flex-col gap-2 w-full p-2">
         <span class="font-semibold">Results</span>
         <div class="flex justify-between max-w-[200px]">
           <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub>cat</sub>(1/s)</span>
-          <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ result.data.kcat }}</span>
+          <span class="flex items-center gap-1">
+            <span class="inline-block w-4 h-4" [style.background-color]="result.data.dlkcat.values.kcat.color"></span>
+            {{ result.data.dlkcat.values.kcat.value }}
+          </span>
         </div>
 
         <span class="font-semibold mt-6">Experimental Context</span>
-        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme Database's experimental data.</span>
-        
+        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme
+          Database's experimental data.</span>
+
         <div class="bg-[#F7F8F9] rounded-sm p-2 flex justify-center gap-2">
           <div class="flex flex-col gap-1 grow">
-            <span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">k</span><sub>cat</sub></span>
-            <app-density-plot
-              class="grow"
-              [data]="(kcat$ | async) || []"
-              scaleType="log"
-              [bandwidth]="0.05"
-              [highlightValue]="result.data.kcat"
-            ></app-density-plot>
+            <span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                class="italic">k</span><sub>cat</sub></span>
+            <app-density-plot class="grow" [data]="(kcat$ | async) || []" scaleType="log" [bandwidth]="0.05"
+              [highlightValue]="result.data.dlkcat.values.kcat.value"></app-density-plot>
           </div>
         </div>
       </div>
     </div>
-  }
-  @case ('unikp') {
+    }
+    @case ('unikp') {
     <div class="flex flex-col gap-2 p-2">
       <div class="flex flex-col gap-4 w-full p-2">
         <span class="font-semibold">Input</span>
@@ -131,57 +103,66 @@
           </div>
           <app-molecule-image #molecule2d
             class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
-            [smiles]="jobInfo.substrate" [width]="200" [height]="150"
-          ></app-molecule-image>
+            [smiles]="jobInfo.substrate" [width]="200" [height]="150"></app-molecule-image>
         </div>
       </div>
       <hr>
       <div class="flex flex-col gap-2 w-full p-2">
         <span class="font-semibold">Results</span>
-        <div class="flex justify-between max-w-[200px]">
-          <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub>cat</sub>(1/s)</span>
-          <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ result.data.kcat }}</span>
+        <div class="flex flex-col gap-2 max-w-[200px]">
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub>cat</sub>(1/s)</span>
+            <span class="flex items-center gap-1">
+              <span class="inline-block w-4 h-4" [style.background-color]="result.data.unikp.values.kcat.color"></span>
+              {{ result.data.unikp.values.kcat.value }}
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]"><span class="italic">K</span><sub>m</sub></span>
+            <span class="flex items-center gap-1">
+              <span class="inline-block w-4 h-4" [style.background-color]="result.data.unikp.values.km.color"></span>
+              {{ result.data.unikp.values.km.value }}
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span><span class="leading-sm text-[#495057]"><span
+                  class="italic">k</span><sub>cat</sub></span>/<span class="leading-sm text-[#495057]"><span
+                  class="italic">K</span><sub>m</sub></span></span>
+            <span class="flex items-center gap-1">
+              <span class="inline-block w-4 h-4" [style.background-color]="result.data.unikp.values.kcat_km.color"></span>
+              {{ result.data.unikp.values.kcat_km.value }}
+            </span>
+          </div>
         </div>
 
         <span class="font-semibold mt-6">Experimental Context</span>
-        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme Database's experimental data.</span>
-        
+        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme
+          Database's experimental data.</span>
+
         <div class="bg-[#F7F8F9] rounded-sm p-2 flex justify-center gap-2">
           <div class="flex flex-col gap-1 grow">
-            <span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">k</span><sub>cat</sub></span>
-            <app-density-plot
-              class="grow"
-              [data]="(kcat$ | async) || []"
-              scaleType="log"
-              [bandwidth]="0.05"
-              [highlightValue]="result.data.kcat"
-            ></app-density-plot>
+            <span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                class="italic">k</span><sub>cat</sub></span>
+            <app-density-plot class="grow" [data]="(kcat$ | async) || []" scaleType="log" [bandwidth]="0.05"
+              [highlightValue]="result.data.unikp.values.kcat.value"></app-density-plot>
           </div>
           <div class="flex flex-col gap-1 grow">
             <span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">K</span><sub>m</sub></span>
-            <app-density-plot
-              class="grow"
-              [data]="(km$ | async) || []"
-              scaleType="log"
-              [bandwidth]="0.05"
-              [highlightValue]="result.data.km"
-            ></app-density-plot>
+            <app-density-plot class="grow" [data]="(km$ | async) || []" scaleType="log" [bandwidth]="0.05"
+              [highlightValue]="result.data.unikp.values.km.value"></app-density-plot>
           </div>
           <div class="flex flex-col gap-1 grow">
-            <span><span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">k</span><sub>cat</sub></span>/<span class="leading-sm text-[#495057] font-semibold"><span class="italic">K</span><sub>m</sub></span></span>
-            <app-density-plot
-              class="grow"
-              [data]="(kcatKm$ | async) || []"
-              scaleType="log"
-              [bandwidth]="0.05"
-              [highlightValue]="result.data.kcatKm"
-            ></app-density-plot>
+            <span><span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                  class="italic">k</span><sub>cat</sub></span>/<span
+                class="leading-sm text-[#495057] font-semibold"><span class="italic">K</span><sub>m</sub></span></span>
+            <app-density-plot class="grow" [data]="(kcatKm$ | async) || []" scaleType="log" [bandwidth]="0.05"
+              [highlightValue]="result.data.unikp.values.kcat_km.value"></app-density-plot>
           </div>
         </div>
       </div>
     </div>
-  }
-  @case ('catpred') {
+    }
+    @case ('catpred') {
     <div class="flex flex-col gap-2 p-2">
       <div class="flex flex-col gap-4 w-full p-2">
         <span class="font-semibold">Input</span>
@@ -198,48 +179,51 @@
           </div>
           <app-molecule-image #molecule2d
             class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
-            [smiles]="jobInfo.substrate" [width]="200" [height]="150"
-          ></app-molecule-image>
+            [smiles]="jobInfo.substrate" [width]="200" [height]="150"></app-molecule-image>
         </div>
       </div>
       <hr>
       <div class="flex flex-col gap-2 w-full p-2">
         <span class="font-semibold">Results</span>
-        <div class="flex justify-between max-w-[200px]">
-          <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub>cat</sub>(1/s)</span>
-          <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ result.data.kcat }}</span>
+        <div class="flex flex-col gap-2 max-w-[200px]">
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub>cat</sub>(1/s)</span>
+            <span class="flex items-center gap-1">
+              <span class="inline-block w-4 h-4" [style.background-color]="result.data.catpred.values.kcat.color"></span>
+              {{ result.data.catpred.values.kcat.value }}
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]"><span class="italic">K</span><sub>m</sub></span>
+            <span class="flex items-center gap-1">
+              <span class="inline-block w-4 h-4" [style.background-color]="result.data.catpred.values.km.color"></span>
+              {{ result.data.catpred.values.km.value }}
+            </span>
+          </div>
         </div>
 
         <span class="font-semibold mt-6">Experimental Context</span>
-        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme Database's experimental data.</span>
-        
+        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme
+          Database's experimental data.</span>
+
         <div class="bg-[#F7F8F9] rounded-sm p-2 flex justify-center gap-2">
           <div class="flex flex-col gap-1 grow">
-            <span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">k</span><sub>cat</sub></span>
-            <app-density-plot
-              class="grow"
-              [data]="(kcat$ | async) || []"
-              scaleType="log"
-              [bandwidth]="0.05"
-              [highlightValue]="result.data.kcat"
-            ></app-density-plot>
+            <span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                class="italic">k</span><sub>cat</sub></span>
+            <app-density-plot class="grow" [data]="(kcat$ | async) || []" scaleType="log" [bandwidth]="0.05"
+              [highlightValue]="result.data.catpred.values.kcat.value"></app-density-plot>
           </div>
           <div class="flex flex-col gap-1 grow">
             <span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">K</span><sub>m</sub></span>
-            <app-density-plot
-              class="grow"
-              [data]="(km$ | async) || []"
-              scaleType="log"
-              [bandwidth]="0.05"
-              [highlightValue]="result.data.km"
-            ></app-density-plot>
+            <app-density-plot class="grow" [data]="(km$ | async) || []" scaleType="log" [bandwidth]="0.05"
+              [highlightValue]="result.data.catpred.values.km.value"></app-density-plot>
           </div>
         </div>
       </div>
     </div>
-  }
-  }
-    <!-- } -->
+    }
+    }
+    }
   </p-panel>
 
 </div>

@@ -35,7 +35,7 @@
         </ng-template>
         <ng-template pTemplate="content">
           <div class="flex w-full grow">
-            <p-table #resultsTable [value]="results" class="w-full h-full" tableStyleClass="w-full" styleClass="w-full"
+            <p-table #resultsTable [value]="results || []" class="w-full h-full" tableStyleClass="w-full" styleClass="w-full"
               [columns]="columns">
               <ng-template pTemplate="header">
                 <tr>
@@ -48,7 +48,7 @@
                   <th class="align-middle relative group w-1/6">
                     <span>Properties</span>
                   </th>
-                  <th class="align-middle relative group w-1/5">
+                  <th class="align-middle relative group w-1/4">
                     <span>Predicted Values</span>
                   </th>
                 </tr>
@@ -105,17 +105,38 @@
                     <div class="flex flex-col gap-2 font-semibold">
                       @switch (row.algorithm) {
                         @case ('dlkcat') {
-                          <span>{{ row.values.kcat | number: '1.1-4' }}</span>
+                          <span class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-4" [style.background-color]="row.values.kcat.color"></span>
+                            {{ row.values.kcat.value }}
+                          </span>
                         }
                         @case ('unikp') {
-                          <span>{{ row.values.kcat | number: '1.1-4' }}</span>
-                          <span>{{ row.values.km | number: '1.1-4' }}</span>
-                          <span>{{ row.values.kcat_km | number: '1.1-4' }}</span>
+                          <span class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-4" [style.background-color]="row.values.kcat.color"></span>
+                            {{ row.values.kcat.value }}
+                          </span>
+                          <span class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-4" [style.background-color]="row.values.km.color"></span>
+                            {{ row.values.km.value }}
+                          </span>
+                          <span class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-4" [style.background-color]="row.values.kcat_km.color"></span>
+                            {{ row.values.kcat_km.value }}
+                          </span>
                         }
                         @case ('catpred') {
-                          <span>{{ row.values.kcat | number: '1.1-4' }}</span>
-                          <span>{{ row.values.km | number: '1.1-4' }}</span>
-                          <span>{{ row.values.ki | number: '1.1-4' }}</span>
+                          <span class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-4" [style.background-color]="row.values.kcat.color"></span>
+                            {{ row.values.kcat.value }}
+                          </span>
+                          <span class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-4" [style.background-color]="row.values.km.color"></span>
+                            {{ row.values.km.value }}
+                          </span>
+                          <span class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-4" [style.background-color]="row.values.ki.color"></span>
+                            {{ row.values.ki.value }}
+                          </span>
                         }
                       }
                     </div>

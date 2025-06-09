@@ -5,16 +5,12 @@ import {
   ElementRef,
   Input,
   ViewChild,
-  Output,
-  EventEmitter,
-  OnDestroy,
   SimpleChanges,
 } from "@angular/core";
 import * as d3 from "d3";
-import { Slider, SliderModule } from "primeng/slider";
-import { BehaviorSubject, combineLatest, debounceTime, filter, map, max, takeLast, tap, throttleTime } from "rxjs";
+import { SliderModule } from "primeng/slider";
 import { FormsModule } from "@angular/forms";
-import { AsyncPipe } from "@angular/common";
+import { OpenEnzymeDBService } from "~/app/services/openenzymedb.service";
 
 export type ScaleType = 'linear' | 'log';
 
@@ -34,6 +30,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
   @Input() scaleType: ScaleType = 'linear';
   @Input() bandwidth = 0.05;
   @Input() highlightValue?: number;
+  @Input() colors: string[] = ['#3a1c71', '#38688f', '#56ab2f', '#c3d40c'];
 
   private density: [number, number][] = [];
   private svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
@@ -45,16 +42,30 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
   private margin = { top: 40, right: 30, bottom: 30, left: 30 };
   private thresholds: number[] = [];
 
+  gradientStops: { offset: number, color: string }[] = [];
+
+  constructor(
+    private openenzymedbService: OpenEnzymeDBService,
+  ) {}
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] || changes['scaleType'] || changes['bandwidth']) {
-      this.updateDensity();
+      const { thresholds, density } = this.openenzymedbService.createDensityFor(this.data, this.scaleType);
+      this.thresholds = thresholds;
+      this.density = density;
+
+      this.gradientStops = this.openenzymedbService.getGradientStopsFor(this.density, this.colors);
+
       this.initializeChart();
       this.render();
     }
   }
 
   ngAfterViewInit(): void {
-    this.updateDensity();
+    const { thresholds, density } = this.openenzymedbService.createDensityFor(this.data, this.scaleType);
+    this.thresholds = thresholds;
+    this.density = density;
+
     this.initializeChart();
     this.render();
   }
@@ -108,62 +119,6 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
       .domain([0, 1]);
   }
 
-  private updateDensity(): void {
-    if (!this.data.length) return;
-
-    const min = Math.min(...this.data);
-    const max = Math.max(...this.data);
-    this.thresholds = this.generateThresholds(min, max);
-    this.density = this.calculateDensity();
-  }
-
-  private generateThresholds(min: number, max: number): number[] {
-    const numPoints = 100;
-    const thresholds: number[] = [];
-
-    if (this.scaleType === 'log') {
-      const logMin = min;
-      const logMax = max;
-      const logStep = (Math.log10(logMax) - Math.log10(logMin)) / numPoints;
-      
-      for (let i = 0; i <= numPoints; i++) {
-        thresholds.push(Math.pow(10, Math.log10(logMin) + i * logStep));
-      }
-    } else {
-      const step = (max - min) / numPoints;
-      for (let i = 0; i <= numPoints; i++) {
-        thresholds.push(min + i * step);
-      }
-    }
-
-    return thresholds;
-  }
-
-  private calculateDensity(): [number, number][] {
-    const density: [number, number][] = [[this.thresholds[0], 0]];
-
-    function epanechnikov(bandwidth: number) {
-      return (x: number) =>
-        Math.abs((x /= bandwidth)) <= 1
-          ? (0.75 * (1 - x * x)) / bandwidth
-          : 0;
-    }
-
-    function kde(kernel: Function, thresholds: number[], data: number[]) {
-      return thresholds.map((t) => [t, d3.mean(data, (d) => kernel(t - d))]);
-    }
-
-    density.push(
-      ...(kde(epanechnikov(this.bandwidth), this.thresholds, this.data) as [number, number][]),
-    );
-
-    density.push([density[density.length - 1][0], 0]);
-
-    // Normalize the density
-    const maxDensity = d3.max(density.map((d) => d[1]))!;
-    return density.map(([x, y]) => [x, y / maxDensity]) as [number, number][];
-  }
-
   private render(): void {
     if (!this.plotContainer || !this.density.length) return;
 
@@ -202,7 +157,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
 
     // Add highlight value to tick values if it exists
     if (this.highlightValue !== undefined) {
-      tickValues = [...new Set([...tickValues, this.highlightValue])].sort((a, b) => a - b);
+      tickValues = [...tickValues, this.highlightValue].sort((a, b) => a - b);
     }
 
     // Update x-axis
@@ -247,12 +202,13 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
       xAxis.selectAll<SVGGElement, unknown>(".tick")
         .filter((d: any) => d === this.highlightValue)
         .each((d: any, i, g) => {
-          d3.select(g[0]).select("line")
+          const [f, ...rest] = Array.from(g);
+          d3.select(f).select("line")
             .attr("stroke", "white")
             .attr("stroke-width", "2")
             .attr("transform", "scale(1, 1.3)")
             .style("mix-blend-mode", "difference");
-          d3.select(g[0]).select("text")
+          d3.select(f).select("text")
             .attr("font-weight", "bold")
             .attr("font-size", ".8rem")
             .attr("fill", "white")
@@ -263,6 +219,10 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
                 ? this.highlightValue!.toExponential(0)
                 : this.highlightValue!.toFixed(4)
             );
+
+          rest.forEach((g) => {
+            d3.select(g).attr("opacity", 0);
+          });
         });
     }
 

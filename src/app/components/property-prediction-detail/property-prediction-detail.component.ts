@@ -15,20 +15,21 @@ import { PropertyPredictionJobInfo } from "../property-prediction-result/propert
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { DensityPlotComponent } from '../density-plot/density-plot.component';
 import { map } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-property-prediction-detail',
   standalone: true,
   imports: [
-    JobTabComponent,
     PanelModule,
     TableModule,
+    CommonModule,
     SkeletonModule,
     AsyncPipe,
 
     // SafePipe,
     // DensityPlotComponent,
+    JobTabComponent,
     MoleculeImageComponent,
     DensityPlotComponent,
   ],
@@ -45,11 +46,7 @@ export class PropertyPredictionDetailComponent extends JobResult<PropertyPredict
 
   result: Loadable<any> = {
     status: 'loading',
-    data: {
-      kcat: 0.783,
-      km: 0.01,
-      kcatKm: 0.783,
-    }
+    data: null,
   };
 
   override jobInfo: PropertyPredictionJobInfo = {
@@ -86,6 +83,17 @@ export class PropertyPredictionDetailComponent extends JobResult<PropertyPredict
     private route: ActivatedRoute,
   ) {
     super(service);
+
+    this.service.getPredictionResult(this.jobId).subscribe((result) => {
+      this.result = {
+        status: 'loaded',
+        data: result.reduce((acc: Record<string, any>, curr: any) => {
+          acc[curr.algorithm] = curr;
+          return acc;
+        }, {} as Record<string, any>)
+      };
+      console.log('result loaded: ', this.result.data);
+    });
   }
 
   backToSearch() {
