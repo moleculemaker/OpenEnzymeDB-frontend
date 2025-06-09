@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { OpenEnzymeDBService } from "../../services/open-enzyme-db.service";
+import { OpenEnzymeDBService } from "../../services/openenzymedb.service";
 import { ChartModule, UIChart } from "primeng/chart";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
