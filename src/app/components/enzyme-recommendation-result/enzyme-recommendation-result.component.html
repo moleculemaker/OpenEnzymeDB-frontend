@@ -66,12 +66,12 @@
               <div class="flex justify-between">
                 <span class="leading-sm text-[#495057]">Maximum Common Substructure (MCS) Matches Returned</span>
                 <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
-                  (response.mcs | keyvalue).length }}</span>
+                  (response.mcs | keyvalue).length > 10 ? 10 : (response.mcs | keyvalue).length }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="leading-sm text-[#495057]">Tanimoto Similarity Matches Returned</span>
                 <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
-                  (response.tanimoto | keyvalue).length }}</span>
+                  (response.tanimoto | keyvalue).length > 10 ? 10 : (response.tanimoto | keyvalue).length }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="leading-sm text-[#495057]">Fragment Algorithm Matches Returned</span>

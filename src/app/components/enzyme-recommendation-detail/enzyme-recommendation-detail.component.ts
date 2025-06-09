@@ -376,32 +376,34 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
         }),
         map(([response, jobResultResponse, uniprot, substrate]) => {
           const v = response
-            .map((row: any, index: number) => ({
-              iid: index,
-              ec_number: row.EC,
-              compound: {
-                name: row.SUBSTRATE,
-                smiles: row.SMILES,
-                formula: substrate[row.SUBSTRATE.toLowerCase()]?.FORMULA,
-              },
-              organism: row['ORGANISM'],
-              sequence: uniprot[row.UNIPROT]?.sequence?.value,
-              enzyme_type: row.EnzymeType,
-              uniprot_id: row.UNIPROT.split(','),
-              ph: row.PH,
-              temperature: row.Temperature,
-              kcat: row['KCAT VALUE'],
-              kcat_km: row['KCAT/KM VALUE'],
-              pubmed_id: `${row.PubMedID}`,
-              tanimoto: jobResultResponse.tanimoto[row.SMILES],
-              fragment: {
-                matches: jobResultResponse.fragment[row.SMILES]?.matches ?? [],
-                flattenedMatches: jobResultResponse.fragment[row.SMILES]?.matches.flat() ?? []
-              },
-              mcs: jobResultResponse.mcs[row.SMILES],
-              expanded: false,
-              reaction_schema: undefined,
-            }))
+            .map((row: any, index: number) => {
+              return {
+                iid: index,
+                ec_number: row.EC,
+                compound: {
+                  name: row.SUBSTRATE,
+                  smiles: row.SMILES,
+                  formula: substrate[row.SUBSTRATE.toLowerCase()]?.FORMULA,
+                },
+                organism: row['ORGANISM'],
+                sequence: uniprot[row.UNIPROT]?.sequence?.value,
+                enzyme_type: row.EnzymeType,
+                uniprot_id: row.UNIPROT.split(','),
+                ph: row.PH,
+                temperature: row.Temperature,
+                kcat: row['KCAT VALUE'],
+                kcat_km: row['KCAT/KM VALUE'],
+                pubmed_id: `${row.PubMedID}`,
+                tanimoto: jobResultResponse.tanimoto[row.SMILES],
+                fragment: {
+                  matches: jobResultResponse.fragment[row.SMILES]?.matches ?? [],
+                  flattenedMatches: jobResultResponse.fragment[row.SMILES]?.matches.flat() ?? []
+                },
+                mcs: jobResultResponse.mcs[row.SMILES],
+                expanded: false,
+                reaction_schema: undefined,
+              }
+            })
             .filter((row: any) => {
               // Always filter by kcat and kcat_km
               if (!row.kcat || !row.kcat_km) return false;
@@ -420,7 +422,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
               return acc;
             }, {});
 
-          const retVal = Object.values(grouped).map((value) => {
+          let retVal = Object.values(grouped).map((value) => {
             const compound = (value as any[])[0].compound;
             const tanimoto = jobResultResponse.tanimoto[compound.smiles];
             const fragment = jobResultResponse.fragment[compound.smiles];
@@ -450,6 +452,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
 
           if (this.algorithm === 'fragment') {
             retVal.sort((a, b) => (b.fragment?.flattenedMatches.length ?? 0) - (a.fragment?.flattenedMatches.length ?? 0))
+          } else if (this.algorithm === 'mcs') {
+            retVal = retVal.sort((a, b) => (b.mcs) - (a.mcs)).slice(0, 10);
+          } else if (this.algorithm === 'tanimoto') {
+            retVal = retVal.sort((a, b) => (b.tanimoto) - (a.tanimoto)).slice(0, 10);
           }
 
           return retVal;
