@@ -44,6 +44,7 @@ import { ReactionSchemaComponent } from "~/app/components/reaction-schema/reacti
 import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
 import { EnzymeRecommendationComponent } from "../enzyme-recommendation/enzyme-recommendation.component";
 import { EnzymeRecommendationJobInfo } from "../enzyme-recommendation-result/enzyme-recommendation-result.component";
+import { OverlayPanelModule } from "primeng/overlaypanel";
 
 export interface RecommendationResultRow {
   iid: number,
@@ -75,6 +76,7 @@ export interface RecommendationResultRowGroup {
   compound: {
     name: string;
     smiles: string;
+    formula: string;
   };
   tanimoto: number;
   fragment: {
@@ -138,6 +140,7 @@ export interface RecommendationResultRowGroup {
     ToastModule,
     ScrollPanelModule,
     SkeletonModule,
+    OverlayPanelModule,
 
     MoleculeImageComponent,
     Molecule3dComponent,
@@ -261,8 +264,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
     ['temperature', new RangeFilterConfig({
       category: 'parameter',
       label: {
-        value: 'Temperature (°C)',
-        rawValue: 'Temperature (°C)',
+        value: 'Temp (°C)',
+        rawValue: 'Temp (°C)',
       },
       placeholder: 'Enter temperature range',
       field: 'temperature',
@@ -365,12 +368,13 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
       .pipe(
         combineLatestWith(
           this.jobResultResponse$,
-          this.service.UNIPROT$
+          this.service.UNIPROT$,
+          this.service.SUBSTRATE$
         ),
-        tap(([_, jobResultResponse, _uniprot]) => {
+        tap(([_, jobResultResponse, _uniprot, _substrate]) => {
           this.substrate = jobResultResponse['query_smiles'];
         }),
-        map(([response, jobResultResponse, uniprot]) => {
+        map(([response, jobResultResponse, uniprot, substrate]) => {
           const v = response
             .map((row: any, index: number) => ({
               iid: index,
@@ -378,6 +382,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
               compound: {
                 name: row.SUBSTRATE,
                 smiles: row.SMILES,
+                formula: substrate[row.SUBSTRATE.toLowerCase()]?.FORMULA,
               },
               organism: row['ORGANISM'],
               sequence: uniprot[row.UNIPROT]?.sequence?.value,
