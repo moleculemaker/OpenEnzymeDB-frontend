@@ -72,31 +72,31 @@
                     @switch (row.algorithm) {
                       @case ('dlkcat') {
                         <span class="italic">
-                          DLKcat provides a deep learning approach combining a graph neural network method for substrates and a convolutional neural network representation for proteins for prediction of the k<sub>cat</sub> kinetic parameter from protein-substrate pairs.
+                          DLKcat provides a deep learning approach combining a graph neural network method for substrates and a convolutional neural network representation for proteins for prediction of the k<sub>cat class="text-xs"</sub> kinetic parameter from protein-substrate pairs.
                         </span>
                       }
                       @case ('unikp') {
-                        UniKP is a unified framework for prediction of enzyme kinetic parameters including k<sub>cat</sub>, K<sub>m</sub>, and k<sub>cat</sub> / K<sub>m</sub> (catalytic efficiency) from amino acid sequence and substrate pairs based on pre-trained language models.
+                        UniKP is a unified framework for prediction of enzyme kinetic parameters including k<sub>cat class="text-xs"</sub>, K<sub>m class="text-xs"</sub>, and k<sub>cat class="text-xs"</sub> / K<sub>m class="text-xs"</sub> (catalytic efficiency) from amino acid sequence and substrate pairs based on pre-trained language models.
                       }
                       @case ('catpred') {
-                        CatPred is a comprehensive framework for Deep Learning In Vitro Enzyme Kinetic Parameters, that allows for prediction of k<sub>cat</sub>, K<sub>m</sub>, and K<sub>i</sub> (inhibitory constant), from an amino acid sequence or protein identifier and a SMILES description of a biochemical reaction. CatPred leverages existing protein sequence embeddings and neural networks for molecular property prediction.
+                        CatPred is a comprehensive framework for Deep Learning In Vitro Enzyme Kinetic Parameters, that allows for prediction of k<sub>cat class="text-xs"</sub>, K<sub>m class="text-xs"</sub>, and K<sub>i class="text-xs"</sub> (inhibitory constant), from an amino acid sequence or protein identifier and a SMILES description of a biochemical reaction. CatPred leverages existing protein sequence embeddings and neural networks for molecular property prediction.
                       }
                     }
                   </td>
                   <td class="align-middle font-semibold leading-xl">
                       @switch (row.algorithm) {
                         @case ('dlkcat') {
-                          <p><span class="italic text-lg">k</span><sub>cat</sub> (s<sup>-1</sup>)</p>
+                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</p>
                         }
                         @case ('unikp') {
-                          <p><span class="italic text-lg">k</span><sub>cat</sub> (s<sup>-1</sup>)</p>
-                          <p><span class="italic text-lg">K</span><sub>m</sub> (mM)</p>
-                          <p><span class="italic text-lg">k</span><sub>cat</sub>/<span class="italic text-lg">K</span><sub>m</sub> (s<sup>-1</sup> mM<sup>-1</sup>)</p>
+                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</p>
+                          <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
+                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub>/<span class="italic text-lg">K</span><sub class="text-xs">m</sub> (s<sup class="text-xs">-1</sup> mM<sup class="text-xs">-1</sup>)</p>
                         }
                         @case ('catpred') {
-                          <p><span class="italic text-lg">k</span><sub>cat</sub> (s<sup>-1</sup>)</p>
-                          <p><span class="italic text-lg">K</span><sub>m</sub> (mM)</p>
-                          <p><span class="italic text-lg">K</span><sub>i</sub> (mM)</p>
+                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</p>
+                          <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
+                          <p><span class="italic text-lg">K</span><sub class="text-xs">i</sub> (mM)</p>
                         }
                       }
                   </td>
