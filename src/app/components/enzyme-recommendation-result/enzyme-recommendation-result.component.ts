@@ -110,6 +110,10 @@ export class EnzymeRecommendationResultComponent extends JobResult<EnzymeRecomme
             .map(([smiles, values]) => [smiles, { matches: values.matches.flat() }]) as [string, any][];
         }
 
+        else if (algorithm === 'mcs') {
+          topSubstrates = Object.entries(results).sort((a, b) => b[1].value - a[1].value).slice(0, 3);
+        }
+
         else {
           // find top 3 substrates with the highest score
           topSubstrates = Object.entries(results).sort((a, b) => b[1] - a[1]).slice(0, 3);

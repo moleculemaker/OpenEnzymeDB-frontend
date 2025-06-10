@@ -66,7 +66,10 @@ export type RecommendationResult = {
     },
   },
   mcs: {
-    [key: string]: number,
+    [key: string]: {
+      value: number,
+      match: number[]
+    },
   },
 }
 

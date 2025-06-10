@@ -67,7 +67,10 @@ export interface RecommendationResultRow {
     matches: number[][];
     flattenedMatches: number[];
   }
-  mcs: number,
+  mcs: {
+    value: number;
+    match: number[];
+  },
   expanded: boolean,
   reaction_schema?: ReactionSchemaRecord[],
 }
@@ -83,7 +86,10 @@ export interface RecommendationResultRowGroup {
     matches: number[][];
     flattenedMatches: number[];
   };
-  mcs: number;
+  mcs: {
+    value: number;
+    match: number[];
+  };
   ec_number: string[];
   organism: string[];
   sequence: string[];
@@ -315,7 +321,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
         rawValue: 'MCS',
       },
       placeholder: 'Enter MCS range',
-      field: 'mcs',
+      field: 'mcs.value',
       min: 0,
       max: 1,
     })],
@@ -453,7 +459,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
           if (this.algorithm === 'fragment') {
             retVal.sort((a, b) => (b.fragment?.flattenedMatches.length ?? 0) - (a.fragment?.flattenedMatches.length ?? 0))
           } else if (this.algorithm === 'mcs') {
-            retVal = retVal.sort((a, b) => (b.mcs) - (a.mcs)).slice(0, 10);
+            retVal = retVal.sort((a, b) => (b.mcs.value) - (a.mcs.value)).slice(0, 10);
           } else if (this.algorithm === 'tanimoto') {
             retVal = retVal.sort((a, b) => (b.tanimoto) - (a.tanimoto)).slice(0, 10);
           }
@@ -789,6 +795,9 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
       const numSubStructureMatches = group.fragment?.matches?.length || 0;
       const numAtomMatches = group.fragment?.flattenedMatches?.length || 0;
       return `${numSubStructureMatches} substructure ${numSubStructureMatches === 1 ? 'match' : 'matches'}, ${numAtomMatches} atom ${numAtomMatches === 1 ? 'match' : 'matches'}`;
+    }
+    if (algorithm === 'mcs' && group) {
+      return `${group.mcs.value.toFixed(4)}`;
     }
     return typeof value === 'number' ? value.toFixed(4) : value;
   }

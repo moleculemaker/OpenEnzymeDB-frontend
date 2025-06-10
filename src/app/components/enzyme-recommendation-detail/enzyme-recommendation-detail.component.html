@@ -255,6 +255,10 @@
                                       [smiles]="group.compound.smiles"
                                       [width]="150"
                                       [height]="150"
+                                      [highlightAtoms]="
+                                        algorithm === 'mcs' 
+                                        ? group[algorithm].match 
+                                        : []"
                                     ></app-molecule-image>
                                   </div>
                                   <div class="flex flex-col gap-3">
@@ -264,11 +268,11 @@
                                     </div>
                                     <div class="flex justify-between">
                                       <span class="leading-base opacity-60">Formula</span>
-                                      <span class="font-semibold text-end">{{ group.compound.formula }}</span>
+                                      <span class="font-semibold text-end break-all">{{ group.compound.formula }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                       <span class="leading-base opacity-60">SMILES</span>
-                                      <span class="font-semibold text-end">{{ group.compound.smiles }}</span>
+                                      <span class="font-semibold text-end break-all">{{ group.compound.smiles }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                       @switch (algorithm) {
@@ -389,7 +393,7 @@
                                     <td class="align-middle">
                                       <ng-container *ngTemplateOutlet="algorithmTemplate; context: { 
                                         $implicit: algorithm, 
-                                        label: getAlgorithmLabel(algorithm, row[value.field])
+                                        label: getAlgorithmLabel(algorithm, row[value.field].value)
                                       }"></ng-container>
                                     </td>
                                   }

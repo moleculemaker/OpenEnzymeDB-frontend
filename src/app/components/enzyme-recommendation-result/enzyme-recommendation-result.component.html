@@ -135,7 +135,6 @@
                                 [width]="120"
                                 [height]="120"
                                 [smiles]="match[0]"
-                                [highlightAtoms]="match[1].matches"
                               >
                               </app-molecule-image>
                             }
@@ -153,9 +152,11 @@
                                 class="top-0 left-0 border border-solid border-[#DEE2E6] rounded-md"
                                 [width]="120"
                                 [height]="120"
-                                [smiles]="match[0]">
+                                [smiles]="match[0]"
+                                [highlightAtoms]="match[1].match"
+                              >
                               </app-molecule-image>
-                              <span class="absolute top-1 left-1 text-white font-semibold rounded-md bg-[#726EDE] px-2 py-1">{{ match[1] | chemicalProperty: 'default' }}</span>
+                              <span class="absolute top-1 left-1 text-white font-semibold rounded-md bg-[#726EDE] px-2 py-1">{{ match[1].value | chemicalProperty: 'default' }}</span>
                             }
                           }
                         </div>
