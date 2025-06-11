@@ -239,10 +239,10 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'Compound',
       placeholder: 'Enter a compound',
       example: {
-        label: 'Ethanol (CCO)',
+        label: 'D-xylose (C1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)',
         inputType: 'smiles',
-        inputValue: 'CCO',
-        value: 'CCO',
+        inputValue: 'C1[C@H]([C@@H]([C@H](C(O1)O)O)O)O',
+        value: 'C1[C@H]([C@@H]([C@H](C(O1)O)O)O)O',
       },
       smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
       nameToSmilesConverter: (name: string) => this.cactusService.getSMILESFromName(name),

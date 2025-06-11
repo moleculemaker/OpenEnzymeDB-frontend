@@ -19,10 +19,10 @@ import { transition, style, animate, trigger } from "@angular/animations";
 
 
 enum ODBTools {
-  DB_SEARCH,
-  ENZYME_PREDICTION,
-  ENZYME_RECOMMENDATION,
-  NA
+  DB_SEARCH = '/query',
+  ENZYME_PREDICTION = '/property-prediction',
+  ENZYME_RECOMMENDATION = '/enzyme-recommendation',
+  NA = ''
 }
 
 const showTransition = transition(":enter", [
