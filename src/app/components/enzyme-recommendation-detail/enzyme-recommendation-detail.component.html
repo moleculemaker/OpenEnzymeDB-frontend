@@ -510,27 +510,27 @@
                                         </app-molecule3d>
                                       </div>
                                       <div class="flex flex-col gap-2">
-                                        <h6 class="font-semibold">Reaction Schema</h6>
-                                        @let schemas = reactionSchemaCache[getCacheKey(row)];
+                                        <h6 class="font-semibold">Reaction Scheme</h6>
+                                        @let schemes = reactionSchemeCache[getCacheKey(row)];
                                         <div class="border border-solid border-[#DEE2E6] rounded-md p-2">
-                                          @switch (schemas?.status) {
+                                          @switch (schemes?.status) {
                                             @case ('loaded') {
-                                              @if (schemas.data.length > 0) {
+                                              @if (schemes.data.length > 0) {
                                                 <p-scrollPanel [style]="{ height: '200px', width: '100%' }">
-                                                  @for (schema of schemas.data; track schema) {
-                                                    <app-reaction-schema [reactionSchema]="schema" />
+                                                  @for (scheme of schemes.data; track scheme) {
+                                                    <app-reaction-scheme [reactionScheme]="scheme" />
                                                     <hr class="my-2" />
                                                   }
                                                 </p-scrollPanel>
                                               } @else {
-                                                <p class="text-[#6C757D] italic">No reaction schema available</p>
+                                                <p class="text-[#6C757D] italic">No reaction scheme available</p>
                                               }
                                             }
                                             @case ('loading') {
-                                              <p class="text-[#6C757D] italic">Loading reaction schema...</p>
+                                              <p class="text-[#6C757D] italic">Loading reaction scheme...</p>
                                             }
                                             @case ('error') {
-                                              <p class="text-[#6C757D] italic">Error loading reaction schema</p>
+                                              <p class="text-[#6C757D] italic">Error loading reaction scheme</p>
                                             }
                                           }
                                         </div>

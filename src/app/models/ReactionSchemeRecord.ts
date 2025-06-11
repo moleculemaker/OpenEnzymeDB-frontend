@@ -1,12 +1,12 @@
 
-export type ReactionSchemaRecord = {
+export type ReactionSchemeRecord = {
   reactionPartners: string;
   reactants: string[];
   products: string[];
   ligandStructureId: number;
 };
 
-export type ReactionSchemaRecordWithKeyInfo = ReactionSchemaRecord & {
+export type ReactionSchemeRecordWithKeyInfo = ReactionSchemeRecord & {
   ecNumber: string;
   substrate: string;
   organism: string;

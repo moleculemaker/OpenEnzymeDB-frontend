@@ -178,19 +178,19 @@
                     </div>
                     <div class="w-[1px] bg-[--surface-d]"></div>
                     <div class="w-1/2 flex flex-col gap-1">
-                      @let schemas = reactionSchemaCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
+                      @let schemes = reactionSchemeCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
                       <div class="flex items-center justify-between w-full">
-                        <span class="font-bold">Reaction Schema</span>
-                        <small class="italic text-[#6C757D]/75">Found: {{ schemas.data ? schemas.data.length : 'N/A'
+                        <span class="font-bold">Reaction Scheme</span>
+                        <small class="italic text-[#6C757D]/75">Found: {{ schemes.data ? schemes.data.length : 'N/A'
                           }}</small>
                       </div>
-                      @switch (schemas.status) {
+                      @switch (schemes.status) {
                       @case ('loaded') {
                       <div
                         class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white flex-col items-center justify-center text-[#6C757D]">
                         <p-scrollPanel [style]="{ height: '100px', width: '100%' }">
-                          @for (schema of schemas.data; track schema) {
-                          <app-reaction-schema [reactionSchema]="schema" />
+                          @for (scheme of schemes.data; track scheme) {
+                          <app-reaction-scheme [reactionScheme]="scheme" />
                           <hr class="mb-2" />
                           }
                         </p-scrollPanel>
@@ -205,13 +205,13 @@
                       @case ('error') {
                       <div
                         class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
-                        Error loading reaction schema
+                        Error loading reaction scheme
                       </div>
                       }
                       @case ('na') {
                       <div
                         class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
-                        No reaction schema found
+                        No reaction scheme found
                       </div>
                       }
                       }

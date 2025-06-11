@@ -135,8 +135,12 @@
                                 [width]="120"
                                 [height]="120"
                                 [smiles]="match[0]"
+                                [highlightAtoms]="match[1].matches"
                               >
                               </app-molecule-image>
+                              <span class="absolute top-1 left-1 text-black font-semibold rounded-md bg-[#B2FDEF] px-2 py-1" [pTooltip]="match[1].numSubstructureMatches + ' substructure matches and total ' + match[1].numAtomMatches + ' atom matches'">
+                                {{ match[1].numSubstructureMatches }}/{{ match[1].numAtomMatches }}
+                              </span>
                             }
                             @case ('tanimoto') {
                               <app-molecule-image 

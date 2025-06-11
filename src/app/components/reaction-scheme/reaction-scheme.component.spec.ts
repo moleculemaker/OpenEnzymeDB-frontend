@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ReactionSchemaComponent } from './reaction-schema.component';
+import { ReactionSchemeComponent } from './reaction-scheme.component';
 
-describe('ReactionSchemaComponent', () => {
-  let component: ReactionSchemaComponent;
-  let fixture: ComponentFixture<ReactionSchemaComponent>;
+describe('ReactionSchemeComponent', () => {
+  let component: ReactionSchemeComponent;
+  let fixture: ComponentFixture<ReactionSchemeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReactionSchemaComponent]
+      imports: [ReactionSchemeComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ReactionSchemaComponent);
+    fixture = TestBed.createComponent(ReactionSchemeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

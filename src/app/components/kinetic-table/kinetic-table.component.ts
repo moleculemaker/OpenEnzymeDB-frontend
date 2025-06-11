@@ -11,12 +11,12 @@ import { animate } from '@angular/animations';
 import { style, transition } from '@angular/animations';
 import { trigger } from '@angular/animations';
 import { RouterLink } from '@angular/router';
-import { ReactionSchemaComponent } from '../reaction-schema/reaction-schema.component';
+import { ReactionSchemeComponent } from '../reaction-scheme/reaction-scheme.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { LoadingStatus } from "~/app/models/Loadable";
-import { ReactionSchemaRecord } from "~/app/models/ReactionSchemaRecord";
+import { ReactionSchemeRecord } from "~/app/models/ReactionSchemeRecord";
 import { catchError } from 'rxjs/operators';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -49,7 +49,7 @@ import { of } from 'rxjs';
 
     ExternalLinkComponent,
     FilterDialogComponent,
-    ReactionSchemaComponent,
+    ReactionSchemeComponent,
   ],
   templateUrl: './kinetic-table.component.html',
   styleUrl: './kinetic-table.component.scss'
@@ -69,9 +69,9 @@ export class KineticTableComponent implements OnChanges {
   @ViewChild(Table) resultsTable!: Table;
 
   columns: any[] = [];
-  reactionSchemaCache: Record<string, {
+  reactionSchemeCache: Record<string, {
     status: LoadingStatus;
-    data: ReactionSchemaRecord[];
+    data: ReactionSchemeRecord[];
   }> = {};
 
   showFilter = false;
@@ -145,23 +145,23 @@ export class KineticTableComponent implements OnChanges {
     const { data } = $event;
     const { ec_number, compound, organism } = data;
     const key = `${ec_number}|${compound.name}|${organism}`;
-    if (this.reactionSchemaCache[key]) {
+    if (this.reactionSchemeCache[key]) {
       return;
     }
-    this.reactionSchemaCache[key] = {
+    this.reactionSchemeCache[key] = {
       status: 'loading',
       data: [],
     };
-    this.service.getReactionSchemasFor(ec_number, compound.name, organism)
+    this.service.getReactionSchemesFor(ec_number, compound.name, organism)
       .pipe(
-        map(schemas => ({
-          status: (schemas && schemas.length > 0 
+        map(schemes => ({
+          status: (schemes && schemes.length > 0 
             ? ('loaded' as const) 
             : ('na' as const)),
-          data: schemas
+          data: schemes
         })),
         catchError(error => {
-          console.error('Failed to fetch reaction schemas:', error);
+          console.error('Failed to fetch reaction schemes:', error);
           return of({
             status: 'error' as const,
             data: []
@@ -169,7 +169,7 @@ export class KineticTableComponent implements OnChanges {
         })
       )
       .subscribe((result) => {
-        this.reactionSchemaCache[key] = result;
+        this.reactionSchemeCache[key] = result;
       });
   }
 

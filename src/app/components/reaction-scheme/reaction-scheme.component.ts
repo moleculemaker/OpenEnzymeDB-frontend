@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { filter, Subscription } from 'rxjs';
-import { ReactionSchemaRecord } from "~/app/models/ReactionSchemaRecord";
+import { ReactionSchemeRecord } from "~/app/models/ReactionSchemeRecord";
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { CactusService } from '~/app/services/cactus.service';
 
 @Component({
-  selector: 'app-reaction-schema',
+  selector: 'app-reaction-scheme',
   standalone: true,
   imports: [
     CommonModule,
     MoleculeImageComponent,
   ],
-  templateUrl: './reaction-schema.component.html',
-  styleUrl: './reaction-schema.component.scss'
+  templateUrl: './reaction-scheme.component.html',
+  styleUrl: './reaction-scheme.component.scss'
 })
-export class ReactionSchemaComponent implements OnChanges, OnDestroy {
-  @Input() reactionSchema: ReactionSchemaRecord;
+export class ReactionSchemeComponent implements OnChanges, OnDestroy {
+  @Input() reactionScheme: ReactionSchemeRecord;
 
   images: { [key: string]: string } = {};
 
@@ -31,9 +31,9 @@ export class ReactionSchemaComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['reactionSchema']) {
-      const reactionSchema = changes['reactionSchema'].currentValue;
-      [...reactionSchema.reactants, ...reactionSchema.products].forEach((chemical: string) => {
+    if (changes['reactionScheme']) {
+      const reactionScheme = changes['reactionScheme'].currentValue;
+      [...reactionScheme.reactants, ...reactionScheme.products].forEach((chemical: string) => {
         if (!this.images[chemical]) {
           const subscription = this.cactusService.getSMILESFromName(chemical)
             .pipe(

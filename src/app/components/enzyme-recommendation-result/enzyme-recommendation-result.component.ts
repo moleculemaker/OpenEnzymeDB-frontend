@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { PanelModule } from 'primeng/panel';
+import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { JobType } from '~/app/api/mmli-backend/v1';
 import { JobResult } from '~/app/models/job-result';
 import { OpenEnzymeDBService, RecommendationResult } from '~/app/services/openenzymedb.service';
 import { LoadingComponent } from '~/app/components/loading/loading.component';
-import { PanelModule } from 'primeng/panel';
-import { TableModule } from 'primeng/table';
 import { SafePipe } from '~/app/pipes/safe.pipe';
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { ChemicalPropertyPipe } from '~/app/pipes/chemical-property.pipe';
@@ -31,6 +32,7 @@ export type EnzymeRecommendationJobInfo = {
     PanelModule,
     TableModule,
     RouterLink,
+    TooltipModule,
     
     LoadingComponent,
     MoleculeImageComponent,
@@ -107,7 +109,11 @@ export class EnzymeRecommendationResultComponent extends JobResult<EnzymeRecomme
           topSubstrates = Object.entries(results)
             .sort((a, b) => b[1].matches.length - a[1].matches.length)
             .slice(0, 3)
-            .map(([smiles, values]) => [smiles, { matches: values.matches.flat() }]) as [string, any][];
+            .map(([smiles, values]) => [smiles, { 
+              matches: values.matches.flat(),
+              numSubstructureMatches: values.matches.length,
+              numAtomMatches: (new Set(values.matches.flat())).size,
+            }]) as [string, any][];
         }
 
         else if (algorithm === 'mcs') {

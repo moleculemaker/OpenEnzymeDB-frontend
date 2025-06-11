@@ -10,7 +10,7 @@ import { EnvironmentService } from "./environment.service";
 import { ungzip } from 'pako';
 import { CommonService } from "./common.service";
 import { Loadable } from "../models/Loadable";
-import { ReactionSchemaRecord, ReactionSchemaRecordWithKeyInfo } from "../models/ReactionSchemaRecord";
+import { ReactionSchemeRecord, ReactionSchemeRecordWithKeyInfo } from "../models/ReactionSchemeRecord";
 import { ScaleType } from "../components/density-plot/density-plot.component";
 
 async function loadGzippedJson<T>(path: string): Promise<T> {
@@ -246,7 +246,7 @@ const substrate_data = loadGzippedJson<SubstrateRecordDict>('/assets/substrate.j
 const exampleRecommendation = import('../../assets/example.recommendation.json');
 const exampleStatus = import('../../assets/example_status.json') as Promise<any>;
 
-const reaction_schema = loadGzippedJson<Record<string, ReactionSchemaRecord[]>>('/assets/reaction_schema.json.gz');
+const reaction_scheme = loadGzippedJson<Record<string, ReactionSchemeRecord[]>>('/assets/reaction_scheme.json.gz');
 
 @Injectable({
   providedIn: "root",
@@ -435,27 +435,32 @@ export class OpenEnzymeDBService {
     ));
   }
 
-  getReactionSchemasFor(ecNumber: string, substrate: string, organism: string): Observable<ReactionSchemaRecord[]> {
-    return from(reaction_schema).pipe(
+  getReactionSchemesFor(ecNumber: string, substrate: string, organism: string): Observable<ReactionSchemeRecord[]> {
+    return from(reaction_scheme).pipe(
       map((records) => records[`${ecNumber}|${substrate}|${organism}`.toLowerCase()]),
       first()
     );
   }
 
-  getSingleReactionSchemaByEC(ecNumber: string): Observable<ReactionSchemaRecordWithKeyInfo> {
-    return from(reaction_schema).pipe(
+  getSingleReactionSchemeByEC(ecNumber: string): Observable<ReactionSchemeRecordWithKeyInfo> {
+    return from(reaction_scheme).pipe(
       map((records) => {
+        const candidates = [];
         for (const [key, value] of Object.entries(records)) {
           if (key.startsWith(`${ecNumber}|`.toLowerCase())) {
-            return {
+            candidates.push({
               ...value[0],
               ecNumber,
               substrate: value[0].reactants.find(r => r.toLowerCase() === key.split('|')[1]) || '',
               organism: key.split('|')[2],
-            };
+            });
           }
         }
-        throw new Error(`No reaction schema found for EC number ${ecNumber}`);
+        if (candidates.length === 0) {
+          throw new Error(`No reaction scheme found for EC number ${ecNumber}`);
+        }
+        
+        return candidates[0];
       }),
       first()
     );

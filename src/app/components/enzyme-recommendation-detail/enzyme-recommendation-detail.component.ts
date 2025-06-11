@@ -6,7 +6,7 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { OpenEnzymeDBService, RecommendationResult, OEDRecord } from '~/app/services/openenzymedb.service';
-import { ReactionSchemaRecord } from "~/app/models/ReactionSchemaRecord";
+import { ReactionSchemeRecord } from "~/app/models/ReactionSchemeRecord";
 import { Loadable } from "~/app/models/Loadable";
 import { PanelModule } from "primeng/panel";
 import { combineLatestWith, map, tap, first, catchError } from "rxjs/operators";
@@ -40,7 +40,7 @@ import { animate } from "@angular/animations";
 import { ToastModule } from "primeng/toast";
 import { EnzymeStructureDialogComponent } from "~/app/components/enzyme-structure-dialog/enzyme-structure-dialog.component"
 import { CompoundStructureDialogComponent } from "~/app/components/compound-structure-dialog/compound-structure-dialog.component";
-import { ReactionSchemaComponent } from "~/app/components/reaction-schema/reaction-schema.component";
+import { ReactionSchemeComponent } from "~/app/components/reaction-scheme/reaction-scheme.component";
 import { JobTabComponent } from "~/app/components/job-tab/job-tab.component";
 import { EnzymeRecommendationComponent } from "../enzyme-recommendation/enzyme-recommendation.component";
 import { EnzymeRecommendationJobInfo } from "../enzyme-recommendation-result/enzyme-recommendation-result.component";
@@ -72,7 +72,7 @@ export interface RecommendationResultRow {
     match: number[];
   },
   expanded: boolean,
-  reaction_schema?: ReactionSchemaRecord[],
+  reaction_scheme?: ReactionSchemeRecord[],
 }
 
 export interface RecommendationResultRowGroup {
@@ -154,7 +154,7 @@ export interface RecommendationResultRowGroup {
     FilterDialogComponent,
     EnzymeStructureDialogComponent,
     CompoundStructureDialogComponent,
-    ReactionSchemaComponent,
+    ReactionSchemeComponent,
     JobTabComponent,
     EnzymeRecommendationComponent,
   ],
@@ -346,10 +346,10 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
   compoundStructureDialogVisible = false;
   compoundStructureDialogSmiles = '';
 
-  // Add reaction schema cache
-  reactionSchemaCache: Record<string, {
+  // Add reaction scheme cache
+  reactionSchemeCache: Record<string, {
     status: 'loading' | 'loaded' | 'error';
-    data: ReactionSchemaRecord[];
+    data: ReactionSchemeRecord[];
   }> = {};
 
   get filterRecords() {
@@ -407,7 +407,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
                 },
                 mcs: jobResultResponse.mcs[row.SMILES],
                 expanded: false,
-                reaction_schema: undefined,
+                reaction_scheme: undefined,
               }
             })
             .filter((row: any) => {
@@ -709,35 +709,35 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
     return `${row.ec_number}|${row.compound.name}|${row.organism}`.toLowerCase();
   }
 
-  // Update method to fetch reaction schema using Observable
-  private fetchReactionSchema(row: RecommendationResultRow) {
+  // Update method to fetch reaction scheme using Observable
+  private fetchReactionScheme(row: RecommendationResultRow) {
     const cacheKey = this.getCacheKey(row);
     
-    if (this.reactionSchemaCache[cacheKey]) {
+    if (this.reactionSchemeCache[cacheKey]) {
       return;
     }
 
-    this.reactionSchemaCache[cacheKey] = {
+    this.reactionSchemeCache[cacheKey] = {
       status: 'loading',
       data: []
     };
 
-    this.service.getReactionSchemasFor(
+    this.service.getReactionSchemesFor(
       row.ec_number,
       row.compound.name,
       row.organism
     ).pipe(
       first(),
       catchError(error => {
-        console.error('Error fetching reaction schema:', error);
-        this.reactionSchemaCache[cacheKey] = {
+        console.error('Error fetching reaction scheme:', error);
+        this.reactionSchemeCache[cacheKey] = {
           status: 'error',
           data: []
         };
         return of([]);
       })
     ).subscribe(response => {
-      this.reactionSchemaCache[cacheKey] = {
+      this.reactionSchemeCache[cacheKey] = {
         status: 'loaded',
         data: response || []
       };
@@ -745,16 +745,16 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
     });
   }
 
-  // Update method to load reaction schema
-  loadReactionSchema(row: RecommendationResultRow) {
-    if (!row.reaction_schema) {
-      this.fetchReactionSchema(row);
+  // Update method to load reaction scheme
+  loadReactionScheme(row: RecommendationResultRow) {
+    if (!row.reaction_scheme) {
+      this.fetchReactionScheme(row);
     }
   }
 
   watchRowExpansion(row: RecommendationResultRow) {
     if (row.expanded) {
-      this.loadReactionSchema(row);
+      this.loadReactionScheme(row);
     }
   }
 

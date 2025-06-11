@@ -6,7 +6,7 @@ import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
 import { ECRecord, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
-import { ReactionSchemaRecordWithKeyInfo } from "~/app/models/ReactionSchemaRecord";
+import { ReactionSchemeRecordWithKeyInfo } from "~/app/models/ReactionSchemeRecord";
 import { PanelModule } from "primeng/panel";
 import { TableModule } from "primeng/table";
 import { combineLatestWith, map, switchMap } from "rxjs/operators";
@@ -28,7 +28,7 @@ import { FilterConfig } from "~/app/models/filters";
 import { ExternalLinkComponent } from "~/app/components/external-link/external-link.component";
 import { Molecule3dComponent } from "~/app/components/molecule3d/molecule3d.component";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
-import { ReactionSchemaComponent } from "~/app/components/reaction-schema/reaction-schema.component";
+import { ReactionSchemeComponent } from "~/app/components/reaction-scheme/reaction-scheme.component";
 import { ScrollPanelModule } from "primeng/scrollpanel";
 
 
@@ -75,7 +75,7 @@ import { ScrollPanelModule } from "primeng/scrollpanel";
     Molecule3dComponent,
     KineticTableComponent,
     ExternalLinkComponent,
-    ReactionSchemaComponent,
+    ReactionSchemeComponent,
 ],
   host: {
     class: "flex flex-col h-full"
@@ -102,7 +102,7 @@ export class EntityECNumberComponent {
   };
 
   ec: ECRecord | null = null;
-  reactionSchema: ReactionSchemaRecordWithKeyInfo | null = null;
+  reactionScheme: ReactionSchemeRecordWithKeyInfo | null = null;
 
   exportOptions = [
     {
@@ -122,9 +122,9 @@ export class EntityECNumberComponent {
       },
     },
     {
-      label: 'Reaction Schema',
+      label: 'Reaction Scheme',
       command: () => {
-        // TODO: export reaction schema
+        // TODO: export reaction scheme
         // this.molecule2d.exportImage('png');
       },
     },
@@ -297,14 +297,14 @@ export class EntityECNumberComponent {
     });
 
     ecNumber$.pipe(
-      switchMap((ecNumber) => this.service.getSingleReactionSchemaByEC(ecNumber))
+      switchMap((ecNumber) => this.service.getSingleReactionSchemeByEC(ecNumber))
     ).subscribe({
-      next: (schema) => {
-        this.reactionSchema = schema;
+      next: (scheme) => {
+        this.reactionScheme = scheme;
       },
       error: (error) => {
-        console.error('Error fetching reaction schema:', error);
-        this.reactionSchema = null;
+        console.error('Error fetching reaction scheme:', error);
+        this.reactionScheme = null;
       }
     });
 
