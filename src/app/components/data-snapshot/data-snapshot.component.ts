@@ -55,9 +55,6 @@ type BarChartState = 'focused'
     DialogModule,
     CheckboxModule,
   ],
-  host: {
-    class: 'flex flex-col justify-center items-center w-full'
-  }
 })
 export class DataSnapshotComponent {
   @ViewChildren(UIChart) charts!: QueryList<UIChart>;
