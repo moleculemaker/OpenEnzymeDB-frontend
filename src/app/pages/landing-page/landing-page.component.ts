@@ -93,10 +93,10 @@ export class LandingPageComponent {
   ) {
 
     this.tutorialService.tutorialKey = 'landing-page-tutorial';
-    if (!this.tutorialService.showTutorial) {
-      this.displayTutorial = true;
-    } else {
-      this.displayTutorial = false;
-    }
+    // if (!this.tutorialService.showTutorial) {
+    //   this.displayTutorial = true;
+    // } else {
+    //   this.displayTutorial = false;
+    // }
   }
 }
