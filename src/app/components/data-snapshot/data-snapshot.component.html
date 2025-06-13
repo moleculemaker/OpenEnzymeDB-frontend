@@ -47,7 +47,7 @@
               <hr>
               <div class="flex justify-between">
                 <div class="flex flex-col gap-2">
-                  <div class="font-semibold"><span class="italic">k</span><sub>cat</sub></div>
+                  <div class="font-semibold"><span class="italic">k</span><sub class="text-xs">cat</sub></div>
                   <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
                       chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[chartState.payload] | number
                     }}</span></div>
@@ -57,7 +57,7 @@
                   </div>
                 </div>
                 <div class="flex flex-col gap-2">
-                  <div class="font-semibold"><span class="italic">K</span><sub>m</sub></div>
+                  <div class="font-semibold"><span class="italic">K</span><sub class="text-xs">m</sub></div>
                   <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
                       chartConfigs['pieChart']['data']['km'].data.datasets[0].data[chartState.payload] | number
                       }}</span></div>
@@ -66,7 +66,7 @@
                       chartConfigs['pieChart']['data']['km'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
                 </div>
                 <div class="flex flex-col gap-2">
-                  <div class="font-semibold"><span class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></div>
+                  <div class="font-semibold"><span class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></div>
                   <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
                       chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[chartState.payload] | number
                       }}</span></div>
@@ -89,7 +89,7 @@
                     <div class="w-4 h-4 rounded-full"
                       [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][0]">
                     </div>
-                    <div><span class="italic">k</span><sub>cat</sub></div>
+                    <div><span class="italic">k</span><sub class="text-xs">cat</sub></div>
                   </div>
                   <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
                       chartConfigs['barChart']['data'].data.datasets[0].data[chartState.payload] | number }}</span>
@@ -103,7 +103,7 @@
                     <div class="w-4 h-4 rounded-full"
                       [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][1]">
                     </div>
-                    <div><span class="italic">K</span><sub>m</sub></div>
+                    <div><span class="italic">K</span><sub class="text-xs">m</sub></div>
                   </div>
                   <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
                       chartConfigs['barChart']['data'].data.datasets[1].data[chartState.payload] | number }}</span>
@@ -117,7 +117,7 @@
                     <div class="w-4 h-4 rounded-full"
                       [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][2]">
                     </div>
-                    <div><span class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></div>
+                    <div><span class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></div>
                   </div>
                   <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
                       chartConfigs['barChart']['data'].data.datasets[2].data[chartState.payload] | number }}</span>
@@ -143,7 +143,7 @@
             @if (chartConfigs['pieChart']['data']['kcat'].status === 'loaded') {
             <div class="w-[200px]">
               <div class="font-semibold"><span
-                  class="pb-1"><span class="italic">k</span><sub>cat</sub></span></div>
+                  class="pb-1"><span class="italic">k</span><sub class="text-xs">cat</sub></span></div>
               <p-chart type="pie" #kcatChart [data]="chartConfigs['pieChart']['data']['kcat'].data"
                 [options]="chartConfigs['pieChart']['data']['kcat'].options"
                 [plugins]="chartConfigs['pieChart']['data']['kcat'].plugins"></p-chart>
@@ -157,7 +157,7 @@
             @if (chartConfigs['pieChart']['data']['km'].status === 'loaded') {
             <div class="w-[200px]">
               <div class="font-semibold"><span
-                  class="pb-1"><span class="italic">K</span><sub>m</sub></span></div>
+                  class="pb-1"><span class="italic">K</span><sub class="text-xs">m</sub></span></div>
               <p-chart type="pie" #kmChart [data]="chartConfigs['pieChart']['data']['km'].data"
                 [options]="chartConfigs['pieChart']['data']['km'].options"
                 [plugins]="chartConfigs['pieChart']['data']['km'].plugins"></p-chart>
@@ -171,7 +171,7 @@
             @if (chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded') {
             <div class="w-[200px]">
               <div class="font-semibold"><span class="pb-1"><span
-                  class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span></div>
+                  class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></span></div>
               <p-chart type="pie" #kcatKmChart [data]="chartConfigs['pieChart']['data']['kcat_km'].data"
                 [options]="chartConfigs['pieChart']['data']['kcat_km'].options"
                 [plugins]="chartConfigs['pieChart']['data']['kcat_km'].plugins"></p-chart>
@@ -212,13 +212,13 @@
             <!-- <th class="align-middle">Reaction</th> -->
             <th class="align-middle"></th>
             <th class="align-middle">
-              <span class="font-semibold mr-2"><span class="italic">k</span><sub>cat</sub></span> Dataset
+              <span class="font-semibold mr-2"><span class="italic">k</span><sub class="text-xs">cat</sub></span> Dataset
             </th>
             <th class="align-middle">
-              <span class="font-semibold mr-2"><span class="italic">K</span><sub>m</sub></span> Dataset
+              <span class="font-semibold mr-2"><span class="italic">K</span><sub class="text-xs">m</sub></span> Dataset
             </th>
             <th class="align-middle">
-              <span class="font-semibold mr-2"><span class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span> Dataset
+              <span class="font-semibold mr-2"><span class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></span> Dataset
             </th>
           </tr>
         </ng-template>

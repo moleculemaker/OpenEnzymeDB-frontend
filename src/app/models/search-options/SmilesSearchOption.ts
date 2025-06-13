@@ -48,6 +48,7 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
         filter((chemical) => chemical.status !== 'loading'),
         map((chemical) => {
           if (chemical.status === 'loaded') {
+            console.log('[smiles-search-option] smiles validation ok', chemical);
             return null;
           }
           console.log('[smiles-search-option] smiles validation error', chemical);

@@ -281,7 +281,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
     ['kcat', new RangeFilterConfig({
       category: 'enzyme',
       label: {
-        value: '<span class="italic">k</span><sub>cat</sub> (s<sup class="text-xs"> -1</sup>)',
+        value: '<span class="italic">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs"> -1</sup>)',
         rawValue: 'kcat',
       },
       placeholder: 'Enter kcat range',
@@ -292,7 +292,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
     ['kcat_km', new RangeFilterConfig({
       category: 'enzyme',
       label: {
-        value: '<span class="italic">k</span><sub>cat</sub>/<span class="italic">K</span><sub>m</sub> (mM<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
+        value: '<span class="italic">k</span><sub class="text-xs">cat</sub>/<span class="italic">K</span><sub class="text-xs">m</sub> (mM<sup class="text-xs"> -1</sup>s<sup class="text-xs"> -1</sup>)',
         rawValue: 'kcat_km',
       },
       placeholder: 'Enter kcat/KM range',

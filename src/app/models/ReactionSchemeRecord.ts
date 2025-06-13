@@ -4,6 +4,7 @@ export type ReactionSchemeRecord = {
   reactants: string[];
   products: string[];
   ligandStructureId: number;
+  representative: boolean;
 };
 
 export type ReactionSchemeRecordWithKeyInfo = ReactionSchemeRecord & {

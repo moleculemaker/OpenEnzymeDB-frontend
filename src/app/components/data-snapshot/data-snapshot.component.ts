@@ -179,9 +179,9 @@ export class DataSnapshotComponent {
   }
 
   kineticsLabelsMap = new Map<string, string>([
-    ['kcat', '<span class="mr-2"><span class="italic">k</span><sub>cat</sub></span>'],
-    ['km', '<span class="mr-2"><span class="italic">K</span><sub>m</sub></span>'],
-    ['kcat_km', '<span class="mr-2"><span class="italic">k</span><sub>cat</sub> / <span class="italic">K</span><sub>m</sub></span>'],
+    ['kcat', '<span class="mr-2"><span class="italic">k</span><sub class="text-xs">cat</sub></span>'],
+    ['km', '<span class="mr-2"><span class="italic">K</span><sub class="text-xs">m</sub></span>'],
+    ['kcat_km', '<span class="mr-2"><span class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></span>'],
   ]);
 
   currentChart: 'pieChart' | 'barChart' = 'pieChart';

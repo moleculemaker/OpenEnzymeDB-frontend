@@ -456,11 +456,13 @@ export class OpenEnzymeDBService {
             });
           }
         }
+
         if (candidates.length === 0) {
           throw new Error(`No reaction scheme found for EC number ${ecNumber}`);
         }
-        
-        return candidates[0];
+
+        return candidates.filter((candidate) => candidate.representative)[0] 
+          || candidates[0];
       }),
       first()
     );
