@@ -16,6 +16,7 @@ import { SmilesValidatorDirective } from "~/app/directives/smiles-validator.dire
 import { InputTextModule } from "primeng/inputtext";
 import { InputTextareaModule } from "primeng/inputtextarea";
 import { SequenceOrUniprotValidatorDirective } from "~/app/directives/sequence-or-uniprot-validator.directive";
+import { forkJoin } from "rxjs";
 
 @Component({
   selector: 'app-property-prediction',
@@ -67,18 +68,33 @@ export class PropertyPredictionComponent {
       return;
     }
 
-    console.log(this.form.value);
+    let name = Math.random().toString(36).substring(2, 15);
+    let sequence = this.form.controls["enzyme"].value || '';
 
-    this.service.createAndRunJob(
-      JobType.Somn, //TODO: use the correct job type
-      { 
-        job_info: JSON.stringify({
-          // TODO: add job info here
-        }),
-        email: this.form.controls["email"].value || '',
-      }
-    ).subscribe((response) => {
-      this.router.navigate(['property-prediction', 'result', response.job_id]);
+    if (sequence.split('\n').length > 1) {
+      name = sequence.split('\n')[0];
+      sequence = sequence.split('\n')[1];
+    }
+
+    const jobInfo = {
+      job_info: JSON.stringify({
+        input_pairs: [
+          {
+            sequence: sequence,
+            smiles: this.form.controls["substrate"].value || '',
+            name: name,
+          }
+        ]
+      }),
+      email: this.form.controls["email"].value || '',
+    }
+
+    forkJoin([
+      this.service.createAndRunJob(JobType.OedDlkcat, jobInfo),
+      this.service.createAndRunJob(JobType.OedUnikp, { ...jobInfo, email: ''}), 
+      this.service.createAndRunJob(JobType.OedCatpred, { ...jobInfo, email: ''}),
+    ]).subscribe(([dlkcat, unikp, catpred]) => {
+      this.router.navigate(['property-prediction', 'result', dlkcat.job_id, unikp.job_id, catpred.job_id]);
     })
   }
 
