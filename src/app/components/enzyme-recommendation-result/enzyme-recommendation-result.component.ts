@@ -45,7 +45,7 @@ export type EnzymeRecommendationJobInfo = {
     class: 'flex flex-col h-full',
   }
 })
-export class EnzymeRecommendationResultComponent extends JobResult<EnzymeRecommendationJobInfo> {
+export class EnzymeRecommendationResultComponent extends JobResult<EnzymeRecommendationJobInfo, RecommendationResult> {
   override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
   override jobType: JobType = JobType.OedCheminfo;
 

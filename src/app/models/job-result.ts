@@ -1,12 +1,11 @@
 import { timer, switchMap, tap, takeWhile, BehaviorSubject, skipUntil, filter, delay, shareReplay } from "rxjs";
 import { JobStatus, JobType } from "~/app/api/mmli-backend/v1";
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
-import { QueryValue } from "./search-options";
 
-export class JobResult<T> {
+export class JobResult<TInfo, TResult> {
     jobId: string;
     jobType: JobType;
-    jobInfo: T;
+    jobInfo: TInfo;
 
     isLoading$ = new BehaviorSubject(true);
     resultLoaded$ = new BehaviorSubject(false);
@@ -30,7 +29,7 @@ export class JobResult<T> {
 
     jobResultResponse$ = this.statusResponse$.pipe(
         skipUntil(this.statusResponse$.pipe(filter((job) => job.phase === JobStatus.Completed))),
-        switchMap(() => this.service.getResult(this.jobType, this.jobId)),
+        switchMap(() => this.service.getResult<TResult>(this.jobType, this.jobId)),
         delay(1000),
         tap(() => this.isLoading$.next(false)),
         tap(() => this.resultLoaded$.next(true)),

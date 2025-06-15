@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, catchError, combineLatestWith, first, from, map, of, shareReplay, switchMap } from "rxjs";
+import { Observable, first, from, map, of } from "rxjs";
 import * as d3 from 'd3';
 
 import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
@@ -235,6 +235,94 @@ export type SubstrateRecord = {
   MOL: string,
 }
 
+export type DLKCatResultResponseRaw = {
+  "dlkcat-output.json": Array<{
+    "Substrate Name": string,
+    "Substrate SMILES": string,
+    "Protein Sequence": string,
+    "Kcat value (1/s)": number,
+  }>
+}
+
+export type UnikpResultResponseRaw = {
+  "unikp-output.json": Array<{
+    "kcat": number,
+    "km": number,
+    "kcat_km": number,
+    "smiles": string,
+    "sequence": string,
+  }>
+}
+
+export type CatpredResultResponseRaw = {
+  "catpred-output.json": Array<{
+    "": string,
+    "Unnamed: 0": string,
+    "Substrate": string
+    "SMILES": string
+    "sequence": string
+    "pdbpath": string
+    "log10kcat_max": string
+    "log10kcat_max_mve_uncal_var": string
+    "log10kcat_max_model_0": string
+    "log10kcat_max_model_1": string
+    "log10kcat_max_model_2": string
+    "log10kcat_max_model_3": string
+    "log10kcat_max_model_4": string
+    "log10kcat_max_model_5": string
+    "log10kcat_max_model_6": string
+    "log10kcat_max_model_7": string
+    "log10kcat_max_model_8": string
+    "log10kcat_max_model_9": string
+    "Prediction_(s^(-1))": string
+    "Prediction_log10": string
+    "SD_total": string
+    "SD_aleatoric": string
+    "SD_epistemic": string
+  }>
+}
+
+export type DLKCatResult = Array<{
+  "substrate": string,
+  "smiles": string,
+  "sequence": string,
+  "kcat": number,
+}>
+
+export type UnikpResult = Array<{
+  "kcat": number,
+  "km": number,
+  "kcat_km": number,
+  "smiles": string,
+  "sequence": string,
+}>
+
+export type CatpredResult = Array<{
+  "": string,
+  "Unnamed: 0": string,
+  "Substrate": string
+  "SMILES": string
+  "sequence": string
+  "pdbpath": string
+  "log10kcat_max": string
+  "log10kcat_max_mve_uncal_var": string
+  "log10kcat_max_model_0": string
+  "log10kcat_max_model_1": string
+  "log10kcat_max_model_2": string
+  "log10kcat_max_model_3": string
+  "log10kcat_max_model_4": string
+  "log10kcat_max_model_5": string
+  "log10kcat_max_model_6": string
+  "log10kcat_max_model_7": string
+  "log10kcat_max_model_8": string
+  "log10kcat_max_model_9": string
+  "Prediction_(s^(-1))": string
+  "Prediction_log10": string
+  "SD_total": string
+  "SD_aleatoric": string
+  "SD_epistemic": string
+}>
+
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
 const kcat = loadGzippedJson<OEDRecord[]>('/assets/data_df_KCAT.json.gz');
 const km = loadGzippedJson<OEDRecord[]>('/assets/data_df_KM.json.gz');
@@ -357,11 +445,11 @@ export class OpenEnzymeDBService {
     );
   }
 
-  getResult(jobType: JobType, jobID: string): Observable<RecommendationResult> {
+  getResult<T>(jobType: JobType, jobID: string): Observable<T> {
     if (this.frontendOnly) {
-      return from(exampleRecommendation);
+      return from(exampleRecommendation) as Observable<T>;
     }
-    return this.filesService.getResultsBucketNameResultsJobIdGet(jobType, jobID);
+    return this.filesService.getResultsBucketNameResultsJobIdGet(jobType, jobID) as Observable<T>;
   }
 
   getData(): Observable<OEDRecord[]> {
@@ -375,65 +463,32 @@ export class OpenEnzymeDBService {
     return this.filesService.getErrorsBucketNameErrorsJobIdGet(jobType, jobID);
   }
 
-  getPredictionResult(jobID: string): Observable<any> {
-    return of([
-      {
-        "algorithm": "dlkcat",
-        "values": {
-          "kcat": 0.072
-        }
-      },
-      {
-        "algorithm": "unikp",
-        "values": {
-          "kcat": 0.072,
-          "km": 0.00004,
-          "kcat_km": 0.104
-        }
-      },
-      {
-        "algorithm": "catpred",
-        "values": {
-          "kcat": 0.072,
-          "km": 0.694,
-          "ki": 0.123
-        }
-      }
-    ]).pipe(
-      combineLatestWith(
-        this.getData()
-      ),
-      map(([results, data]) => results.map((result) => {
-        const dataset = {
-          kcat: data.map((d) => d['KCAT VALUE']).filter((kcat) => kcat !== null),
-          km: data.map((d) => d['KM VALUE']).filter((km) => km !== null),
-          kcat_km: data.map((d) => d['KCAT/KM VALUE']).filter((kcat) => kcat !== null),
-        }
-
-        let newResult: any = structuredClone(result);
-        Object.entries(result.values).forEach(([key, value]) => {
-          if (key === 'ki') {
-            newResult.values[key] = {
-              value,
-              color: null
-            }
-            return;
-          }
-          const color = this.getColorForDensityPoint(
-            value, 
-            this.createDensityFor(dataset[key as keyof typeof dataset], 'log').density, 
-            ['#3a1c71', '#38688f', '#56ab2f', '#c3d40c'],
-          );
-          newResult.values[key] = {
-            value,
-            color
-          }
-        });
-
-        return newResult;
-      })
-    ));
+  getDLKcatResult(jobID: string): Observable<DLKCatResult> {
+    return this.getResult<DLKCatResultResponseRaw>(JobType.OedDlkcat, jobID)
+      .pipe(map((dlkcat) => dlkcat['dlkcat-output.json'].map((item) => ({
+        substrate: item['Substrate Name'],
+        smiles: item['Substrate SMILES'],
+        sequence: item['Protein Sequence'],
+        kcat: item['Kcat value (1/s)'],
+      }))))
   }
+
+  getUnikpResult(jobID: string): Observable<UnikpResult> {
+    return this.getResult<UnikpResultResponseRaw>(JobType.OedUnikp, jobID)
+      .pipe(map((unikp) => unikp['unikp-output.json'].map((item) => ({
+        kcat: item.kcat,
+        km: item.km,
+        kcat_km: item.kcat_km,
+        smiles: item.smiles,
+        sequence: item.sequence,
+      }))))
+  }
+
+  getCatpredResult(jobID: string): Observable<CatpredResult> {
+    return this.getResult<CatpredResultResponseRaw>(JobType.OedCatpred, jobID)
+      .pipe(map((catpred) => catpred['catpred-output.json']))
+  }
+
 
   getReactionSchemesFor(ecNumber: string, substrate: string, organism: string): Observable<ReactionSchemeRecord[]> {
     return from(reaction_scheme).pipe(

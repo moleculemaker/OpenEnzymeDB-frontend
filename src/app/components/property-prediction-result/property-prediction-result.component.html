@@ -3,12 +3,8 @@
   <div class="flex items-center justify-between">
     <div *ngIf="statusResponse$ | async as status">
       <h5 class="flex items-center gap-2 mb-2 font-bold opacity-100 leading-xl">
-        Job ID: {{ status.job_id || "loading" }}
-        <button
-          type="button"
-          title="copy job id"
-          class="border-none cursor-pointer"
-        >
+        Job ID: Multiple Jobs
+        <button type="button" title="copy job id" class="border-none cursor-pointer">
           <i class="pi pi-copy" (click)="copyAndPasteURL()"></i>
         </button>
       </h5>
@@ -20,135 +16,171 @@
     <div class="flex items-center gap-2">
 
       <!-- TODO: add button here -->
-      
+
     </div>
   </div>
 
-  <app-loading *ngIf="isLoading$ | async" [jobType]="jobType"></app-loading>
+  @if (isLoading$ | async) {
+  <app-loading [statusQuery$]="statusResponse$"></app-loading>
+  }
 
   <div class="flex flex-col gap-8" [class.hidden]="isLoading$ | async">
-    @let response = response$ | async;
+    @let response = jobResultResponse$ | async;
     @if (response) {
-      <p-panel>
-        <ng-template pTemplate="header">
-          <h6 class="grow">Results Summary</h6>
-        </ng-template>
-        <ng-template pTemplate="content">
-          <div class="flex w-full grow">
-            <p-table #resultsTable [value]="results || []" class="w-full h-full" tableStyleClass="w-full" styleClass="w-full"
-              [columns]="columns">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th class="align-middle relative group">
-                    <span>Model</span>
-                  </th>
-                  <th class="align-middle relative group">
-                    <span>Description</span>
-                  </th>
-                  <th class="align-middle relative group w-1/6">
-                    <span>Properties</span>
-                  </th>
-                  <th class="align-middle relative group w-1/4">
-                    <span>Predicted Values</span>
-                  </th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-row let-expanded="expanded">
-                <tr class="table-row">
-                  <td class="align-middle">
+    <p-panel>
+      <ng-template pTemplate="header">
+        <h6 class="grow">Results Summary</h6>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <div class="flex w-full grow">
+          <p-table #resultsTable [value]="results || []" class="w-full h-full" tableStyleClass="w-full"
+            styleClass="w-full" [columns]="columns">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="align-middle relative group">
+                  <span>Model</span>
+                </th>
+                <th class="align-middle relative group">
+                  <span>Description</span>
+                </th>
+                <th class="align-middle relative group w-1/6">
+                  <span>Properties</span>
+                </th>
+                <th class="align-middle relative group w-1/4">
+                  <span>Predicted Values</span>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row let-expanded="expanded">
+              <tr class="table-row">
+                <td class="align-middle">
+                  @switch (row.algorithm) {
+                  @case ('dlkcat') {
+                  DLKCat
+                  }
+                  @case ('unikp') {
+                  UniKP
+                  }
+                  @case ('catpred') {
+                  CatPred
+                  }
+                  }
+                </td>
+                <td class="align-middle">
+                  @switch (row.algorithm) {
+                  @case ('dlkcat') {
+                  <span class="italic">
+                    DLKcat provides a deep learning approach combining a graph neural network method for substrates and
+                    a convolutional neural network representation for proteins for prediction of the k<sub
+                      class="text-xs">cat</sub> kinetic parameter from protein-substrate pairs.
+                  </span>
+                  }
+                  @case ('unikp') {
+                  UniKP is a unified framework for prediction of enzyme kinetic parameters including k<sub
+                    class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and k<sub class="text-xs">cat</sub> /
+                  K<sub class="text-xs">m</sub> (catalytic efficiency) from amino acid sequence and substrate pairs
+                  based on pre-trained language models.
+                  }
+                  @case ('catpred') {
+                  CatPred is a comprehensive framework for Deep Learning In Vitro Enzyme Kinetic Parameters, that allows
+                  for prediction of k<sub class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and K<sub
+                    class="text-xs">i</sub> (inhibitory constant), from an amino acid sequence or protein identifier and
+                  a SMILES description of a biochemical reaction. CatPred leverages existing protein sequence embeddings
+                  and neural networks for molecular property prediction.
+                  }
+                  }
+                </td>
+                <td class="align-middle font-semibold leading-xl">
+                  @switch (row.algorithm) {
+                  @case ('dlkcat') {
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup
+                      class="text-xs">-1</sup>)</p>
+                  }
+                  @case ('unikp') {
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup
+                      class="text-xs">-1</sup>)</p>
+                  <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub>/<span
+                      class="italic text-lg">K</span><sub class="text-xs">m</sub> (s<sup class="text-xs">-1</sup> mM<sup
+                      class="text-xs">-1</sup>)</p>
+                  }
+                  @case ('catpred') {
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup
+                      class="text-xs">-1</sup>)</p>
+                  <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
+                  <p><span class="italic text-lg">K</span><sub class="text-xs">i</sub> (mM)</p>
+                  }
+                  }
+                </td>
+                <td class="align-middle">
+                  <div class="flex justify-between items-center gap-4">
                     @switch (row.algorithm) {
-                      @case ('dlkcat') {
-                        DLKCat
-                      }
-                      @case ('unikp') {
-                        UniKP
-                      }
-                      @case ('catpred') {
-                        CatPred
-                      }
-                    }
-                  </td>
-                  <td class="align-middle">
-                    @switch (row.algorithm) {
-                      @case ('dlkcat') {
-                        <span class="italic">
-                          DLKcat provides a deep learning approach combining a graph neural network method for substrates and a convolutional neural network representation for proteins for prediction of the k<sub class="text-xs">cat</sub> kinetic parameter from protein-substrate pairs.
-                        </span>
-                      }
-                      @case ('unikp') {
-                        UniKP is a unified framework for prediction of enzyme kinetic parameters including k<sub class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and k<sub class="text-xs">cat</sub> / K<sub class="text-xs">m</sub> (catalytic efficiency) from amino acid sequence and substrate pairs based on pre-trained language models.
-                      }
-                      @case ('catpred') {
-                        CatPred is a comprehensive framework for Deep Learning In Vitro Enzyme Kinetic Parameters, that allows for prediction of k<sub class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and K<sub class="text-xs">i</sub> (inhibitory constant), from an amino acid sequence or protein identifier and a SMILES description of a biochemical reaction. CatPred leverages existing protein sequence embeddings and neural networks for molecular property prediction.
-                      }
-                    }
-                  </td>
-                  <td class="align-middle font-semibold leading-xl">
-                      @switch (row.algorithm) {
-                        @case ('dlkcat') {
-                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</p>
-                        }
-                        @case ('unikp') {
-                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</p>
-                          <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
-                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub>/<span class="italic text-lg">K</span><sub class="text-xs">m</sub> (s<sup class="text-xs">-1</sup> mM<sup class="text-xs">-1</sup>)</p>
-                        }
-                        @case ('catpred') {
-                          <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</p>
-                          <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
-                          <p><span class="italic text-lg">K</span><sub class="text-xs">i</sub> (mM)</p>
-                        }
-                      }
-                  </td>
-                  <td class="align-middle">
-                    <div class="flex justify-between items-center gap-4">
+                    @case ('dlkcat') {
                     <div class="flex flex-col gap-2 font-semibold">
-                      @switch (row.algorithm) {
-                        @case ('dlkcat') {
-                          <span class="flex items-center gap-1">
-                            {{ row.values.kcat.value }}
-                          </span>
-                        }
-                        @case ('unikp') {
-                          <span class="flex items-center gap-1">
-                            {{ row.values.kcat.value }}
-                          </span>
-                          <span class="flex items-center gap-1">
-                            {{ row.values.km.value }}
-                          </span>
-                          <span class="flex items-center gap-1">
-                            {{ row.values.kcat_km.value }}
-                          </span>
-                        }
-                        @case ('catpred') {
-                          <span class="flex items-center gap-1">
-                            {{ row.values.kcat.value }}
-                          </span>
-                          <span class="flex items-center gap-1">
-                            {{ row.values.km.value }}
-                          </span>
-                          <span class="flex items-center gap-1">
-                            {{ row.values.ki.value }}
-                          </span>
-                        }
-                      }
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat | number: '1.1-4'}}
+                      </span>
                     </div>
                     <div class="flex items-center gap-4">
-                      <a [routerLink]="['/property-prediction/result', jobId, row.algorithm]">
+                      <a [routerLink]="['/property-prediction/result', jobs.dlkcat.id, 'dlkcat']">
                         <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
                           <span>View full results</span>
                           <i class="pi pi-arrow-right"></i>
                         </button>
                       </a>
                     </div>
+                    }
+                    @case ('unikp') {
+                    <div class="flex flex-col gap-2 font-semibold">
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.km | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat_km | number: '1.1-4'}}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <a [routerLink]="['/property-prediction/result', jobs.unikp.id, 'unikp']">
+                        <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
+                          <span>View full results</span>
+                          <i class="pi pi-arrow-right"></i>
+                        </button>
+                      </a>
+                    </div>
+                    }
+                    @case ('catpred') {
+                    <div class="flex flex-col gap-2 font-semibold">
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.km | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.ki | number: '1.1-4'}}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <a [routerLink]="['/property-prediction/result', jobs.catpred.id, 'catpred']">
+                        <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
+                          <span>View full results</span>
+                          <i class="pi pi-arrow-right"></i>
+                        </button>
+                      </a>
+                    </div>
+                    }
+                    }
                   </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
 
-        </ng-template>
+      </ng-template>
     </p-panel>
     }
   </div>

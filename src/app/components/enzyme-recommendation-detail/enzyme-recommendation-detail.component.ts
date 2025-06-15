@@ -165,7 +165,7 @@ export interface RecommendationResultRowGroup {
     class: "flex flex-col h-full"
   }
 })
-export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecommendationJobInfo> {
+export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecommendationJobInfo, RecommendationResult> {
   override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
   override jobType: JobType = JobType.OedCheminfo;
   algorithm: 'mcs' | 'fragment' | 'tanimoto' = this.route.snapshot.paramMap.get("algorithm") as 'mcs' | 'fragment' | 'tanimoto';

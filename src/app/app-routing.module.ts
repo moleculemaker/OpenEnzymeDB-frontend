@@ -45,7 +45,7 @@ const routes: Routes = [
       { path: 'enzyme-recommendation/result/:id/:algorithm', component: EnzymeRecommendationDetailComponent },
 
       { path: 'property-prediction', component: PropertyPredictionComponent },
-      { path: 'property-prediction/result/:id', component: PropertyPredictionResultComponent },
+      { path: 'property-prediction/result/:dlkcat/:unikp/:catpred', component: PropertyPredictionResultComponent },
       { path: 'property-prediction/result/:id/:algorithm', component: PropertyPredictionDetailComponent },
     ]
   },

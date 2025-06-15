@@ -33,9 +33,11 @@
     </div>
   </div>
 
-  <app-loading *ngIf="isLoading$ | async" [jobType]="jobType"></app-loading>
+  @if (isLoading$ | async) {
+    <app-loading [statusQuery$]="statusResponse$"></app-loading>
+  }
 
-  <div class="flex flex-col gap-8" [class.hidden]="isLoading$ | async">
+  <div class="flex flex-col gap-8">
     <ng-container *ngIf="response$ | async as response">
 
       <p-panel>
