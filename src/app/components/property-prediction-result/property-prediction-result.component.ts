@@ -11,7 +11,7 @@ import { BehaviorSubject, combineLatest, delay, filter, forkJoin, map, shareRepl
 
 export type PropertyPredictionJobInfo = {
   sequence: string;
-  substrate: string;
+  smiles: string;
   name: string;
 };
 

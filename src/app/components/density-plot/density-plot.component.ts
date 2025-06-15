@@ -101,13 +101,8 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
 
     // Adjust domain if highlight value is outside current range
     if (this.highlightValue !== undefined) {
-      if (this.scaleType === 'log') {
-        min = Math.min(min, this.highlightValue);
-        max = Math.max(max, this.highlightValue);
-      } else {
-        min = Math.min(min, this.highlightValue);
-        max = Math.max(max, this.highlightValue);
-      }
+      min = Math.min(min, this.highlightValue);
+      max = Math.max(max, this.highlightValue);
     }
 
     this.x = this.scaleType === 'log' 

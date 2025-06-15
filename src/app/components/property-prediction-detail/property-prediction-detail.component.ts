@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { JobTabComponent } from '../job-tab/job-tab.component';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
-import { JobResult } from '~/app/models/job-result';
 import { Loadable } from "~/app/models/Loadable";
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { ActivatedRoute } from '@angular/router';
@@ -11,7 +10,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { PropertyPredictionJobInfo } from "../property-prediction-result/property-prediction-result.component";
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { DensityPlotComponent } from '../density-plot/density-plot.component';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { AsyncPipe, CommonModule } from '@angular/common';
 
 @Component({
@@ -36,7 +35,7 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 export class PropertyPredictionDetailComponent {
   jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
   index: number = parseInt(this.route.snapshot.paramMap.get("index") || "0");
-  algorithm: 'dlkcat' | 'unikp' | 'catpred' 
+  algorithm: 'dlkcat' | 'unikp' | 'catpred'
     = this.route.snapshot.paramMap.get("algorithm") as 'dlkcat' | 'unikp' | 'catpred';
 
   currentPage = 'result';
@@ -47,7 +46,7 @@ export class PropertyPredictionDetailComponent {
   };
 
   jobInfo: PropertyPredictionJobInfo = {
-    substrate: 'CCO',
+    smiles: 'CCO',
     sequence: 'P0DP23',
     name: '',
   }
@@ -55,7 +54,7 @@ export class PropertyPredictionDetailComponent {
   exportOptions = [
     {
       label: 'Table Results',
-      command: () => {},
+      command: () => { },
     },
   ];
 
@@ -80,6 +79,24 @@ export class PropertyPredictionDetailComponent {
     private service: OpenEnzymeDBService,
     private route: ActivatedRoute,
   ) {
+    this.loadJobInfo();
+    this.loadResult();
+  }
+
+  loadJobInfo() {
+    const jobType = this.algorithm === 'catpred' ? JobType.OedCatpred
+      : (this.algorithm === 'unikp' ? JobType.OedUnikp
+        : JobType.OedDlkcat);
+    this.service.getResultStatus(jobType, this.jobId).subscribe((result) => {
+      this.jobInfo = {
+        ...(JSON.parse(result.job_info || '{}'))['input_pairs'][this.index],
+        email: result.email || '',
+      };
+      console.log(this.jobInfo);
+    });
+  }
+
+  loadResult() {
     switch (this.algorithm) {
       case 'dlkcat':
         this.service.getDLKcatResult(this.jobId).subscribe((result) => {

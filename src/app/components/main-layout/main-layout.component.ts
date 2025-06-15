@@ -41,8 +41,8 @@ export class MainLayoutComponent {
     {
       id: 'enz-pred',
       name: 'Enzyme Property Prediction',
-      route: '/enz-pred',
-      status: ToolStatus.COMING_SOON,
+      route: '/property-prediction',
+      status: ToolStatus.RUNNING,
       svgGenerator: this.getEnzymePropertyPredictionSVG,
     },
     {

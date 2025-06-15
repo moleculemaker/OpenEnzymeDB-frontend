@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { BehaviorSubject, combineLatest, interval, map, Observable, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, interval, map, Observable, switchMap, tap } from "rxjs";
 import { NgIf, AsyncPipe } from "@angular/common";
 import { ProgressBarModule } from "primeng/progressbar";
 
@@ -21,12 +21,11 @@ export interface WithPhaseAndTime {
     },
     standalone: true,
     imports: [
-        NgIf,
-        ProgressBarModule,
-        AsyncPipe,
+      NgIf,
+      ProgressBarModule,
     ],
 })
-export class LoadingComponent implements OnInit, OnChanges {
+export class LoadingComponent implements OnInit {
   @Input() statusQuery$: Observable<WithPhaseAndTime> = new Observable();
   jobId: string = this.route.snapshot.paramMap.get("id") || "";
 
@@ -34,7 +33,7 @@ export class LoadingComponent implements OnInit, OnChanges {
   estimatedTimeString: string = '';
 
   showError$ = new BehaviorSubject(false);
-  value$: Observable<number> | null = null;
+  value = 0;
 
   form = new FormGroup({
     agreeToSubscription: new FormControl(false),
@@ -47,21 +46,10 @@ export class LoadingComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.updateEstimatedTimeString();
-    this.initializeValueObservable();
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['statusQuery$'] && changes['statusQuery$'].currentValue) {
-      this.initializeValueObservable();
-    }
-  }
-
-  private initializeValueObservable(): void {
-    this.value$ = combineLatest([
-      this.statusQuery$,
-      interval(1000),
-    ]).pipe(
-      map(([status, _]) => {
+    interval(1000).pipe(
+      switchMap(() => this.statusQuery$),
+      map((status) => {
         switch (status.phase) {
           case JobStatus.Queued:
           case JobStatus.Processing:
@@ -90,7 +78,9 @@ export class LoadingComponent implements OnInit, OnChanges {
         }
         return 0;
       })
-    );
+    ).subscribe((value) => {
+      this.value = value;
+    })
   }
 
   private updateEstimatedTimeString(): void {
