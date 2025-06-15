@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, combineLatest, interval, map, Observable, tap } from "rxjs";
@@ -26,15 +26,15 @@ export interface WithPhaseAndTime {
         AsyncPipe,
     ],
 })
-export class LoadingComponent implements OnInit {
-  @Input() statusQuery$: Observable<WithPhaseAndTime>;
+export class LoadingComponent implements OnInit, OnChanges {
+  @Input() statusQuery$: Observable<WithPhaseAndTime> = new Observable();
   jobId: string = this.route.snapshot.paramMap.get("id") || "";
 
-  estimatedTime: number;
-  estimatedTimeString: string;
+  estimatedTime: number = 10 * 60; // Initialize with default value
+  estimatedTimeString: string = '';
 
   showError$ = new BehaviorSubject(false);
-  value$: Observable<number>;
+  value$: Observable<number> | null = null;
 
   form = new FormGroup({
     agreeToSubscription: new FormControl(false),
@@ -43,34 +43,29 @@ export class LoadingComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.estimatedTime = 10 * 60;
+    this.updateEstimatedTimeString();
+    this.initializeValueObservable();
+  }
 
-    const hours = Math.floor(this.estimatedTime / 3600);
-    const minutes = Math.floor((this.estimatedTime % 3600) / 60);
-    let resultString = '';
-    if (hours > 0) {
-      resultString += `${hours} hour${hours > 1 ? 's' : ''}`;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['statusQuery$'] && changes['statusQuery$'].currentValue) {
+      this.initializeValueObservable();
     }
-    if (minutes > 0) {
-      resultString += `${resultString.length > 0 ? ' ' : ''}${minutes} minute${minutes > 1 ? 's' : ''}`;
-    }
-    
-    this.estimatedTimeString = resultString;
+  }
 
+  private initializeValueObservable(): void {
     this.value$ = combineLatest([
       this.statusQuery$,
       interval(1000),
     ]).pipe(
       map(([status, _]) => {
         switch (status.phase) {
-  
           case JobStatus.Queued:
           case JobStatus.Processing:
-            const jobStartedMs = (status.time_created || 0) * 1000; // use created time for estimation for now
+            const jobStartedMs = (status.time_created || 0) * 1000;
             const jobElapsedMs = Date.now() - jobStartedMs;
             const coe = 2 / 5;
             const estimatedMs = this.estimatedTime * 1000;
@@ -94,7 +89,21 @@ export class LoadingComponent implements OnInit {
             return 0;
         }
         return 0;
-      }
-    ))
+      })
+    );
+  }
+
+  private updateEstimatedTimeString(): void {
+    const hours = Math.floor(this.estimatedTime / 3600);
+    const minutes = Math.floor((this.estimatedTime % 3600) / 60);
+    let resultString = '';
+    if (hours > 0) {
+      resultString += `${hours} hour${hours > 1 ? 's' : ''}`;
+    }
+    if (minutes > 0) {
+      resultString += `${resultString.length > 0 ? ' ' : ''}${minutes} minute${minutes > 1 ? 's' : ''}`;
+    }
+    
+    this.estimatedTimeString = resultString;
   }
 }
