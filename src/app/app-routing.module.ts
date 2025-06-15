@@ -46,7 +46,7 @@ const routes: Routes = [
 
       { path: 'property-prediction', component: PropertyPredictionComponent },
       { path: 'property-prediction/result/:dlkcat/:unikp/:catpred', component: PropertyPredictionResultComponent },
-      { path: 'property-prediction/result/:id/:algorithm', component: PropertyPredictionDetailComponent },
+      { path: 'property-prediction/result/detail/:algorithm/:id/:index', component: PropertyPredictionDetailComponent },
     ]
   },
   { path: "font-match", component: FontMatchComponent },

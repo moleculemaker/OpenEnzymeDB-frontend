@@ -106,7 +106,6 @@ export class PropertyPredictionResultComponent {
       this.service.getUnikpResult(this.jobs.unikp.id),
       this.service.getCatpredResult(this.jobs.catpred.id),
     ])),
-    switchMap(() => import('~/assets/example.prediction.json').then((res) => res.default)),
     map((data) => data as unknown as [DLKCatResult, UnikpResult, CatpredResult]),
     map(([dlkcat, unikp, catpred]) => ([
       {

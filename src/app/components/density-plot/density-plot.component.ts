@@ -215,27 +215,23 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
             .attr("font-size", ".8rem")
             .attr("fill", "black")
             .attr('transform', `translate(0, ${-this.height - 25})`)
-            .html(
-              (this.highlightValue! > 1000 || this.highlightValue! < 0.0001)
-                ? this.highlightValue!.toExponential(0)
-                : this.highlightValue!.toFixed(4)
-            );
+            .html(this.highlightValue!.toFixed(4));
 
-          const color = this.openenzymedbService.getColorForDensityPoint(this.highlightValue!, this.density, this.colors);
+          // const color = this.openenzymedbService.getColorForDensityPoint(this.highlightValue!, this.density, this.colors);
 
           // Add background rectangle
-          const text = d3.select(f).select("text");
-          const textNode = text.node() as SVGTextElement;
-          if (textNode) {
-            const bbox = textNode.getBBox();
-            d3.select(f).insert("rect", "text")
-              .attr("x", bbox.x - 4)
-              .attr("y", bbox.y - 2)
-              .attr('transform', `translate(-16, ${-this.height - 22})`)
-              .attr("width", 12)
-              .attr("height", 12)
-              .attr("fill", color);
-          }
+          // const text = d3.select(f).select("text");
+          // const textNode = text.node() as SVGTextElement;
+          // if (textNode) {
+          //   const bbox = textNode.getBBox();
+          //   d3.select(f).insert("rect", "text")
+          //     .attr("x", bbox.x - 4)
+          //     .attr("y", bbox.y - 2)
+          //     .attr('transform', `translate(-16, ${-this.height - 22})`)
+          //     .attr("width", 12)
+          //     .attr("height", 12)
+          //     .attr("fill", color);
+          // }
 
           rest.forEach((g) => {
             d3.select(g).attr("opacity", 0);

@@ -1,12 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { JobTabComponent } from '../job-tab/job-tab.component';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { JobResult } from '~/app/models/job-result';
 import { Loadable } from "~/app/models/Loadable";
-import { FilterService } from 'primeng/api';
-import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { ActivatedRoute } from '@angular/router';
 import { JobType } from '~/app/api/mmli-backend/v1';
@@ -14,7 +11,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { PropertyPredictionJobInfo } from "../property-prediction-result/property-prediction-result.component";
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
 import { DensityPlotComponent } from '../density-plot/density-plot.component';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { AsyncPipe, CommonModule } from '@angular/common';
 
 @Component({
@@ -36,9 +33,9 @@ import { AsyncPipe, CommonModule } from '@angular/common';
   templateUrl: './property-prediction-detail.component.html',
   styleUrl: './property-prediction-detail.component.scss'
 })
-export class PropertyPredictionDetailComponent extends JobResult<PropertyPredictionJobInfo> {
-  override jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
-  override jobType: JobType = JobType.OedCheminfo;
+export class PropertyPredictionDetailComponent {
+  jobId: string = this.route.snapshot.paramMap.get("id") || "example-id";
+  index: number = parseInt(this.route.snapshot.paramMap.get("index") || "0");
   algorithm: 'dlkcat' | 'unikp' | 'catpred' 
     = this.route.snapshot.paramMap.get("algorithm") as 'dlkcat' | 'unikp' | 'catpred';
 
@@ -49,9 +46,10 @@ export class PropertyPredictionDetailComponent extends JobResult<PropertyPredict
     data: null,
   };
 
-  override jobInfo: PropertyPredictionJobInfo = {
+  jobInfo: PropertyPredictionJobInfo = {
     substrate: 'CCO',
-    enzyme: 'P0DP23'
+    sequence: 'P0DP23',
+    name: '',
   }
 
   exportOptions = [
@@ -79,21 +77,47 @@ export class PropertyPredictionDetailComponent extends JobResult<PropertyPredict
   );
 
   constructor(
-    service: OpenEnzymeDBService,
+    private service: OpenEnzymeDBService,
     private route: ActivatedRoute,
   ) {
-    super(service);
+    switch (this.algorithm) {
+      case 'dlkcat':
+        this.service.getDLKcatResult(this.jobId).subscribe((result) => {
+          this.result = {
+            status: 'loaded',
+            data: {
+              kcat: result[this.index].kcat,
+            },
+          };
+        });
+        break;
 
-    this.service.getPredictionResult(this.jobId).subscribe((result) => {
-      this.result = {
-        status: 'loaded',
-        data: result.reduce((acc: Record<string, any>, curr: any) => {
-          acc[curr.algorithm] = curr;
-          return acc;
-        }, {} as Record<string, any>)
-      };
-      console.log('result loaded: ', this.result.data);
-    });
+      case 'unikp':
+        this.service.getUnikpResult(this.jobId).subscribe((result) => {
+          this.result = {
+            status: 'loaded',
+            data: {
+              kcat: result[this.index].kcat,
+              km: result[this.index].km,
+              kcat_km: result[this.index].kcat_km,
+            },
+          };
+        });
+        break;
+
+      case 'catpred':
+        this.service.getCatpredResult(this.jobId).subscribe((result) => {
+          this.result = {
+            status: 'loaded',
+            data: {
+              kcat: 0.2, // result[this.index].kcat,
+              km: 0.2, // result[this.index].km,
+              kcat_km: 0.2, // result[this.index].kcat_km,
+            },
+          };
+        });
+        break;
+    }
   }
 
   backToSearch() {
