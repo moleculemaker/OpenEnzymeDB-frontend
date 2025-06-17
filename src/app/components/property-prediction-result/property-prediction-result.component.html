@@ -20,11 +20,11 @@
     </div>
   </div>
 
-  @if (isLoading$ | async) {
+  @if (isLoading) {
   <app-loading [statusQuery$]="statusResponse$"></app-loading>
   }
 
-  <div class="flex flex-col gap-8" [class.hidden]="isLoading$ | async">
+  <div class="flex flex-col gap-8" [class.hidden]="isLoading">
     @let response = jobResultResponse$ | async;
     @if (response) {
     <p-panel>

@@ -140,7 +140,8 @@
                 <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
                   <div [@slideIn]
                     class="rounded-md border border-[--surface-d] border-solid bg-white p-2 flex gap-2 w-full">
-                    <div class="flex flex-col gap-2 w-1/2">
+                    @let schemes = reactionSchemeCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
+                    <div class="flex flex-col gap-2 {{ schemes.data && schemes.data.length > 0 ? 'w-1/2' : 'w-full' }}">
                       <div class="font-bold">Experiment Information</div>
                       <div class="flex justify-between">
                         <div>Organism</div>
@@ -176,46 +177,47 @@
                         </div>
                       </div>
                     </div>
-                    <div class="w-[1px] bg-[--surface-d]"></div>
-                    <div class="w-1/2 flex flex-col gap-1">
-                      @let schemes = reactionSchemeCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
-                      <div class="flex items-center justify-between w-full">
-                        <span class="font-bold">Reaction Scheme</span>
-                        <small class="italic text-[#6C757D]/75">Found: {{ schemes.data ? schemes.data.length : 'N/A'
-                          }}</small>
+                    @if (schemes.data && schemes.data.length > 0) {
+                      <div class="w-[1px] bg-[--surface-d]"></div>
+                      <div class="w-1/2 flex flex-col gap-1">
+                        <div class="flex items-center justify-between w-full">
+                          <span class="font-bold">Reaction Scheme</span>
+                          <small class="italic text-[#6C757D]/75">Found: {{ schemes.data ? schemes.data.length : 'N/A'
+                            }}</small>
+                        </div>
+                        @switch (schemes.status) {
+                        @case ('loaded') {
+                          <div
+                            class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white flex-col items-center justify-center text-[#6C757D]">
+                            <p-scrollPanel [style]="{ height: '100px', width: '100%' }">
+                              @for (scheme of schemes.data; track scheme) {
+                              <app-reaction-scheme [reactionScheme]="scheme" />
+                              <hr class="mb-2" />
+                              }
+                            </p-scrollPanel>
+                          </div>
+                        }
+                        @case ('loading') {
+                        <div
+                          class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
+                          <p-skeleton height="100%" width="100%"></p-skeleton>
+                        </div>
+                        }
+                        @case ('error') {
+                        <div
+                          class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
+                          Error loading reaction scheme
+                        </div>
+                        }
+                        @case ('na') {
+                        <div
+                          class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
+                          No reaction scheme found
+                        </div>
+                        }
+                        }
                       </div>
-                      @switch (schemes.status) {
-                      @case ('loaded') {
-                      <div
-                        class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white flex-col items-center justify-center text-[#6C757D]">
-                        <p-scrollPanel [style]="{ height: '100px', width: '100%' }">
-                          @for (scheme of schemes.data; track scheme) {
-                          <app-reaction-scheme [reactionScheme]="scheme" />
-                          <hr class="mb-2" />
-                          }
-                        </p-scrollPanel>
-                      </div>
-                      }
-                      @case ('loading') {
-                      <div
-                        class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
-                        <p-skeleton height="100%" width="100%"></p-skeleton>
-                      </div>
-                      }
-                      @case ('error') {
-                      <div
-                        class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
-                        Error loading reaction scheme
-                      </div>
-                      }
-                      @case ('na') {
-                      <div
-                        class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white p-2 flex items-center justify-center text-[#6C757D]">
-                        No reaction scheme found
-                      </div>
-                      }
-                      }
-                    </div>
+                    }
                   </div>
                 </td>
               </tr>

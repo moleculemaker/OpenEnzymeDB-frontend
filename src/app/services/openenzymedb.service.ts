@@ -236,50 +236,15 @@ export type SubstrateRecord = {
 }
 
 export type DLKCatResultResponseRaw = {
-  "dlkcat-output.json": Array<{
-    "Substrate Name": string,
-    "Substrate SMILES": string,
-    "Protein Sequence": string,
-    "Kcat value (1/s)": number,
-  }>
+  "dlkcat-output.json": DLKCatResult
 }
 
 export type UnikpResultResponseRaw = {
-  "unikp-output.json": Array<{
-    "kcat": number,
-    "km": number,
-    "kcat_km": number,
-    "smiles": string,
-    "sequence": string,
-  }>
+  "unikp-output.json": UnikpResult
 }
 
 export type CatpredResultResponseRaw = {
-  "catpred-output.json": Array<{
-    "": string,
-    "Unnamed: 0": string,
-    "Substrate": string
-    "SMILES": string
-    "sequence": string
-    "pdbpath": string
-    "log10kcat_max": string
-    "log10kcat_max_mve_uncal_var": string
-    "log10kcat_max_model_0": string
-    "log10kcat_max_model_1": string
-    "log10kcat_max_model_2": string
-    "log10kcat_max_model_3": string
-    "log10kcat_max_model_4": string
-    "log10kcat_max_model_5": string
-    "log10kcat_max_model_6": string
-    "log10kcat_max_model_7": string
-    "log10kcat_max_model_8": string
-    "log10kcat_max_model_9": string
-    "Prediction_(s^(-1))": string
-    "Prediction_log10": string
-    "SD_total": string
-    "SD_aleatoric": string
-    "SD_epistemic": string
-  }>
+  "catpred-output.json": CatpredResult
 }
 
 export type DLKCatResult = Array<{
@@ -298,29 +263,11 @@ export type UnikpResult = Array<{
 }>
 
 export type CatpredResult = Array<{
-  "": string,
-  "Unnamed: 0": string,
-  "Substrate": string
-  "SMILES": string
-  "sequence": string
-  "pdbpath": string
-  "log10kcat_max": string
-  "log10kcat_max_mve_uncal_var": string
-  "log10kcat_max_model_0": string
-  "log10kcat_max_model_1": string
-  "log10kcat_max_model_2": string
-  "log10kcat_max_model_3": string
-  "log10kcat_max_model_4": string
-  "log10kcat_max_model_5": string
-  "log10kcat_max_model_6": string
-  "log10kcat_max_model_7": string
-  "log10kcat_max_model_8": string
-  "log10kcat_max_model_9": string
-  "Prediction_(s^(-1))": string
-  "Prediction_log10": string
-  "SD_total": string
-  "SD_aleatoric": string
-  "SD_epistemic": string
+  "smiles": string,
+  "sequence": string,
+  "kcat": number,
+  "km": number,
+  "ki": number,
 }>
 
 const example = loadGzippedJson<OEDRecord[]>('/assets/example.json.gz');
@@ -465,23 +412,12 @@ export class OpenEnzymeDBService {
 
   getDLKcatResult(jobID: string): Observable<DLKCatResult> {
     return this.getResult<DLKCatResultResponseRaw>(JobType.OedDlkcat, jobID)
-      .pipe(map((dlkcat) => dlkcat['dlkcat-output.json'].map((item) => ({
-        substrate: item['Substrate Name'],
-        smiles: item['Substrate SMILES'],
-        sequence: item['Protein Sequence'],
-        kcat: item['Kcat value (1/s)'],
-      }))))
+      .pipe(map((dlkcat) => dlkcat['dlkcat-output.json']))
   }
 
   getUnikpResult(jobID: string): Observable<UnikpResult> {
     return this.getResult<UnikpResultResponseRaw>(JobType.OedUnikp, jobID)
-      .pipe(map((unikp) => unikp['unikp-output.json'].map((item) => ({
-        kcat: item.kcat,
-        km: item.km,
-        kcat_km: item.kcat_km,
-        smiles: item.smiles,
-        sequence: item.sequence,
-      }))))
+      .pipe(map((unikp) => unikp['unikp-output.json']))
   }
 
   getCatpredResult(jobID: string): Observable<CatpredResult> {

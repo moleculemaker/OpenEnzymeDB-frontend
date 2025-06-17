@@ -52,8 +52,10 @@ export class PropertyPredictionResultComponent {
     },
   }
 
-  isLoading$ = new BehaviorSubject(true);
-  resultLoaded$ = new BehaviorSubject(false);
+  // isLoading$ = new BehaviorSubject(true);
+  // resultLoaded$ = new BehaviorSubject(false);
+  isLoading = true;
+  resultLoaded = false;
 
   statusResponse$ = combineLatest([
     this.service.getResultStatus(this.jobs.dlkcat.type, this.jobs.dlkcat.id),
@@ -74,7 +76,7 @@ export class PropertyPredictionResultComponent {
         email: catpred.email || '',
       };
     }),
-    tap(() => this.resultLoaded$.value ? null : this.isLoading$.next(true)),
+    tap(() => this.resultLoaded ? null : this.isLoading = true),
     takeWhile(([dlkcat, unikp, catpred]) =>
       (dlkcat.phase === JobStatus.Processing || dlkcat.phase === JobStatus.Queued)
       || (unikp.phase === JobStatus.Processing || unikp.phase === JobStatus.Queued)
@@ -125,17 +127,17 @@ export class PropertyPredictionResultComponent {
       {
         algorithm: 'catpred',
         values: {
-          kcat: -1, //catpred[0].kcat,
-          km: -1, //catpred[0].km,
-          ki: -1, //catpred[0].ki,
+          kcat: catpred[0].kcat,
+          km: catpred[0].km,
+          ki: catpred[0].ki,
         }
       }
     ])),
     delay(1000),
-    tap(() => this.isLoading$.next(false)),
-    tap(() => this.resultLoaded$.next(true)),
+    tap((data) => { this.results = data }),
     tap((data) => { console.log('result: ', data) }),
-    tap((data) => this.results = data),
+    tap(() => this.isLoading = false),
+    tap(() => this.resultLoaded = true),
     shareReplay(1),
 );
 
@@ -143,7 +145,7 @@ export class PropertyPredictionResultComponent {
 
   ];
 
-  results = null;
+  results: any = null;
 
   data$ = this.service.getData();
 

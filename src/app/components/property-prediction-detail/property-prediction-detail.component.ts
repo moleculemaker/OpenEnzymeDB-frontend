@@ -127,9 +127,9 @@ export class PropertyPredictionDetailComponent {
           this.result = {
             status: 'loaded',
             data: {
-              kcat: 0.2, // result[this.index].kcat,
-              km: 0.2, // result[this.index].km,
-              kcat_km: 0.2, // result[this.index].kcat_km,
+              kcat: result[this.index].kcat,
+              km: result[this.index].km,
+              ki: result[this.index].ki,
             },
           };
         });
