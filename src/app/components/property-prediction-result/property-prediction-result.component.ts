@@ -7,7 +7,7 @@ import { CatpredResult, DLKCatResult, OpenEnzymeDBService, UnikpResult } from '~
 import { LoadingComponent } from '~/app/components/loading/loading.component';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
-import { BehaviorSubject, combineLatest, delay, filter, forkJoin, map, shareReplay, skipUntil, switchMap, takeWhile, tap, timer } from 'rxjs';
+import { combineLatest, forkJoin, map, Subscription, tap } from 'rxjs';
 
 export type PropertyPredictionJobInfo = {
   sequence: string;
@@ -52,11 +52,6 @@ export class PropertyPredictionResultComponent {
     },
   }
 
-  // isLoading$ = new BehaviorSubject(true);
-  // resultLoaded$ = new BehaviorSubject(false);
-  isLoading = true;
-  resultLoaded = false;
-
   statusResponse$ = combineLatest([
     this.service.getResultStatus(this.jobs.dlkcat.type, this.jobs.dlkcat.id),
     this.service.getResultStatus(this.jobs.unikp.type, this.jobs.unikp.id),
@@ -76,13 +71,6 @@ export class PropertyPredictionResultComponent {
         email: catpred.email || '',
       };
     }),
-    tap(() => this.resultLoaded ? null : this.isLoading = true),
-    takeWhile(([dlkcat, unikp, catpred]) =>
-      (dlkcat.phase === JobStatus.Processing || dlkcat.phase === JobStatus.Queued)
-      || (unikp.phase === JobStatus.Processing || unikp.phase === JobStatus.Queued)
-      || (catpred.phase === JobStatus.Processing || catpred.phase === JobStatus.Queued)
-      , true),
-    tap((data) => { console.log('job status: ', data) }),
     map(([dlkcat, unikp, catpred]) => ({
       time_created: dlkcat.time_created!,
       phase: 
@@ -97,66 +85,20 @@ export class PropertyPredictionResultComponent {
       job_id: dlkcat.job_id || unikp.job_id || catpred.job_id || '',
     })),
   );
-
-  jobResultResponse$ = this.statusResponse$.pipe(
-    skipUntil(this.statusResponse$.pipe(filter((data) =>
-      data.phase === JobStatus.Completed
-    ))),
-    tap((data) => { console.log('job completed, get result') }),
-    switchMap(() => forkJoin([
-      this.service.getDLKcatResult(this.jobs.dlkcat.id),
-      this.service.getUnikpResult(this.jobs.unikp.id),
-      this.service.getCatpredResult(this.jobs.catpred.id),
-    ])),
-    map((data) => data as unknown as [DLKCatResult, UnikpResult, CatpredResult]),
-    map(([dlkcat, unikp, catpred]) => ([
-      {
-        algorithm: 'dlkcat',
-        values: {
-          kcat: dlkcat[0].kcat
-        }
-      },
-      {
-        algorithm: 'unikp',
-        values: {
-          kcat: unikp[0].kcat,
-          kcat_km: unikp[0].kcat_km,
-          km: unikp[0].km
-        }
-      },
-      {
-        algorithm: 'catpred',
-        values: {
-          kcat: catpred[0].kcat,
-          km: catpred[0].km,
-          ki: catpred[0].ki,
-        }
-      }
-    ])),
-    delay(1000),
-    tap((data) => { this.results = data }),
-    tap((data) => { console.log('result: ', data) }),
-    tap(() => this.isLoading = false),
-    tap(() => this.resultLoaded = true),
-    shareReplay(1),
-);
-
-  columns = [
-
-  ];
-
-  results: any = null;
-
   data$ = this.service.getData();
+
+  showResults = false;
+  results: any = null;
+  columns = [];
+  subscriptions: Subscription[] = [];
 
   constructor(
     private service: OpenEnzymeDBService,
     private route: ActivatedRoute,
-  ) {
+  ) { }
 
-    // this.service.getPredictionResult(this.dlkcatJobId, this.unikpJobId, this.catpredJobId).subscribe((results) => {
-    //   this.results = results;
-    // });
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   copyAndPasteURL(): void {
@@ -171,6 +113,48 @@ export class PropertyPredictionResultComponent {
     selBox.select();
     document.execCommand('copy');
     document.body.removeChild(selBox);
+  }
+
+  onProgressChange(value: number): void {
+    if (value === 100) {
+      this.subscriptions.push(
+        forkJoin([
+          this.service.getDLKcatResult(this.jobs.dlkcat.id),
+          this.service.getUnikpResult(this.jobs.unikp.id),
+          this.service.getCatpredResult(this.jobs.catpred.id),
+        ]).pipe(
+          map((data) => data as unknown as [DLKCatResult, UnikpResult, CatpredResult]),
+          map(([dlkcat, unikp, catpred]) => ([
+            {
+              algorithm: 'dlkcat',
+              values: {
+                kcat: dlkcat[0].kcat
+              }
+            },
+            {
+              algorithm: 'unikp',
+              values: {
+                kcat: unikp[0].kcat,
+                kcat_km: unikp[0].kcat_km,
+                km: unikp[0].km
+              }
+            },
+            {
+              algorithm: 'catpred',
+              values: {
+                kcat: catpred[0].kcat,
+                km: catpred[0].km,
+                ki: catpred[0].ki,
+              }
+            }
+          ])),
+          tap((data) => { console.log('result: ', data) }),
+        ).subscribe((data) => {
+          this.showResults = true;
+          this.results = data;
+        })
+      );
+    }
   }
 }
 

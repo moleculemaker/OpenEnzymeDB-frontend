@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { BehaviorSubject, combineLatest, interval, map, Observable, switchMap, tap } from "rxjs";
-import { NgIf, AsyncPipe } from "@angular/common";
+import { BehaviorSubject, interval, map, Observable, Subscription, switchMap } from "rxjs";
+import { NgIf } from "@angular/common";
 import { ProgressBarModule } from "primeng/progressbar";
 
 import { JobStatus } from "~/app/api/mmli-backend/v1";
@@ -25,8 +25,10 @@ export interface WithPhaseAndTime {
       ProgressBarModule,
     ],
 })
-export class LoadingComponent implements OnInit {
+export class LoadingComponent implements OnInit, OnDestroy {
   @Input() statusQuery$: Observable<WithPhaseAndTime> = new Observable();
+  @Output() progressChange = new EventEmitter<number>();
+
   jobId: string = this.route.snapshot.paramMap.get("id") || "";
 
   estimatedTime: number = 10 * 60; // Initialize with default value
@@ -40,6 +42,8 @@ export class LoadingComponent implements OnInit {
     subscriberEmail: new FormControl("", [Validators.required, Validators.email]),
   });
 
+  subscriptions: Subscription[] = [];
+
   constructor(
     private route: ActivatedRoute,
   ) {}
@@ -47,40 +51,47 @@ export class LoadingComponent implements OnInit {
   ngOnInit(): void {
     this.updateEstimatedTimeString();
 
-    interval(1000).pipe(
-      switchMap(() => this.statusQuery$),
-      map((status) => {
-        switch (status.phase) {
-          case JobStatus.Queued:
-          case JobStatus.Processing:
-            const jobStartedMs = (status.time_created || 0) * 1000;
-            const jobElapsedMs = Date.now() - jobStartedMs;
-            const coe = 2 / 5;
-            const estimatedMs = this.estimatedTime * 1000;
-            const decimalTime = (jobElapsedMs % estimatedMs) / estimatedMs;
-            const wholeTime = Math.floor(jobElapsedMs / estimatedMs);
-  
-            let sum = 0;
-            let i = 1;
-            while (i < wholeTime && wholeTime >= 1) {
-              sum += Math.pow(coe, i);
-              i++;
-            }
-            sum += Math.pow(coe, i) * decimalTime;
-            return sum * 100;
-  
-          case JobStatus.Completed:
-            return 100;
-  
-          case JobStatus.Error:
-            this.showError$.next(true);
-            return 0;
-        }
-        return 0;
+    this.subscriptions.push(
+      interval(1000).pipe(
+        switchMap(() => this.statusQuery$),
+        map((status) => {
+          switch (status.phase) {
+            case JobStatus.Queued:
+            case JobStatus.Processing:
+              const jobStartedMs = (status.time_created || 0) * 1000;
+              const jobElapsedMs = Date.now() - jobStartedMs;
+              const coe = 2 / 5;
+              const estimatedMs = this.estimatedTime * 1000;
+              const decimalTime = (jobElapsedMs % estimatedMs) / estimatedMs;
+              const wholeTime = Math.floor(jobElapsedMs / estimatedMs);
+    
+              let sum = 0;
+              let i = 1;
+              while (i < wholeTime && wholeTime >= 1) {
+                sum += Math.pow(coe, i);
+                i++;
+              }
+              sum += Math.pow(coe, i) * decimalTime;
+              return sum * 100;
+    
+            case JobStatus.Completed:
+              return 100;
+    
+            case JobStatus.Error:
+              this.showError$.next(true);
+              return 0;
+          }
+          return 0;
+        })
+      ).subscribe((value) => {
+        this.value = value;
+        this.progressChange.emit(value);
       })
-    ).subscribe((value) => {
-      this.value = value;
-    })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   private updateEstimatedTimeString(): void {
