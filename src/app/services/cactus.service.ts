@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Loadable } from "../models/Loadable";
+import { Loadable } from '../models/Loadable';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +13,7 @@ export class CactusService {
     private http: HttpClient
   ) { }
 
-
-  /**
-   * Get SMILES from Cactus
-   */
-  getSMILESFromName(name: string): Observable<Loadable<string>> {
+  getCompoundSMILES(name: string): Observable<Loadable<string>> {
     return new Observable(observer => {
       observer.next({ status: 'loading', data: null });
 

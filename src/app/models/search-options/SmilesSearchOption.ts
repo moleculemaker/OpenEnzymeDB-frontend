@@ -86,7 +86,6 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
           case 'name':
             return this.nameToSmilesConverter(value).pipe(
               filter((smiles) => smiles.status !== 'loading'),
-              first(),
               switchMap((smiles) => {
                 switch (smiles.status) {
                   case 'loaded':
@@ -116,7 +115,8 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
 
         return of({ unknownInputType: true });
       }),
-      first()
+      first(),
+      tap((v) => console.log('[smiles-search-option] validateInput', this.formGroup)),
     )
   }
 }

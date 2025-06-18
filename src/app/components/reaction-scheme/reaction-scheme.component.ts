@@ -3,7 +3,7 @@ import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/
 import { filter, Subscription } from 'rxjs';
 import { ReactionSchemeRecord } from "~/app/models/ReactionSchemeRecord";
 import { MoleculeImageComponent } from '../molecule-image/molecule-image.component';
-import { CactusService } from '~/app/services/cactus.service';
+import { ChemicalResolverService } from '~/app/services/chemical-resolver.service';
 
 @Component({
   selector: 'app-reaction-scheme',
@@ -22,7 +22,7 @@ export class ReactionSchemeComponent implements OnChanges, OnDestroy {
 
   subscriptions: Subscription[] = [];
   
-  constructor(public cactusService: CactusService) {
+  constructor(public chemicalResolverService: ChemicalResolverService) {
 
   }
 
@@ -35,7 +35,7 @@ export class ReactionSchemeComponent implements OnChanges, OnDestroy {
       const reactionScheme = changes['reactionScheme'].currentValue;
       [...reactionScheme.reactants, ...reactionScheme.products].forEach((chemical: string) => {
         if (!this.images[chemical]) {
-          const subscription = this.cactusService.getSMILESFromName(chemical)
+          const subscription = this.chemicalResolverService.getSMILESFromName(chemical)
             .pipe(
               filter((result) => result.status !== 'loading'),
             )

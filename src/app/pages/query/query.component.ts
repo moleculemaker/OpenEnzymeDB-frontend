@@ -26,7 +26,7 @@ import { DividerModule } from "primeng/divider";
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from "~/app/models/filters";
 import { Subscription, map } from "rxjs";
 import { KineticTableComponent } from "~/app/components/kinetic-table/kinetic-table.component";
-import { CactusService } from "~/app/services/cactus.service";
+import { ChemicalResolverService } from "~/app/services/chemical-resolver.service";
 
 @Component({
   selector: 'app-query',
@@ -240,12 +240,12 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       placeholder: 'Enter a compound',
       example: {
         label: 'D-xylose (OC1OC[C@@H](O)[C@H](O)[C@H]1O)',
-        inputType: 'name',
-        inputValue: 'D-xylose',
+        inputType: 'smiles',
+        inputValue: 'OC1OC[C@@H](O)[C@H](O)[C@H]1O',
         value: 'OC1OC[C@@H](O)[C@H](O)[C@H]1O',
       },
       smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
-      nameToSmilesConverter: (name: string) => this.cactusService.getSMILESFromName(name),
+      nameToSmilesConverter: (name: string) => this.chemicalResolverService.getSMILESFromName(name),
     }),
     new StringSearchOption({
       key: 'organism',
@@ -318,7 +318,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private cactusService: CactusService,
+    private chemicalResolverService: ChemicalResolverService,
   ) {}
 
   ngOnInit(): void {

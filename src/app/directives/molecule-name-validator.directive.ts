@@ -3,7 +3,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable, of, tap, startWith, distinctUntilChanged, debounceTime, switchMap, filter, map, first } from 'rxjs';
 import { CommonService } from '../services/common.service';
 import { Loadable } from "../models/Loadable";
-import { CactusService } from '../services/cactus.service';
+import { ChemicalResolverService } from '../services/chemical-resolver.service';
 
 @Directive({
   selector: '[appMoleculeNameValidator]',
@@ -13,7 +13,7 @@ export class MoleculeNameValidatorDirective {
   @Output() onMoleculeNameValidationStatusChange = new EventEmitter<Loadable<string>>();
 
   constructor(
-    private cactusService: CactusService,
+    private chemicalResolverService: ChemicalResolverService,
     private commonService: CommonService
   ) { }
 
@@ -35,7 +35,7 @@ export class MoleculeNameValidatorDirective {
       startWith(control.value),
       distinctUntilChanged(),
       debounceTime(300),
-      switchMap(() => this.cactusService.getSMILESFromName(control.value)),
+      switchMap(() => this.chemicalResolverService.getSMILESFromName(control.value)),
       filter((result: Loadable<string>) => 
           result.status === 'loaded' 
         || result.status === 'error' 

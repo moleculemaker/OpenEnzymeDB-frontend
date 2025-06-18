@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
 import { DropdownModule } from 'primeng/dropdown';
@@ -120,9 +120,13 @@ export class QueryInputComponent implements ControlValueAccessor {
   useExample(option: SearchOption['key'] = 'compound') {
     this.selectedSearchOption?.reset();
     this.selectedSearchOption = this.searchOptionRecords[option];
-    this.selectedSearchOption?.formGroup.reset({
+
+    console.log('[query-input] use example before', this.selectedSearchOption?.formGroup.status);
+    this.selectedSearchOption?.formGroup.patchValue({
       ...this.selectedSearchOption!.example,
     });
+    this.selectedSearchOption?.formGroup.updateValueAndValidity();
+    console.log('[query-input] use example after', this.selectedSearchOption?.formGroup.status);
   }
 
   reset() {

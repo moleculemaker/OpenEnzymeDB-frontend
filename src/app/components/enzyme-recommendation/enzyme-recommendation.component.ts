@@ -12,7 +12,7 @@ import { PanelModule } from "primeng/panel";
 import { MenuModule } from "primeng/menu";
 import { QueryInputComponent } from "../query-input/query-input.component";
 import { QueryValue, SearchOption, SmilesSearchOption } from "~/app/models/search-options";
-import { CactusService } from '~/app/services/cactus.service';
+import { ChemicalResolverService } from '~/app/services/chemical-resolver.service';
 
 @Component({
   selector: 'app-enzyme-recommendation',
@@ -64,13 +64,13 @@ export class EnzymeRecommendationComponent implements OnChanges {
         value: 'COC1=C(C=CC(=C1)CCN)O'
       },
       smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
-      nameToSmilesConverter: (name: string) => this.cactusService.getSMILESFromName(name),
+      nameToSmilesConverter: (name: string) => this.chemicalResolverService.getSMILESFromName(name),
     })
   ];
 
   constructor(
     private service: OpenEnzymeDBService,
-    private cactusService: CactusService,
+    private chemicalResolverService: ChemicalResolverService,
     private router: Router,
   ) { }
 

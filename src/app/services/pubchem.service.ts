@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, of, switchMap } from 'rxjs';
+import { Loadable } from '../models/Loadable';
 
 @Injectable({
   providedIn: 'root'
@@ -13,22 +14,28 @@ export class PubchemService {
     private http: HttpClient
   ) { }
 
-  /**
-   * Get Compound SMILES from PubChem in Text format
-   */
-  getCompoundSMILES(name: string): Observable<string> {
-    return this.http.get(`${this.API_URL}/compound/name/${name}/smiles/TXT`, { responseType: 'text' });
-  }
+  getCompoundSMILES(name: string): Observable<Loadable<string>> {
+    return new Observable(observer => {
+      observer.next({ status: 'loading', data: null });
 
-  /**
-   * Get Compound Name from PubChem in Text format
-   */
-  getCompoundNameFromSMILES(smiles: string): Observable<string> {
-    return this.http.get(`${this.API_URL}/compound/smiles/${smiles}/name/TXT`, { responseType: 'text' });
-  }
+      const subscription = this.http.get(`${this.API_URL}/compound/name/${name}/property/CanonicalSMILES/TXT`, { responseType: 'text' })
+        .subscribe({
+          next: (smiles) => {
+            console.log('[pubchem-service] smiles', smiles);
+            observer.next({ status: 'loaded', data: smiles });
+            observer.complete();
+          },
+          error: (error) => {
+            observer.next({ 
+              status: error.status >= 500 ? 'error' : 'invalid',
+              data: null 
+            });
+            observer.complete();
+          }
+        });
 
-  getCompoundCIDsFromSMILES(smiles: string): Observable<string> {
-    return this.http.get(`${this.API_URL}/compound/smiles/${smiles}/cids/TXT`, { responseType: 'text' });
+      return () => subscription.unsubscribe();
+    });
   }
 
   /**
@@ -44,5 +51,9 @@ export class PubchemService {
         return this.http.get(`${this.API_URL}/compound/cid/${cids[0]}/record/SDF?record_type=3d`, { responseType: 'text' });
       })
     );
+  }
+
+  getCompoundCIDsFromSMILES(smiles: string): Observable<string> {
+    return this.http.get(`${this.API_URL}/compound/smiles/${smiles}/cids/TXT`, { responseType: 'text' });
   }
 }
