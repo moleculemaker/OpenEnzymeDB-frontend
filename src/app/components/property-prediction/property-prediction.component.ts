@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
@@ -16,7 +16,7 @@ import { SmilesValidatorDirective } from "~/app/directives/smiles-validator.dire
 import { InputTextModule } from "primeng/inputtext";
 import { InputTextareaModule } from "primeng/inputtextarea";
 import { SequenceOrUniprotValidatorDirective } from "~/app/directives/sequence-or-uniprot-validator.directive";
-import { forkJoin } from "rxjs";
+import { forkJoin, Subscription } from "rxjs";
 
 @Component({
   selector: 'app-property-prediction',
@@ -42,7 +42,7 @@ import { forkJoin } from "rxjs";
     class: "flex flex-col h-full"
   }
 })
-export class PropertyPredictionComponent {
+export class PropertyPredictionComponent implements OnDestroy {
   showJobTab = true;
   currentPage: 'input' | 'result' = 'input';
   
@@ -57,14 +57,35 @@ export class PropertyPredictionComponent {
     status: 'na',
     data: null,
   };
+
+  exampleEnzyme = '>sp|Q29476|ST1A1_CANLF Sulfotransferase 1A1 OS=Canis lupus familiaris OX=9615 GN=SULT1A1 PE=1 SV=1\nMEDIPDTSRPPLKYVKGIPLIKYFAEALESLQDFQAQPDDLLISTYPKSGTTWVSEILDMIYQDGDVEKCRRAPVFIRVPFLEFKAPGIPTGLEVLKDTPAPRLIKTHLPLALLPQTLLDQKVKVVYVARNAKDVAVSYYHFYRMAKVHPDPDTWDSFLEKFMAGEVSYGSWYQHVQEWWELSHTHPVLYLFYEDMKENPKREIQKILKFVGRSLPEETVDLIVQHTSFKEMKNNSMANYTTLSPDIMDHSISAFMRKGISGDWKTTFTVAQNERFDADYAKKMEGCGLSFRTQL';
+  exampleSubstrate = 'OC1=CC=C(C[C@@H](C(O)=O)N)C=C1';
+  exampleUsed = false;
+
+  subscriptions: Subscription[] = [];
  
   constructor(
     private service: OpenEnzymeDBService,
     private router: Router,
-  ) { }
+  ) {
+    this.subscriptions.push(
+      this.form.valueChanges.subscribe((value) => {
+        this.exampleUsed = value.enzyme === this.exampleEnzyme && value.substrate === this.exampleSubstrate;
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+  }
 
   onSubmit() {
     if (!this.form.valid) {
+      return;
+    }
+
+    if (this.exampleUsed) {
+      this.router.navigate(['property-prediction', 'result', 'precomputed', 'precomputed', 'precomputed']);
       return;
     }
 
@@ -100,8 +121,8 @@ export class PropertyPredictionComponent {
 
   useExample() {
     this.form.patchValue({
-      enzyme: '>sp|Q29476|ST1A1_CANLF Sulfotransferase 1A1 OS=Canis lupus familiaris OX=9615 GN=SULT1A1 PE=1 SV=1\nMEDIPDTSRPPLKYVKGIPLIKYFAEALESLQDFQAQPDDLLISTYPKSGTTWVSEILDMIYQDGDVEKCRRAPVFIRVPFLEFKAPGIPTGLEVLKDTPAPRLIKTHLPLALLPQTLLDQKVKVVYVARNAKDVAVSYYHFYRMAKVHPDPDTWDSFLEKFMAGEVSYGSWYQHVQEWWELSHTHPVLYLFYEDMKENPKREIQKILKFVGRSLPEETVDLIVQHTSFKEMKNNSMANYTTLSPDIMDHSISAFMRKGISGDWKTTFTVAQNERFDADYAKKMEGCGLSFRTQL',
-      substrate: 'OC1=CC=C(C[C@@H](C(O)=O)N)C=C1',
+      enzyme: this.exampleEnzyme,
+      substrate: this.exampleSubstrate,
     });
   }
 

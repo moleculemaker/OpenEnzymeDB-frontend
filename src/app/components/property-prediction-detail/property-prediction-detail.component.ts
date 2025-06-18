@@ -46,7 +46,7 @@ export class PropertyPredictionDetailComponent {
   };
 
   jobInfo: PropertyPredictionJobInfo = {
-    smiles: 'loading ...',
+    smiles: '',
     sequence: 'loading ...',
     name: '',
   }

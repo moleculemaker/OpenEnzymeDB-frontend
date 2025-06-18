@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, first, from, map, of } from "rxjs";
+import { Observable, first, from, map, of, tap } from "rxjs";
 import * as d3 from 'd3';
 
 import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
@@ -279,7 +279,13 @@ const ec_data = loadGzippedJson<ECRecordDict>('/assets/kegg_ec.json.gz');
 const substrate_data = loadGzippedJson<SubstrateRecordDict>('/assets/substrate.json.gz');
 
 const exampleRecommendation = import('../../assets/example.recommendation.json');
-const exampleStatus = import('../../assets/example_status.json') as Promise<any>;
+const exampleStatus = import('../../assets/example_status.json').then((m) => m.default);
+const exampleDLKcat = import('../../assets/example.dlkcat.json').then((m) => m.default);
+const exampleUnikp = import('../../assets/example.unikp.json').then((m) => m.default);
+const exampleCatpred = import('../../assets/example.catpred.json').then((m) => m.default);
+const exampleStatusDLKcat = import('../../assets/example.dlkcat.status.json').then((m) => m.default);
+const exampleStatusUnikp = import('../../assets/example.unikp.status.json').then((m) => m.default);
+const exampleStatusCatpred = import('../../assets/example.catpred.status.json').then((m) => m.default);
 
 const reaction_scheme = loadGzippedJson<Record<string, ReactionSchemeRecord[]>>('/assets/reaction_scheme.json.gz');
 
@@ -337,14 +343,31 @@ export class OpenEnzymeDBService {
 
   createAndRunJob(jobType: JobType, requestBody: BodyCreateJobJobTypeJobsPost): Observable<Job> {
     if (this.frontendOnly) {
-      return from(exampleStatus);
+      return from(exampleStatus) as Observable<Job>;
     }
     return this.jobsService.createJobJobTypeJobsPost(jobType, requestBody);
   }
 
   getResultStatus(jobType: JobType, jobID: string): Observable<Job> {
-    if (this.frontendOnly) {
-      return from(exampleStatus);
+    if (this.frontendOnly || jobID === 'precomputed') {
+      let status$;
+      switch (jobType) {
+        case JobType.OedCheminfo:
+          status$ = from(exampleStatus);
+          break;
+        case JobType.OedDlkcat:
+          status$ = from(exampleStatusDLKcat);
+          break;
+        case JobType.OedUnikp:
+          status$ = from(exampleStatusUnikp);
+          break;
+        case JobType.OedCatpred:
+          status$ = from(exampleStatusCatpred);
+          break;
+        default:
+          throw new Error(`No example result for job type ${jobType}`);
+      }
+      return status$.pipe(map((jobs) => jobs[0] as unknown as Job));
     }
     return this.jobsService.listJobsByTypeAndJobIdJobTypeJobsJobIdGet(jobType, jobID)
       .pipe(map((jobs) => jobs[0]));
@@ -393,8 +416,19 @@ export class OpenEnzymeDBService {
   }
 
   getResult<T>(jobType: JobType, jobID: string): Observable<T> {
-    if (this.frontendOnly) {
-      return from(exampleRecommendation) as Observable<T>;
+    if (this.frontendOnly || jobID === 'precomputed') {
+      switch (jobType) {
+        case JobType.OedCheminfo:
+          return from(exampleRecommendation) as Observable<T>;
+        case JobType.OedDlkcat:
+          return from(exampleDLKcat) as Observable<T>;
+        case JobType.OedUnikp:
+          return from(exampleUnikp) as Observable<T>;
+        case JobType.OedCatpred:
+          return from(exampleCatpred) as Observable<T>;
+        default:
+          throw new Error(`No example result for job type ${jobType}`);
+      }
     }
     return this.filesService.getResultsBucketNameResultsJobIdGet(jobType, jobID) as Observable<T>;
   }
