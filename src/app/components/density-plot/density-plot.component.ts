@@ -29,7 +29,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
   @Input() data: number[] = [];
   @Input() scaleType: ScaleType = 'linear';
   @Input() bandwidth = 0.05;
-  @Input() highlightValue?: number;
+  @Input() highlightValue: number = 0;
   @Input() colors: string[] = ['#3a1c71', '#38688f', '#56ab2f', '#c3d40c'];
 
   private density: [number, number][] = [];
@@ -160,7 +160,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
       .attr("transform", `translate(0,${this.height})`);
 
     const xAxisGenerator = d3.axisBottom(this.x)
-      .tickFormat((d: any) => this.formatScientificNotation(d))
+      .tickFormat((d: any) => d === this.highlightValue ? d : this.formatScientificNotation(d))
       .tickSize(-this.height + 10)
       .tickValues(tickValues);
 
@@ -210,7 +210,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
             .attr("font-size", ".8rem")
             .attr("fill", "black")
             .attr('transform', `translate(0, ${-this.height - 25})`)
-            .html(this.highlightValue!.toFixed(4));
+            .html(`${this.highlightValue ? this.highlightValue.toFixed(4) : ''}`);
 
           // const color = this.openenzymedbService.getColorForDensityPoint(this.highlightValue!, this.density, this.colors);
 
