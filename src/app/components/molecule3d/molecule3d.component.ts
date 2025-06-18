@@ -243,7 +243,7 @@ export class Molecule3dComponent implements AfterViewInit, OnChanges, OnDestroy 
     // Center and zoom the molecule
     viewer.zoomTo();
     viewer.render();
-    viewer.zoom(0.8, 2000);
+    viewer.zoom(1, 2000);
   }
 
   private captureMoleculeImage(viewer: any) {

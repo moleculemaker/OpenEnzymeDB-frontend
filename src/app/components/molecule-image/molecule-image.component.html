@@ -7,10 +7,10 @@
   <div [innerHTML]="chemical.data | safe:'html'"></div>
   }
   @case ('error') {
-  Error loading image
+  <span class="text-sm opacity-25">Error loading image</span>
   }
   @case ('na') {
-  No Image Available
+  <span class="text-sm opacity-25">No Image Available</span>
   }
   @default {
   <div [innerHTML]="chemical.data | safe:'html'"></div>
