@@ -62,10 +62,10 @@
             </ng-template>
             <ng-template pTemplate="body" let-row let-expanded="expanded">
               <tr class="table-row">
-                <td class="align-middle">
+                <td class="align-middle text-text-secondary">
                   @switch (row.algorithm) {
                   @case ('dlkcat') {
-                  DLKCat
+                  DLKcat
                   }
                   @case ('unikp') {
                   UniKP
@@ -76,28 +76,22 @@
                   }
                 </td>
                 <td class="align-middle">
-                  @switch (row.algorithm) {
-                  @case ('dlkcat') {
-                  <span class="italic">
-                    DLKcat provides a deep learning approach combining a graph neural network method for substrates and
-                    a convolutional neural network representation for proteins for prediction of the k<sub
-                      class="text-xs">cat</sub> kinetic parameter from protein-substrate pairs.
+                  <span class="italic leading-xl text-text-secondary">
+                    @switch (row.algorithm) {
+                    @case ('dlkcat') {
+                      DLKcat employs a deep learning approach that combines a graph neural network for substrate representation with a convolutional neural network for protein representation to predict the k<sub
+                      class="text-xs">cat</sub> kinetic parameter from enzyme-substrate pairs.
+                    }
+                    @case ('unikp') {
+                      UniKP is a unified framework for predicting enzyme kinetic parameters k<sub
+                      class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and catalytic efficiency k<sub class="text-xs">cat</sub> / K<sub class="text-xs">m</sub> from amino acid sequences and substrate pairs using pre-trained language models.
+                    }
+                    @case ('catpred') {
+                      CatPred is a deep learning model for predicting in vitro enzyme kinetic parameters (including k<sub class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and inhibitory constant K<sub
+                      class="text-xs">i</sub>) by leveraging pre-trained protein language model and Directed Message Passing Neural Networks (D-MPNN).
+                    }
+                    }
                   </span>
-                  }
-                  @case ('unikp') {
-                  UniKP is a unified framework for prediction of enzyme kinetic parameters including k<sub
-                    class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and k<sub class="text-xs">cat</sub> /
-                  K<sub class="text-xs">m</sub> (catalytic efficiency) from amino acid sequence and substrate pairs
-                  based on pre-trained language models.
-                  }
-                  @case ('catpred') {
-                  CatPred is a comprehensive framework for Deep Learning In Vitro Enzyme Kinetic Parameters, that allows
-                  for prediction of k<sub class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and K<sub
-                    class="text-xs">i</sub> (inhibitory constant), from an amino acid sequence or protein identifier and
-                  a SMILES description of a biochemical reaction. CatPred leverages existing protein sequence embeddings
-                  and neural networks for molecular property prediction.
-                  }
-                  }
                 </td>
                 <td class="align-middle font-semibold leading-xl">
                   @switch (row.algorithm) {
