@@ -140,8 +140,11 @@ export class QueryInputComponent implements ControlValueAccessor {
     const searchOption = this.searchOptionRecords[option];
     console.log('[query-input] use example before', searchOption.formGroup.status);
     searchOption.formGroup.patchValue(searchOption.example);
-    console.log('[query-input] use example after', searchOption.formGroup.status);
     this.selectedSearchOptionKey = searchOption.key;
+    setTimeout(() => {
+      searchOption.formGroup.updateValueAndValidity({ onlySelf: false, emitEvent: true })
+      console.log('[query-input] use example after', searchOption.formGroup.status);
+    }, 100);
   }
 
   reset() {
