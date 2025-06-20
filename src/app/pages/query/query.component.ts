@@ -239,10 +239,10 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'Compound',
       placeholder: 'Enter a compound',
       example: {
-        label: 'D-xylose (OC1OC[C@@H](O)[C@H](O)[C@H]1O)',
+        label: 'L-proline (C1CC(NC1)C(=O)O)',
         inputType: 'smiles',
-        inputValue: 'OC1OC[C@@H](O)[C@H](O)[C@H]1O',
-        value: 'OC1OC[C@@H](O)[C@H](O)[C@H]1O',
+        inputValue: 'C1CC(NC1)C(=O)O',
+        value: 'C1CC(NC1)C(=O)O',
       },
       smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
       nameToSmilesConverter: (name: string) => this.chemicalResolverService.getSMILESFromName(name),
@@ -252,8 +252,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'Organism',
       placeholder: 'Enter organism name',
       example: {
-        label: 'Lentzea aerocolonigenes',
-        value: 'Lentzea aerocolonigenes'
+        label: 'Yersinia enterocolitica',
+        value: 'Yersinia enterocolitica'
       }
     }),
     new StringSearchOption({
@@ -261,8 +261,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'Uniprot ID',
       placeholder: 'Enter Uniprot ID',
       example: {
-        label: 'P05655',
-        value: 'P05655'
+        label: 'Q96V44',
+        value: 'Q96V44'
       }
     }),
     new StringSearchOption({
@@ -270,8 +270,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'EC Number',
       placeholder: 'Enter EC Number',
       example: {
-        label: '5.1.1.1',
-        value: '5.1.1.1'
+        label: '2.1.1.2',
+        value: '2.1.1.2'
       }
     }),
     new RangeSearchOption({
@@ -279,9 +279,9 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'pH',
       placeholder: 'Enter pH range',
       example: {
-        label: '1-8',
-        valueLabel: '1-8',
-        value: [1, 8]
+        label: '6-8',
+        valueLabel: '6-8',
+        value: [6, 8]
       }
     }),
     new RangeSearchOption({
@@ -289,9 +289,9 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'Temperature',
       placeholder: 'Enter temperature range',
       example: {
-        label: '37-39°C',
-        valueLabel: '37-39',
-        value: [37, 39]
+        label: '29-31°C',
+        valueLabel: '29-31',
+        value: [29, 31]
       }
     }),
   ];

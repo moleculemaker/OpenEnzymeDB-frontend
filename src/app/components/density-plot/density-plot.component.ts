@@ -40,7 +40,6 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
   private width = 0;
   private height = 0;
   private margin = { top: 40, right: 30, bottom: 30, left: 30 };
-  private thresholds: number[] = [];
 
   gradientStops: { offset: number, color: string }[] = [];
 
@@ -50,8 +49,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] || changes['scaleType'] || changes['bandwidth']) {
-      const { thresholds, density } = this.openenzymedbService.createDensityFor(this.data, this.scaleType);
-      this.thresholds = thresholds;
+      const { density } = this.openenzymedbService.createDensityFor(this.data, this.scaleType);
       this.density = density;
 
       this.gradientStops = this.openenzymedbService.getGradientStopsFor(this.density, this.colors);
@@ -62,8 +60,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const { thresholds, density } = this.openenzymedbService.createDensityFor(this.data, this.scaleType);
-    this.thresholds = thresholds;
+    const { density } = this.openenzymedbService.createDensityFor(this.data, this.scaleType);
     this.density = density;
 
     this.initializeChart();
@@ -96,8 +93,8 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
   private initializeScales(): void {
     if (!this.density.length) return;
 
-    let min = this.thresholds[0];
-    let max = this.thresholds[this.thresholds.length - 1];
+    let min = Math.min(...this.data);
+    let max = Math.max(...this.data);
 
     // Adjust domain if highlight value is outside current range
     if (this.highlightValue !== undefined) {
@@ -131,21 +128,12 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
     this.updateAxes();
   }
 
-  private formatScientificNotation(value: number): string {
-    if (this.scaleType === 'log') {
-      const exponent = Math.log10(value);
-      return value === 1 ? '1' : `10${exponent}`;
-    }
-    return value.toFixed(2);
-  }
-
   private updateAxes(): void {
     const max = Math.max(...this.data);
     const min = Math.min(...this.data);
     let tickValues = this.scaleType === 'log'
-      ? d3.range(Math.floor(Math.log10(min)), Math.ceil(Math.log10(max)) + 1)
-          .map(exp => Math.pow(10, exp))
-      : [min, max, 0.25, 0.5, 0.75, 1.0];
+      ? [10e-8, 10e-7, 10e-6, 10e-5, 10e-4, 10e-3, 10e-2, 10e-1, 10e0, 10e1, 10e2, 10e3, 10e4, 10e5, 10e6, 10e7, 10e8]
+      : [0.25, 0.5, 0.75, 1.0];
 
     // Always include min and max values
     tickValues = [...new Set([min, ...tickValues, max])].sort((a, b) => a - b);
@@ -159,8 +147,9 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
     const xAxis = this.plotContainer.select<SVGGElement>('#x-axis')
       .attr("transform", `translate(0,${this.height})`);
 
+    // console.log(tickValues);
     const xAxisGenerator = d3.axisBottom(this.x)
-      .tickFormat((d: any) => d === this.highlightValue ? d : this.formatScientificNotation(d))
+      // .tickFormat((d: any) => d === this.highlightValue ? d : this.formatScientificNotation(d))
       .tickSize(-this.height + 10)
       .tickValues(tickValues);
 
@@ -179,19 +168,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
     xAxis.selectAll<SVGTextElement, unknown>(".tick text")
       .attr("fill", "#495057")
       .attr("font-weight", "300")
-      .attr("transform", `translate(0, 20) rotate(-60)`)
-      .each(function(d: any) {
-        const text = d3.select(this);
-        const value = text.text();
-        if (value.startsWith('10')) {
-          const exponent = value.substring(2);
-          text.text('10');
-          text.append('tspan')
-            .attr('baseline-shift', 'super')
-            .attr('font-size', '0.7em')
-            .text(exponent);
-        }
-      });
+      .attr("transform", `translate(0, 20)`);
 
     // Style the highlight tick differently
     if (this.highlightValue) {

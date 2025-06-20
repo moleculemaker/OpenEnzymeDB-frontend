@@ -510,33 +510,21 @@ export class OpenEnzymeDBService {
     );
   }
 
-  createDensityFor(data: number[], scaleType: ScaleType) {
+  createDensityFor(originalData: number[], scaleType: ScaleType) {
+    const data = scaleType === 'log' ? originalData.map(d => Math.log10(d)) : originalData;
     const min = Math.min(...data);
     const max = Math.max(...data);
 
-    const generateThresholds = (min: number, max: number): number[] => {
-      const numPoints = 100;
+    const generateThresholds = (min: number, max: number, numPoints: number): number[] => {
       const thresholds: number[] = [];
-  
-      if (scaleType === 'log') {
-        const logMin = min;
-        const logMax = max;
-        const logStep = (Math.log10(logMax) - Math.log10(logMin)) / numPoints;
-        
-        for (let i = 0; i <= numPoints; i++) {
-          thresholds.push(Math.pow(10, Math.log10(logMin) + i * logStep));
-        }
-      } else {
-        const step = (max - min) / numPoints;
-        for (let i = 0; i <= numPoints; i++) {
-          thresholds.push(min + i * step);
-        }
+      const step = (max - min) / numPoints;
+      for (let i = 0; i <= numPoints; i++) {
+        thresholds.push(min + i * step);
       }
-  
       return thresholds;
     }
     
-    const calculateDensity = (thresholds: number[], data: number[], bandwidth: number) => {
+    const calculateDensity = (thresholds: number[], data: number[]) => {
       const density: [number, number][] = [[thresholds[0], 0]];
 
       const epanechnikov = (bandwidth: number) => {
@@ -546,9 +534,17 @@ export class OpenEnzymeDBService {
             : 0;
       }
 
+      const getBandwidth = (data: number[]) => {
+        const mean = data.reduce((acc, d) => acc + d, 0) / data.length;
+        const std = Math.sqrt(data.reduce((acc, d) => acc + Math.pow(d - mean, 2), 0) / data.length);
+        return std * Math.pow(data.length, -0.2);
+      }
+
       const kde = (kernel: Function, thresholds: number[], data: number[]) => {
         return thresholds.map((t) => [t, data.reduce((acc, d) => acc + kernel(t - d), 0) / data.length]);
       }
+
+      const bandwidth = getBandwidth(data);
 
       density.push(
         ...(kde(epanechnikov(bandwidth), thresholds, data) as [number, number][]),
@@ -561,12 +557,12 @@ export class OpenEnzymeDBService {
       return density.map(([x, y]) => [x, y / maxDensity]) as [number, number][];
     }
 
-    const thresholds = generateThresholds(min, max);
-    const density = calculateDensity(thresholds, data, 0.5);
+    const thresholds = generateThresholds(min, max, 100);
+    const density = calculateDensity(thresholds, data);
 
     return {
       thresholds,
-      density
+      density: density.map(([x, y]) => [Math.pow(10, x), y] as [number, number])
     }
   }
 
