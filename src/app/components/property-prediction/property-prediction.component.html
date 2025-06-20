@@ -49,9 +49,9 @@
                   <small class="leading-xl text-text-secondary">
                     Example:
                     <small class="font-semibold underline cursor-pointer"
-                      (click)="form.controls['sequence'].setValue('>WP_063460136\nMAIPPYPDFRSAAFLRQHLRATMAFYDPVATDASGGQFHFFLDDGTVYNTHTRHLVSATRFVVTHAMLYRTTGEARYQVGMRHALEFLRTAFLDPATGGYAWLIDWQDGRATVQDTTRHCYGMAFVMLAYARAYEAGVPEARVWLAEAFDTAEQHFWQPAAGLYADEASPDWQLTSYRGQNANMHACEAMISAFRATGERRYIERAEQLAQGICQRQAALSDRTHAPAAEGWVWEHFHADWSVDWDYNRHDRSNIFRPWGYQVGHQTEWAKLLLQLDALLPADWHLPCAQRLFDTAVERGWDAEHGGLYYGMAPDGSICDDGKYHWVQAESMAAAAVLAVRTGDARYWQWYDRIWAYCWAHFVDHEHGAWFRILHRDNRNTTREKSNAGKVDYHNMGACYDVLLWALDAPGFSKESRSAALGRP')">
-                      WP_063460136
-                    </small>,
+                      (click)="form.controls['sequence'].setValue('>sp|Q29476|ST1A1_CANLF Sulfotransferase 1A1 OS=Canis lupus familiaris OX=9615 GN=SULT1A1 PE=1 SV=1\nMEDIPDTSRPPLKYVKGIPLIKYFAEALESLQDFQAQPDDLLISTYPKSGTTWVSEILDMIYQDGDVEKCRRAPVFIRVPFLEFKAPGIPTGLEVLKDTPAPRLIKTHLPLALLPQTLLDQKVKVVYVARNAKDVAVSYYHFYRMAKVHPDPDTWDSFLEKFMAGEVSYGSWYQHVQEWWELSHTHPVLYLFYEDMKENPKREIQKILKFVGRSLPEETVDLIVQHTSFKEMKNNSMANYTTLSPDIMDHSISAFMRKGISGDWKTTFTVAQNERFDADYAKKMEGCGLSFRTQL')">
+                      >sp|Q29476|ST1A1_CANLF
+                    </small>
                   </small>
                 </span>
                 <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
@@ -61,9 +61,9 @@
                     class="w-full border-none h-8"
                     type="text" 
                     formControlName="sequence"
-                    title="Enter an Enzyme Sequence (FASTA or Uniprot)"
+                    title="Enter an Enzyme Sequence (FASTA)"
                     appSequenceOrUniprotValidator
-                    placeholder="Enter an Enzyme Sequence (FASTA or Uniprot)"></textarea>
+                    placeholder="Enter an Enzyme Sequence (FASTA)"></textarea>
                 </div>
 
                 @let sequenceControl = form.controls['sequence'];
@@ -105,8 +105,8 @@
                   <small class="leading-xl text-text-secondary">
                     Example:
                     <small class="font-semibold underline cursor-pointer"
-                      (click)="form.controls['smiles'].setValue('COC1=C(C=CC(=C1)CCN)O')">
-                      4-(2-aminoethyl)-2-methoxyphenol
+                      (click)="form.controls['smiles'].setValue('OC1=CC=C(C[C@@H](C(O)=O)N)C=C1')">
+                      (2S)-2-amino-3-(4-hydroxyphenyl)propanoic acid
                     </small>
                   </small>
                 </span>
