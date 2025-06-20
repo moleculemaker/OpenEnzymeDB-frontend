@@ -28,8 +28,7 @@
     <div class="flex items-center gap-2">
 
       <div id="btn-export" class="flex flex-col justify-center">
-        <!-- <p-button label="Export" icon="pi pi-download" (onClick)="menu.toggle($event)"></p-button>
-          <p-tieredMenu #menu [model]="exportOptions" [popup]="true" /> -->
+        <p-button label="Export" icon="pi pi-download" (onClick)="onExport()"></p-button>
       </div>
     </div>
   </div>
@@ -239,5 +238,5 @@
 
 </div>
 } @else {
-<!-- <app-property-prediction [formValue]="jobInfo" [showJobTab]="false"></app-property-prediction> -->
+<app-property-prediction [formValue]="jobInfo" [showJobTab]="false"></app-property-prediction>
 }

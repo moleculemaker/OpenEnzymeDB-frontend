@@ -8,6 +8,8 @@ import { LoadingComponent } from '~/app/components/loading/loading.component';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { combineLatest, forkJoin, map, Subscription, tap } from 'rxjs';
+import { JobTabComponent } from '../job-tab/job-tab.component';
+import { PropertyPredictionComponent } from '../property-prediction/property-prediction.component';
 
 export type PropertyPredictionJobInfo = {
   sequence: string;
@@ -27,12 +29,16 @@ export type PropertyPredictionJobInfo = {
 
     CommonModule,
     LoadingComponent,
+    JobTabComponent,
+    PropertyPredictionComponent,
   ],
   host: {
     class: 'flex flex-col h-full',
   }
 })
 export class PropertyPredictionResultComponent {
+
+  currentPage = 'result';
 
   jobs = {
     dlkcat: {

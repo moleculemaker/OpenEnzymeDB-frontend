@@ -12,6 +12,9 @@ import { MoleculeImageComponent } from '../molecule-image/molecule-image.compone
 import { DensityPlotComponent } from '../density-plot/density-plot.component';
 import { map } from 'rxjs';
 import { AsyncPipe, CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import { TieredMenuModule } from 'primeng/tieredmenu';
+import { PropertyPredictionComponent } from '../property-prediction/property-prediction.component';
 
 @Component({
   selector: 'app-property-prediction-detail',
@@ -22,12 +25,15 @@ import { AsyncPipe, CommonModule } from '@angular/common';
     CommonModule,
     SkeletonModule,
     AsyncPipe,
+    ButtonModule,
+    TieredMenuModule,
 
     // SafePipe,
     // DensityPlotComponent,
     JobTabComponent,
     MoleculeImageComponent,
     DensityPlotComponent,
+    PropertyPredictionComponent,
   ],
   templateUrl: './property-prediction-detail.component.html',
   styleUrl: './property-prediction-detail.component.scss'
@@ -51,12 +57,12 @@ export class PropertyPredictionDetailComponent {
     name: '',
   }
 
-  exportOptions = [
-    {
-      label: 'Table Results',
-      command: () => { },
-    },
-  ];
+  // exportOptions = [
+  //   {
+  //     label: 'Table Results',
+  //     command: () => { },
+  //   },
+  // ];
 
   columns: any[] = [
     { field: 'compound.name', header: 'compound' },
@@ -139,6 +145,22 @@ export class PropertyPredictionDetailComponent {
 
   backToSearch() {
     history.back();
+  }
+
+  onExport() {
+    // export this.result.data as csv
+    console.log(this.result.data);
+    const header = ['substrate', 'sequence name', 'sequence', ...Object.keys(this.result.data)].join(',');
+    const values = [this.jobInfo.smiles, this.jobInfo.name, this.jobInfo.sequence, ...Object.values(this.result.data)].join(',');
+    const csv = [header, values].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${this.jobId}-${this.algorithm}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
   }
 
   copyAndPasteURL(): void {
