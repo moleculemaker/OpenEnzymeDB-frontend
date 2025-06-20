@@ -39,9 +39,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
   private y: d3.ScaleLinear<number, number>;
   private width = 0;
   private height = 0;
-  private margin = { top: 40, right: 30, bottom: 30, left: 30 };
-
-  gradientStops: { offset: number, color: string }[] = [];
+  private margin = { top: 40, right: 30, bottom: 40, left: 30 };
 
   constructor(
     private openenzymedbService: OpenEnzymeDBService,
@@ -51,8 +49,6 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
     if (changes['data'] || changes['scaleType'] || changes['bandwidth']) {
       const { density } = this.openenzymedbService.createDensityFor(this.data, this.scaleType);
       this.density = density;
-
-      this.gradientStops = this.openenzymedbService.getGradientStopsFor(this.density, this.colors);
 
       this.initializeChart();
       this.render();
@@ -132,7 +128,15 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
     const max = Math.max(...this.data);
     const min = Math.min(...this.data);
     let tickValues = this.scaleType === 'log'
-      ? [10e-8, 10e-7, 10e-6, 10e-5, 10e-4, 10e-3, 10e-2, 10e-1, 10e0, 10e1, 10e2, 10e3, 10e4, 10e5, 10e6, 10e7, 10e8]
+      ? ((min, max) => {
+        let values = [];
+        let start = Math.floor(Math.log10(min));
+        let end = Math.ceil(Math.log10(max));
+        for (let i = start; i <= end; i++) {
+          values.push(Math.pow(10, i));
+        }
+        return values;
+      })(min, max)
       : [0.25, 0.5, 0.75, 1.0];
 
     // Always include min and max values
@@ -149,7 +153,6 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
 
     // console.log(tickValues);
     const xAxisGenerator = d3.axisBottom(this.x)
-      // .tickFormat((d: any) => d === this.highlightValue ? d : this.formatScientificNotation(d))
       .tickSize(-this.height + 10)
       .tickValues(tickValues);
 
@@ -168,7 +171,14 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
     xAxis.selectAll<SVGTextElement, unknown>(".tick text")
       .attr("fill", "#495057")
       .attr("font-weight", "300")
-      .attr("transform", `translate(0, 20)`);
+      .attr("transform", `translate(-5, 20) rotate(-45)`)
+      .html((d: any) => {
+        const exponent = Math.log10(d);
+        if (d === 1) {
+          return '1';
+        }
+        return `10<tspan baseline-shift="super" font-size="0.5rem">${exponent}</tspan>`;
+      });
 
     // Style the highlight tick differently
     if (this.highlightValue) {
@@ -177,7 +187,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
         .each((d: any, i, g) => {
           const [f, ...rest] = Array.from(g);
           d3.select(f).select("line")
-            .attr("stroke", "#DEE2E6")
+            .attr("stroke", "#224063")
             .attr("stroke-width", "2")
             .attr("opacity", 1)
             .attr("transform", "scale(1, 1.3)");
