@@ -182,6 +182,7 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
 
     // Style the highlight tick differently
     if (this.highlightValue) {
+      const percentile = Math.floor(((this.data.sort((a, b) => a - b).findIndex((d) => d > this.highlightValue) - 1) / this.data.length) * 100);
       xAxis.selectAll<SVGGElement, unknown>(".tick")
         .filter((d: any) => d === this.highlightValue)
         .each((d: any, i, g) => {
@@ -197,7 +198,13 @@ export class DensityPlotComponent implements OnChanges, AfterViewInit {
             .attr("font-size", ".8rem")
             .attr("fill", "black")
             .attr('transform', `translate(0, ${-this.height - 25})`)
-            .html(`${this.highlightValue ? this.highlightValue.toFixed(4) : ''}`);
+            .html(this.highlightValue ? `
+<tspan>${this.highlightValue.toFixed(4)} </tspan><tspan> (${percentile}
+<tspan dx="-3" dy="0" baseline-shift="super" font-size="0.5rem">${`${percentile}`.endsWith('1') 
+  ? 'st' : (`${percentile}`.endsWith('2') 
+    ? 'nd' : (`${percentile}`.endsWith('3') 
+      ? 'rd' : 'th'))}</tspan>)</tspan>
+              ` : '');
 
           // const color = this.openenzymedbService.getColorForDensityPoint(this.highlightValue!, this.density, this.colors);
 
