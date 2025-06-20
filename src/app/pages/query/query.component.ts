@@ -178,8 +178,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     ['temperature', new RangeFilterConfig({
       category: 'parameter',
       label: {
-        value: 'Temperature (°C)',
-        rawValue: 'Temperature (°C)',
+        value: 'Temp (°C)',
+        rawValue: 'Temp (°C)',
       },
       placeholder: 'Enter temperature range',
       field: 'temperature',
