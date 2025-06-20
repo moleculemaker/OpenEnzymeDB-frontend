@@ -1,17 +1,17 @@
 [
     {
-        "run_id": null,
-        "job_info": "{\"input_pairs\":[{\"sequence\":\"MAIPPYPDFRSAAFLRQHLRATMAFYDPVATDASGGQFHFFLDDGTVYNTHTRHLVSATRFVVTHAMLYRTTGEARYQVGMRHALEFLRTAFLDPATGGYAWLIDWQDGRATVQDTTRHCYGMAFVMLAYARAYEAGVPEARVWLAEAFDTAEQHFWQPAAGLYADEASPDWQLTSYRGQNANMHACEAMISAFRATGERRYIERAEQLAQGICQRQAALSDRTHAPAAEGWVWEHFHADWSVDWDYNRHDRSNIFRPWGYQVGHQTEWAKLLLQLDALLPADWHLPCAQRLFDTAVERGWDAEHGGLYYGMAPDGSICDDGKYHWVQAESMAAAAVLAVRTGDARYWQWYDRIWAYCWAHFVDHEHGAWFRILHRDNRNTTREKSNAGKVDYHNMGACYDVLLWALDAPGFSKESRSAALGRP\",\"smiles\":\"COC1=C(C=CC(=C1)CCN)O\",\"name\":\">WP_063460136\"}]}",
+        "phase": "completed",
+        "email": "",
+        "job_id": "084353bf20204bf79331bce18f286e5e",
         "type": "oed-dlkcat",
         "command": "",
         "time_start": 0,
         "deleted": 0,
-        "user_agent": "",
-        "phase": "completed",
-        "email": "",
-        "job_id": "3ffbcb2e46b94adc8a19aa57436d25d5",
-        "image": "moleculemaker/oed-dlkcat-dla:staging",
-        "time_created": 1750277145,
-        "time_end": 0
+        "job_info": "{\"input_pairs\":[{\"sequence\":\"MEDIPDTSRPPLKYVKGIPLIKYFAEALESLQDFQAQPDDLLISTYPKSGTTWVSEILDMIYQDGDVEKCRRAPVFIRVPFLEFKAPGIPTGLEVLKDTPAPRLIKTHLPLALLPQTLLDQKVKVVYVARNAKDVAVSYYHFYRMAKVHPDPDTWDSFLEKFMAGEVSYGSWYQHVQEWWELSHTHPVLYLFYEDMKENPKREIQKILKFVGRSLPEETVDLIVQHTSFKEMKNNSMANYTTLSPDIMDHSISAFMRKGISGDWKTTFTVAQNERFDADYAKKMEGCGLSFRTQL\",\"smiles\":\"OC1=CC=C(C[C@@H](C(O)=O)N)C=C1\",\"name\":\">sp|Q29476|ST1A1_CANLF Sulfotransferase 1A1 OS=Canis lupus familiaris OX=9615 GN=SULT1A1 PE=1 SV=1\"}]}",
+        "run_id": null,
+        "image": "moleculemaker/oed-dlkcat-dla",
+        "time_created": 1750456613,
+        "time_end": 0,
+        "user_agent": ""
     }
 ]

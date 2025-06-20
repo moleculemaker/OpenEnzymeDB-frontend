@@ -71,7 +71,7 @@ export class PropertyPredictionComponent implements OnDestroy, OnChanges {
   ) {
     this.subscriptions.push(
       this.form.valueChanges.subscribe((value) => {
-        this.exampleUsed = value.sequence === this.exampleEnzyme && value.smiles === this.exampleSubstrate;
+        // this.exampleUsed = value.sequence === this.exampleEnzyme && value.smiles === this.exampleSubstrate;
       })
     );
   }

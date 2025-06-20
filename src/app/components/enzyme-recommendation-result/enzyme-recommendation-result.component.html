@@ -34,7 +34,11 @@
   </div>
 
   @if (isLoading$ | async) {
-    <app-loading [statusQuery$]="statusResponse$"></app-loading>
+    <app-loading 
+      [statusQuery$]="statusResponse$"
+      [estimatedTime]="2 * 60"
+    >
+    </app-loading>
   }
 
   <div class="flex flex-col gap-8">

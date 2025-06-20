@@ -29,7 +29,9 @@
   @if (!showResults) {
   <app-loading 
     [statusQuery$]="statusResponse$" 
-    (progressChange)="onProgressChange($event)">
+    (progressChange)="onProgressChange($event)"
+    [estimatedTime]="2 * 60"
+  >
   </app-loading>
   }
 
