@@ -1,0 +1,243 @@
+<div #dataSnapshot class="flex flex-col justify-center items-center pt-4 pb-4">
+  @if (summary.status === 'loaded'
+  && chartConfigs['pieChart']['data']['kcat'].status === 'loaded'
+  && chartConfigs['pieChart']['data']['km'].status === 'loaded'
+  && chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded'
+  && chartConfigs['barChart']['data'].status === 'loaded') {
+  <p-panel class="w-full">
+    <ng-template pTemplate="header">
+      <span class="grow">Statistics</span>
+    </ng-template>
+
+    <div class="flex flex-col">
+      <div class="flex gap-2 p-2">
+        <div>
+          <div class="rounded-md border border-solid border-[--surface-d] py-2 flex flex-col gap-2 bg-white min-w-[100px]">
+            <div class="font-semibold px-2">EC Classes</div>
+            <hr>
+            <div class="flex flex-col">
+              @for (color of chartConfigs['pieChart']['styleConfig']['backgroundColor']; track color; let i = $index) {
+              <button title="EC {{ i + 1 }}" type="button" class="flex items-center gap-2 cursor-pointer px-2 py-1"
+                [class.bg-[#F5F9FF]]="chartState.state === 'focused' && chartState.payload === i"
+                (click)="chartState = { state: 'focused', payload: i }; $event.stopPropagation()"
+                (mouseover)="chartState = { state: 'hovering-ec', payload: i }; $event.stopPropagation()"
+                (mouseout)="chartState = { state: 'mouseout-ec', payload: i }; $event.stopPropagation()">
+                @if (currentChart === 'pieChart') {
+                <div class="w-4 h-4 rounded-full" [style.background-color]="color"></div>
+                }
+                <div>{{ ecSummary[i].label }}</div>
+              </button>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <div class="flex justify-end w-full pr-8 gap-2">
+            @if (chartState.state === 'focused' || chartState.state === 'hovering-ec') {
+            <div class="rounded-md border border-solid border-[--surface-d] p-2 flex flex-col gap-2 bg-white grow">
+              @switch (currentChart) {
+              @case ('pieChart') {
+              <div class="font-semibold flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full"
+                  [style.background-color]="chartConfigs[currentChart]['styleConfig']['backgroundColor'][chartState.payload]">
+                </div>
+                <div class="font-semibold">{{ ecSummary[chartState.payload].longLabel }}:<span
+                    class="font-normal ml-1">{{ ecSummary[chartState.payload].description }}</span></div>
+              </div>
+              <hr>
+              <div class="flex justify-between">
+                <div class="flex flex-col gap-2">
+                  <div class="font-semibold"><span class="italic">k</span><sub class="text-xs">cat</sub></div>
+                  <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
+                      chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[chartState.payload] | number
+                    }}</span></div>
+                  <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
+                      (chartConfigs['pieChart']['data']['kcat'].data.datasets[0].data[chartState.payload] /
+                      chartConfigs['pieChart']['data']['kcat'].data.datasets[0].total * 100).toFixed(1) }}%</span>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <div class="font-semibold"><span class="italic">K</span><sub class="text-xs">m</sub></div>
+                  <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
+                      chartConfigs['pieChart']['data']['km'].data.datasets[0].data[chartState.payload] | number
+                      }}</span></div>
+                  <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
+                      (chartConfigs['pieChart']['data']['km'].data.datasets[0].data[chartState.payload] /
+                      chartConfigs['pieChart']['data']['km'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <div class="font-semibold"><span class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></div>
+                  <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
+                      chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[chartState.payload] | number
+                      }}</span></div>
+                  <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
+                      (chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].data[chartState.payload] /
+                      chartConfigs['pieChart']['data']['kcat_km'].data.datasets[0].total * 100).toFixed(1) }}%</span>
+                  </div>
+                </div>
+              </div>
+              }
+              @case ('barChart') {
+              <div class="font-semibold flex items-center gap-2">
+                <div class="font-semibold">{{ ecSummary[chartState.payload].longLabel }}:<span
+                    class="font-normal ml-1">{{ ecSummary[chartState.payload].description }}</span></div>
+              </div>
+              <hr>
+              <div class="flex justify-between">
+                <div class="flex flex-col gap-2">
+                  <div class="font-semibold flex items-center gap-2">
+                    <div class="w-4 h-4 rounded-full"
+                      [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][0]">
+                    </div>
+                    <div><span class="italic">k</span><sub class="text-xs">cat</sub></div>
+                  </div>
+                  <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
+                      chartConfigs['barChart']['data'].data.datasets[0].data[chartState.payload] | number }}</span>
+                  </div>
+                  <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
+                      (chartConfigs['barChart']['data'].data.datasets[0].data[chartState.payload] /
+                      chartConfigs['barChart']['data'].data.datasets[0].total * 100).toFixed(1) }}%</span></div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <div class="font-semibold flex items-center gap-2">
+                    <div class="w-4 h-4 rounded-full"
+                      [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][1]">
+                    </div>
+                    <div><span class="italic">K</span><sub class="text-xs">m</sub></div>
+                  </div>
+                  <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
+                      chartConfigs['barChart']['data'].data.datasets[1].data[chartState.payload] | number }}</span>
+                  </div>
+                  <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
+                      (chartConfigs['barChart']['data'].data.datasets[1].data[chartState.payload] /
+                      chartConfigs['barChart']['data'].data.datasets[1].total * 100).toFixed(1) }}%</span></div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <div class="font-semibold flex items-center gap-2">
+                    <div class="w-4 h-4 rounded-full"
+                      [style.background-color]="chartConfigs['barChart']['styleConfig']['backgroundColor'][2]">
+                    </div>
+                    <div><span class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></div>
+                  </div>
+                  <div class="text-[#6C757D]">No. Entries: <span class="font-semibold text-[--text-color]">{{
+                      chartConfigs['barChart']['data'].data.datasets[2].data[chartState.payload] | number }}</span>
+                  </div>
+                  <div class="text-[#6C757D]">% Entries: <span class="font-semibold text-[--text-color]">{{
+                      (chartConfigs['barChart']['data'].data.datasets[2].data[chartState.payload] /
+                      chartConfigs['barChart']['data'].data.datasets[2].total * 100).toFixed(1) }}%</span></div>
+                </div>
+              </div>
+              }
+              }
+            </div>
+            } @else {
+            <div class="h-[116px] w-full"></div>
+            }
+            <p-dropdown [options]="dropdownOptions" [(ngModel)]="currentChart" optionValue="value"
+              (onChange)="currentChart = $event.value"></p-dropdown>
+          </div>
+          @switch (currentChart) {
+          <!-- Pie Charts -->
+          @case ('pieChart') {
+          <div class="flex justify-center gap-4 p-8">
+            @if (chartConfigs['pieChart']['data']['kcat'].status === 'loaded') {
+            <div class="w-[200px]">
+              <div class="font-semibold"><span
+                  class="pb-1"><span class="italic">k</span><sub class="text-xs">cat</sub></span></div>
+              <p-chart type="pie" #kcatChart [data]="chartConfigs['pieChart']['data']['kcat'].data"
+                [options]="chartConfigs['pieChart']['data']['kcat'].options"
+                [plugins]="chartConfigs['pieChart']['data']['kcat'].plugins"></p-chart>
+            </div>
+            } @else {
+            <div class="flex justify-center items-center h-full">
+              <p-skeleton width="100px" height="100px"></p-skeleton>
+            </div>
+            }
+
+            @if (chartConfigs['pieChart']['data']['km'].status === 'loaded') {
+            <div class="w-[200px]">
+              <div class="font-semibold"><span
+                  class="pb-1"><span class="italic">K</span><sub class="text-xs">m</sub></span></div>
+              <p-chart type="pie" #kmChart [data]="chartConfigs['pieChart']['data']['km'].data"
+                [options]="chartConfigs['pieChart']['data']['km'].options"
+                [plugins]="chartConfigs['pieChart']['data']['km'].plugins"></p-chart>
+            </div>
+            } @else {
+            <div class="flex justify-center items-center h-full">
+              <p-skeleton width="100px" height="100px"></p-skeleton>
+            </div>
+            }
+
+            @if (chartConfigs['pieChart']['data']['kcat_km'].status === 'loaded') {
+            <div class="w-[200px]">
+              <div class="font-semibold"><span class="pb-1"><span
+                  class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></span></div>
+              <p-chart type="pie" #kcatKmChart [data]="chartConfigs['pieChart']['data']['kcat_km'].data"
+                [options]="chartConfigs['pieChart']['data']['kcat_km'].options"
+                [plugins]="chartConfigs['pieChart']['data']['kcat_km'].plugins"></p-chart>
+            </div>
+            } @else {
+            <div class="flex justify-center items-center h-full">
+              <p-skeleton width="100px" height="100px"></p-skeleton>
+            </div>
+            }
+          </div>
+          }
+
+          <!-- Bar Charts -->
+          @case ('barChart') {
+          @if (chartConfigs['barChart']['data'].status === 'loaded') {
+          <div class="p-8">
+            <div class="flex justify-center w-full">
+              <div id="legend-container"></div>
+            </div>
+            <p-chart type="bar" #histogramChart styleClass="w-full" [data]="chartConfigs['barChart']['data'].data"
+              [options]="chartConfigs['barChart']['data'].options" [plugins]="chartConfigs['barChart']['data'].plugins">
+            </p-chart>
+          </div>
+          }
+          }
+          }
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="flex w-full">
+      <p-table #resultsTable [value]="summary.dataset" dataKey="label" class="w-full h-full" tableStyleClass="w-full"
+        styleClass="w-full">
+        <ng-template pTemplate="header">
+          <tr>
+            <!-- <th class="align-middle">Reaction</th> -->
+            <th class="align-middle"></th>
+            <th class="align-middle">
+              <span class="font-semibold mr-2"><span class="italic">k</span><sub class="text-xs">cat</sub></span> Dataset
+            </th>
+            <th class="align-middle">
+              <span class="font-semibold mr-2"><span class="italic">K</span><sub class="text-xs">m</sub></span> Dataset
+            </th>
+            <th class="align-middle">
+              <span class="font-semibold mr-2"><span class="italic">k</span><sub class="text-xs">cat</sub> / <span class="italic">K</span><sub class="text-xs">m</sub></span> Dataset
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-expanded="expanded">
+          <tr>
+            <td class="align-middle w-[300px]">{{ row.label }}</td>
+            <td class="align-middle">{{ row.kcat | number }}</td>
+            <td class="align-middle">{{ row.km | number }}</td>
+            <td class="align-middle">{{ row.kcat_km | number }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-panel>
+  }
+
+  @else {
+  <div class="flex justify-center items-center h-full">
+    <p-progressSpinner ariaLabel="loading" />
+  </div>
+  }
+</div>

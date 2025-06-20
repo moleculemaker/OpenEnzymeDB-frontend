@@ -28,13 +28,13 @@
 
     <div class="spacer"></div>
 
-    <p-menu #menu class="user_menu" [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
+    <!-- <p-menu #menu class="user_menu" [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
     <div class="user_menu_button" *ngIf="userInfo" (click)="menu.toggle($event)">
         {{ userInfo.email }}
     </div>
 
     <a class="login_button" href="#" *ngIf="!userInfo"
-        (click)="$event.preventDefault();$event.stopPropagation();login()">Sign In</a>
+        (click)="$event.preventDefault();$event.stopPropagation();login()">Sign In</a> -->
 
     <div class="coming_soon" [class.show_popup]="showComingSoonPopup">
         <div class="coming_soon_button" (click)="autocloseComingSoonPopup=false;toggleComingSoonPopup();">
@@ -46,10 +46,10 @@
 
             <div class="flex flex-col gap-4">
                 <div>
-                    <h3>Welcome to our pre-release</h3>
+                    <h3>Welcome to our initial release</h3>
 
                     <p>
-                        We’re looking for input on features, bugs, and user feedback in order to improve on our pre-release for future versions.
+                        We’re looking for input on features, bugs, and user feedback in order to improve on our initial release for future versions.
                         <!-- We welcome your suggestions and
                         <a [href]="emailstring" target="_top"><u>feedback</u></a>. New features and improvements will be
                         released over the
@@ -122,42 +122,34 @@
             }
             @if (releaseNotesUrl) {
                 <button class="flex items-center gap-[10px] m-1 ml-3 cursor-pointer opacity-80" type="button">
-                    <i class="pi pi-tag !text-lg"></i>
+                    <i class="pi pi-question-circle !text-lg"></i>
                     <a 
-                        [href]="releaseNotesUrl"
-                        target="_blank"
+                        href="/tutorial"
                         rel="noopener noreferrer">
-                        <span class="text-base">Release Notes</span>
+                        <span class="text-base">Tutorial</span>
                     </a>
                 </button>
                 }
             @if (visionUrl) {
-            <button class="flex items-center gap-[10px] m-1 ml-3 cursor-pointer opacity-80" type="button">
-                <svg style="transform: scale(0.75)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_474_34867)">
-                        <path
-                            d="M9 21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V20H9V21ZM12 2C8.14 2 5 5.14 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.14 15.86 2 12 2ZM14.85 13.1L14 13.7V16H10V13.7L9.15 13.1C7.8 12.16 7 10.63 7 9C7 6.24 9.24 4 12 4C14.76 4 17 6.24 17 9C17 10.63 16.2 12.16 14.85 13.1Z"
-                            fill="white" />
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_474_34867">
-                            <rect width="24" height="24" fill="white" />
-                        </clipPath>
-                    </defs>
-                </svg>
-                <a 
-                    [href]="visionUrl"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <span class="text-base">Our Vision</span>
-                </a>
-            </button>
+                <button class="flex items-center gap-[10px] m-1 ml-3 cursor-pointer opacity-80" type="button">
+                    <i class="pi pi-info-circle !text-lg"></i>
+                    <a 
+                        href="/about"
+                        rel="noopener noreferrer">
+                        <span class="text-base">About</span>
+                    </a>
+                </button>
             }
         </div>
     </div>
 </div>
 
+<!-- <div class="flex justify-center w-full h-full grow">
+    <div class="max-w-content-xl grow"> -->
 <router-outlet></router-outlet>
+    <!-- </div>
+</div> -->
+
 
 <!-- <cite>
     <div class="page_container">

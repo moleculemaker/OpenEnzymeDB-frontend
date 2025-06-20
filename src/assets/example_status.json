@@ -1,0 +1,17 @@
+[
+    {
+        "job_info": "{\"query_smiles\":\"COC1=C(C=CC(=C1)CCN)O\",\"smiles_list\":[\"COc1ccc2c(c1OC)C(O)O[C@@H]2[C@H]1c2c(cc3c(c2OC)OCO3)CCN1C\"],\"algorithms\":[\"tanimoto\",\"fragment\",\"mcs\"],\"config\":{\"tanimoto\":{\"fptype\":\"rdkit\"},\"fragment\":{\"uniquify\":false,\"useChirality\":true,\"useQueryQueryMatches\":false,\"maxMatches\":10},\"mcs\":{\"maximizeBonds\":true,\"threshold\":1,\"timeout\":1,\"verbose\":false,\"matchValences\":false,\"ringMatchesRingOnly\":true,\"completeRingsOnly\":false,\"matchChiralTag\":true}}}",
+        "run_id": null,
+        "type": "oed-cheminfo",
+        "command": "python ./main.py",
+        "time_start": 0,
+        "deleted": 0,
+        "phase": "completed",
+        "email": "bingjig2@illinois.edu",
+        "job_id": "oed-cheminfo4",
+        "image": "moleculemaker/mmli-cheminfo-service",
+        "time_created": 1745013269,
+        "time_end": 0,
+        "user_agent": ""
+    }
+]

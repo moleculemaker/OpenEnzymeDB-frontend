@@ -30,6 +30,7 @@ model/jobType.ts
 model/jobUpdate.ts
 model/locationInner.ts
 model/models.ts
+model/molecule.ts
 model/savedMolecule.ts
 model/savedMoleculeDelete.ts
 model/validationError.ts

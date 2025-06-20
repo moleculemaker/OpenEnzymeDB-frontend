@@ -1,0 +1,174 @@
+<div class="flex flex-col gap-4 max-w-content-xl w-full px-4">
+  <div class="flex items-center justify-between pt-10">
+    <div class="flex gap-2 items-center">
+      <!-- <button type="button" title="Back to Search"
+        class="border border-solid border-[#DEE2E6] rounded-sm px-2 py-1 flex items-center gap-2 bg-[#f8f9fa]"
+        (click)="backToSearch()">
+        <i class="pi pi-arrow-left"></i>
+        <span>Back to Search</span>
+      </button> -->
+      @if (ec) {
+        <h5 class="font-bold mt-0">EC Number: {{ ec['entry'] }}</h5>
+      }
+    </div>
+    <div class="flex items-center gap-2">
+
+      <div id="btn-export" class="flex flex-col justify-center">
+        <p-button label="Export" icon="pi pi-download" (onClick)="menu.toggle($event)"></p-button>
+        <p-tieredMenu #menu [model]="exportOptions" [popup]="true" />
+      </div>
+    </div>
+  </div>
+
+  <p-panel>
+    <ng-template pTemplate="header">
+      <span class="grow">Overview</span>
+    </ng-template>
+
+    @if (ec) {
+    <div class="flex p-2 gap-2 flex-wrap">
+      <div class="flex flex-col gap-4 w-1/4 border-r border-solid border-[#DEE2E6]">
+        <div class="flex flex-col gap-4 pr-2">
+          <p class="font-bold">Entity Information</p>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">EC Number</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ ec['entry'] }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Generic Name</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ ec['name'][0] }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4 w-1/4 border-r border-solid border-[#DEE2E6]">
+        <div class="grid grid-cols-2 gap-4">
+          <p class="font-bold col-span-2">References</p>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://enzyme.expasy.org/EC/' + ec['entry'], 
+              label: 'Expasy'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.kegg.jp/dbget-bin/www_bget?ec:' + ec['entry'], 
+              label: 'KEGG'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://sabiork.h-its.org/newSearch?q=ecnumber:' + ec['entry'], 
+              label: 'SABIO-RK'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.uniprot.org/uniprotkb/?query=ec:' + ec['entry'] + '&sort=score', 
+              label: 'Uniprot'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.rcsb.org/search?request=' + '%7B%22query%22%3A%7B%22type%22%3A%22group%22%2C%22nodes%22%3A%5B%7B%22type%22%3A%22group%22%2C%22nodes%22%3A%5B%7B%22type%22%3A%22terminal%22%2C%22service%22%3A%22text%22%2C%22parameters%22%3A%7B%22attribute%22%3A%22rcsb_polymer_entity.rcsb_ec_lineage.id%22%2C%22negation%22%3Afalse%2C%22operator%22%3A%22in%22%2C%22value%22%3A%5B%22' + ec['entry'] + '%22%5D%7D%7D%5D%2C%22logical_operator%22%3A%22and%22%2C%22label%22%3A%22text%22%7D%5D%2C%22logical_operator%22%3A%22and%22%7D%2C%22return_type%22%3A%22entry%22%2C%22request_options%22%3A%7B%22paginate%22%3A%7B%22start%22%3A0%2C%22rows%22%3A25%7D%2C%22results_content_type%22%3A%5B%22experimental%22%5D%2C%22sort%22%3A%5B%7B%22sort_by%22%3A%22score%22%2C%22direction%22%3A%22desc%22%7D%5D%2C%22scoring_strategy%22%3A%22combined%22%7D%7D',
+              label: 'RCSB'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.rhea-db.org/rhea?query=ec:' + ec['entry'], 
+              label: 'RHEA'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.enzyme-database.org/query.php?ec=' + ec['entry'], 
+              label: 'ExploreEnz'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://prosite.expasy.org/cgi-bin/prosite/prosite_search_full.pl?SEARCH=' + ec['entry'], 
+              label: 'Prosite'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.ebi.ac.uk/interpro/search/text/' + ec['entry'] + '/?page=1#table', 
+              label: 'InterPro'
+            }"
+          ></app-external-link>
+          <app-external-link 
+            class="col-span-1"
+            [linkItem]="{ 
+              url: 'https://www.ncbi.nlm.nih.gov/protein?SUBMIT=y&term=' + ec['entry'] + '%5BEC%2FRN%20Number%5D', 
+              label: 'NCBI'
+            }"
+          ></app-external-link>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4 grow h-[240px]">
+        <p class="font-bold">Representative Structure</p>
+        @if (ec['uniprots'].length > 0) {
+          <div class="relative h-full p-1 rounded-md border border-solid border-[#DEE2E6]">
+            <div class="absolute top-1 left-1 font-semibold z-10">
+              <app-external-link 
+                [linkItem]="{ 
+                  url: 'https://www.uniprot.org/uniprotkb/' + ec['uniprots'][0]['uniprot_id'], 
+                  label: ec['uniprots'][0]['uniprot_id']
+                }"
+              ></app-external-link>
+            </div>
+            <app-molecule3d 
+            class="w-full h-full" 
+            [options]="{
+                data: ec['uniprots'][0]['uniprot_id'],
+                dataType: 'uniprot',
+                viewerOptions: {
+                  mode: 'cartoon',
+                  modeConfig: {
+                    color: 'spectrum'
+                  }
+                }
+            }"></app-molecule3d>
+          </div>
+        } @else {
+          <div class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-1 flex flex-col justify-center items-center">
+            <h1><i class="pi pi-exclamation-triangle text-gray-400"></i></h1>
+            <span class="text-gray-400">No structure available</span>
+          </div>
+        }
+      </div>
+
+      <div class="flex flex-col gap-4 w-full pt-3 border-t border-solid border-[#DEE2E6]">
+        <p class="font-bold">Representative Reaction Scheme</p>
+        @if (reactionScheme) {
+          <div class="col-span-2 col-start-1 w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2">
+            <p-scrollPanel [style]="{width: '100%', height: '100%'}">
+              <app-reaction-scheme [reactionScheme]="reactionScheme"></app-reaction-scheme>
+            </p-scrollPanel>
+          </div>
+        } @else {
+          <div class="col-span-2 col-start-1 w-full h-full rounded-md border border-solid border-[#DEE2E6] bg-gray-50 flex flex-col justify-center items-center">
+            <h1><i class="pi pi-exclamation-triangle text-gray-400"></i></h1>
+            <span class="text-gray-400">No reaction scheme available</span>
+          </div>
+        }
+      </div>
+    </div>
+    }
+  </p-panel>
+
+  <!-- Request Configuration -->
+  <app-kinetic-table #kineticTable [result]="result" [filters]="filters"></app-kinetic-table>
+</div>

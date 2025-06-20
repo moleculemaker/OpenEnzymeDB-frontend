@@ -1,14 +1,13 @@
 <div class="relative flex justify-center w-full">
-    <!-- <app-sidebar 
+    <app-sidebar 
+        #sidebar
         class="absolute top-0 left-0 h-full"
-        [collapsed]="sidebarCollapsed"
-        (collapsedChange)="onSidebarCollapsedChange($event)"
         [openInNewPage]="false"
         [tools]="sidebarTools">
-    </app-sidebar> -->
+    </app-sidebar>
     <div class="px-4 grow max-w-content-xl"
-        [class.xl-sidebar-sm:ml-sidebar-sm]="sidebarCollapsed"
-        [class.xl-sidebar:ml-sidebar]="!sidebarCollapsed"
+        [class.xl-sidebar-sm:ml-sidebar-sm]="sidebar.collapsed"
+        [class.xl-sidebar:ml-sidebar]="!sidebar.collapsed"
     >
         <router-outlet></router-outlet>
     </div>

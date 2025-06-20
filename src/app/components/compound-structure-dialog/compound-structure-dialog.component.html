@@ -1,0 +1,30 @@
+<p-dialog [(visible)]="visible" [modal]="true" styleClass="w-[800px] h-[800px]" (onHide)="visibleChange.emit(false)">
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-2 font-semibold">
+      Compound Structure
+    </div>
+  </ng-template>
+  <div class="mx-4 h-full flex flex-col gap-4">
+    <!-- 3D Structure Viewer -->
+    <div class="flex gap-2 h-full py-4">
+      <div class="relative w-1/2 h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center">
+        <div class="absolute top-2 left-2 font-semibold">2D</div>
+        <app-molecule-image #molecule2d
+          [smiles]="smiles" [width]="300" [height]="200"></app-molecule-image>
+      </div>
+      <div class="relative w-1/2 h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center">
+        <div class="absolute top-2 left-2 font-semibold z-[9999]">3D</div>
+        <app-molecule3d #molecule3d 
+          class="w-full h-full"
+          [options]="{
+              data: smiles,
+              dataType: 'smi',
+              viewerOptions: {
+                  mode: 'stick'
+              }
+          }">
+        </app-molecule3d>
+      </div>
+    </div>
+  </div>
+</p-dialog>

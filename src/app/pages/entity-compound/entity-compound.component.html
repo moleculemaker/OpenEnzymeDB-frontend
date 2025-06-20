@@ -1,0 +1,103 @@
+<div class="flex flex-col gap-4 max-w-content-xl w-full px-4">
+  <div class="flex items-center justify-between pt-10">
+    <div class="flex gap-2 items-center">
+      <!-- <button type="button" title="Back to Search"
+        class="border border-solid border-[#DEE2E6] rounded-sm px-2 py-1 flex items-center gap-2 bg-[#f8f9fa]"
+        (click)="backToSearch()">
+        <i class="pi pi-arrow-left"></i>
+        <span>Back to Search</span>
+      </button> -->
+      @if (compound) {
+        <h5 class="font-bold mt-0">Compound: {{ compound['SUBSTRATE'] }}</h5>
+      }
+    </div>
+    <div class="flex items-center gap-2">
+
+      <div id="btn-export" class="flex flex-col justify-center">
+        <p-button label="Export" icon="pi pi-download" (onClick)="menu.toggle($event)"></p-button>
+        <p-tieredMenu #menu [model]="exportOptions" [popup]="true" />
+      </div>
+    </div>
+  </div>
+
+  <p-panel>
+    <ng-template pTemplate="header">
+      <span class="grow">Overview</span>
+    </ng-template>
+
+    @if (compound) {
+    <div class="flex gap-2 p-2">
+      <div class="flex flex-col gap-4 w-1/3 border-r border-solid border-[#DEE2E6] p-2">
+        <div class="flex flex-col gap-4">
+          <p class="font-bold">Compound Information</p>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Name</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['SUBSTRATE'] }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Formula</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words" [innerHTML]="compound['FORMULA'] | chemicalProperty: 'chemicalFormula'"></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">SMILES</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['SMILES'] }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Molecular Weight</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['MOLECULAR_WEIGHT'] | chemicalProperty: 'default' }}g/mol</span>
+          </div>
+          <hr>
+          <p class="font-bold">Chemical Properties</p>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">LogP</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['LOG_P'] | chemicalProperty: 'default' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Topological Polar Surface Area (TPSA)</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['TPSA'] | chemicalProperty: 'default' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Number of H-Bond Donors</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['H_BOND_DONOR'] | chemicalProperty: 'default' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Number of H-Bond Acceptors</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['H_BOND_ACCEPTOR'] | chemicalProperty: 'default' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#495057]">Number of Rings</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{ compound['N_RINGS'] | chemicalProperty: 'default' }}</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="flex flex-col gap-2 w-2/3 p-2">
+        <p class="font-bold">Structure</p>
+        <div class="flex gap-2 h-full">
+          <app-molecule-image
+            #molecule2d
+            class="w-1/2 h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
+            [smiles]="compound['SMILES']"
+            [width]="300"
+            [height]="200"
+          ></app-molecule-image>
+          <app-molecule3d
+            #molecule3d
+            class="w-1/2 h-full rounded-md border border-solid border-[#DEE2E6] p-1" 
+            [options]="{
+                data: compound['SMILES'],
+                dataType: 'smi',
+                viewerOptions: {
+                    mode: 'stick'
+                }
+            }">
+          </app-molecule3d>
+        </div>
+      </div>
+    </div>
+    }
+  </p-panel>
+
+  <!-- Request Configuration -->
+  <app-kinetic-table #kineticTable [result]="result" [filters]="filters"></app-kinetic-table>
+</div>

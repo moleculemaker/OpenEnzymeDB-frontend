@@ -1,0 +1,111 @@
+<!-- Request Configuration -->
+<div class="flex flex-col h-full">
+    <form
+        class="flex flex-col justify-between h-full"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+    >
+        <div>
+            @if (showJobTab) {
+                <app-job-tab [tab]="currentPage"></app-job-tab>
+            }
+            
+            <div>
+                <div class="my-6 flex items-center justify-between">
+                    <div>
+                        <h5 class="mb-2 font-bold opacity-100 leading-lg">Enzyme Recommendation</h5>
+                        <h6 class="leading-lg text-text-secondary">
+                            Please enter a substrate to get an enzyme recommendation.
+                        </h6>
+                    </div>
+                </div>
+    
+                <p-panel>
+                    <ng-template pTemplate="header">
+                        <h6 class="grow">Input</h6>
+                        <div class="flex gap-2 -my-1">
+                            <button type="button" class="flex items-center btn-outline"
+                                (click)="useExample()">
+                                <i class="mr-2 pi pi-box"></i>
+                                Use an Example
+                            </button>
+                            <button type="button" class="flex items-center btn-outline"
+                                (click)="clearAll()">
+                                Reset Input
+                            </button>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <div class="p-4 flex flex-col gap-4">
+                            <div class="flex flex-col gap-3 w-full">
+                                <div class="flex items-center gap-4 w-full">
+                                    <app-query-input
+                                        #queryInput
+                                        class="w-full"
+                                        formControlName="search" 
+                                        [searchConfigs]="searchConfigs"
+                                        [multiple]="false"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-panel>
+            </div>
+        </div>
+
+        <!-- Subscription Email Input -->
+        <div
+            class="sticky bottom-0 flex justify-between rounded-t-md bg-[#F3F5FB] px-10 pt-8"
+        >
+        <div class="flex flex-col">
+            <div class="flex items-end justify-center mb-2">
+                <span class="pr-12 mb-1">
+                    <h5 class="inline m-0 mr-2 font-semibold opacity-100 leading-lg">Email</h5>
+                    <h6 class="inline-block leading-lg">Leave an email to get an notification when your
+                    results are ready.</h6>
+                </span>
+            </div>
+            <div class="w-full">
+                <input
+                    id="subscriber-email"
+                    type="email"
+                    aria-describedby="subscriber-email-help"
+                    [class]="'h-12 w-full p-input p-inputtext'
+                    + ((form.controls['email'].invalid
+                        && form.controls['email'].dirty) ? ' ng-invalid ng-dirty' : '')"
+                    pInputText
+                    placeholder="Enter email here"
+                    formControlName="email"
+                />
+                <small
+                    *ngIf="form.controls['email'].invalid
+                        && form.controls['email'].dirty"
+                    id="subscriber-email-help"
+                    class="block mt-2 p-error"
+                    >Email is invalid.</small
+                >
+            </div>
+            <div class="py-4">
+                <p-checkbox
+                    name="subscription"
+                    styleClass="subscription-checkbox"
+                    label="Agree to receive email notifications and updates about EnzymeRecommendation."
+                    [binary]="true"
+                    [formControl]="form.controls['agreeToSubscription']"
+                ></p-checkbox>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-2">
+            <p-button label="Get Enzyme Recommendation" type="submit" styleClass="bg-[#224063]" [disabled]="form.invalid"
+            iconPos="right" icon="pi pi-arrow-right"></p-button>
+            @if (exampleUsed) {
+            <span class="text-sm opacity-75">
+                <i class="pi pi-exclamation-triangle text-yellow-400"></i>
+                A precomputed result will be returned for the example values.
+            </span>
+            }
+        </div>
+        </div>
+    </form>
+</div>

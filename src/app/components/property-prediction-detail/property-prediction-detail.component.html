@@ -1,0 +1,242 @@
+<app-job-tab [tab]="currentPage" (onTabChange)="currentPage = $event"></app-job-tab>
+
+@if (currentPage === 'result') {
+<div class="flex flex-col gap-4 max-w-content-xl w-full px-4">
+  <div class="flex items-center justify-between pt-4">
+    <div class="flex gap-2 items-center">
+      <button type="button" title="Back to All Results"
+        class="border border-solid border-[#DEE2E6] rounded-sm px-2 py-1 flex items-center gap-2 bg-[#f8f9fa]"
+        (click)="backToSearch()">
+        <i class="pi pi-arrow-left"></i>
+        <span>Back to All Results</span>
+      </button>
+      @switch (algorithm) {
+      @case ('dlkcat') {
+      <h5 class="font-bold mt-0">DLKcat Results</h5>
+      }
+      @case ('unikp') {
+      <h5 class="font-bold mt-0">UniKP Results</h5>
+      }
+      @case ('catpred') {
+      <h5 class="font-bold mt-0">CatPred Results</h5>
+      }
+      }
+      <button type="button" title="copy job id" class="border-none cursor-pointer">
+        <i class="pi pi-link" (click)="copyAndPasteURL()"></i>
+      </button>
+    </div>
+    <div class="flex items-center gap-2">
+
+      <div id="btn-export" class="flex flex-col justify-center">
+        <p-button label="Export" icon="pi pi-download" (onClick)="onExport()"></p-button>
+      </div>
+    </div>
+  </div>
+
+  <p-panel>
+    <ng-template pTemplate="header">
+      <span class="grow">Predictions</span>
+    </ng-template>
+
+    @if (result.status === 'loaded') {
+    @switch (algorithm) {
+    @case ('dlkcat') {
+    <div class="flex flex-col gap-2 p-2">
+      <div class="flex flex-col gap-4 w-full p-2">
+        <span class="font-semibold">Input</span>
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#6C757D]">Enzyme Sequence (FASTA)</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+              jobInfo.name }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#6C757D]">Substrate</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+              jobInfo.smiles }}</span>
+          </div>
+          @if (jobInfo.smiles) {
+            <app-molecule-image #molecule2d
+              class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
+              [smiles]="jobInfo.smiles" [width]="200" [height]="150"></app-molecule-image>
+          }
+        </div>
+      </div>
+      <div class="flex flex-col gap-2 w-full p-2">
+        <span class="font-semibold pb-4">Results</span>
+        <div class="flex justify-between max-w-[200px] border-b border-solid border-[#dee2e6] pb-1 font-semibold">
+          <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</span>
+          <span class="flex items-center gap-1">
+            {{ result.data.kcat | number:'1.1-4' }}
+          </span>
+        </div>
+
+        <span class="font-semibold mt-6">Experimental Context</span>
+        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme
+          Database's experimental data.</span>
+
+          <div class="bg-[#F7F8F9] rounded-sm p-2 flex gap-2 flex-col">
+  
+            <div class="flex gap-8 w-full justify-around p-4">
+              <div class="flex flex-col gap-1 grow">
+                <span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                    class="italic">k</span><sub class="text-xs">cat</sub></span>
+                <app-density-plot class="grow" [data]="(kcat$ | async) || []" scaleType="log" [bandwidth]="0.05"
+                  [highlightValue]="result.data.kcat"></app-density-plot>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+    }
+    @case ('unikp') {
+    <div class="flex flex-col gap-2 p-2">
+      <div class="flex flex-col gap-4 w-full p-2">
+        <span class="font-semibold">Input</span>
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#6C757D]">Enzyme Sequence (FASTA)</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+              jobInfo.name }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#6C757D]">Substrate</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+              jobInfo.smiles }}</span>
+          </div>
+          <app-molecule-image #molecule2d
+            class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
+            [smiles]="jobInfo.smiles" [width]="200" [height]="150"></app-molecule-image>
+        </div>
+      </div>
+      <hr>
+      <div class="flex flex-col gap-2 w-full p-2">
+        <span class="font-semibold pb-4">Results</span>
+        <div class="flex flex-col gap-2 max-w-[200px]">
+          <div class="flex justify-between border-b border-solid border-[#dee2e6] pb-1 font-semibold">
+            <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</span>
+            <span class="flex items-center gap-1">
+              {{ result.data.kcat | number:'1.1-4' }}
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-solid border-[#dee2e6] pb-1 font-semibold">
+            <span class="leading-sm text-[#495057]"><span class="italic">K</span><sub class="text-xs">m</sub> (mM)</span>
+            <span class="flex items-center gap-1">
+              {{ result.data.km | number:'1.1-4' }}
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-solid border-[#dee2e6] pb-1 font-semibold">
+            <span>
+              <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub class="text-xs">cat</sub></span>/<span
+                class="leading-sm text-[#495057]"><span class="italic">K</span><sub class="text-xs">m</sub></span> (mM<sup class="text-xs">-1</sup>s<sup class="text-xs">-1</sup>)</span>
+            <span class="flex items-center gap-1">
+              {{ result.data.kcat_km | number:'1.1-4' }}
+            </span>
+          </div>
+        </div>
+
+        <span class="font-semibold mt-6">Experimental Context</span>
+        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme
+          Database's experimental data.</span>
+
+        <div class="bg-[#F7F8F9] rounded-sm p-2 flex gap-2 flex-col">
+
+          <div class="flex gap-8 w-full justify-around p-4">
+            <div class="flex flex-col gap-1 grow">
+              <span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                  class="italic">k</span><sub class="text-xs">cat</sub></span>
+              <app-density-plot class="grow" [data]="(kcat$ | async) || []" scaleType="log" [bandwidth]="0.05"
+                [highlightValue]="result.data.kcat"></app-density-plot>
+            </div>
+            <div class="flex flex-col gap-1 grow">
+              <span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">K</span><sub class="text-xs">m</sub></span>
+              <app-density-plot class="grow" [data]="(km$ | async) || []" scaleType="log" [bandwidth]="0.05"
+                [highlightValue]="result.data.km"></app-density-plot>
+            </div>
+            <div class="flex flex-col gap-1 grow">
+              <span><span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                    class="italic">k</span><sub class="text-xs">cat</sub></span>/<span
+                  class="leading-sm text-[#495057] font-semibold"><span class="italic">K</span><sub class="text-xs">m</sub></span></span>
+              <app-density-plot class="grow" [data]="(kcatKm$ | async) || []" scaleType="log" [bandwidth]="0.05"
+                [highlightValue]="result.data.kcat_km"></app-density-plot>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    @case ('catpred') {
+    <div class="flex flex-col gap-2 p-2">
+      <div class="flex flex-col gap-4 w-full p-2">
+        <span class="font-semibold">Input</span>
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#6C757D]">Enzyme Sequence (FASTA)</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+              jobInfo.name }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="leading-sm text-[#6C757D]">Substrate</span>
+            <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
+              jobInfo.smiles }}</span>
+          </div>
+          <app-molecule-image #molecule2d
+            class="w-full h-full rounded-md border border-solid border-[#DEE2E6] p-2 flex items-center justify-center"
+            [smiles]="jobInfo.smiles" [width]="200" [height]="150"></app-molecule-image>
+        </div>
+      </div>
+      <hr>
+      <div class="flex flex-col gap-2 w-full p-2">
+        <span class="font-semibold pb-4">Results</span>
+        <div class="flex flex-col gap-2 max-w-[200px]">
+          <div class="flex justify-between border-b border-solid border-[#dee2e6] pb-1 font-semibold">
+            <span class="leading-sm text-[#495057]"><span class="italic">k</span><sub class="text-xs">cat</sub> (s<sup class="text-xs">-1</sup>)</span>
+            <span class="flex items-center gap-1">
+              {{ result.data.kcat | number:'1.1-4' }}
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-solid border-[#dee2e6] pb-1 font-semibold">
+            <span class="leading-sm text-[#495057]"><span class="italic">K</span><sub class="text-xs">m</sub> (mM)</span>
+            <span class="flex items-center gap-1">
+              {{ result.data.km | number:'1.1-4' }}
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-solid border-[#dee2e6] pb-1 font-semibold">
+            <span class="leading-sm text-[#495057]"><span class="italic">K</span><sub class="text-xs">i</sub> (mM)</span>
+            <span class="flex items-center gap-1">
+              {{ result.data.ki | number:'1.1-4' }}
+            </span>
+          </div>
+        </div>
+
+        <span class="font-semibold mt-6">Experimental Context</span>
+        <span class="italic text-[#6C757D] text-sm">Understand your prediction results in the context of Open Enzyme
+          Database's experimental data.</span>
+
+        <div class="bg-[#F7F8F9] rounded-sm p-2 flex gap-2 flex-col">
+
+          <div class="flex gap-8 w-full justify-around p-4">
+            <div class="flex flex-col gap-1 grow">
+              <span class="leading-sm text-[#495057] font-semibold ml-2"><span
+                  class="italic">k</span><sub class="text-xs">cat</sub></span>
+              <app-density-plot class="grow" [data]="(kcat$ | async) || []" scaleType="log" [bandwidth]="0.05"
+                [highlightValue]="result.data.kcat"></app-density-plot>
+            </div>
+            <div class="flex flex-col gap-1 grow">
+              <span class="leading-sm text-[#495057] font-semibold ml-2"><span class="italic">K</span><sub class="text-xs">m</sub></span>
+              <app-density-plot class="grow" [data]="(km$ | async) || []" scaleType="log" [bandwidth]="0.05"
+                [highlightValue]="result.data.km"></app-density-plot>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    }
+    }
+  </p-panel>
+
+</div>
+} @else {
+<app-property-prediction [formValue]="jobInfo" [showJobTab]="false"></app-property-prediction>
+}

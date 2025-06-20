@@ -1,0 +1,192 @@
+<app-job-tab [tab]="currentPage" (onTabChange)="currentPage = $event"></app-job-tab>
+
+@if (currentPage === 'result') {
+<!-- Model Results -->
+<div class="flex flex-col h-full gap-8">
+  <div class="flex items-center justify-between">
+    @let status = statusResponse$ | async;
+    @if (status) {
+      <div>
+        <h5 class="flex items-center gap-2 mb-2 font-bold opacity-100 leading-xl">
+          Job ID: Multiple Jobs
+          <button type="button" title="copy job id" class="border-none cursor-pointer">
+            <i class="pi pi-copy" (click)="copyAndPasteURL()"></i>
+          </button>
+        </h5>
+        <h6 class="text-text-secondary leading-lg">
+          Submission Time:
+          {{ (status.time_created || 0) * 1000 | date : "short" }}
+        </h6>
+      </div>
+    }
+    <div class="flex items-center gap-2">
+
+      <!-- TODO: add button here -->
+
+    </div>
+  </div>
+
+  @if (!showResults) {
+  <app-loading 
+    [statusQuery$]="statusResponse$" 
+    (progressChange)="onProgressChange($event)"
+    [estimatedTime]="2 * 60"
+  >
+  </app-loading>
+  }
+
+  <div class="flex flex-col gap-8" [class.hidden]="!showResults">
+    <p-panel>
+      <ng-template pTemplate="header">
+        <h6 class="grow">Results Summary</h6>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <div class="flex w-full grow">
+          <p-table #resultsTable [value]="results || []" class="w-full h-full" tableStyleClass="w-full"
+            styleClass="w-full" [columns]="columns">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="align-middle relative group">
+                  <span>Model</span>
+                </th>
+                <th class="align-middle relative group">
+                  <span>Description</span>
+                </th>
+                <th class="align-middle relative group w-1/6">
+                  <span>Properties</span>
+                </th>
+                <th class="align-middle relative group w-1/4">
+                  <span>Predicted Values</span>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row let-expanded="expanded">
+              <tr class="table-row">
+                <td class="align-middle text-text-secondary">
+                  @switch (row.algorithm) {
+                  @case ('dlkcat') {
+                  DLKcat
+                  }
+                  @case ('unikp') {
+                  UniKP
+                  }
+                  @case ('catpred') {
+                  CatPred
+                  }
+                  }
+                </td>
+                <td class="align-middle">
+                  <span class="italic leading-xl text-text-secondary">
+                    @switch (row.algorithm) {
+                    @case ('dlkcat') {
+                      DLKcat employs a deep learning approach that combines a graph neural network for substrate representation with a convolutional neural network for protein representation to predict the k<sub
+                      class="text-xs">cat</sub> kinetic parameter from enzyme-substrate pairs.
+                    }
+                    @case ('unikp') {
+                      UniKP is a unified framework for predicting enzyme kinetic parameters k<sub
+                      class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and catalytic efficiency k<sub class="text-xs">cat</sub> / K<sub class="text-xs">m</sub> from amino acid sequences and substrate pairs using pre-trained language models.
+                    }
+                    @case ('catpred') {
+                      CatPred is a deep learning model for predicting in vitro enzyme kinetic parameters (including k<sub class="text-xs">cat</sub>, K<sub class="text-xs">m</sub>, and inhibitory constant K<sub
+                      class="text-xs">i</sub>) by leveraging pre-trained protein language model and Directed Message Passing Neural Networks (D-MPNN).
+                    }
+                    }
+                  </span>
+                </td>
+                <td class="align-middle font-semibold leading-xl">
+                  @switch (row.algorithm) {
+                  @case ('dlkcat') {
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup
+                      class="text-xs">-1</sup>)</p>
+                  }
+                  @case ('unikp') {
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup
+                      class="text-xs">-1</sup>)</p>
+                  <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub>/<span
+                      class="italic text-lg">K</span><sub class="text-xs">m</sub> (s<sup class="text-xs">-1</sup> mM<sup
+                      class="text-xs">-1</sup>)</p>
+                  }
+                  @case ('catpred') {
+                  <p><span class="italic text-lg">k</span><sub class="text-xs">cat</sub> (s<sup
+                      class="text-xs">-1</sup>)</p>
+                  <p><span class="italic text-lg">K</span><sub class="text-xs">m</sub> (mM)</p>
+                  <p><span class="italic text-lg">K</span><sub class="text-xs">i</sub> (mM)</p>
+                  }
+                  }
+                </td>
+                <td class="align-middle">
+                  <div class="flex justify-between items-center gap-4">
+                    @switch (row.algorithm) {
+                    @case ('dlkcat') {
+                    <div class="flex flex-col gap-2 font-semibold">
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat | number: '1.1-4'}}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <a [routerLink]="['/property-prediction/result/detail', 'dlkcat', jobs.dlkcat.id, 0]">
+                        <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
+                          <span>View full results</span>
+                          <i class="pi pi-arrow-right"></i>
+                        </button>
+                      </a>
+                    </div>
+                    }
+                    @case ('unikp') {
+                    <div class="flex flex-col gap-2 font-semibold">
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.km | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat_km | number: '1.1-4'}}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <a [routerLink]="['/property-prediction/result/detail', 'unikp', jobs.unikp.id, 0]">
+                        <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
+                          <span>View full results</span>
+                          <i class="pi pi-arrow-right"></i>
+                        </button>
+                      </a>
+                    </div>
+                    }
+                    @case ('catpred') {
+                    <div class="flex flex-col gap-2 font-semibold">
+                      <span class="flex items-center gap-1">
+                        {{ row.values.kcat | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.km | number: '1.1-4'}}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        {{ row.values.ki | number: '1.1-4'}}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <a [routerLink]="['/property-prediction/result/detail', 'catpred', jobs.catpred.id, 0]">
+                        <button title="view full results" class="rounded-full bg-[#eee] flex gap-2 items-center p-2">
+                          <span>View full results</span>
+                          <i class="pi pi-arrow-right"></i>
+                        </button>
+                      </a>
+                    </div>
+                    }
+                    }
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+      </ng-template>
+    </p-panel>
+  </div>
+</div>
+} @else {
+<app-property-prediction [formValue]="$any(jobs.dlkcat.info)?.input_pairs[0]" [showJobTab]="false"></app-property-prediction>
+}

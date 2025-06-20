@@ -5,7 +5,6 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-production
     kubernetes.io/tls-acme: "true"
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: "openenzymedb-oed-staging-redirect-to-login@kubernetescrd,openenzymedb-oed-staging-private-auth@kubernetescrd"
 
 controller:
   image: moleculemaker/openenzymedb-frontend:staging
@@ -17,7 +16,7 @@ config:
   signOutUrl: "https://auth.openenzymedb.mmli1.ncsa.illinois.edu/oauth2/sign_out?rd=https%3A%2F%2Ffrontend.staging.openenzymedb.mmli1.ncsa.illinois.edu%2Fconfiguration"
   userInfoUrl: "https://auth.openenzymedb.mmli1.ncsa.illinois.edu/oauth2/userinfo"
 
-  frontendOnly: "true"
+  frontendOnly: "false"
   whitePaperUrl: ""
   visionUrl: "https://docs.google.com/document/d/17nfpqWG8N8uS4wGpNlUumwknwh7kIsKp2rZNv6TLYyk/edit?usp=sharing"
   feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfISchgT9oNHL5f0_Ev1T0BD736AakYnS4GUuJJdtA9fxF78A/viewform"

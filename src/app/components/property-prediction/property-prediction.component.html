@@ -1,0 +1,188 @@
+<!-- Request Configuration -->
+<div class="flex flex-col h-full">
+  <form class="flex flex-col justify-between h-full" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      @if (showJobTab) {
+      <app-job-tab-prediction [tab]="currentPage"></app-job-tab-prediction>
+      }
+
+      <div>
+        <div class="my-6 flex items-center justify-between">
+          <div>
+            <h5 class="mb-2 font-bold opacity-100 leading-lg">Enzyme Property Prediction</h5>
+            <h6 class="leading-lg">
+              Please input an enzyme-substrate pair to get a 
+              <span class="font-semibold">
+                <span class="italic">k</span><sub class="text-xs">cat</sub>, 
+                <span class="italic">K</span><sub class="text-xs">m</sub>, 
+                <span class="italic">k</span><sub class="text-xs">cat</sub>/<span class="italic">K</span><sub class="text-xs">m</sub>, 
+                or 
+                <span class="italic">K</span><sub class="text-xs">i</sub> 
+              </span>
+              prediction.
+            </h6>
+          </div>
+        </div>
+
+        <p-panel>
+          <ng-template pTemplate="header">
+            <h6 class="grow">Input</h6>
+            <div class="flex gap-2 -my-1">
+              <button type="button" class="flex items-center btn-outline" (click)="useExample()">
+                <i class="mr-2 pi pi-box"></i>
+                Use an Example
+              </button>
+              <button type="button" class="flex items-center btn-outline" (click)="clearAll()">
+                Reset Input
+              </button>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <div class="p-4 flex flex-col gap-4">
+              <div class="flex flex-col gap-2">
+                <span class="flex justify-between mt-2 text-sm">
+                  <div class="flex gap-4 items-center">
+                    <small class="font-semibold leading-xl">
+                      Enzyme (FASTA)
+                    </small>
+                  </div>
+                  <small class="leading-xl text-text-secondary">
+                    Example:
+                    <small class="font-semibold underline cursor-pointer"
+                      (click)="form.controls['sequence'].setValue('>sp|Q29476|ST1A1_CANLF Sulfotransferase 1A1 OS=Canis lupus familiaris OX=9615 GN=SULT1A1 PE=1 SV=1\nMEDIPDTSRPPLKYVKGIPLIKYFAEALESLQDFQAQPDDLLISTYPKSGTTWVSEILDMIYQDGDVEKCRRAPVFIRVPFLEFKAPGIPTGLEVLKDTPAPRLIKTHLPLALLPQTLLDQKVKVVYVARNAKDVAVSYYHFYRMAKVHPDPDTWDSFLEKFMAGEVSYGSWYQHVQEWWELSHTHPVLYLFYEDMKENPKREIQKILKFVGRSLPEETVDLIVQHTSFKEMKNNSMANYTTLSPDIMDHSISAFMRKGISGDWKTTFTVAQNERFDADYAKKMEGCGLSFRTQL')">
+                      Q29476 (Sulfotransferase 1A1)
+                    </small>
+                  </small>
+                </span>
+                <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
+                  <textarea 
+                    pInputTextarea
+                    autoResize 
+                    class="w-full border-none h-8"
+                    type="text" 
+                    formControlName="sequence"
+                    title="Enter an Enzyme Sequence (FASTA)"
+                    appSequenceOrUniprotValidator
+                    placeholder="Enter an Enzyme Sequence (FASTA)"></textarea>
+                </div>
+
+                @let sequenceControl = form.controls['sequence'];
+                @if (sequenceControl.invalid && sequenceControl.dirty) {
+                <div class="flex flex-col gap-1 px-1">
+                  @if (sequenceControl.hasError('invalid')) {
+                  <div class="text-red-500">invalid name</div>
+                  }
+                  @if (sequenceControl.hasError('required')) {
+                  <div class="text-red-500">field is required</div>
+                  }
+                  @if (sequenceControl.hasError('invalidUniprotId')) {
+                  <div class="text-red-500">invalid UniProt ID</div>
+                  }
+                  @if (sequenceControl.hasError('headerCannotBeEmpty')) {
+                  <div class="text-red-500">header cannot be empty</div>
+                  }
+                  @if (sequenceControl.hasError('invalidSequence')) {
+                  <div class="text-red-500">invalid sequence</div>
+                  }
+                  @if (sequenceControl.hasError('sequenceLengthGreaterThan1022')) {
+                  <div class="text-red-500">sequence length greater than 1022</div>
+                  }
+                  @if (sequenceControl.hasError('sequenceLengthIs0')) {
+                  <div class="text-red-500">sequence length is 0</div>
+                  }
+
+                </div>
+                }
+
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="flex justify-between mt-2 text-sm">
+                  <div class="flex gap-4 items-center">
+                    <small class="font-semibold leading-xl">
+                      Substate (SMILES or Structure)
+                    </small>
+                  </div>
+                  <small class="leading-xl text-text-secondary">
+                    Example:
+                    <small class="font-semibold underline cursor-pointer"
+                      (click)="form.controls['smiles'].setValue('OC1=CC=C(C[C@@H](C(O)=O)N)C=C1')">
+                      Tyrosine
+                    </small>
+                  </small>
+                </span>
+                <div class="flex p-[5px] border rounded-lg border-solid gap-2 border-[--surface-d]">
+                  <div class="grow h-8">
+                    <app-marvinjs-input placeholder="Enter a Substrate SMILES or “Draw / Upload” another format"
+                      class="grow h-8" formControlName="smiles" appSmilesValidator
+                      (onSmilesValidationStatusChange)="chemInfo = $event">
+                    </app-marvinjs-input>
+                  </div>
+                </div>
+
+                @let smilesControl = form.controls['smiles'];
+                @if (smilesControl.invalid && smilesControl.dirty) {
+                <div class="flex flex-col gap-1 px-1">
+                  @if (smilesControl.hasError('invalid')) {
+                  <div class="text-red-500">invalid SMILES</div>
+                  }
+                  @if (smilesControl.hasError('required')) {
+                  <div class="text-red-500">field is required</div>
+                  }
+                </div>
+                }
+
+                @if (chemInfo.status !== 'na') {
+                <div
+                  class="relative grow flex flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
+                  [class.invalid]="smilesControl.errors && smilesControl.dirty">
+                  <div class="flex items-center justify-center">
+                    <i class="absolute pi left-3 top-3" [class.pi-check-circle]="smilesControl.valid"></i>
+                    <app-molecule-image [height]="300" [width]="300" [loadableImage]="chemInfo"></app-molecule-image>
+                  </div>
+                </div>
+                }
+              </div>
+            </div>
+          </ng-template>
+        </p-panel>
+      </div>
+    </div>
+
+    <!-- Subscription Email Input -->
+    <div class="sticky bottom-0 flex justify-between rounded-t-md bg-[#F3F5FB] px-10 pt-8">
+      <div class="flex flex-col">
+        <div class="flex items-end justify-center mb-2">
+          <span class="pr-12 mb-1">
+            <h5 class="inline m-0 mr-2 font-semibold opacity-100 leading-lg">Email</h5>
+            <h6 class="inline-block leading-lg">Leave an email to get an notification when your
+              results are ready.</h6>
+          </span>
+        </div>
+        <div class="w-full">
+          <input id="subscriber-email" type="email" aria-describedby="subscriber-email-help" [class]="'h-12 w-full'
+                    + ((form.controls['email'].invalid
+                        && form.controls['email'].dirty) ? ' ng-invalid ng-dirty' : '')" pInputText
+            placeholder="Enter email here" formControlName="email" />
+          <small *ngIf="form.controls['email'].invalid
+                        && form.controls['email'].dirty" id="subscriber-email-help" class="block mt-2 p-error">Email is
+            invalid.</small>
+        </div>
+        <div class="py-4">
+          <p-checkbox name="subscription" styleClass="subscription-checkbox"
+            label="Agree to receive email notifications and updates about PropertyPrediction." [binary]="true"
+            [formControl]="form.controls['agreeToSubscription']"></p-checkbox>
+        </div>
+      </div>
+      <div class="flex flex-col items-end gap-2">
+        <p-button label="Get Enzyme Property Prediction" type="submit" styleClass="bg-[#224063]" [disabled]="form.invalid"
+          iconPos="right" icon="pi pi-arrow-right"></p-button>
+        @if (exampleUsed) {
+          <span class="text-sm opacity-75">
+            <i class="pi pi-exclamation-triangle text-yellow-400"></i>
+            A precomputed result will be returned for the example values.
+          </span>
+        }
+      </div>
+    </div>
+  </form>
+</div>
