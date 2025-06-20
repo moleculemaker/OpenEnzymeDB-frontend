@@ -279,7 +279,7 @@ const ec_data = loadGzippedJson<ECRecordDict>('/assets/kegg_ec.json.gz');
 const substrate_data = loadGzippedJson<SubstrateRecordDict>('/assets/substrate.json.gz');
 
 const exampleRecommendation = import('../../assets/example.recommendation.json');
-const exampleStatus = import('../../assets/example_status.json').then((m) => m.default);
+const exampleStatusRecommendation = import('../../assets/example.recommendation.status.json').then((m) => m.default);
 const exampleDLKcat = import('../../assets/example.dlkcat.json').then((m) => m.default);
 const exampleUnikp = import('../../assets/example.unikp.json').then((m) => m.default);
 const exampleCatpred = import('../../assets/example.catpred.json').then((m) => m.default);
@@ -343,7 +343,24 @@ export class OpenEnzymeDBService {
 
   createAndRunJob(jobType: JobType, requestBody: BodyCreateJobJobTypeJobsPost): Observable<Job> {
     if (this.frontendOnly) {
-      return from(exampleStatus) as Observable<Job>;
+      let status$;
+      switch (jobType) {
+        case JobType.OedCheminfo:
+          status$ = from(exampleStatusRecommendation);
+          break;
+        case JobType.OedDlkcat:
+          status$ = from(exampleStatusDLKcat);
+          break;
+        case JobType.OedUnikp:
+          status$ = from(exampleStatusUnikp);
+          break;
+        case JobType.OedCatpred:
+          status$ = from(exampleStatusCatpred);
+          break;
+        default:
+          throw new Error(`No example result for job type ${jobType}`);
+      }
+      return status$.pipe(map((jobs) => jobs[0] as unknown as Job));
     }
     return this.jobsService.createJobJobTypeJobsPost(jobType, requestBody);
   }
@@ -353,7 +370,7 @@ export class OpenEnzymeDBService {
       let status$;
       switch (jobType) {
         case JobType.OedCheminfo:
-          status$ = from(exampleStatus);
+          status$ = from(exampleStatusRecommendation);
           break;
         case JobType.OedDlkcat:
           status$ = from(exampleStatusDLKcat);
@@ -618,8 +635,25 @@ export class OpenEnzymeDBService {
   }
 
   updateSubscriberEmail(jobType: JobType, jobId: string, email: string) {
-    if (this.frontendOnly) {
-      return from(exampleStatus);
+    if (this.frontendOnly || jobId === 'precomputed') {
+      let status$;
+      switch (jobType) {
+        case JobType.OedCheminfo:
+          status$ = from(exampleStatusRecommendation);
+          break;
+        case JobType.OedDlkcat:
+          status$ = from(exampleStatusDLKcat);
+          break;
+        case JobType.OedUnikp:
+          status$ = from(exampleStatusUnikp);
+          break;
+        case JobType.OedCatpred:
+          status$ = from(exampleStatusCatpred);
+          break;
+        default:
+          throw new Error(`No example result for job type ${jobType}`);
+      }
+      return status$.pipe(map((jobs) => jobs[0] as unknown as Job));
     }
     return this.jobsService.patchExistingJobJobTypeJobsJobIdRunIdPatch(jobType, {
       job_id: jobId,
