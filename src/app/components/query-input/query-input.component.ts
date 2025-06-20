@@ -12,6 +12,7 @@ import { MoleculeImageComponent } from '../molecule-image/molecule-image.compone
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SearchOption, QueryValue } from '../../models/search-options';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-query-input',
@@ -43,13 +44,19 @@ export class QueryInputComponent implements ControlValueAccessor {
   @Input() searchConfigs: SearchOption[] = [];
   @Input() multiple = true;
 
-  selectedSearchOption: SearchOption | null = null;
+  // selectedSearchOption: SearchOption | null = null;
+  selectedSearchOptionKey: SearchOption['key'] | null = null;
+
+  get selectedSearchOption() {
+    return this.selectedSearchOptionKey 
+    ? this.searchOptionRecords[this.selectedSearchOptionKey] : null;
+  }
 
   searchOptions = this.searchConfigs.map((config) => ({
     ...config,
     command: () => {
       this.selectedSearchOption?.reset();
-      this.selectedSearchOption = config;
+      this.selectedSearchOptionKey = config.key;
       this.emitValue();
     }
   }));
@@ -59,16 +66,24 @@ export class QueryInputComponent implements ControlValueAccessor {
     return acc;
   }, {} as Record<string, typeof this.searchConfigs[0]>);
 
+  subscriptions: Subscription[] = [];
+
   constructor() { }
 
   ngOnInit() {
     // Subscribe to value changes for all search configs
     this.searchConfigs.forEach(config => {
-      config.formGroup.statusChanges.subscribe((status) => {
-        console.log('[query-input] form group status changed', status);
-        this.emitValue();
-      });
+      this.subscriptions.push(
+        config.formGroup.statusChanges.subscribe((status) => {
+          console.log('[query-input] form group status changed', status);
+          this.emitValue();
+        })
+      );
     });
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -78,9 +93,9 @@ export class QueryInputComponent implements ControlValueAccessor {
 
     if (changes['multiple']) {
       this.updateSearchOptions();
-      this.selectedSearchOption = changes['multiple'].currentValue 
+      this.selectedSearchOptionKey = changes['multiple'].currentValue 
         ? null 
-        : this.searchConfigs[0];
+        : this.searchConfigs[0].key;
     }
   }
 
@@ -92,15 +107,15 @@ export class QueryInputComponent implements ControlValueAccessor {
     console.log('[query-input] write value', value);
     if (value) {
       const { selectedOption, ...values } = value;
-      this.selectedSearchOption = this.searchOptionRecords[selectedOption];
+      this.selectedSearchOptionKey = selectedOption;
       if (this.selectedSearchOption) {
         this.selectedSearchOption.formGroup.patchValue(values);
       }
     } else {
       if (this.multiple) {
-        this.selectedSearchOption = null;
+        this.selectedSearchOptionKey = null;
       } else {
-        this.selectedSearchOption = this.searchConfigs[0];
+        this.selectedSearchOptionKey = this.searchConfigs[0].key;
       }
     }
   }
@@ -118,22 +133,22 @@ export class QueryInputComponent implements ControlValueAccessor {
   }
 
   useExample(option: SearchOption['key'] = 'compound') {
-    this.selectedSearchOption?.reset();
-    this.selectedSearchOption = this.searchOptionRecords[option];
-
-    console.log('[query-input] use example before', this.selectedSearchOption?.formGroup.status);
-    this.selectedSearchOption?.formGroup.patchValue({
-      ...this.selectedSearchOption!.example,
-    });
-    this.selectedSearchOption?.formGroup.updateValueAndValidity();
-    console.log('[query-input] use example after', this.selectedSearchOption?.formGroup.status);
+    if (this.selectedSearchOption) {
+      this.selectedSearchOption.reset();
+    }
+    
+    const searchOption = this.searchOptionRecords[option];
+    console.log('[query-input] use example before', searchOption.formGroup.status);
+    searchOption.formGroup.patchValue(searchOption.example);
+    console.log('[query-input] use example after', searchOption.formGroup.status);
+    this.selectedSearchOptionKey = searchOption.key;
   }
 
   reset() {
     Object.values(this.searchConfigs).forEach((config) => {
       config.reset();
     });
-    this.selectedSearchOption = this.multiple ? null : this.searchConfigs[0];
+    this.selectedSearchOptionKey = this.multiple ? null : this.searchConfigs[0].key;
   }
 
   private emitValue(): void {
@@ -171,7 +186,7 @@ export class QueryInputComponent implements ControlValueAccessor {
       ...config,
       command: () => {
         this.selectedSearchOption?.reset();
-        this.selectedSearchOption = config;
+        this.selectedSearchOptionKey = config.key;
       }
     }));
 

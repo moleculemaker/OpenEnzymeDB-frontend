@@ -70,12 +70,17 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
   }
 
   private validateInput(control: AbstractControl<string | null>) {
+    console.log('[smiles-search-option] validating input', control.value);
     return control.valueChanges.pipe(
       startWith(control.value),
       tap(() => this.chemInfo.status = 'loading'),
-      distinctUntilChanged(),
-      tap((v) => console.log('[smiles-search-option] inputValue changed', v)),
-      debounceTime(300),
+      distinctUntilChanged((a, b) => {
+        console.log('[smiles-search-option] distinctUntilChanged previous: ', a, 'current: ', b, 'equal: ', a === b);
+        return a === b;
+      }),
+      tap((v) => {
+        console.log('[smiles-search-option] inputValue changed', v)
+      }),
       switchMap((value) => {
         if (!value) {
           return of({ required: true });
@@ -116,7 +121,12 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
         return of({ unknownInputType: true });
       }),
       first(),
-      tap((v) => console.log('[smiles-search-option] validateInput', this.formGroup)),
+      tap((v) => {
+        console.log('[smiles-search-option] validateInput', this.formGroup, v);
+        setTimeout(() => {
+          this.formGroup.updateValueAndValidity({ onlySelf: false, emitEvent: true })
+        }, 100);
+      }),
     )
   }
 }
