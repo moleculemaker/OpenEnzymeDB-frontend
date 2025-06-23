@@ -457,11 +457,17 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
           });
 
           if (this.algorithm === 'fragment') {
-            retVal.sort((a, b) => (b.fragment?.flattenedMatches.length ?? 0) - (a.fragment?.flattenedMatches.length ?? 0))
+            retVal.sort((a, b) => (b.fragment?.flattenedMatches.length ?? 0) - (a.fragment?.flattenedMatches.length ?? 0));
           } else if (this.algorithm === 'mcs') {
-            retVal = retVal.sort((a, b) => (b.mcs.value) - (a.mcs.value)).slice(0, 10);
+            if (retVal.some(x => !x.mcs)) {
+              console.warn('[should not happen] values without mcs', retVal.filter(x => !x.mcs));
+            }
+            retVal = retVal.filter(x => x.mcs).sort((a, b) => (b.mcs.value) - (a.mcs.value)).slice(0, 10);
           } else if (this.algorithm === 'tanimoto') {
-            retVal = retVal.sort((a, b) => (b.tanimoto) - (a.tanimoto)).slice(0, 10);
+            if (retVal.some(x => !x.tanimoto)) {
+              console.warn('[should not happen] values without tanimoto', retVal.filter(x => !x.tanimoto));
+            }
+            retVal = retVal.filter(x => x.tanimoto).sort((a, b) => (b.tanimoto) - (a.tanimoto)).slice(0, 10);
           }
 
           return retVal;
