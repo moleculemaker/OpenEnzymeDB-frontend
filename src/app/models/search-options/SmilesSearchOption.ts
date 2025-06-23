@@ -95,10 +95,11 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
             return this.nameToSmilesConverter(value).pipe(
               filter((smiles) => smiles.status !== 'loading'),
               switchMap((smiles) => {
+                console.log('[smiles-search-option] nameToSmilesConverter', smiles);
                 switch (smiles.status) {
                   case 'loaded':
                     this.formGroup.get('value')!.setValue(this.onlyOutputSmiles 
-                      ? smiles.data 
+                      ? smiles.data!.trim()
                       : value, 
                       { emitEvent: false }
                     );
