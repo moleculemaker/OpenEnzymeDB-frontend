@@ -58,6 +58,7 @@ export class EnzymeRecommendationComponent implements OnChanges {
       key: 'smiles',
       label: 'Substrate',
       placeholder: 'Enter a substrate',
+      onlyOutputSmiles: true,
       example: {
         label: '4-(2-aminoethyl)-2-methoxyphenol',
         inputType: 'smiles',

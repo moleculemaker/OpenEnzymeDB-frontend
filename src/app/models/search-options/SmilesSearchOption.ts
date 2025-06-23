@@ -5,6 +5,7 @@ import { Loadable } from "~/app/models/Loadable";
 
 type SmilesSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
+  onlyOutputSmiles?: boolean;
   smilesValidator: (smiles: string) => Observable<Loadable<string>>;
   nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
 };
@@ -35,12 +36,14 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
 
   private nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
   private smilesValidator: (smiles: string) => Observable<ValidationErrors | null>;
+  private onlyOutputSmiles: boolean;
 
   constructor(params: SmilesSearchOptionParams) {
     super({
       ...params,
       type: 'smiles',
     });
+    this.onlyOutputSmiles = params.onlyOutputSmiles ?? false;
     this.nameToSmilesConverter = params.nameToSmilesConverter;
     this.smilesValidator = (smiles: string) => {
       return params.smilesValidator(smiles).pipe(
@@ -94,7 +97,11 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
               switchMap((smiles) => {
                 switch (smiles.status) {
                   case 'loaded':
-                    this.formGroup.get('value')!.setValue(value, { emitEvent: false });
+                    this.formGroup.get('value')!.setValue(this.onlyOutputSmiles 
+                      ? smiles.data 
+                      : value, 
+                      { emitEvent: false }
+                    );
                     console.log('[smiles-search-option] name validated', value);
                     return this.smilesValidator(smiles.data || '');
                   default: // only error and invalid are possible
