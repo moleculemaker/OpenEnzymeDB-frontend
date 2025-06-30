@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
@@ -42,13 +42,14 @@ import { forkJoin, Subscription } from "rxjs";
     class: "flex flex-col h-full"
   }
 })
-export class PropertyPredictionComponent implements OnDestroy {
-  showJobTab = true;
+export class PropertyPredictionComponent implements OnDestroy, OnChanges {
+  @Input() formValue: any = null;
+  @Input() showJobTab = true;
   currentPage: 'input' | 'result' = 'input';
   
   form = new FormGroup({
-    enzyme: new FormControl("", [Validators.required]),
-    substrate: new FormControl(""),
+    sequence: new FormControl("", [Validators.required]),
+    smiles: new FormControl(""),
     email: new FormControl("", [Validators.email]),
     agreeToSubscription: new FormControl(false),
   });
@@ -70,13 +71,26 @@ export class PropertyPredictionComponent implements OnDestroy {
   ) {
     this.subscriptions.push(
       this.form.valueChanges.subscribe((value) => {
-        this.exampleUsed = value.enzyme === this.exampleEnzyme && value.substrate === this.exampleSubstrate;
+        this.exampleUsed = value.sequence === this.exampleEnzyme && value.smiles === this.exampleSubstrate;
       })
     );
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formValue'] && changes['formValue'].currentValue) {
+      // console.log(this.formValue);
+      this.form.patchValue({
+        sequence: this.formValue.name.startsWith('>') 
+          ? `${this.formValue.name}\n${this.formValue.sequence}`
+          : this.formValue.sequence,
+        smiles: this.formValue.smiles,
+        email: this.formValue.email,
+      });
+    }
   }
 
   onSubmit() {
@@ -90,7 +104,7 @@ export class PropertyPredictionComponent implements OnDestroy {
     }
 
     let name = Math.random().toString(36).substring(2, 15);
-    let sequence = this.form.controls["enzyme"].value || '';
+    let sequence = this.form.controls["sequence"].value || '';
 
     if (sequence.split('\n').length > 1) {
       name = sequence.split('\n')[0];
@@ -102,7 +116,7 @@ export class PropertyPredictionComponent implements OnDestroy {
         input_pairs: [
           {
             sequence: sequence,
-            smiles: this.form.controls["substrate"].value || '',
+            smiles: this.form.controls["smiles"].value || '',
             name: name,
           }
         ]
@@ -115,14 +129,21 @@ export class PropertyPredictionComponent implements OnDestroy {
       this.service.createAndRunJob(JobType.OedUnikp, { ...jobInfo, email: ''}), 
       this.service.createAndRunJob(JobType.OedCatpred, { ...jobInfo, email: ''}),
     ]).subscribe(([dlkcat, unikp, catpred]) => {
-      this.router.navigate(['property-prediction', 'result', dlkcat.job_id, unikp.job_id, catpred.job_id]);
-    })
+      if (this.router.url.search(/\/.*\/result\//) !== -1) {
+        window.open(
+          this.router.url.replace(/\/result\/.*/g, `/result/${dlkcat.job_id}/${unikp.job_id}/${catpred.job_id}`), 
+          '_blank'
+        );
+      } else {
+        this.router.navigate(['property-prediction', 'result', dlkcat.job_id, unikp.job_id, catpred.job_id])
+      }
+    });
   }
 
   useExample() {
     this.form.patchValue({
-      enzyme: this.exampleEnzyme,
-      substrate: this.exampleSubstrate,
+      sequence: this.exampleEnzyme,
+      smiles: this.exampleSubstrate,
     });
   }
 

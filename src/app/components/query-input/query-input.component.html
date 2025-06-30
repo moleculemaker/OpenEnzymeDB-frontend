@@ -82,9 +82,9 @@
     }
   </div>
 
-  @if (selectedSearchOption 
-    && selectedSearchOption.formGroup.invalid
-    && selectedSearchOption.formGroup.dirty
+  @if (selectedSearchOption
+  && selectedSearchOption.formGroup.invalid
+  && selectedSearchOption.formGroup.dirty
   ) {
   <div class="flex flex-col gap-1">
     @if (selectedSearchOption.formGroup.hasError('invalidName', 'inputValue')) {
@@ -108,7 +108,8 @@
   && inputValueControl.value
   && !inputValueControl.invalid
   ) {
-  <div class="relative grow flex flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
+  <div
+    class="relative grow flex flex-col items-center justify-center rounded-md border border-solid border-[--surface-d]"
     [class.invalid]="inputValueControl.errors 
                 && inputValueControl.dirty">
     <div class="flex items-center justify-center">

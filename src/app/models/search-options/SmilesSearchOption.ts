@@ -5,6 +5,7 @@ import { Loadable } from "~/app/models/Loadable";
 
 type SmilesSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
+  onlyOutputSmiles?: boolean;
   smilesValidator: (smiles: string) => Observable<Loadable<string>>;
   nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
 };
@@ -35,12 +36,14 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
 
   private nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
   private smilesValidator: (smiles: string) => Observable<ValidationErrors | null>;
+  private onlyOutputSmiles: boolean;
 
   constructor(params: SmilesSearchOptionParams) {
     super({
       ...params,
       type: 'smiles',
     });
+    this.onlyOutputSmiles = params.onlyOutputSmiles ?? false;
     this.nameToSmilesConverter = params.nameToSmilesConverter;
     this.smilesValidator = (smiles: string) => {
       return params.smilesValidator(smiles).pipe(
@@ -70,12 +73,17 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
   }
 
   private validateInput(control: AbstractControl<string | null>) {
+    console.log('[smiles-search-option] validating input', control.value);
     return control.valueChanges.pipe(
       startWith(control.value),
       tap(() => this.chemInfo.status = 'loading'),
-      distinctUntilChanged(),
-      tap((v) => console.log('[smiles-search-option] inputValue changed', v)),
-      debounceTime(300),
+      distinctUntilChanged((a, b) => {
+        console.log('[smiles-search-option] distinctUntilChanged previous: ', a, 'current: ', b, 'equal: ', a === b);
+        return a === b;
+      }),
+      tap((v) => {
+        console.log('[smiles-search-option] inputValue changed', v)
+      }),
       switchMap((value) => {
         if (!value) {
           return of({ required: true });
@@ -87,9 +95,14 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
             return this.nameToSmilesConverter(value).pipe(
               filter((smiles) => smiles.status !== 'loading'),
               switchMap((smiles) => {
+                console.log('[smiles-search-option] nameToSmilesConverter', smiles);
                 switch (smiles.status) {
                   case 'loaded':
-                    this.formGroup.get('value')!.setValue(value, { emitEvent: false });
+                    this.formGroup.get('value')!.setValue(this.onlyOutputSmiles 
+                      ? smiles.data!.trim()
+                      : value, 
+                      { emitEvent: false }
+                    );
                     console.log('[smiles-search-option] name validated', value);
                     return this.smilesValidator(smiles.data || '');
                   default: // only error and invalid are possible
@@ -116,7 +129,12 @@ export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdd
         return of({ unknownInputType: true });
       }),
       first(),
-      tap((v) => console.log('[smiles-search-option] validateInput', this.formGroup)),
+      tap((v) => {
+        console.log('[smiles-search-option] validateInput', this.formGroup, v);
+        setTimeout(() => {
+          this.formGroup.updateValueAndValidity({ onlySelf: false, emitEvent: true })
+        }, 100);
+      }),
     )
   }
 }

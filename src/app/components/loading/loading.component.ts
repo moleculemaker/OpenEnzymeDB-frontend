@@ -27,11 +27,11 @@ export interface WithPhaseAndTime {
 })
 export class LoadingComponent implements OnInit, OnDestroy {
   @Input() statusQuery$: Observable<WithPhaseAndTime> = new Observable();
+  @Input() estimatedTime: number = 10 * 60;
   @Output() progressChange = new EventEmitter<number>();
 
   jobId: string = this.route.snapshot.paramMap.get("id") || "";
 
-  estimatedTime: number = 10 * 60; // Initialize with default value
   estimatedTimeString: string = '';
 
   showError$ = new BehaviorSubject(false);

@@ -13,6 +13,7 @@ import { MenuModule } from "primeng/menu";
 import { QueryInputComponent } from "../query-input/query-input.component";
 import { QueryValue, SearchOption, SmilesSearchOption } from "~/app/models/search-options";
 import { ChemicalResolverService } from '~/app/services/chemical-resolver.service';
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-enzyme-recommendation',
@@ -57,6 +58,7 @@ export class EnzymeRecommendationComponent implements OnChanges {
       key: 'smiles',
       label: 'Substrate',
       placeholder: 'Enter a substrate',
+      onlyOutputSmiles: true,
       example: {
         label: '4-(2-aminoethyl)-2-methoxyphenol',
         inputType: 'smiles',
@@ -68,11 +70,20 @@ export class EnzymeRecommendationComponent implements OnChanges {
     })
   ];
 
+  exampleUsed = false;
+  subscriptions: Subscription[] = [];
+
   constructor(
     private service: OpenEnzymeDBService,
     private chemicalResolverService: ChemicalResolverService,
     private router: Router,
-  ) { }
+  ) {
+    this.subscriptions.push(
+      this.form.valueChanges.subscribe((value) => {
+        this.exampleUsed = value.search?.value === this.searchConfigs[0].example['value'];
+      })
+    );
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['formValue'] && changes['formValue'].currentValue) {
@@ -88,8 +99,17 @@ export class EnzymeRecommendationComponent implements OnChanges {
     }
   }
 
+  ngOnDestroy() {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+  }
+
   onSubmit() {
     if (!this.form.valid) {
+      return;
+    }
+
+    if (this.exampleUsed) {
+      this.router.navigate(['enzyme-recommendation', 'result', 'precomputed']);
       return;
     }
 

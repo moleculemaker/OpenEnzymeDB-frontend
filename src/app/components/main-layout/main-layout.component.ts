@@ -39,7 +39,7 @@ export class MainLayoutComponent {
       icon: 'pi pi-search',
     },
     {
-      id: 'enz-pred',
+      id: 'property-prediction',
       name: 'Enzyme Property Prediction',
       route: '/property-prediction',
       status: ToolStatus.RUNNING,
