@@ -18,7 +18,7 @@ export class PubchemService {
     return new Observable(observer => {
       observer.next({ status: 'loading', data: null });
 
-      const subscription = this.http.get(`${this.API_URL}/compound/name/${name}/property/CanonicalSMILES/TXT`, { responseType: 'text' })
+      const subscription = this.http.get(`${this.API_URL}/compound/name/${name}/property/ConnectivitySMILES/TXT`, { responseType: 'text' })
         .subscribe({
           next: (smiles) => {
             console.log('[pubchem-service] smiles', smiles);
