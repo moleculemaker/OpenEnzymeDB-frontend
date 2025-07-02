@@ -145,10 +145,10 @@ export class EntityCompoundComponent {
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
-        value: 'Uniprot IDs',
-        rawValue: 'Uniprot IDs',
+        value: 'UniProt Accessions',
+        rawValue: 'UniProt Accessions',
       },
-      placeholder: 'Select uniprot ID',
+      placeholder: 'Select UniProt Accession',
       field: 'uniprot_id',
       options: [],
       value: [],

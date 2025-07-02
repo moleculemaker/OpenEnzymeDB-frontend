@@ -133,10 +133,10 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
-        value: 'Uniprot IDs',
-        rawValue: 'Uniprot IDs',
+        value: 'UniProt Accessions',
+        rawValue: 'UniProt Accessions',
       },
-      placeholder: 'Select uniprot ID',
+      placeholder: 'Select UniProt Accession',
       field: 'uniprot_id',
       options: [],
       value: [],
@@ -258,8 +258,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     }),
     new StringSearchOption({
       key: 'uniprot_id',
-      label: 'Uniprot ID',
-      placeholder: 'Enter Uniprot ID',
+      label: 'UniProt Accession',
+      placeholder: 'Enter UniProt Accession',
       example: {
         label: 'Q96V44',
         value: 'Q96V44'

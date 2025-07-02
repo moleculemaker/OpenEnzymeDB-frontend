@@ -82,7 +82,7 @@ export class EntityUniprotComponent {
   
   exportOptions = [
     {
-      label: 'Uniprot Information',
+      label: 'UniProt Information',
       command: () => {
         // export compound information as json
         const json = JSON.stringify(this.uniprot, null, 2);
@@ -98,7 +98,7 @@ export class EntityUniprotComponent {
       },
     },
     {
-      label: 'Uniprot Structure',
+      label: 'UniProt Structure',
       command: () => {
         this.molecule3d.export('structure');
       },
@@ -137,10 +137,10 @@ export class EntityUniprotComponent {
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
-        value: 'Uniprot IDs',
-        rawValue: 'Uniprot IDs',
+        value: 'UniProt Accessions',
+        rawValue: 'UniProt Accessions',
       },
-      placeholder: 'Select uniprot ID',
+      placeholder: 'Select UniProt Accession',
       field: 'uniprot_id',
       options: [],
       value: [],
