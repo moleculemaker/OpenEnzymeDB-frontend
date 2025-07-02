@@ -8,7 +8,7 @@
         <span>Back to Search</span>
       </button> -->
       @if (uniprot) {
-      <h5 class="font-bold mt-0">Uniprot: {{ uniprot['primaryAccession'] }}</h5>
+      <h5 class="font-bold mt-0">UniProt: {{ uniprot['primaryAccession'] }}</h5>
       }
     </div>
     <div class="flex items-center gap-2">
@@ -31,7 +31,7 @@
         <div class="flex flex-col gap-4">
           <p class="font-bold">Entity Information</p>
           <div class="flex justify-between">
-            <span class="leading-sm text-[#495057]">Uniprot ID</span>
+            <span class="leading-sm text-[#495057]">UniProt Accession</span>
             <span class="font-semibold text-end leading-base inline-block max-w-[200px] break-words">{{
               uniprot['primaryAccession'] }}</span>
           </div>

@@ -24,33 +24,33 @@ import { Molecule3dComponent } from '~/app/components/molecule3d/molecule3d.comp
  * - All filter values are initialized using the input dataset
  * - If group is provided, filter values are set to match the group's values
  * - Compound filter contains all unique compound names from the input dataset
- * - Organism and Uniprot ID filters start with no options until a compound is selected
+ * - Organism and UniProt ID filters start with no options until a compound is selected
  * 
  * Compound Filter:
  * - Single select filter that shows all unique compound names from the dataset
- * - When a compound is selected, it triggers updates to both organism and uniprot ID filters
+ * - When a compound is selected, it triggers updates to both organism and UniProt ID filters
  * - If group is provided, initializes with the group's compound name
  * 
  * Organism Filter:
  * - Multi-select filter that is dependent on the compound filter
  * - By default has no options if no compound is selected
  * - When a compound is selected, shows all unique organisms associated with that compound
- * - Selection changes trigger updates to the uniprot ID filter
+ * - Selection changes trigger updates to the UniProt ID filter
  * - If group is provided, initializes with the group's organisms
  * 
- * Uniprot ID Filter:
+ * UniProt ID Filter:
  * - Multi-select filter that is dependent on both compound and organism filters
  * - By default has no options if no compound is selected
- * - When a compound is selected, shows all unique uniprot IDs associated with that compound
- * - If organisms are selected, further filters to show only uniprot IDs that are associated with
+ * - When a compound is selected, shows all unique UniProt IDs associated with that compound
+ * - If organisms are selected, further filters to show only UniProt IDs that are associated with
  *   both the selected compound and the selected organisms
  * - Filter values are cleared whenever compound or organism selections change
- * - If group is provided, initializes with the group's uniprot IDs
+ * - If group is provided, initializes with the group's UniProt IDs
  * 
  * Filter Dependencies:
- * - Compound selection -> Updates organism and uniprot ID options
- * - Organism selection -> Updates uniprot ID options
- * - Both compound and organism changes -> Clears uniprot ID selections
+ * - Compound selection -> Updates organism and UniProt ID options
+ * - Organism selection -> Updates UniProt ID options
+ * - Both compound and organism changes -> Clears UniProt ID selections
  */
 @Component({
   selector: 'app-enzyme-structure-dialog',
@@ -110,10 +110,10 @@ export class EnzymeStructureDialogComponent {
     this.uniprotIdFilter = new MultiselectFilterConfig({
       category: 'parameter',
       label: {
-        value: 'Uniprot IDs',
-        rawValue: 'Uniprot IDs',
+        value: 'UniProt Accessions',
+        rawValue: 'UniProt Accessions',
       },
-      placeholder: 'Select uniprot ID',
+      placeholder: 'Select UniProt Accession',
       field: 'uniprot_id',
       options: [],
       value: [],
@@ -137,7 +137,7 @@ export class EnzymeStructureDialogComponent {
         this.organismFilter.value = [...this.group.organism];
       }
 
-      // Set uniprot ID filter values
+      // Set UniProt ID filter values
       if (this.group.uniprot_id) {
         this.uniprotIdFilter.value = [...this.group.uniprot_id];
       }
@@ -151,7 +151,7 @@ export class EnzymeStructureDialogComponent {
    * Updates all filter options based on the current dataset
    * - Updates compound options with all unique compound names
    * - Updates organism options with all unique organisms
-   * - Updates uniprot ID options with all unique uniprot IDs
+   * - Updates UniProt ID options with all unique UniProt IDs
    */
   private updateFilterOptions() {
     // Update compound options with all unique compound names from dataset
@@ -182,17 +182,17 @@ export class EnzymeStructureDialogComponent {
       this.organismFilter.options = [];
     }
 
-    // Update uniprot ID options based on selected compound and organisms
+    // Update UniProt ID options based on selected compound and organisms
     this.updateUniprotIdFilter();
   }
 
   /**
    * Handles compound filter changes
-   * - Clears organism and uniprot ID selections
-   * - Updates organism and uniprot ID options
+   * - Clears organism and UniProt ID selections
+   * - Updates organism and UniProt ID options
    */
   onCompoundFilterChange() {
-    // Clear organism and uniprot ID selections
+    // Clear organism and UniProt ID selections
     this.organismFilter.value = [];
     this.uniprotIdFilter.value = [];
     
@@ -202,35 +202,35 @@ export class EnzymeStructureDialogComponent {
 
   /**
    * Handles organism filter changes
-   * - Clears uniprot ID selections
-   * - Updates uniprot ID options
+   * - Clears UniProt ID selections
+   * - Updates UniProt ID options
    */
   onOrganismFilterChange() {
-    // Clear uniprot ID selections
+    // Clear UniProt ID selections
     this.uniprotIdFilter.value = [];
     
-    // Update uniprot ID options
+    // Update UniProt ID options
     this.updateUniprotIdFilter();
   }
 
   /**
-   * Updates uniprot ID filter based on selected compound and organisms
-   * - Filters uniprot IDs to only those associated with selected compound
+   * Updates UniProt ID filter based on selected compound and organisms
+   * - Filters UniProt IDs to only those associated with selected compound
    * - Further filters by selected organisms if any are selected
-   * - Updates uniprot ID options and clears current selection
+   * - Updates UniProt ID options and clears current selection
    */
   private updateUniprotIdFilter() {
     const selectedCompound = this.compoundFilter.value;
     const selectedOrganisms = this.organismFilter.value || [];
 
     if (!selectedCompound) {
-      // If no compound is selected, clear uniprot ID options
+      // If no compound is selected, clear UniProt ID options
       this.uniprotIdFilter.options = [];
       this.uniprotIdFilter.value = [];
       return;
     }
 
-    // Filter uniprot IDs based on selected compounds and organisms
+    // Filter UniProt IDs based on selected compounds and organisms
     let filteredRecords = this.dataset.filter(record => 
       record.compound.name === selectedCompound
     );
@@ -242,29 +242,29 @@ export class EnzymeStructureDialogComponent {
       );
     }
 
-    // Get unique uniprot IDs from filtered records
+    // Get unique UniProt IDs from filtered records
     const uniqueUniprotIds = [...new Set(
       filteredRecords.flatMap(record => record.uniprot_id)
     )];
 
-    // Update uniprot ID options
+    // Update UniProt ID options
     this.uniprotIdFilter.options = uniqueUniprotIds.map(id => ({
       label: id,
       value: id
     }));
 
-    // Update uniprot ID filter to only include valid options
+    // Update UniProt ID filter to only include valid options
     this.uniprotIdFilter.value = this.uniprotIdFilter.value.filter((id: string) =>
       uniqueUniprotIds.includes(id)
     );
   }
 
   /**
-   * Gets the list of uniprot IDs based on current filter selections
+   * Gets the list of UniProt IDs based on current filter selections
    * - Filters by selected compound
    * - Filters by selected organisms
-   * - Filters by selected uniprot IDs
-   * @returns Array of uniprot IDs that match all filter criteria
+   * - Filters by selected UniProt IDs
+   * @returns Array of UniProt IDs that match all filter criteria
    */
   getUniprotIds(): string[] {
     const selectedCompound = this.compoundFilter.value;
@@ -285,12 +285,12 @@ export class EnzymeStructureDialogComponent {
       );
     }
 
-    // Get all uniprot IDs from filtered records
+    // Get all UniProt IDs from filtered records
     const allUniprotIds = Array.from(
       new Set(filteredRecords.flatMap(record => record.uniprot_id))
     );
 
-    // Filter by selected uniprot IDs if any
+    // Filter by selected UniProt IDs if any
     if (selectedUniprotIds.length > 0) {
       return allUniprotIds.filter(id => selectedUniprotIds.includes(id));
     }
