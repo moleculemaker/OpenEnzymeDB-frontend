@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, first, from, map, of, share, tap, withLatestFrom } from "rxjs";
+import { Observable, first, from, map, of, shareReplay, tap, withLatestFrom } from "rxjs";
 import * as d3 from 'd3';
 
 import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
@@ -415,7 +415,7 @@ export class OpenEnzymeDBService {
       });
       return accessionToBestName;
     }),
-    share()
+    shareReplay(1)
   );
   getUniprotBestNames$(): Observable<Map<string, string>> {
     return this.uniprotBestNames$;
@@ -426,7 +426,7 @@ export class OpenEnzymeDBService {
     map((accessionToBestName) => {
       return Array.from(new Set<string>(accessionToBestName.values())).sort((a, b) => a.localeCompare(b));
     }),
-    share()
+    shareReplay(1)
   );
   getSortedUniprotBestNames$(): Observable<string[]> {
     return this.sortedUniprotBestNames$;
@@ -534,7 +534,7 @@ export class OpenEnzymeDBService {
         [...temp.entries()].sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
       );
     }),
-    share()
+    shareReplay(1)
   );
   /**
    * Returns a map in which each key is a lowercase compound name, and the associated value is an object
