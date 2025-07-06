@@ -772,6 +772,6 @@ export class OpenEnzymeDBService {
   }
 
   validateChemical(smiles: string): Observable<Loadable<string>> {
-    return this.commonService.drawSMILES(smiles).pipe(tap(console.log));
+    return this.commonService.drawSMILES(smiles);
   }
 }

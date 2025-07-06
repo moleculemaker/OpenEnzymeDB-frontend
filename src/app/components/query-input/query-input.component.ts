@@ -228,7 +228,6 @@ export class QueryInputComponent implements ControlValueAccessor {
             items: includesMatches
           });
         }
-        console.log('[query-input] search suggestions', this.searchSuggestions);
       },
       error: (error) => {
         this.searchSuggestions = [];
@@ -237,10 +236,8 @@ export class QueryInputComponent implements ControlValueAccessor {
   }
 
   private getSearchSuggestionsForEnzymeName(query: string) {
-    console.log('[query-input] searching for enzyme name', query);
     this.openEnzymeDBService.getSortedUniprotBestNames$().subscribe({
       next: (sortedBestNames) => {   
-        console.log('[query-input] search suggestions for enzyme', sortedBestNames);
         const startsWithMatches = [];
         const includesMatches = [];
         const maxMatchesPerType = 20; // limit to 20 suggestions per type
@@ -271,7 +268,6 @@ export class QueryInputComponent implements ControlValueAccessor {
             items: includesMatches
           });
         }
-        console.log('[query-input] search suggestions', this.searchSuggestions);
       },
       error: (error) => {
         this.searchSuggestions = [];
