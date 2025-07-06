@@ -5,7 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { OEDRecord, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { OEDRecord, OEDRecordWithBestEnzymeName, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent } from "../../components/query-input/query-input.component";
 import { QueryValue, SearchOption, SmilesSearchOption } from '~/app/models/search-options';
@@ -130,6 +130,18 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       options: [],
       value: [],
     })],
+    ['enzyme_name', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Enzyme Names',
+        rawValue: 'Enzyme Names',
+      },
+      placeholder: 'Select Enzyme Names',
+      field: 'enzyme_name',
+      options: [],
+      value: [],
+      matchMode: 'subset',
+    })],
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
@@ -245,7 +257,9 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
         value: 'L-proline',
       },
       smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
-      nameToSmilesConverter: (name: string) => this.chemicalResolverService.getSMILESFromName(name),
+      // nameToSmilesConverter is redundant here, at least for now, because the autocomplete control forces the user to select a
+      // known compound with known SMILES, but keeping it for now for consistency
+      nameToSmilesConverter: (name: string) => this.service.getSMILESForKnownCompoundName(name)
     }),
     new StringSearchOption({
       key: 'organism',
@@ -254,6 +268,15 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       example: {
         label: 'Yersinia enterocolitica',
         value: 'Yersinia enterocolitica'
+      }
+    }),
+    new StringSearchOption({
+      key: 'enzyme_name',
+      label: 'Enzyme Name',
+      placeholder: 'Enter Enzyme Name',
+      example: {
+        label: 'L-arabinitol 4-dehydrogenase',
+        value: 'L-arabinitol 4-dehydrogenase'
       }
     }),
     new StringSearchOption({
@@ -299,7 +322,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
   columns: any[] = [];
 
   exampleRecords: any[] = [];
-  readonly filterRecordsByCategory = Object.entries(this.filters)
+  readonly filterRecordsByCategory = [...this.filters.entries()]
     .reduce((acc, [key, filter]) => {
       if (!acc[filter.category]) {
         acc[filter.category] = [filter];
@@ -309,7 +332,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       return acc;
     }, {} as Record<string, FilterConfig[]>);
 
-  readonly filterRecords = Object.values(this.filters);
+  readonly filterRecords = [...this.filters.values()];
   
   private formSubscription: Subscription | null = null;
  
@@ -438,6 +461,11 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
             ec_number: search.value,
           };
           break;
+        case 'enzyme_name':
+          criteriaQuery = {
+            enzyme_name: search.value,
+          };
+          break;
         case 'uniprot_id':
           criteriaQuery = {
             uniprot_id: search.value,
@@ -489,11 +517,11 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
     // Use the existing getResult method
     // For the prototype, we'll use a fixed JobType.Defaults and dummy job ID
     // In a real implementation, this would send the query to the backend first
-    this.service.getData()
+    this.service.getDataWithBestEnzymeNames()
       .pipe(
-        map((response: OEDRecord[]) => 
+        map((response: OEDRecordWithBestEnzymeName[]) => 
           response
-            .map((row: OEDRecord, index: number) => ({
+            .map((row: OEDRecordWithBestEnzymeName, index: number) => ({
               iid: index,
               ec_number: row.EC,
               compound: {
@@ -509,6 +537,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
               km: row['KM VALUE'],
               kcat_km: row['KCAT/KM VALUE'],
               pubmed_id: `${row.PubMedID}`,
+              enzyme_name: row.bestEnzymeNames
             }))
             .filter((row) => {
               // Process multi-criteria filtering client-side
@@ -562,6 +591,9 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
         case 'organism':
           currentMatch = row.organism.toLowerCase() === search.value.toLowerCase();
           break;
+        case 'enzyme_name':
+          currentMatch = row.enzyme_name.some((name: string) => name.toLowerCase() === search.value.toLowerCase());
+          break;
         case 'uniprot_id':
           currentMatch = row.uniprot_id.some((id: string) => id.toLowerCase() === search.value.toLowerCase());
           break;
@@ -609,7 +641,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       return dotPath.split('.').reduce((obj, key) => obj[key], obj);
     }
     
-    Object.entries(this.filters).forEach(([key, filter]) => {
+    [...this.filters.entries()].forEach(([key, filter]) => {
       const options = response.map((row: any) => getField(row, filter.field)).flat();
       const optionsSet = new Set(options);
       if (filter instanceof MultiselectFilterConfig) {
@@ -626,7 +658,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     });
     
-    this.columns = Object.values(this.filters).map((filter) => ({
+    this.columns = [...this.filters.values()].map((filter) => ({
       field: filter.field,
       header: filter.label.rawValue,
     }));

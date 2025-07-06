@@ -75,6 +75,13 @@
                   {{ row[value.field] }}
                 </td>
                 }
+                @case ('enzyme_name') {
+                <td class="align-middle">
+                  @for (name of row.enzyme_name; track name) {
+                    <div>{{ name }}</div>
+                  }
+                </td>
+                }
                 @case ('uniprot_id') {
                 <td class="align-middle">
                   <div class="flex flex-col gap-1">
