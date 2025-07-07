@@ -13,9 +13,8 @@ import { MoleculeImageComponent } from '../molecule-image/molecule-image.compone
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SearchOption, QueryValue } from '../../models/search-options';
-import { BehaviorSubject, Observable, Subscription, filter, forkJoin, of, skip, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
-import { SharedService } from '~/app/api/mmli-backend/v1';
 
 @Component({
   selector: 'app-query-input',
@@ -73,29 +72,9 @@ export class QueryInputComponent implements ControlValueAccessor {
   subscriptions: Subscription[] = [];
   searchSuggestions: { label: string, items: { label: string, value: string }[] }[] = [];
 
-  canonicalizedSMILES$ = new BehaviorSubject<QueryValue|null>(null);
-
   constructor(
-    private openEnzymeDBService: OpenEnzymeDBService,
-    private sharedService: SharedService
+    private openEnzymeDBService: OpenEnzymeDBService
   ) {
-    this.subscriptions.push(
-      this.canonicalizedSMILES$.pipe(
-        skip(1), // ignore the initial value
-        filter((queryValue) => !!queryValue && queryValue.selectedOption === 'compound' && queryValue['inputType'] === 'smiles' && queryValue.value),
-        switchMap((queryValue) => forkJoin({
-          canonicalizedSmiles: this.sharedService.canonicalizeSmilesSmilesCanonicalizeGet(queryValue!.value) as Observable<string>,
-          queryValue: of(queryValue)
-        }))
-      ).subscribe(({canonicalizedSmiles, queryValue }) => {
-        if (canonicalizedSmiles) {
-          queryValue!.value = canonicalizedSmiles;
-          console.log('[query-input] emitting value', queryValue);
-          this.onChange(queryValue);
-          this.onTouched();
-        }
-      })
-    );
   }
 
   ngOnInit() {
@@ -103,7 +82,7 @@ export class QueryInputComponent implements ControlValueAccessor {
     this.searchConfigs.forEach(config => {
       this.subscriptions.push(
         config.formGroup.statusChanges.subscribe((status) => {
-          console.log('[query-input] form group status changed', status);
+          console.log('[query-input] form group status changed', status, config);
           this.emitValue();
         })
       );
@@ -289,9 +268,9 @@ export class QueryInputComponent implements ControlValueAccessor {
   }
 
   private emitValue(): void {
-    if (!this.selectedSearchOption) return;
+    if (!this.selectedSearchOption || this.selectedSearchOption.formGroup.status === 'PENDING') return;
 
-    if (this.selectedSearchOption.formGroup.status !== 'VALID') {
+    if (this.selectedSearchOption.formGroup.status === 'INVALID') {
       // console.log('[query-input] clear input when status isn\'t valid');
       this.onChange(null);
       this.onTouched();
@@ -313,13 +292,9 @@ export class QueryInputComponent implements ControlValueAccessor {
       ...others
     };
     
-    if (this.selectedSearchOptionKey === 'compound' && others['inputType'] === 'smiles') {
-      this.canonicalizedSMILES$.next(value);
-    } else {
-      console.log('[query-input] emitting value', value);
-      this.onChange(value);
-      this.onTouched();
-    }
+    console.log('[query-input] emitting value', value);
+    this.onChange(value);
+    this.onTouched();
   }
 
   private updateSearchOptions() {

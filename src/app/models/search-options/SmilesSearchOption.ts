@@ -1,12 +1,13 @@
-import { FormControl, Validators, AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
-import { Observable, of, switchMap, map, first, catchError, tap, filter, distinctUntilChanged, debounceTime, startWith } from 'rxjs';
+import { FormControl, Validators, AbstractControl, FormGroup } from '@angular/forms';
+import { Observable, of, switchMap, map, catchError, filter, debounceTime } from 'rxjs';
 import { BaseSearchOptionParams, BaseSearchOption, SearchOptionType } from './BaseSearchOption';
 import { Loadable } from "~/app/models/Loadable";
+import { inject } from '@angular/core';
+import { CommonService } from '~/app/services/common.service';
+import { SharedService } from '~/app/api/mmli-backend/v1';
 
 type SmilesSearchOptionParams = Omit<BaseSearchOptionParams, 'type'> & {
   example: Record<string, any>;
-  onlyOutputSmiles?: boolean;
-  smilesValidator: (smiles: string) => Observable<Loadable<string>>;
   nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
 };
 
@@ -21,120 +22,101 @@ type SmilesSearchOptionType = SearchOptionType<string, SmilesSearchAdditionalCon
 
 export class SmilesSearchOption extends BaseSearchOption<string, SmilesSearchAdditionalControls> {
   override formGroup: FormGroup<SmilesSearchOptionType> = new FormGroup({
+    // inputType controls whether the input is a name or a SMILES string
     inputType: new FormControl<SmilesSearchInputType>('name', [Validators.required]),
+    // inputValue is the actual input value, which can be a name or a SMILES string
     inputValue: new FormControl<string>('', 
       [Validators.required],
       [this.validateInput.bind(this)]
     ),
+    // value is a normalized version of inputValue. the user does not interact with this field directly
     value: new FormControl<string>('', [Validators.required]),
   });
 
-  public chemInfo: Loadable<string> = {
+  private readonly blankChemInfo: Loadable<string> = {
     data: '',
     status: 'na'
   };
+  public chemInfo: Loadable<string> = this.blankChemInfo
 
   private nameToSmilesConverter: (name: string) => Observable<Loadable<string>>;
-  private smilesValidator: (smiles: string) => Observable<ValidationErrors | null>;
-  private onlyOutputSmiles: boolean;
+  private commonService = inject(CommonService);
+  private sharedService = inject(SharedService);
 
   constructor(params: SmilesSearchOptionParams) {
     super({
       ...params,
       type: 'smiles',
     });
-    this.onlyOutputSmiles = params.onlyOutputSmiles ?? false;
     this.nameToSmilesConverter = params.nameToSmilesConverter;
-    this.smilesValidator = (smiles: string) => {
-      return params.smilesValidator(smiles).pipe(
-        tap((chemical) => this.chemInfo = chemical),
-        filter((chemical) => chemical.status !== 'loading'),
-        map((chemical) => {
-          if (chemical.status === 'loaded') {
-            console.log('[smiles-search-option] smiles validation ok', chemical);
-            return null;
-          }
-          console.log('[smiles-search-option] smiles validation error', chemical);
-          return { invalidSmiles: true };
-        }),
-      )
-    };
+    
+    this.formGroup.get('value')!.valueChanges.pipe(
+      debounceTime(300), // wait for 300ms after the last change
+      switchMap((value) => !!value ? this.commonService.drawSMILES(value as string, []) : of(this.blankChemInfo)),
+    ).subscribe({
+      next: (loadable) => this.chemInfo = loadable,
+      error: (error) => {
+        console.error('[smiles-search-option] Error drawing SMILES:', error);
+        this.chemInfo = { ...this.blankChemInfo, status: 'error' as const };
+      }
+    });
+
   }
 
   override reset() {
     super.reset();
-    this.chemInfo = {
-      data: '',
-      status: 'na'
-    };
+    this.chemInfo = this.blankChemInfo
     this.formGroup.get('inputType')!.setValue('name', { emitEvent: false });
     this.formGroup.get('value')!.setValue('', { emitEvent: false });
     this.formGroup.get('inputValue')!.setValue('', { emitEvent: false });
   }
 
+  /**
+   * Validates the inputValue field based on the inputType. Will update the value field with the normalized SMILES string
+   * if validation succeeds.
+   * @param control 
+   * @returns 
+   */
   private validateInput(control: AbstractControl<string | null>) {
-    console.log('[smiles-search-option] validating input', control.value);
-    return control.valueChanges.pipe(
-      startWith(control.value),
-      tap(() => this.chemInfo.status = 'loading'),
-      distinctUntilChanged((a, b) => {
-        console.log('[smiles-search-option] distinctUntilChanged previous: ', a, 'current: ', b, 'equal: ', a === b);
-        return a === b;
-      }),
-      tap((v) => {
-        console.log('[smiles-search-option] inputValue changed', v)
-      }),
-      switchMap((value) => {
-        if (!value) {
-          return of({ required: true });
-        }
-
-        const inputType = this.formGroup.get('inputType')!.value;
-        switch (inputType) {
-          case 'name':
-            return this.nameToSmilesConverter(value).pipe(
-              filter((smiles) => smiles.status !== 'loading'),
-              switchMap((smiles) => {
-                console.log('[smiles-search-option] nameToSmilesConverter', smiles);
-                switch (smiles.status) {
-                  case 'loaded':
-                    this.formGroup.get('value')!.setValue(this.onlyOutputSmiles 
-                      ? smiles.data!.trim()
-                      : value, 
-                      { emitEvent: false }
-                    );
-                    console.log('[smiles-search-option] name validated', value);
-                    return this.smilesValidator(smiles.data || '');
-                  default: // only error and invalid are possible
-                    this.chemInfo = {
-                      status: 'invalid' as const,
-                      data: ''
-                    };
-                    return of({ invalidName: true });
-                }
-              }),
-            )
-          case 'smiles':
-            return this.smilesValidator(value).pipe(
-              map((errors) => {
-                if (!errors) {
-                  this.formGroup.get('value')!.setValue(value, { emitEvent: false });
+      console.warn('[smiles-search-option] validating input', control.value);
+      if (!control.value) {
+        return of({ required: true });
+      }
+  
+      const inputType = this.formGroup.get('inputType')!.value;
+      switch (inputType) {
+        case 'name':
+          return this.nameToSmilesConverter(control.value).pipe(
+            filter((smiles) => smiles.status !== 'loading'),
+            map((smiles) => {
+              switch (smiles.status) {
+                case 'loaded':
+                  this.formGroup.get('value')!.setValue(smiles.data!.trim(), { emitEvent: true, onlySelf: false });
                   return null;
-                }
-                return errors;
-              })
-            )
-        }
-
-        return of({ unknownInputType: true });
-      }),
-      first(),
-      tap((v) => {
-        console.log('[smiles-search-option] validateInput', this.formGroup, v);
-        setTimeout(() => {
-          this.formGroup.updateValueAndValidity({ onlySelf: false, emitEvent: true })
-        }, 100);
-      }),
-    )
-  }
+                default: // only error and invalid are possible
+                  this.chemInfo = { ...this.blankChemInfo, status: 'invalid' as const };
+                  return { invalidName: true };
+              }
+            }),
+          )
+        case 'smiles':
+          this.formGroup.get('value')!.setValue('', { emitEvent: false });
+          return this.sharedService.canonicalizeSmilesSmilesCanonicalizeGet(control.value).pipe(
+            catchError((error) => {
+              console.error('[smiles-search-option] Error validating SMILES:', error);
+              this.chemInfo = { ...this.blankChemInfo, status: 'error' as const };
+              return of(null);
+            }),
+            map((canonicalized) => {
+              if (canonicalized) {
+                this.formGroup.get('value')!.setValue(canonicalized, { emitEvent: true, onlySelf: false });
+                return null;
+              }
+              return { invalidSmiles: true };
+            })
+          )
+      }
+      return of({ unknownInputType: true });
+    }
 }
+

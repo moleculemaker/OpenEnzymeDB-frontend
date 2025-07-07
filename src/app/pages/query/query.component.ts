@@ -5,7 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { ButtonModule } from "primeng/button";
 import { CommonModule } from "@angular/common";
 
-import { OEDRecord, OEDRecordWithBestEnzymeName, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
+import { OEDRecordWithBestEnzymeName, OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { PanelModule } from "primeng/panel";
 import { QueryInputComponent } from "../../components/query-input/query-input.component";
 import { QueryValue, SearchOption, SmilesSearchOption } from '~/app/models/search-options';
@@ -254,9 +254,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
         label: 'L-proline (O=C(O)[C@@H]1CCCN1)',
         inputType: 'name',
         inputValue: 'L-proline',
-        value: 'L-proline',
+        value: 'O=C(O)[C@@H]1CCCN1',
       },
-      smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
       // nameToSmilesConverter is redundant here, at least for now, because the autocomplete control forces the user to select a
       // known compound with known SMILES, but keeping it for now for consistency
       nameToSmilesConverter: (name: string) => this.service.getSMILESForKnownCompoundName(name)
@@ -452,8 +451,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       switch (search.selectedOption) {
         case 'compound':
           criteriaQuery = {
-            'compound.name': search.value,
-            searchType: search.inputType || 'name',
+            'compound.smiles': search.value,
           };
           break;
         case 'ec_number':
@@ -585,8 +583,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       // Check if this criteria matches
       switch (search.selectedOption) {
         case 'compound':
-          const searchType = search.inputType || 'name';
-          currentMatch = row.compound[searchType]?.toLowerCase() === search.value.toLowerCase();
+          currentMatch = row.compound.smiles?.toLowerCase() === search.value.toLowerCase();
           break;
         case 'organism':
           currentMatch = row.organism.toLowerCase() === search.value.toLowerCase();

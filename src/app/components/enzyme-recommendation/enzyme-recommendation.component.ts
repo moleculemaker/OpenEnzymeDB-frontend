@@ -58,14 +58,12 @@ export class EnzymeRecommendationComponent implements OnChanges {
       key: 'smiles',
       label: 'Substrate',
       placeholder: 'Enter a substrate',
-      onlyOutputSmiles: true,
       example: {
         label: '4-(2-aminoethyl)-2-methoxyphenol',
         inputType: 'smiles',
         inputValue: 'COC1=C(C=CC(=C1)CCN)O',
         value: 'COC1=C(C=CC(=C1)CCN)O'
       },
-      smilesValidator: (smiles: string) => this.service.validateChemical(smiles),
       nameToSmilesConverter: (name: string) => this.chemicalResolverService.getSMILESFromName(name),
     })
   ];
