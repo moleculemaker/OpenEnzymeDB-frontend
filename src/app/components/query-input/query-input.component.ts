@@ -222,11 +222,11 @@ export class QueryInputComponent implements ControlValueAccessor {
         const maxMatchesPerType = 20; // limit to 20 suggestions per type
         let lowerSearch = query.toLowerCase();
         for (let name of sortedBestNames) {
-          if (name.startsWith(lowerSearch)) {
+          if (name.toLowerCase().startsWith(lowerSearch)) {
             if (startsWithMatches.length < maxMatchesPerType) {
               startsWithMatches.push({ label: name, value: name });
             }
-          } else if (name.includes(lowerSearch)) {
+          } else if (name.toLowerCase().includes(lowerSearch)) {
             if (includesMatches.length < maxMatchesPerType) {
               includesMatches.push({ label: name, value: name });
             }
