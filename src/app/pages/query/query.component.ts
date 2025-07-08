@@ -141,6 +141,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       options: [],
       value: [],
       matchMode: 'subset',
+      suppressColumnInResultsTable: true
     })],
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
