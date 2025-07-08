@@ -1,4 +1,9 @@
-<p-dialog [(visible)]="visible" [modal]="true" styleClass="w-[800px] h-[800px]" (onHide)="visibleChange.emit(false)">
+<!-- 
+  The 3D molecule viewer tries to set the zoom level automatically. This seems to work best if its container is roughly square.
+  We achieve that here by setting the width of the dialog to be approximately twice the height. The width is then split
+  in half for the 2D and 3D views.
+-->
+<p-dialog [(visible)]="visible" [modal]="true" styleClass="w-[1000px] h-[500px]" (onHide)="visibleChange.emit(false)">
   <ng-template pTemplate="header">
     <div class="flex items-center gap-2 font-semibold">
       Compound Structure
