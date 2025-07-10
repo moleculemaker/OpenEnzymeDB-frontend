@@ -207,7 +207,8 @@
                       <div class="w-full flex flex-col gap-1">
                         <div class="flex items-center justify-between py-1 w-full">
                           <span class="font-bold">Reaction Scheme</span>
-                          <small class="italic text-[#6C757D]/75">Found: {{ schemes.data ? schemes.data.length : 'N/A'
+                          <!-- at Le's request, hiding the "Found" count for now -->
+                          <small class="italic text-[#6C757D]/75 hidden">Found: {{ schemes.data ? schemes.data.length : 'N/A'
                             }}</small>
                         </div>
                         @switch (schemes.status) {
