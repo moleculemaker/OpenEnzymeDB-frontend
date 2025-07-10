@@ -173,7 +173,7 @@ export class KineticTableComponent implements OnChanges {
       });
   }
 
-  isSchemeGood(scheme: ReactionSchemeRecord): boolean {
+  isSchemeComplete(scheme: ReactionSchemeRecord): boolean {
     return scheme.reactants.length > 0 && scheme.products.length > 0 &&
       scheme.reactants.every(reactant => reactant.toLowerCase() !== 'unknown') &&
       scheme.products.every(product => product.toLowerCase() !== 'unknown');

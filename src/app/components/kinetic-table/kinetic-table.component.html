@@ -196,10 +196,12 @@
                     </div>
                     @let schemes = reactionSchemeCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
                     <!-- 
-                      If we have at least one reaction scheme with no missing compounds, display just one. Otherwise, hide this section.
+                      If we have at least one reaction scheme with no missing compounds, display just one of them.
+                      Else if we have at least one reaction scheme with missing compounds, display just one of them.
+                      Otherwise, hide this section.
                       https://github.com/moleculemaker/OpenEnzymeDB-frontend/issues/48
                     -->
-                    @let bestScheme = (schemes.data && schemes.data.length > 0) ? schemes.data.find(isSchemeGood) : null;
+                    @let bestScheme = (schemes.data && schemes.data.length > 0) ? (schemes.data.find(isSchemeComplete) || schemes.data[0]) : null;
                     @if (bestScheme) {
                       <div class="w-[1px] bg-[--surface-d]"></div>
                       <div class="w-full flex flex-col gap-1">
