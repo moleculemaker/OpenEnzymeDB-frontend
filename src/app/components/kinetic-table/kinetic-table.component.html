@@ -45,12 +45,14 @@
               <tr>
                 @for (filter of filters.entries(); track filter[0]) {
                 @let value = filter[1];
-                <th class="align-middle relative group" pSortableColumn="{{ value.field }}">
-                  <div [innerHTML]="value.label.value"></div>
-                  <p-sortIcon
-                    class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
-                    [field]="value.field" />
-                </th>
+                @if (!value.suppressColumnInResultsTable) {
+                  <th class="align-middle relative group" pSortableColumn="{{ value.field }}">
+                    <div [innerHTML]="value.label.value"></div>
+                    <p-sortIcon
+                      class="absolute top-0 right-0 p-2 text-[#6C757D] [.p-highlight_&]:!visible invisible group-hover:visible"
+                      [field]="value.field" />
+                  </th>
+                }
                 }
               </tr>
             </ng-template>
@@ -58,80 +60,82 @@
               <tr class="table-row">
                 @for (filter of filters.entries(); track filter[0]) {
                 @let value = filter[1];
-                @switch (value.field) {
-                @case ('compound.name') {
-                <td class="align-middle">
-                  <div class="flex items-start gap-2">
-                    <button title="Expand" type="button" [pRowToggler]="row">
-                      <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-                    </button>
-                    <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{
-                      row.compound.name }}</a>
-                  </div>
-                </td>
-                }
-                @case ('organism') {
-                <td class="align-middle italic">
-                  {{ row[value.field] }}
-                </td>
-                }
-                @case ('uniprot_id') {
-                <td class="align-middle">
-                  <div class="flex flex-col gap-1">
-                    @for (id of row.uniprot_id; track id) {
-                    <a class="block" [routerLink]="['/query/uniprot', id]" class="text-blue-500 cursor-pointer">{{ id
-                      }}</a>
+                  @if (!value.suppressColumnInResultsTable) {
+                    @switch (value.field) {
+                    @case ('compound.name') {
+                    <td class="align-middle">
+                      <div class="flex items-start gap-2">
+                        <button title="Expand" type="button" [pRowToggler]="row">
+                          <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                        </button>
+                        <a [routerLink]="['/query/compound', row.compound.name]" class="text-blue-500 cursor-pointer">{{
+                          row.compound.name }}</a>
+                      </div>
+                    </td>
                     }
-                  </div>
-                </td>
-                }
-                @case ('ec_number') {
-                <td class="align-middle">
-                  <a [routerLink]="['/query/ec', row.ec_number]" class="text-blue-500 cursor-pointer">{{ row.ec_number
-                    }}</a>
-                </td>
-                }
-                @case ('kcat') {
-                <td class="align-middle min-w-[100px]">
-                  @if (row.kcat) {
-                  {{ row.kcat | number: '1.1-4' }}
-                  } @else {
-                  <span class="opacity-25">N/A</span>
+                    @case ('organism') {
+                    <td class="align-middle italic">
+                      {{ row[value.field] }}
+                    </td>
+                    }
+                    @case ('uniprot_id') {
+                    <td class="align-middle">
+                      <div class="flex flex-col gap-1">
+                        @for (id of row.uniprot_id; track id) {
+                        <a class="block" [routerLink]="['/query/uniprot', id]" class="text-blue-500 cursor-pointer">{{ id
+                          }}</a>
+                        }
+                      </div>
+                    </td>
+                    }
+                    @case ('ec_number') {
+                    <td class="align-middle">
+                      <a [routerLink]="['/query/ec', row.ec_number]" class="text-blue-500 cursor-pointer">{{ row.ec_number
+                        }}</a>
+                    </td>
+                    }
+                    @case ('kcat') {
+                    <td class="align-middle min-w-[100px]">
+                      @if (row.kcat) {
+                      {{ row.kcat | number: '1.1-4' }}
+                      } @else {
+                      <span class="opacity-25">N/A</span>
+                      }
+                    </td>
+                    }
+                    @case ('km') {
+                    <td class="align-middle min-w-[100px]">
+                      @if (row.km) {
+                      {{ row.km | number: '1.1-4' }}
+                      } @else {
+                      <span class="opacity-25">N/A</span>
+                      }
+                    </td>
+                    }
+                    @case ('kcat_km') {
+                    <td class="align-middle min-w-[100px]">
+                      @if (row.kcat_km) {
+                      {{ row.kcat_km | number: '1.1-4' }}
+                      } @else {
+                      <span class="opacity-25">N/A</span>
+                      }
+                    </td>
+                    }
+                    @case ('pubmed_id') {
+                    <td class="text-end align-middle">
+                      <app-external-link class="justify-end" [linkItem]="{
+                                  url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                  label: row.pubmed_id
+                                }"></app-external-link>
+                    </td>
+                    }
+                    @default {
+                    <td class="align-middle">
+                      {{ row[value.field] }}
+                    </td>
+                    }
+                    }
                   }
-                </td>
-                }
-                @case ('km') {
-                <td class="align-middle min-w-[100px]">
-                  @if (row.km) {
-                  {{ row.km | number: '1.1-4' }}
-                  } @else {
-                  <span class="opacity-25">N/A</span>
-                  }
-                </td>
-                }
-                @case ('kcat_km') {
-                <td class="align-middle min-w-[100px]">
-                  @if (row.kcat_km) {
-                  {{ row.kcat_km | number: '1.1-4' }}
-                  } @else {
-                  <span class="opacity-25">N/A</span>
-                  }
-                </td>
-                }
-                @case ('pubmed_id') {
-                <td class="text-end align-middle">
-                  <app-external-link class="justify-end" [linkItem]="{
-                              url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                              label: row.pubmed_id
-                            }"></app-external-link>
-                </td>
-                }
-                @default {
-                <td class="align-middle">
-                  {{ row[value.field] }}
-                </td>
-                }
-                }
                 }
               </tr>
             </ng-template>
@@ -139,62 +143,79 @@
               <tr>
                 <td colspan="11" class="relative overflow-hidden no-scrollbar bg-[#F7FAFF] !p-2">
                   <div [@slideIn]
-                    class="rounded-md border border-[--surface-d] border-solid bg-white p-2 flex gap-2 w-full">
-                    @let schemes = reactionSchemeCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
-                    <div class="flex flex-col gap-2 {{ schemes.data && schemes.data.length > 0 ? 'w-1/2' : 'w-full' }}">
-                      <div class="font-bold">Experiment Information</div>
-                      <div class="flex justify-between">
-                        <div>Organism</div>
-                        <div class="text-end italic">{{ row.organism }}</div>
-                      </div>
-                      <div class="flex justify-between">
-                        <div>UniProt Accession</div>
-                        <div>
-                          @for (id of row.uniprot_id; track id) {
-                          <app-external-link [linkItem]="{
-                                                        url: 'https://www.uniprot.org/uniprotkb/' + id + '/entry',
-                                                        label: id
-                                                    }"></app-external-link>
-                          }
+                    class="rounded-md border border-[--surface-d] border-solid bg-white p-2 flex flex-col gap-2 w-full">
+                    <div class="">
+                      <div class="font-bold pb-3">Experiment Information</div>
+                      <div class="flex flex-row gap-2 w-full">
+                        <div class="basis-1/4">
+                          <div class="pb-2">Organism</div>
+                          <div class="font-semibold italic">{{ row.organism }}</div>
                         </div>
-                      </div>
-                      <div class="flex justify-between">
-                        <div>EC Number</div>
-                        <div class="text-end">
-                          <app-external-link [linkItem]="{
-                                                        url: 'https://www.brenda-enzymes.org/enzyme.php?ecno=' + row.ec_number,
-                                                        label: row.ec_number
-                                                    }"></app-external-link>
+                        <div class="basis-1/4">
+                          <div class="pb-2">UniProt Accession</div>
+                          <div class="font-semibold flex gap-3">
+                            @for (id of row.uniprot_id; track id) {
+                            <app-external-link [linkItem]="{
+                                                          url: 'https://www.uniprot.org/uniprotkb/' + id + '/entry',
+                                                          label: id
+                                                      }"></app-external-link>
+                            }
+                          </div>
                         </div>
-                      </div>
-                      <div class="flex justify-between">
-                        <div>PubMed ID</div>
-                        <div class="text-end">
-                          <app-external-link [linkItem]="{
-                                                        url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
-                                                        label: row.pubmed_id
-                                                    }"></app-external-link>
+                        <div class="basis-1/4">
+                          <div class="pb-2">EC Number</div>
+                          <div class="font-semibold">
+                            <app-external-link [linkItem]="{
+                                                          url: 'https://www.brenda-enzymes.org/enzyme.php?ecno=' + row.ec_number,
+                                                          label: row.ec_number
+                                                      }"></app-external-link>
+                          </div>
+                        </div>
+                        <div class="basis-1/4">
+                          <div class="pb-2">PubMed ID</div>
+                          <div class="font-semibold">
+                            <app-external-link [linkItem]="{
+                                                          url: 'https://pubmed.ncbi.nlm.nih.gov/' + row.pubmed_id,
+                                                          label: row.pubmed_id
+                                                      }"></app-external-link>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    @if (schemes.data && schemes.data.length > 0) {
+                    <div>
+                      @if (row.enzyme_name && row.enzyme_name.length > 0) {
+                      <div class="flex flex-row gap-2 w-full pt-3">
+                        <div class="">
+                          <div class="pb-2">Enzyme Name</div>
+                          <div class="font-semibold">
+                            {{ row.enzyme_name.join(', ') }}
+                          </div>
+                        </div>
+                      </div>
+                      }
+                    </div>
+                    @let schemes = reactionSchemeCache[row.ec_number + '|' + row.compound.name + '|' + row.organism];
+                    <!-- 
+                      If we have at least one reaction scheme with no missing compounds, display just one of them.
+                      Else if we have at least one reaction scheme with missing compounds, display just one of them.
+                      Otherwise, hide this section.
+                      https://github.com/moleculemaker/OpenEnzymeDB-frontend/issues/48
+                    -->
+                    @let bestScheme = (schemes.data && schemes.data.length > 0) ? (schemes.data.find(isSchemeComplete) || schemes.data[0]) : null;
+                    @if (bestScheme) {
                       <div class="w-[1px] bg-[--surface-d]"></div>
-                      <div class="w-1/2 flex flex-col gap-1">
-                        <div class="flex items-center justify-between w-full">
+                      <div class="w-full flex flex-col gap-1">
+                        <div class="flex items-center justify-between py-1 w-full">
                           <span class="font-bold">Reaction Scheme</span>
-                          <small class="italic text-[#6C757D]/75">Found: {{ schemes.data ? schemes.data.length : 'N/A'
+                          <!-- at Le's request, hiding the "Found" count for now -->
+                          <small class="italic text-[#6C757D]/75 hidden">Found: {{ schemes.data ? schemes.data.length : 'N/A'
                             }}</small>
                         </div>
                         @switch (schemes.status) {
                         @case ('loaded') {
                           <div
                             class="w-full grow rounded-md border border-[--surface-d] border-solid bg-white flex-col items-center justify-center text-[#6C757D]">
-                            <p-scrollPanel [style]="{ height: '100px', width: '100%' }">
-                              @for (scheme of schemes.data; track scheme) {
-                              <app-reaction-scheme [reactionScheme]="scheme" />
-                              <hr class="mb-2" />
-                              }
-                            </p-scrollPanel>
+                            <app-reaction-scheme [reactionScheme]="bestScheme" />
                           </div>
                         }
                         @case ('loading') {

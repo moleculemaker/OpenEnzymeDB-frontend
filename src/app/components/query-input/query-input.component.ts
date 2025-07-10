@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
+import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule } from 'primeng/menu';
@@ -13,11 +14,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SearchOption, QueryValue } from '../../models/search-options';
 import { Subscription } from 'rxjs';
+import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 
 @Component({
   selector: 'app-query-input',
   standalone: true,
   imports: [
+    AutoCompleteModule,
     DropdownModule,
     FormsModule,
     InputTextModule,
@@ -67,15 +70,19 @@ export class QueryInputComponent implements ControlValueAccessor {
   }, {} as Record<string, typeof this.searchConfigs[0]>);
 
   subscriptions: Subscription[] = [];
+  searchSuggestions: { label: string, items: { label: string, value: string }[] }[] = [];
 
-  constructor() { }
+  constructor(
+    private openEnzymeDBService: OpenEnzymeDBService
+  ) {
+  }
 
   ngOnInit() {
     // Subscribe to value changes for all search configs
     this.searchConfigs.forEach(config => {
       this.subscriptions.push(
         config.formGroup.statusChanges.subscribe((status) => {
-          console.log('[query-input] form group status changed', status);
+          console.log('[query-input] form group status changed', status, config);
           this.emitValue();
         })
       );
@@ -154,10 +161,116 @@ export class QueryInputComponent implements ControlValueAccessor {
     this.selectedSearchOptionKey = this.multiple ? null : this.searchConfigs[0].key;
   }
 
-  private emitValue(): void {
+  public search(key: string , event: AutoCompleteCompleteEvent) {
+    this.searchSuggestions = [];
     if (!this.selectedSearchOption) return;
 
-    if (this.selectedSearchOption.formGroup.status !== 'VALID') {
+    if (this.selectedSearchOptionKey === 'compound') {
+      this.getSearchSuggestionsForCompound(event.query);
+    } else if (this.selectedSearchOptionKey === 'enzyme_name') {
+      this.getSearchSuggestionsForEnzymeName(event.query);
+    } else {
+      console.error('[query-input] search not implemented for', this.selectedSearchOptionKey);
+      this.searchSuggestions = [];
+    }
+  }
+  private getSearchSuggestionsForCompound(query: string) {
+    this.openEnzymeDBService.getCompoundNamesToSMILES().subscribe({
+      next: (data) => {   
+        const startsWithMatches = [];
+        const includesMatches = [];
+        const maxMatchesPerType = 20; // limit to 20 suggestions per type
+        let lowerSearch = query.toLowerCase();
+        for (let [key, value] of data) {
+          if (key.startsWith(lowerSearch)) {
+            if (startsWithMatches.length < maxMatchesPerType) {
+              startsWithMatches.push({ label: value.originalName, value: value.smiles });
+            }
+          } else if (key.includes(lowerSearch)) {
+            if (includesMatches.length < maxMatchesPerType) {
+              includesMatches.push({ label: value.originalName, value: value.smiles });
+            }
+          }
+          if (startsWithMatches.length === maxMatchesPerType && includesMatches.length === maxMatchesPerType) {
+            break; // stop if both lists are full
+          }
+        }
+        if (startsWithMatches.length > 0) {
+          this.searchSuggestions.push({
+            label: 'Beginning with "' + query + '"' + (startsWithMatches.length === maxMatchesPerType ? ` (first ${startsWithMatches.length} matches)` : ''),
+            items: startsWithMatches
+          });
+        }
+        if (includesMatches.length > 0) {
+          this.searchSuggestions.push({
+            label: 'Containing "' + query + '"' + (includesMatches.length === maxMatchesPerType ? ` (first ${includesMatches.length} matches)` : ''),
+            items: includesMatches
+          });
+        }
+      },
+      error: (error) => {
+        this.searchSuggestions = [];
+      }
+    });
+  }
+
+  private getSearchSuggestionsForEnzymeName(query: string) {
+    this.openEnzymeDBService.getSortedUniprotBestNames$().subscribe({
+      next: (sortedBestNames) => {   
+        const startsWithMatches = [];
+        const includesMatches = [];
+        const maxMatchesPerType = 20; // limit to 20 suggestions per type
+        let lowerSearch = query.toLowerCase();
+        for (let name of sortedBestNames) {
+          if (name.toLowerCase().startsWith(lowerSearch)) {
+            if (startsWithMatches.length < maxMatchesPerType) {
+              startsWithMatches.push({ label: name, value: name });
+            }
+          } else if (name.toLowerCase().includes(lowerSearch)) {
+            if (includesMatches.length < maxMatchesPerType) {
+              includesMatches.push({ label: name, value: name });
+            }
+          }
+          if (startsWithMatches.length === maxMatchesPerType && includesMatches.length === maxMatchesPerType) {
+            break; // stop if both lists are full
+          }
+        }
+        if (startsWithMatches.length > 0) {
+          this.searchSuggestions.push({
+            label: 'Beginning with "' + query + '"' + (startsWithMatches.length === maxMatchesPerType ? ` (first ${startsWithMatches.length} matches)` : ''),
+            items: startsWithMatches
+          });
+        }
+        if (includesMatches.length > 0) {
+          this.searchSuggestions.push({
+            label: 'Containing "' + query + '"' + (includesMatches.length === maxMatchesPerType ? ` (first ${includesMatches.length} matches)` : ''),
+            items: includesMatches
+          });
+        }
+      },
+      error: (error) => {
+        this.searchSuggestions = [];
+      }
+    });
+
+  }
+
+  onSuggestionSelect(event: AutoCompleteSelectEvent) {
+    if (this.selectedSearchOption) {
+      this.selectedSearchOption.formGroup.patchValue({
+        inputValue: event.value.label,
+        value: event.value.value,
+      });
+      setTimeout(() => {
+        this.selectedSearchOption!.formGroup.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+      }, 100);
+    }
+  }
+
+  private emitValue(): void {
+    if (!this.selectedSearchOption || this.selectedSearchOption.formGroup.status === 'PENDING') return;
+
+    if (this.selectedSearchOption.formGroup.status === 'INVALID') {
       // console.log('[query-input] clear input when status isn\'t valid');
       this.onChange(null);
       this.onTouched();
@@ -178,7 +291,7 @@ export class QueryInputComponent implements ControlValueAccessor {
       value: inputValue,
       ...others
     };
-
+    
     console.log('[query-input] emitting value', value);
     this.onChange(value);
     this.onTouched();

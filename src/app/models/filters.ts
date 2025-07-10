@@ -13,6 +13,7 @@ export interface FilterConfigParams {
   disabled?: boolean;
   optionsField?: string;
   sortingField?: string;
+  suppressColumnInResultsTable?: boolean;
 }
 
 export abstract class FilterConfig {
@@ -30,6 +31,7 @@ export abstract class FilterConfig {
   public disabled: boolean;
   public optionsField: string;
   public sortingField: string;
+  public suppressColumnInResultsTable: boolean = false;
   #value: any;
 
   constructor(params: FilterConfigParams) {
@@ -44,6 +46,7 @@ export abstract class FilterConfig {
     this.disabled = params.disabled ?? false;
     this.optionsField = params.optionsField ?? params.field;
     this.sortingField = params.sortingField ?? params.field;
+    this.suppressColumnInResultsTable = params.suppressColumnInResultsTable ?? false;
   }
 
   get value() {

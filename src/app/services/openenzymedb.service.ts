@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, first, from, map, of, tap } from "rxjs";
+import { Observable, first, from, map, of, shareReplay, tap, withLatestFrom } from "rxjs";
 import * as d3 from 'd3';
 
 import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
@@ -9,7 +9,7 @@ import { EnvironmentService } from "./environment.service";
 
 import { ungzip } from 'pako';
 import { CommonService } from "./common.service";
-import { Loadable } from "../models/Loadable";
+import { Loadable, LoadingStatus } from "../models/Loadable";
 import { ReactionSchemeRecord, ReactionSchemeRecordWithKeyInfo } from "../models/ReactionSchemeRecord";
 import { ScaleType } from "../components/density-plot/density-plot.component";
 
@@ -87,6 +87,10 @@ export type OEDRecord = {
   "KM VALUE": number,
   "KCAT/KM VALUE": number,
   "Lineage": string[],
+};
+
+export type OEDRecordWithBestEnzymeName = OEDRecord & {
+  bestEnzymeNames: string[] // array because OEDRecord.UNIPROT is a comma-separated string of accessions
 };
 
 export type UniprotEvidence = {
@@ -395,22 +399,70 @@ export class OpenEnzymeDBService {
       map((uniprotData) => ({
         ...uniprotData[uniprot],
         status: uniprotData[uniprot].entryType === "Inactive" ? "inactive" : "active",
-        names: [
-          ...(uniprotData[uniprot].proteinDescription.recommendedName?.fullName?.value ? [{
-            value: uniprotData[uniprot].proteinDescription!.recommendedName!.fullName.value,
-            type: 'recommended' as const
-          }] : []),
-          ...(uniprotData[uniprot].proteinDescription.alternativeNames?.map(n => ({
-            value: n.fullName.value,
-            type: 'alternative' as const
-          })) || []),
-          ...(uniprotData[uniprot].proteinDescription.submissionNames?.map(n => ({
-            value: n.fullName.value,
-            type: 'submission' as const
-          })) || []),
-        ],
+        names: this.getNamesForUniprot(uniprotData[uniprot])
       })));
   }
+
+  private uniprotBestNames$ = this.UNIPROT$.pipe(
+    first(),
+    map((uniprotData) => {
+      const accessionToBestName: Map<string, string> = new Map();
+      Object.values(uniprotData).forEach((record) => {
+        const bestName = this.getBestNameForUniprot(uniprotData, record.primaryAccession);
+        if (bestName) {
+          accessionToBestName.set(record.primaryAccession, bestName);
+        }
+      });
+      return accessionToBestName;
+    }),
+    shareReplay(1)
+  );
+  getUniprotBestNames$(): Observable<Map<string, string>> {
+    return this.uniprotBestNames$;
+  }
+
+  private sortedUniprotBestNames$ = this.uniprotBestNames$.pipe(
+    first(),
+    map((accessionToBestName) => {
+      return Array.from(new Set<string>(accessionToBestName.values())).sort((a, b) => a.localeCompare(b));
+    }),
+    shareReplay(1)
+  );
+  getSortedUniprotBestNames$(): Observable<string[]> {
+    return this.sortedUniprotBestNames$;
+  }
+
+  getNamesForUniprot(uniprotRecord: UniprotRecord): Array<{ value: string, type: 'recommended' | 'alternative' | 'submission' }> {
+    return [
+      ...(uniprotRecord.proteinDescription.recommendedName?.fullName?.value ? [{
+        value: uniprotRecord.proteinDescription!.recommendedName!.fullName.value,
+        type: 'recommended' as const
+      }] : []),
+      ...(uniprotRecord.proteinDescription.alternativeNames?.map(n => ({
+        value: n.fullName.value,
+        type: 'alternative' as const
+      })) || []),
+      ...(uniprotRecord.proteinDescription.submissionNames?.map(n => ({
+        value: n.fullName.value,
+        type: 'submission' as const
+      })) || []),
+    ];
+  }
+
+  getBestNameForUniprot(uniprotRecordDict: UniprotRecordDict, accession: string): string|null {
+    const record = uniprotRecordDict[accession];
+    if (record?.proteinDescription) {
+      // Prefer recommended name, then first alternative name (TODO: will we ever have an alternative name but not a recommended name?), then first submission name
+      return record.proteinDescription?.recommendedName?.fullName?.value
+        || record.proteinDescription?.alternativeNames?.[0]?.fullName?.value
+        || record.proteinDescription?.submissionNames?.[0]?.fullName?.value
+        || null;
+    } else if (record?.inactiveReason?.inactiveReasonType === 'MERGED' && record.inactiveReason.mergeDemergeTo?.length > 0) {
+      return this.getBestNameForUniprot(uniprotRecordDict, record.inactiveReason.mergeDemergeTo[0]);
+    } else {
+      return null;
+    }
+  } 
 
   getECInfo(ec: string): Observable<ECRecord> {
     return this.EC$.pipe(map((ecData) => ecData[ec]));
@@ -452,6 +504,67 @@ export class OpenEnzymeDBService {
 
   getData(): Observable<OEDRecord[]> {
     return from(example);
+  }
+
+  getDataWithBestEnzymeNames(): Observable<OEDRecordWithBestEnzymeName[]> {
+    return this.getData().pipe(
+      first(),
+      withLatestFrom(this.uniprotBestNames$),
+      map(([data, bestNames]) => {
+        return data.map((record) => ({ ...record, bestEnzymeNames: record.UNIPROT.split(',').filter(accession => bestNames.has(accession)).map(accession => bestNames.get(accession)!) }));
+      })
+    );
+  }
+
+  private compoundNamesToSMILES$ = this.getData().pipe(
+    first(),
+    map((data) => {
+      // create a temporary map--later we'll create a new copy with sorted keys
+      const temp = new Map<string, { smiles: string, originalName: string }>();
+      data.forEach((record) => {
+        if (record.SMILES) {
+          const lowerCaseName = record.SUBSTRATE.toLowerCase();
+          temp.set(lowerCaseName, {
+            smiles: record.SMILES,
+            originalName: record.SUBSTRATE,
+          });
+        }
+      });
+      return new Map<string, { smiles: string, originalName: string }>(
+        [...temp.entries()].sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+      );
+    }),
+    shareReplay(1)
+  );
+  /**
+   * Returns a map in which each key is a lowercase compound name, and the associated value is an object
+   * containing the SMILES representation along with the compound name in its original capitalization.
+   * Keys are inserted in alphabetical order so we can efficiently return the first N entries for autocomplete.
+   */
+
+  getCompoundNamesToSMILES(): Observable<Map<string, { smiles: string, originalName: string }>> {
+    return this.compoundNamesToSMILES$;
+  }
+
+  getSMILESForKnownCompoundName(name: string): Observable<Loadable<string>> {
+    return this.compoundNamesToSMILES$.pipe(
+      first(),
+      map((compoundNamesToSMILES) => {
+        const lowerCaseName = name.toLowerCase();
+        if (compoundNamesToSMILES.has(lowerCaseName)) {
+          const { smiles, originalName } = compoundNamesToSMILES.get(lowerCaseName)!
+          return {
+            status: 'loaded' as LoadingStatus,
+            data: smiles
+          };
+        } else {
+          return {
+            status: 'invalid' as LoadingStatus,
+            data: null
+          };
+        }
+      }),
+    );
   }
 
   getError(jobType: JobType, jobID: string): Observable<string> {

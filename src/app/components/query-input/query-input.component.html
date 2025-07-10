@@ -41,11 +41,43 @@
     <div class="grow h-8" [formGroup]="selectedSearchOption.formGroup">
       @switch (selectedSearchOption.key) {
       @case ('compound') {
-      <app-marvinjs-input [placeholder]="selectedSearchOption.placeholder || ''" class="grow h-8"
-        formControlName="inputValue">
-      </app-marvinjs-input>
+        @if (selectedSearchOption.formGroup.contains('inputType') && $any(selectedSearchOption.formGroup).get('inputType')?.value === 'name') {
+          <p-autoComplete 
+            pInputText 
+            type="text" 
+            title="{{selectedSearchOption.placeholder}}"
+            [placeholder]="selectedSearchOption.placeholder"
+            formControlName="inputValue" 
+            inputStyleClass="w-full border-none"
+            styleClass="w-full h-5"
+            class="w-full border-none p-0"
+            [group]="true"
+            [suggestions]="searchSuggestions" 
+            [optionLabel]="'label'"
+            [optionValue]="'value'"
+            (completeMethod)="search(selectedSearchOption.key, $event)"
+            [forceSelection]="true"
+            [minLength]="1"
+            [delay]="300"
+            (onSelect)="onSuggestionSelect($event)"
+          >
+            <ng-template let-group pTemplate="group">
+              <div class="flex items-center">
+                <span>{{ group.label }}</span>
+              </div>
+            </ng-template>
+            <ng-template let-item pTemplate="item">
+              <div class="px-2">{{ item.label }}</div>
+            </ng-template>
+          </p-autoComplete>
+        } @else {
+          <app-marvinjs-input [placeholder]="selectedSearchOption.placeholder || ''" class="grow h-8"
+            formControlName="inputValue">
+          </app-marvinjs-input>
+        }
       }
       @case ('smiles') {
+      <!-- TODO is this used anymore? -->
       <app-marvinjs-input [placeholder]="selectedSearchOption.placeholder || ''" class="grow h-8"
         formControlName="inputValue">
       </app-marvinjs-input>
@@ -53,6 +85,36 @@
       @case ('organism') {
       <input pInputText type="text" title="{{selectedSearchOption.placeholder}}"
         [placeholder]="selectedSearchOption.placeholder" formControlName="value" class="w-full border-none h-8" />
+      }
+      @case ('enzyme_name') {
+        <p-autoComplete 
+          pInputText 
+          type="text" 
+          title="{{selectedSearchOption.placeholder}}"
+          [placeholder]="selectedSearchOption.placeholder"
+          formControlName="value" 
+          inputStyleClass="w-full border-none"
+          styleClass="w-full h-5"
+          class="w-full border-none p-0"
+          [group]="true"
+          [suggestions]="searchSuggestions" 
+          [optionLabel]="'label'"
+          [optionValue]="'value'"
+          (completeMethod)="search(selectedSearchOption.key, $event)"
+          [forceSelection]="true"
+          [minLength]="1"
+          [delay]="300"
+          (onSelect)="onSuggestionSelect($event)"
+        >
+          <ng-template let-group pTemplate="group">
+            <div class="flex items-center">
+              <span>{{ group.label }}</span>
+            </div>
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            <div class="px-2">{{ item.label }}</div>
+          </ng-template>
+        </p-autoComplete>
       }
       @case ('ec_number') {
       <input pInputText type="text" title="{{selectedSearchOption.placeholder}}"

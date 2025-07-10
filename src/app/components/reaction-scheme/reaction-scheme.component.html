@@ -1,5 +1,5 @@
 <div class="flex gap-1 justify-around p-1">
-  @for (reactant of reactionScheme.reactants; track reactant; let index = $index) {
+  @for (reactant of cleanedReactionScheme.reactants; track reactant; let index = $index) {
   @if (index !== 0) {
     <span>&nbsp;+&nbsp;</span>
   }
@@ -10,8 +10,8 @@
     } 
   }"></ng-container>
   }
-  <span>&nbsp;=&nbsp;</span>
-  @for (product of reactionScheme.products; track product; let index = $index) {
+  <span>&nbsp;&rarr;&nbsp;</span>
+  @for (product of cleanedReactionScheme.products; track product; let index = $index) {
     @if (index !== 0) {
       <span>&nbsp;+&nbsp;</span>
     }
