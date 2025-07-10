@@ -17,6 +17,7 @@ import { ChemicalResolverService } from '~/app/services/chemical-resolver.servic
 })
 export class ReactionSchemeComponent implements OnChanges, OnDestroy {
   @Input() reactionScheme: ReactionSchemeRecord;
+  cleanedReactionScheme: ReactionSchemeRecord;
 
   images: { [key: string]: string } = {};
 
@@ -33,6 +34,12 @@ export class ReactionSchemeComponent implements OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['reactionScheme']) {
       const reactionScheme = changes['reactionScheme'].currentValue;
+      this.cleanedReactionScheme = {
+        ...reactionScheme,
+        // remove leading digits followed by a space from reactants and products (e.g., "2 H+" becomes "H+")
+        reactants: reactionScheme.reactants.map((reactant: string) => reactant.trim().replace(/^\d+\s+/, '')),
+        products: reactionScheme.products.map((product: string) => product.trim().replace(/^\d+\s+/, '')),
+      };
       [...reactionScheme.reactants, ...reactionScheme.products].forEach((chemical: string) => {
         if (!this.images[chemical]) {
           const subscription = this.chemicalResolverService.getSMILESFromName(chemical)
