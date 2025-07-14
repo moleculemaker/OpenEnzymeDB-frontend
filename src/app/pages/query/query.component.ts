@@ -275,8 +275,8 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       label: 'Enzyme Name',
       placeholder: 'Enter Enzyme Name',
       example: {
-        label: 'L-arabinitol 4-dehydrogenase',
-        value: 'L-arabinitol 4-dehydrogenase'
+        label: 'Guanidinoacetate N-methyltransferase',
+        value: 'Guanidinoacetate N-methyltransferase'
       }
     }),
     new StringSearchOption({

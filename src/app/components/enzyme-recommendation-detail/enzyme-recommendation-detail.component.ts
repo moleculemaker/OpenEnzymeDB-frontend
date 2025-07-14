@@ -464,9 +464,6 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
             }
             retVal = retVal.filter(x => x.mcs).sort((a, b) => (b.mcs.value) - (a.mcs.value)).slice(0, 10);
           } else if (this.algorithm === 'tanimoto') {
-            if (retVal.some(x => !x.tanimoto)) {
-              console.warn('[should not happen] values without tanimoto', retVal.filter(x => !x.tanimoto));
-            }
             retVal = retVal.filter(x => x.tanimoto).sort((a, b) => (b.tanimoto) - (a.tanimoto)).slice(0, 10);
           }
 
