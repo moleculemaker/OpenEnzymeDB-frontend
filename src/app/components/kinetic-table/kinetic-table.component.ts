@@ -180,29 +180,46 @@ export class KineticTableComponent implements OnChanges {
 
   copySequence(row: any) {
     if (row.uniprot_id.length === 0) {
+      // frontend shouldn't allow this, but just in case
       return;
     }
-    this.service.getUniprotInfo(row.uniprot_id[0]).subscribe((uniprot) => {
-      const sequence = uniprot?.sequence?.value;
-      if (sequence) {
-        navigator.clipboard.writeText(sequence)
-          .then(() => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Sequence copied to clipboard',
+    this.service.getUniprotInfo(row.uniprot_id[0]).subscribe(
+      (uniprot) => {
+        const sequence = uniprot?.sequence?.value;
+        if (sequence) {
+          navigator.clipboard.writeText(sequence)
+            .then(() => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Sequence copied to clipboard.',
+              });
+            })
+            .catch((error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to copy sequence to clipboard.',
+              });
+              console.error('Clipboard write failed:', error);
             });
-          })
-          .catch((error) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to copy sequence to clipboard',
-            });
-            console.error('Clipboard write failed:', error);
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No sequence found for this UniProt accession.',
           });
+        }
+      },
+      (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch sequence from UniProt. Please try again later.',
+        });
+        console.error('Failed to fetch Uniprot information:', error);
       }
-    });
+    );
   }
 
   isSchemeComplete(scheme: ReactionSchemeRecord): boolean {
