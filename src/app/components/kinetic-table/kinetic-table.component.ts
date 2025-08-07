@@ -185,12 +185,22 @@ export class KineticTableComponent implements OnChanges {
     this.service.getUniprotInfo(row.uniprot_id[0]).subscribe((uniprot) => {
       const sequence = uniprot?.sequence?.value;
       if (sequence) {
-        navigator.clipboard.writeText(sequence);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Sequence copied to clipboard',
-        });
+        navigator.clipboard.writeText(sequence)
+          .then(() => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Sequence copied to clipboard',
+            });
+          })
+          .catch((error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to copy sequence to clipboard',
+            });
+            console.error('Clipboard write failed:', error);
+          });
       }
     });
   }
