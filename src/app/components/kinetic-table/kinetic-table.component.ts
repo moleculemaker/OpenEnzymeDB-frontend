@@ -7,6 +7,7 @@ import { ExternalLinkComponent } from '../external-link/external-link.component'
 import { FilterDialogComponent } from '../filter-dialog/filter-dialog.component';
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from '~/app/models/filters';
 import { FilterService } from 'primeng/api';
+import { MessageService } from "primeng/api";
 import { animate } from '@angular/animations';
 import { style, transition } from '@angular/animations';
 import { trigger } from '@angular/animations';
@@ -14,6 +15,7 @@ import { RouterLink } from '@angular/router';
 import { ReactionSchemeComponent } from '../reaction-scheme/reaction-scheme.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ToastModule } from "primeng/toast";
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { LoadingStatus } from "~/app/models/Loadable";
 import { ReactionSchemeRecord } from "~/app/models/ReactionSchemeRecord";
@@ -45,12 +47,14 @@ import { of } from 'rxjs';
     CommonModule,
     RouterLink,
     SkeletonModule,
-    ScrollPanelModule, 
+    ScrollPanelModule,
+    ToastModule,
 
     ExternalLinkComponent,
     FilterDialogComponent,
     ReactionSchemeComponent,
   ],
+  providers: [FilterService, MessageService],
   templateUrl: './kinetic-table.component.html',
   styleUrl: './kinetic-table.component.scss'
 })
@@ -84,6 +88,7 @@ export class KineticTableComponent implements OnChanges {
   constructor(
     private filterService: FilterService,
     private service: OpenEnzymeDBService,
+    private messageService: MessageService
   ) {
     this.filterService.register(
       "range",
@@ -171,6 +176,23 @@ export class KineticTableComponent implements OnChanges {
       .subscribe((result) => {
         this.reactionSchemeCache[key] = result;
       });
+  }
+
+  copySequence(row: any) {
+    if (row.uniprot_id.length === 0) {
+      return;
+    }
+    this.service.getUniprotInfo(row.uniprot_id[0]).subscribe((uniprot) => {
+      const sequence = uniprot?.sequence?.value;
+      if (sequence) {
+        navigator.clipboard.writeText(sequence);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Sequence copied to clipboard',
+        });
+      }
+    });
   }
 
   isSchemeComplete(scheme: ReactionSchemeRecord): boolean {
