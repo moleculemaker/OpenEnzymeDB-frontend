@@ -140,7 +140,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       field: 'enzyme_name',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'union',
       suppressColumnInResultsTable: true
     })],
     ['uniprot_ids', new MultiselectFilterConfig({
@@ -153,7 +153,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       field: 'uniprot_id',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'union',
     })],
     ['ec_numbers', new MultiselectFilterConfig({
       category: 'parameter',
@@ -242,7 +242,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
       field: 'pubmed_id',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'in',
     })],
   ] as [string, FilterConfig][])
 
@@ -647,6 +647,7 @@ export class QueryComponent implements AfterViewInit, OnInit, OnDestroy {
           label: option,
           value: option,
         }));
+        filter.options.sort((a, b) => a.label.localeCompare(b.label));
         filter.defaultValue = [];
       } else if (filter instanceof RangeFilterConfig) {
         filter.min = Math.min(...options);

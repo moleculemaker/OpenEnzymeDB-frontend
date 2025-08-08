@@ -9,7 +9,7 @@ export interface FilterConfigParams {
   type?: 'range' | 'multiselect' | 'singleselect';
   value?: any;
   defaultValue?: any;
-  matchMode?: 'in' | 'range' | 'subset' | 'union';
+  matchMode?: 'in' | 'range' | 'union';
   disabled?: boolean;
   optionsField?: string;
   sortingField?: string;
@@ -26,7 +26,7 @@ export abstract class FilterConfig {
   public field: string;
   public type: 'range' | 'multiselect' | 'singleselect';
   public defaultValue: any;
-  public matchMode: 'in' | 'range' | 'subset' | 'union';
+  public matchMode: 'in' | 'range' | 'union';
   public formattedValue: any;
   public disabled: boolean;
   public optionsField: string;

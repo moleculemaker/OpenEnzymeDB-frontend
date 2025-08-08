@@ -7,6 +7,7 @@ import { ExternalLinkComponent } from '../external-link/external-link.component'
 import { FilterDialogComponent } from '../filter-dialog/filter-dialog.component';
 import { FilterConfig, MultiselectFilterConfig, RangeFilterConfig } from '~/app/models/filters';
 import { FilterService } from 'primeng/api';
+import { MessageService } from "primeng/api";
 import { animate } from '@angular/animations';
 import { style, transition } from '@angular/animations';
 import { trigger } from '@angular/animations';
@@ -14,6 +15,7 @@ import { RouterLink } from '@angular/router';
 import { ReactionSchemeComponent } from '../reaction-scheme/reaction-scheme.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ToastModule } from "primeng/toast";
 import { OpenEnzymeDBService } from '~/app/services/openenzymedb.service';
 import { LoadingStatus } from "~/app/models/Loadable";
 import { ReactionSchemeRecord } from "~/app/models/ReactionSchemeRecord";
@@ -45,12 +47,14 @@ import { of } from 'rxjs';
     CommonModule,
     RouterLink,
     SkeletonModule,
-    ScrollPanelModule, 
+    ScrollPanelModule,
+    ToastModule,
 
     ExternalLinkComponent,
     FilterDialogComponent,
     ReactionSchemeComponent,
   ],
+  providers: [FilterService, MessageService],
   templateUrl: './kinetic-table.component.html',
   styleUrl: './kinetic-table.component.scss'
 })
@@ -84,6 +88,7 @@ export class KineticTableComponent implements OnChanges {
   constructor(
     private filterService: FilterService,
     private service: OpenEnzymeDBService,
+    private messageService: MessageService
   ) {
     this.filterService.register(
       "range",
@@ -96,12 +101,12 @@ export class KineticTableComponent implements OnChanges {
     );
 
     this.filterService.register(
-      "subset",
+      "union",
       (value: any[], filter: any[]) => {
         if (!filter) {
           return true;
         }
-        return filter.every((f) => value.includes(f));
+        return filter.some((f) => value.includes(f));
       },
     );
 
@@ -173,6 +178,50 @@ export class KineticTableComponent implements OnChanges {
       });
   }
 
+  copySequence(row: any) {
+    if (row.uniprot_id.length === 0) {
+      // frontend shouldn't allow this, but just in case
+      return;
+    }
+    this.service.getUniprotInfo(row.uniprot_id[0]).subscribe(
+      (uniprot) => {
+        const sequence = uniprot?.sequence?.value;
+        if (sequence) {
+          navigator.clipboard.writeText(sequence)
+            .then(() => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Sequence copied to clipboard.',
+              });
+            })
+            .catch((error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to copy sequence to clipboard.',
+              });
+              console.error('Clipboard write failed:', error);
+            });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No sequence found for this UniProt accession.',
+          });
+        }
+      },
+      (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch sequence from UniProt. Please try again later.',
+        });
+        console.error('Failed to fetch Uniprot information:', error);
+      }
+    );
+  }
+
   isSchemeComplete(scheme: ReactionSchemeRecord): boolean {
     return scheme.reactants.length > 0 && scheme.products.length > 0 &&
       scheme.reactants.every(reactant => reactant.toLowerCase() !== 'unknown') &&
@@ -192,6 +241,7 @@ export class KineticTableComponent implements OnChanges {
           label: option,
           value: option,
         }));
+        filter.options.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
         filter.defaultValue = [];
       } else if (filter instanceof RangeFilterConfig) {
         filter.min = Math.min(...options);

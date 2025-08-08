@@ -25,6 +25,7 @@ export class JobResult<TInfo, TResult> {
             || data.phase === JobStatus.Queued
             , true),
         tap((data) => { console.log('job status: ', data) }),
+        shareReplay(1)
     );
 
     jobResultResponse$ = this.statusResponse$.pipe(
