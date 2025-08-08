@@ -117,7 +117,7 @@ export class EnzymeStructureDialogComponent {
       field: 'uniprot_id',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'union',
     });
   }
 
@@ -163,6 +163,7 @@ export class EnzymeStructureDialogComponent {
       .filter((option, index, self) => 
         index === self.findIndex((o) => o.value === option.value)
       );
+    compoundOptions.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
     this.compoundFilter.options = compoundOptions;
 
     // Update organism options based on selected compound
@@ -177,6 +178,7 @@ export class EnzymeStructureDialogComponent {
         .filter((option, index, self) => 
           index === self.findIndex((o) => o.value === option.value)
         );
+      organismOptions.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
       this.organismFilter.options = organismOptions;
     } else {
       this.organismFilter.options = [];
@@ -252,6 +254,7 @@ export class EnzymeStructureDialogComponent {
       label: id,
       value: id
     }));
+    this.uniprotIdFilter.options.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
 
     // Update UniProt ID filter to only include valid options
     this.uniprotIdFilter.value = this.uniprotIdFilter.value.filter((id: string) =>

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, first, from, map, of, shareReplay, tap, withLatestFrom } from "rxjs";
+import { Observable, first, forkJoin, from, map, of, shareReplay } from "rxjs";
 import * as d3 from 'd3';
 
 import { BodyCreateJobJobTypeJobsPost, FilesService, Job, JobType, JobsService, SharedService } from "../api/mmli-backend/v1";
@@ -507,10 +507,12 @@ export class OpenEnzymeDBService {
   }
 
   getDataWithBestEnzymeNames(): Observable<OEDRecordWithBestEnzymeName[]> {
-    return this.getData().pipe(
+    return forkJoin({
+      data: this.getData(),
+      bestNames: this.uniprotBestNames$
+    }).pipe(
       first(),
-      withLatestFrom(this.uniprotBestNames$),
-      map(([data, bestNames]) => {
+      map(({data, bestNames}) => {
         return data.map((record) => ({ ...record, bestEnzymeNames: record.UNIPROT.split(',').filter(accession => bestNames.has(accession)).map(accession => bestNames.get(accession)!) }));
       })
     );

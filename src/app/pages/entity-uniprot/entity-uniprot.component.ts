@@ -134,6 +134,19 @@ export class EntityUniprotComponent {
       options: [],
       value: [],
     })],
+    ['enzyme_name', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Enzyme Names',
+        rawValue: 'Enzyme Names',
+      },
+      placeholder: 'Select Enzyme Names',
+      field: 'enzyme_name',
+      options: [],
+      value: [],
+      matchMode: 'union',
+      suppressColumnInResultsTable: true
+    })],
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
@@ -144,7 +157,7 @@ export class EntityUniprotComponent {
       field: 'uniprot_id',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'union',
     })],
     ['ec_numbers', new MultiselectFilterConfig({
       category: 'parameter',
@@ -233,7 +246,7 @@ export class EntityUniprotComponent {
       field: 'pubmed_id',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'in',
     })],
   ] as [string, FilterConfig][])
  
@@ -252,7 +265,7 @@ export class EntityUniprotComponent {
     });
 
     uniprotId$.pipe(
-      combineLatestWith(this.service.getData()),
+      combineLatestWith(this.service.getDataWithBestEnzymeNames()),
     ).subscribe({
       next: ([uniprotId, response]) => {
         const results = response
@@ -272,6 +285,7 @@ export class EntityUniprotComponent {
             km: row['KM VALUE'],
             kcat_km: row['KCAT/KM VALUE'],
             pubmed_id: `${row.PubMedID}`,
+            enzyme_name: row.bestEnzymeNames
           }))
           .filter((row: any) => row.uniprot_id.includes(uniprotId));  
 

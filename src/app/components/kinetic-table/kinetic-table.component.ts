@@ -101,12 +101,12 @@ export class KineticTableComponent implements OnChanges {
     );
 
     this.filterService.register(
-      "subset",
+      "union",
       (value: any[], filter: any[]) => {
         if (!filter) {
           return true;
         }
-        return filter.every((f) => value.includes(f));
+        return filter.some((f) => value.includes(f));
       },
     );
 
@@ -241,6 +241,7 @@ export class KineticTableComponent implements OnChanges {
           label: option,
           value: option,
         }));
+        filter.options.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
         filter.defaultValue = [];
       } else if (filter instanceof RangeFilterConfig) {
         filter.min = Math.min(...options);

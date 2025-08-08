@@ -220,6 +220,19 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
       value: [],
       matchMode: 'union',
     })],
+    ['enzyme_name', new MultiselectFilterConfig({
+      category: 'parameter',
+      label: {
+        value: 'Enzyme Names',
+        rawValue: 'Enzyme Names',
+      },
+      placeholder: 'Select Enzyme Names',
+      field: 'enzyme_name',
+      options: [],
+      value: [],
+      matchMode: 'union',
+      suppressColumnInResultsTable: true
+    })],
     ['uniprot_ids', new MultiselectFilterConfig({
       category: 'parameter',
       label: {
@@ -230,7 +243,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
       field: 'uniprot_id',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'union',
     })],
     ['ec_numbers', new MultiselectFilterConfig({
       category: 'parameter',
@@ -310,7 +323,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
       field: 'pubmed_id',
       options: [],
       value: [],
-      matchMode: 'subset',
+      matchMode: 'in',
     })],
 
     this.algorithm === 'mcs' 
@@ -370,7 +383,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
   ) {
     super(service);
 
-    this.service.getData()
+    this.service.getDataWithBestEnzymeNames()
       .pipe(
         combineLatestWith(
           this.jobResultResponse$,
@@ -400,6 +413,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
                 kcat: row['KCAT VALUE'],
                 kcat_km: row['KCAT/KM VALUE'],
                 pubmed_id: `${row.PubMedID}`,
+                enzyme_name: row.bestEnzymeNames,
                 tanimoto: jobResultResponse.tanimoto[row.SMILES],
                 fragment: {
                   matches: jobResultResponse.fragment[row.SMILES]?.matches ?? [],
@@ -445,7 +459,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
               organism: Array.from(new Set(value.map((row: any) => row.organism))),
               sequence: Array.from(new Set(value.map((row: any) => row.sequence))),
               enzyme_type: Array.from(new Set(value.map((row: any) => row.enzyme_type))),
-              uniprot_id: Array.from(new Set(value.map((row: any) => row.uniprot_id))),
+              enzyme_name: Array.from(new Set(value.map((row: any) => row.enzyme_name).flat())),
+              uniprot_id: Array.from(new Set(value.map((row: any) => row.uniprot_id).flat())),
               ph: Array.from(new Set(value.map((row: any) => row.ph))),
               temperature: Array.from(new Set(value.map((row: any) => row.temperature))),
               kcat: Array.from(new Set(value.map((row: any) => row.kcat))),
@@ -508,16 +523,6 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
         },
       );
   
-      this.filterService.register(
-        "subset",
-        (value: any[], filter: any[]) => {
-          if (!filter) {
-            return true;
-          }
-          return filter.every((f) => value.includes(f));
-        },
-      );
-
       this.filterService.register(
         "union",
         (value: any[], filter: any[]) => {
@@ -632,6 +637,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
           label: option,
           value: option,
         }));
+        filter.options.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
         filter.defaultValue = [];
       } else if (filter instanceof RangeFilterConfig) {
         filter.min = Math.min(...options);
