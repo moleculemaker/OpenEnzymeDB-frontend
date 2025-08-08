@@ -323,7 +323,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
       field: 'pubmed_id',
       options: [],
       value: [],
-      matchMode: 'in',
+      matchMode: 'union',
     })],
 
     this.algorithm === 'mcs' 
@@ -465,7 +465,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
               temperature: Array.from(new Set(value.map((row: any) => row.temperature))),
               kcat: Array.from(new Set(value.map((row: any) => row.kcat))),
               kcat_km: Array.from(new Set(value.map((row: any) => row.kcat_km))),
-              pubmed_id: Array.from(new Set(value.map((row: any) => `${row.PubMedID}`))),
+              pubmed_id: Array.from(new Set(value.map((row: any) => row.pubmed_id))),
               expanded: false,
               rows: value as RecommendationResultRow[],
             } as RecommendationResultRowGroup;
