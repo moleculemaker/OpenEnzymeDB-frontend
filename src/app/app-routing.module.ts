@@ -27,6 +27,7 @@ const routes: Routes = [
     component: CenterLayoutComponent, 
     children: [
       { path: "home", component: LandingPageComponent },
+      { path: 'about/:section', component: AboutPageComponent },
       { path: 'about', component: AboutPageComponent },
       { path: 'tutorial', component: TutorialPageComponent },
     ]
