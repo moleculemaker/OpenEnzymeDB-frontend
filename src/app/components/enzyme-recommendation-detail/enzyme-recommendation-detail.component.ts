@@ -189,19 +189,6 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
 
   substrate: RecommendationResult['query_smiles'];
 
-  exportOptions = [
-    {
-      label: 'Table Results',
-      command: () => {
-        if (this.algorithm === 'fragment') {
-          this.exportFragmentResults();
-        } else {
-          this.resultsTable.exportCSV();
-        }
-      },
-    },
-  ];
-
   columns: any[] = [
     { field: 'compound.name', header: 'compound' },
     { field: this.algorithm, header: this.algorithm },
@@ -791,19 +778,39 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
     }
   }
 
-  private exportFragmentResults() {
+  exportResults() {
     if (!this.result.data) return;
 
-    const headers = ['Compound Name', 'Number of Substructure Matches', 'Number of Atom Matches'];
-    const rows = this.result.data.data.map(group => {
-      const numSubStructureMatches = group.fragment?.matches?.length || 0;
-      const numAtomMatches = group.fragment?.flattenedMatches?.length || 0;
-      return [
-        `"${group.compound.name}"`,
-        numSubStructureMatches,
-        numAtomMatches
-      ];
-    });
+    let headers: string[] = [];
+    let rows: (string | number)[][] = [];
+    if (this.algorithm === 'fragment') {
+      headers = ['Compound Name', 'Number of Substructure Matches', 'Number of Atom Matches'];
+      rows = this.result.data.data.map(group => {
+        const numSubStructureMatches = group.fragment?.matches?.length || 0;
+        const numAtomMatches = group.fragment?.flattenedMatches?.length || 0;
+        return [
+          `"${group.compound.name}"`,
+          numSubStructureMatches,
+          numAtomMatches
+        ];
+      });
+    } else if (this.algorithm === 'mcs') {
+      headers = ['Compound Name', 'MCS Value'];
+      rows = this.result.data.data.map(group => {
+        return [
+          `"${group.compound.name}"`,
+          group.mcs?.value ? group.mcs.value.toFixed(4) : 'N/A'
+        ];
+      });
+    } else if (this.algorithm === 'tanimoto') {
+      headers = ['Compound Name', 'Tanimoto Value'];
+      rows = this.result.data.data.map(group => {
+        return [
+          `"${group.compound.name}"`,
+          group.tanimoto ? group.tanimoto.toFixed(4) : 'N/A'
+        ];
+      });
+    }
 
     // Create CSV content
     const csvContent = [
@@ -816,7 +823,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', 'fragment_results.csv');
+    link.setAttribute('download', this.algorithm + '_results.csv');
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();

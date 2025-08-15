@@ -32,8 +32,7 @@
       <div class="flex items-center gap-2">
 
         <div id="btn-export" class="flex flex-col justify-center">
-          <p-button label="Export" icon="pi pi-download" (onClick)="menu.toggle($event)"></p-button>
-          <p-tieredMenu #menu [model]="exportOptions" [popup]="true" />
+          <p-button label="Export" icon="pi pi-download" (onClick)="exportResults()"></p-button>
         </div>
       </div>
     </div>
