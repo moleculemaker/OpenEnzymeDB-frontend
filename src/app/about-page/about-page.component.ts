@@ -7,6 +7,7 @@ enum ActiveAboutPanel {
   ABOUT,
   TUTORIAL,
   STATISTICS,
+  API,
   GITHUB,
   PUBLICATIONS,
   TEAM,
