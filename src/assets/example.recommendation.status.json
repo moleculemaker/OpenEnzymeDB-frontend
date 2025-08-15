@@ -7,7 +7,7 @@
         "command": "python ./main.py --oed",
         "time_start": 0,
         "deleted": 0,
-        "job_info": "{\"query_smiles\":\"COC1=C(C=CC(=C1)CCN)O\",\"query_value\":{\"selectedOption\":\"smiles\",\"value\":\"COC1=C(C=CC(=C1)CCN)O\",\"inputType\":\"smiles\",\"inputValue\":\"COC1=C(C=CC(=C1)CCN)O\"}}",
+        "job_info": "{\"query_smiles\":\"CC1=C2C(=CC=C1)C(=CN2)CCN\",\"query_value\":{\"selectedOption\":\"smiles\",\"value\":\"CC1=C2C(=CC=C1)C(=CN2)CCN\",\"inputType\":\"smiles\",\"inputValue\":\"CC1=C2C(=CC=C1)C(=CN2)CCN\"}}",
         "run_id": null,
         "image": "moleculemaker/mmli-cheminfo-service",
         "time_created": 1750437676,

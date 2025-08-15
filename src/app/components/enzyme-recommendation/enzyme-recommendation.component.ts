@@ -13,7 +13,6 @@ import { MenuModule } from "primeng/menu";
 import { QueryInputComponent } from "../query-input/query-input.component";
 import { QueryValue, SearchOption, SmilesSearchOption } from "~/app/models/search-options";
 import { ChemicalResolverService } from '~/app/services/chemical-resolver.service';
-import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-enzyme-recommendation',
@@ -59,28 +58,20 @@ export class EnzymeRecommendationComponent implements OnChanges {
       label: 'Substrate',
       placeholder: 'Enter a substrate',
       example: {
-        label: '4-(2-aminoethyl)-2-methoxyphenol',
+        label: '7-Methyltryptamine',
         inputType: 'smiles',
-        inputValue: 'COC1=C(C=CC(=C1)CCN)O',
-        value: 'COC1=C(C=CC(=C1)CCN)O'
+        inputValue: 'CC1=C2C(=CC=C1)C(=CN2)CCN',
+        value: 'CC1=C2C(=CC=C1)C(=CN2)CCN'
       },
       nameToSmilesConverter: (name: string) => this.chemicalResolverService.getSMILESFromName(name),
     })
   ];
-
-  exampleUsed = false;
-  subscriptions: Subscription[] = [];
 
   constructor(
     private service: OpenEnzymeDBService,
     private chemicalResolverService: ChemicalResolverService,
     private router: Router,
   ) {
-    this.subscriptions.push(
-      this.form.valueChanges.subscribe((value) => {
-        this.exampleUsed = value.search?.value === this.searchConfigs[0].example['value'];
-      })
-    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -97,16 +88,12 @@ export class EnzymeRecommendationComponent implements OnChanges {
     }
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
-  }
-
   onSubmit() {
     if (!this.form.valid) {
       return;
     }
 
-    if (this.exampleUsed) {
+    if (this.isUsingExample()) {
       this.router.navigate(['enzyme-recommendation', 'result', 'precomputed']);
       return;
     }
@@ -139,5 +126,9 @@ export class EnzymeRecommendationComponent implements OnChanges {
 
   useExample() {
     this.queryInput.useExample('smiles');
+  }
+
+  isUsingExample() {
+    return this.form.controls['search'].value ? (this.form.controls['search'].value as any)['inputValue'] === this.searchConfigs[0].example['inputValue'] : false;
   }
 }
