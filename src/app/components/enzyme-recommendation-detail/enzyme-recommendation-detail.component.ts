@@ -179,6 +179,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
   result: Loadable<{
     data: RecommendationResultRowGroup[];
     ungroupedData: RecommendationResultRow[];
+    rowLevelFilterStatus: Map<RecommendationResultRow, boolean>;
+    rowLevelFilterCount: number;
     total: number;
   }> = {
     status: 'loading',
@@ -326,7 +328,7 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
       matchMode: 'union',
     })],
 
-    this.algorithm === 'mcs' 
+    this.algorithm === 'mcs'
     && ['mcs', new RangeFilterConfig({
       category: 'parameter',
       label: {
@@ -498,6 +500,8 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
             data: {
               data: response,
               ungroupedData: ungroupedData,
+              rowLevelFilterStatus: new Map<RecommendationResultRow, boolean>(ungroupedData.map(row => [row, true])),
+              rowLevelFilterCount: ungroupedData.length,
               total: response.length,
             }
           };
@@ -515,21 +519,27 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
 
       this.filterService.register(
         "range",
-        (value: number, filter: [number, number]) => {
+        // range filters are applied at the compound/group level, where values can be arrays (most fields) or single values (e.g., tanimoto)
+        // range filters can also be applied at the row level, where values are single values
+        (value: number|number[], filter: [number, number]) => {
           if (!filter) {
             return true;
           }
-          return value >= filter[0] && value <= filter[1];
+          let workingValue = Array.isArray(value) ? value : [value];
+          return workingValue.some(entry => entry >= filter[0] && entry <= filter[1]);
         },
       );
   
       this.filterService.register(
         "union",
+        // union filters are applied at the compound/group level, where values can be arrays (most fields) or single values (e.g., compound)
+        // union filters can also be applied at the row level, where values are single values
         (value: any[], filter: any[]) => {
           if (!filter) {
             return true;
           }
-          return filter.some((f) => value.includes(f));
+          let workingValue = Array.isArray(value) ? value : [value];
+          return filter.some((f) => workingValue.includes(f));
         },
       );
   }
@@ -566,26 +576,37 @@ export class EnzymeRecommendationDetailComponent extends JobResult<EnzymeRecomme
   clearAllFilters() {
     this.filterDialogVisible = false;
     this.filterRecords.forEach((filter) => {
-      filter.value = [...filter.defaultValue];
+      filter.value = Array.isArray(filter.defaultValue) ? [...filter.defaultValue] : filter.defaultValue;
     });
     if (this.resultsTable) {
-      this.applyFilters();
+      this.applyFilters(false);
     }
   }
 
-  applyFilters() {
-    this.filterDialogVisible = false;
+  applyFilters(forceDialogClose: boolean) {
+    if (forceDialogClose) {
+      this.filterDialogVisible = false;
+    } 
+    // apply filters at group level on table
     this.filterRecords.forEach((filter) => {
       this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
     });
+    // now apply filters at row level to determine which rows are visible in the expanded groups
+    // performing this operation on ungroupedData rather than a flatted array of rows from the filtered-in groups
+    // because retultsTable.filteredValue does not update immediately
+    let rowsToCheck = this.result!.data!.ungroupedData.slice();
+    this.filterRecords.forEach((filter) => {
+      if ((Array.isArray(filter.value) && filter.value.length > 0) || (!Array.isArray(filter.value) && filter.value)) {
+        rowsToCheck = this.filterService.filter(rowsToCheck, [filter.field], filter.value, filter.matchMode);
+      }
+    });
+    const matchingRows = new Set<RecommendationResultRow>(rowsToCheck);
+    this.result!.data!.rowLevelFilterStatus = new Map<RecommendationResultRow, boolean>(this.result!.data!.ungroupedData.map(row => [row, matchingRows.has(row)]));
+    this.result!.data!.rowLevelFilterCount = matchingRows.size;
   }
 
   getUniqueUniprotIds(rows: any[]) {
     return [...new Set(rows.map((row) => row.uniprot_id).flat())];
-  }
-
-  searchTable(filter: FilterConfig): void {
-    this.resultsTable.filter(filter.value, filter.field, filter.matchMode);
   }
 
   showCompoundStructureDialog(
