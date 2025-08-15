@@ -33,6 +33,13 @@
                 </button>
                 <button
                     class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
+                    [class.border-[#495057]]="activePanel$.value === ActiveAboutPanel.API"
+                    [class.text-[#224063]]="activePanel$.value === ActiveAboutPanel.API"
+                    (click)="activePanel$.next(ActiveAboutPanel.API)">
+                    <i class="pi pi-database"></i><a class="ml-2 font-bold">API</a>
+                </button>
+                <button
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
                     [class.border-[#495057]]="activePanel$.value === ActiveAboutPanel.GITHUB"
                     [class.text-[#224063]]="activePanel$.value === ActiveAboutPanel.GITHUB"
                     (click)="activePanel$.next(ActiveAboutPanel.GITHUB)">
@@ -112,6 +119,20 @@
                     <h5>Learn more about our curated data below.</h5>
 
                     <app-data-snapshot></app-data-snapshot>
+                </main>
+
+                <!-- API -->
+                <main *ngIf="activePanel$.value === ActiveAboutPanel.API" class="w-full h-full pb-12 pl-16">
+                    <h1 class="mb-4 font-bold">Application Programming Interface (API)</h1>
+                    <h5 class="leading-xl">
+                        Programmatic access to Open Enzyme Database is available through the OED API.
+                        The page below provides documentation, including Python examples, allows you to try the API directly
+                        in your browser.</h5>
+
+                    <h5><b class="font-bold">API: </b><a class="text-[#0080FF] underline" target="_blank"
+                            href="https://openenzymedb-api.platform.moleculemaker.org"><i
+                                class="mx-2 pi pi-external-link"></i>https://openenzymedb-api.platform.moleculemaker.org</a>
+                    </h5>
                 </main>
 
                 <!-- Github -->
