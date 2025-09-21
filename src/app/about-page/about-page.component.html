@@ -11,16 +11,18 @@
         <div class="flex w-full p-4 pb-0 grow">
             <nav class="flex w-[200px] flex-col">
                 <a
-                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
                     [class.border-[#495057]]="activePanel === ActiveAboutPanel.ABOUT"
                     [class.text-[#224063]]="activePanel === ActiveAboutPanel.ABOUT"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.ABOUT"
                     routerLink="/about">
                     <i class="pi pi-info-circle"></i><a class="ml-2 font-bold">About</a>
                 </a>
                 <a
-                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
                     [class.border-[#495057]]="activePanel === ActiveAboutPanel.TUTORIAL"
                     [class.text-[#224063]]="activePanel === ActiveAboutPanel.TUTORIAL"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.TUTORIAL"
                     routerLink="/about/tutorial">
                     <i class="pi pi-question-circle"></i><a class="ml-2 font-bold">Tutorial</a>
                 </a>
@@ -28,42 +30,56 @@
                     class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
                     [class.border-[#495057]]="activePanel === ActiveAboutPanel.STATISTICS"
                     [class.text-[#224063]]="activePanel === ActiveAboutPanel.STATISTICS"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.STATISTICS"
                     routerLink="/about/statistics">
                     <i class="pi pi-chart-bar"></i><a class="ml-2 font-bold">Statistics</a>
                 </a>
                 <a
-                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
-                    [class.border-[#495057]]="activePanel === ActiveAboutPanel.API"
-                    [class.text-[#224063]]="activePanel === ActiveAboutPanel.API"
-                    routerLink="/about/api">
-                    <i class="pi pi-database"></i><a class="ml-2 font-bold">API</a>
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
+                    [class.border-[#495057]]="activePanel === ActiveAboutPanel.LICENSE"
+                    [class.text-[#224063]]="activePanel === ActiveAboutPanel.LICENSE"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.LICENSE"
+                    routerLink="/about/license">
+                    <i class="pi pi-file-check"></i><a class="ml-2 font-bold">License</a>
                 </a>
                 <a
-                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
+                    [class.border-[#495057]]="activePanel === ActiveAboutPanel.API"
+                    [class.text-[#224063]]="activePanel === ActiveAboutPanel.API"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.API"
+                    routerLink="/about/api">
+                    <i class="pi pi-database"></i><a class="ml-2 font-bold">API and Download</a>
+                </a>
+                <a
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
                     [class.border-[#495057]]="activePanel === ActiveAboutPanel.GITHUB"
                     [class.text-[#224063]]="activePanel === ActiveAboutPanel.GITHUB"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.GITHUB"
                     routerLink="/about/github">
                     <i class="pi pi-github"></i><a class="ml-2 font-bold">Github</a>
                 </a>
                 <a
-                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
                     [class.border-[#495057]]="activePanel === ActiveAboutPanel.PUBLICATIONS"
                     [class.text-[#224063]]="activePanel === ActiveAboutPanel.PUBLICATIONS"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.PUBLICATIONS"
                     routerLink="/about/publications">
                     <i class="pi pi-book"></i><a class="ml-2 font-bold">Publications</a>
                 </a>
                 <a
-                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
                     [class.border-[#495057]]="activePanel === ActiveAboutPanel.TEAM"
                     [class.text-[#224063]]="activePanel === ActiveAboutPanel.TEAM"
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.TEAM"
                     routerLink="/about/team">
                     <i class="pi pi-users"></i><a class="ml-2 font-bold">Team</a>
                 </a>
                 <a
-                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 active:border-[#495057] text-nowrap"
+                    class="z-10 flex items-center border-r-2 border-solid p-4 hover:bg-gray-100 text-nowrap"
                     [class.border-[#495057]]="activePanel === ActiveAboutPanel.GET_INVOLVED"
                     [class.text-[#224063]]="activePanel === ActiveAboutPanel.GET_INVOLVED"
-                    routerLink="/about/get-involved">
+                    [class.text-[#6C757D]]="activePanel !== ActiveAboutPanel.GET_INVOLVED"
+                    routerLink="/about/get_involved">
                     <i class="pi pi-comment"></i><a class="ml-2 font-bold">Get Involved</a>
                 </a>
             </nav>
@@ -121,9 +137,44 @@
                     <app-data-snapshot></app-data-snapshot>
                 </main>
 
+                <!-- License -->
+                <main *ngIf="activePanel === ActiveAboutPanel.LICENSE" class="w-full h-full pb-12 pl-16">
+                    <h1 class="mb-4 font-bold">License</h1>
+                    <span class="cc-titles">
+                        <svg viewBox="0 0 30 30">
+                            <use href="assets/cc-icons.svg#cc-logo">
+                            </use>
+                        </svg>
+                        <svg viewBox="0 0 30 30">
+                            <use href="assets/cc-icons.svg#cc-by">
+                            </use>
+                        </svg>
+                        <span class="cc-text">
+                            CC BY 4.0
+                        </span>
+                    </span>
+                    <h5 class="leading-xl">
+                        The Open Enzyme Database is licensed under the Creative Commons Attribution 4.0 International License
+                        (CC BY 4.0). This means you are free to share and adapt the material for any purpose, even commercially,
+                        as long as you give appropriate credit, provide a link to the license, and indicate if changes were made.
+                    </h5>
+                    <h5><b class="font-bold">Full license text: </b><a class="text-[#0080FF] underline" target="_blank"
+                            href="https://creativecommons.org/licenses/by/4.0/"><i
+                                class="mx-2 pi pi-external-link"></i>https://creativecommons.org/licenses/by/4.0/</a>
+                    </h5>
+                    <h5 class="leading-xl">
+                        The Open Enzyme Database incorporates data from other sources:
+                        <ul class="list-disc ml-8 mt-2">
+                            <li><b>BRENDA</b>, which is published under CC BY 4.0.</li>
+                            <li><b>SABIO-RK</b>, which is published under the <a class="text-[#0080FF] underline" href="https://sabiork.h-its.org/license.html" target="_blank"><i
+                                class="mx-2 pi pi-external-link"></i>SABIO-RK Non-Commercial Purpose License.</a></li>
+                        </ul>
+                    </h5>
+                </main>
+
                 <!-- API -->
                 <main *ngIf="activePanel === ActiveAboutPanel.API" class="w-full h-full pb-12 pl-16">
-                    <h1 class="mb-4 font-bold">Application Programming Interface (API)</h1>
+                    <h1 class="mb-4 font-bold">Application Programming Interface (API) and Download</h1>
                     <h5 class="leading-xl">
                         Programmatic access to Open Enzyme Database is available through the OED API.
                         The page below provides documentation, including Python examples, and allows you to try the API directly
@@ -132,6 +183,20 @@
                     <h5><b class="font-bold">API: </b><a class="text-[#0080FF] underline" target="_blank"
                             href="https://openenzymedb-api.platform.moleculemaker.org/api/v1/docs"><i
                                 class="mx-2 pi pi-external-link"></i>https://openenzymedb-api.platform.moleculemaker.org/api/v1/docs</a>
+                    </h5>
+
+                    <h5 class="leading-xl">
+                        Alternatively, the entire dataset can be downloaded in several different formats from the links below. Note these
+                        files are compressed using gzip (.gz) to reduce file size and must be decompressed before use.
+                    </h5>
+                    <h5><b class="font-bold">CSV download: </b><a class="text-[#0080FF] underline" download type="application/gzip"
+                            href="assets/downloads/OpenEnzymeDatabase-1.0.0.csv.gz">OpenEnzymeDatabase-1.0.0.csv.gz</a>
+                    </h5>
+                    <h5><b class="font-bold">JSON download: </b><a class="text-[#0080FF] underline" download type="application/gzip"
+                            href="assets/downloads/OpenEnzymeDatabase-1.0.0.json.gz">OpenEnzymeDatabase-1.0.0.json.gz</a>
+                    </h5>
+                    <h5><b class="font-bold">JSONL download: </b><a class="text-[#0080FF] underline" download type="application/gzip"
+                            href="assets/downloads/OpenEnzymeDatabase-1.0.0.jsonl.gz">OpenEnzymeDatabase-1.0.0.jsonl.gz</a>
                     </h5>
                 </main>
 
@@ -336,17 +401,79 @@
 
                 <!-- Get Involved -->
                 <main *ngIf="activePanel === ActiveAboutPanel.GET_INVOLVED" class="w-full h-full pb-12 pl-16">
-                    <h1 class="mb-4 font-bold">Get involved</h1>
+                    <h1 class="mb-4 font-bold">Get Involved</h1>
                     <h5 class="leading-xl">
                         We welcome your questions, suggestions, feedback, and collaboration! Get in touch with us via
-                        email
-                        to share your perspective or join the Open Enzyme Database community through a data
-                        contribution:
+                        email (<a class="text-[#0080FF] underline"
+                            href="mailto:oed-feedback@moleculemaker.org">oed-feedback&#64;moleculemaker.org</a>)
+                        to share your perspective, or join the Open Enzyme Database community through a data
+                        contribution by filling out the form below.
                     </h5>
-                    <h5 class="mt-0 leading-xl">
-                        <a class="text-[#0080FF] underline"
-                            href="mailto:oed-feedback@moleculemaker.org">oed-feedback&#64;moleculemaker.org</a>
-                    </h5>
+                    <div class="bg-[#F3F5FB] p-5 mt-8">
+                        <h2 class="font-semibold mt-0">Contribute Data</h2>
+                        <div *ngIf="!contributionFormSubmitted">
+                            <h6 class="mt-4 mb-6 leading-xl">
+                                Contribute your data to the Open Enzyme Database (OED) and help expand our community resource for enzymology, protein and metabolic engineering, and related fields.
+                                Submissions make valuable experimental results accessible for open science and will be reviewed by our team for inclusion.
+                                To share your dataset, please complete this form and upload the populated template.
+                            </h6>
+                            <hr />
+                            <form [formGroup]="contributionForm" (ngSubmit)="submitContributionForm()">
+                                <h5 class="mt-6 mb-4 font-semibold">1. Contributor Information</h5>
+                                <div class="mb-4">
+                                    <label for="email" class="block mb-2">Email<span class="text-[#E24C4C]">*</span></label>
+                                    <input type="email" pInputText name="email" formControlName="email" placeholder="Enter email"
+                                        class="p-3 w-75 border border-gray-300 rounded-md" />
+                                </div>
+                                <h5 class="mt-6 mb-4 font-semibold">2. Download Template</h5>
+                                <h6 class="mt-4 mb-5 leading-xl">
+                                    We currently accept submissions for select kinetic parameters (<span class="italic">k<sub>cat</sub></span> , <span class="italic">K<sub>m</sub></span> , <span class="italic">k<sub>cat</sub></span> / <span class="italic">K<sub>m</sub></span>) and related metadata (e.g., temperature, pH). Please download the template, fill in your contributor details and dataset,
+                                    then upload it below. For data outside this format, contact us at <a class="text-[#0080FF] underline"
+                                        href="mailto:oed-feedback@moleculemaker.org">oed-feedback&#64;moleculemaker.org</a>.
+                                </h6>
+                                <a class="p-button p-button-lg" download href="assets/downloads/OpenEnzymeDatabase-ContributionTemplate-1.0.0.xlsx"><i class="pi pi-download p-button-icon p-button-icon-left"></i> <span class="p-button-label">Download Template (.xlsx)</span></a>
+                                <h5 class="mt-6 mb-4 font-semibold">3. Upload Dataset</h5>
+                                <h6 class="mt-4 mb-4 leading-xl">
+                                    Upload your dataset in the format of the template above.
+                                </h6>
+                                <p-fileUpload
+                                    mode="basic"
+                                    chooseLabel="Upload Data Contribution" 
+                                    chooseIcon="pi pi-upload"
+                                    name="demo[]" 
+                                    accept=".xlsx,.xls,.csv" 
+                                    maxFileSize="1000000000" 
+                                    styleClass="p-button-lg"
+                                    [customUpload]="true"
+                                    (onSelect)="onUploadSelect($event)" />
+                                <h5 class="mt-6 mb-4 font-semibold">4. Licensing</h5>
+                                <h6 class="mt-4 mb-4 leading-xl">
+                                    To align with OED’s open data practices and standards, please review the licensing terms and confirm your consent to share this data openly.
+                                </h6>
+                                <div class="flex items-center gap-2 mb-4">
+                                    <p-checkbox formControlName="license" value="cc-by-4" inputId="license" />
+                                    <label for="license">I agree to release this data under the <a class="text-[#0080FF] underline" href="https://creativecommons.org/licenses/by/4.0/" target="_blank">Creative Commons Attribution License CC BY 4.0.</a><span class="text-[#E24C4C]">*</span> <i class="pi pi-info-circle p-2" pTooltip="This license enables reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use."></i></label>
+                                </div>
+                                <div class="flex items-center gap-2 mb-6">
+                                    <p-checkbox formControlName="rights" value="confirm" inputId="rights" />
+                                    <label for="rights">I confirm that I have the rights to share this data publicly through OED.<span class="text-[#E24C4C]">*</span></label>
+                                </div>
+                                <div class="flex justify-center">
+                                    <p-button type="submit" [disabled]="!contributionForm.valid" size="large" label="Submit Contribution" />
+                                </div>
+                            </form>
+                        </div>
+                        <div *ngIf="contributionFormSubmitted">
+                            <div class="mt-4 mb-6 px-6 py-4 leading-xl text-[#1EA97C] bg-[#E4F8F0]" style="border-radius: 6px 0 0 6px; border-left: 7px solid #1EA97C;">
+                                Thank you for your submission! Your upload will be reviewed, and we may be in touch if further discussion is needed. If you would like to contribute additional data that
+                                does not match the template file format, please send us an email at <a class="text-[#0080FF] underline"
+                                    href="mailto:oed-feedback@moleculemaker.org">oed-feedback&#64;moleculemaker.org</a>.
+                            </div>
+                            <div class="flex justify-center">
+                                <p-button size="large" label="Submit Another Dataset" (click)="resetContributionForm()" />
+                            </div>
+                        </div>
+                    </div>
                 </main>
             </div>
 

@@ -1,11 +1,21 @@
 import { NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
+import { InputTextModule } from 'primeng/inputtext';
+import { TooltipModule } from 'primeng/tooltip';
+
+import { FilesService } from '../api/mmli-backend/v1';
 import { DataSnapshotComponent } from "../components/data-snapshot/data-snapshot.component";
 import { TutorialComponent } from "../components/tutorial/tutorial.component";
 
 enum ActiveAboutPanel {
   ABOUT,
+  LICENSE,
   TUTORIAL,
   STATISTICS,
   API,
@@ -18,7 +28,18 @@ enum ActiveAboutPanel {
 @Component({
   selector: 'app-about-page',
   standalone: true,
-  imports: [NgIf, DataSnapshotComponent, RouterLink, TutorialComponent],
+  imports: [
+    NgIf,
+    DataSnapshotComponent,
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+    CheckboxModule,
+    FileUploadModule,
+    InputTextModule,
+    TooltipModule,
+    TutorialComponent,
+  ],
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.scss'
 })
@@ -28,7 +49,15 @@ export class AboutPageComponent {
   activePanel = ActiveAboutPanel.ABOUT;
   private activatedRoute = inject(ActivatedRoute);
 
-  constructor() {
+  contributionForm = new FormGroup({
+    email: new FormControl<string | null>(null, [Validators.required, Validators.email]),
+    file: new FormControl<File | null>(null, Validators.required),
+    license: new FormControl<string | null>(null, Validators.required),
+    rights: new FormControl<string | null>(null, Validators.required),
+  });
+  contributionFormSubmitted = false;
+
+  constructor(private fileService: FilesService) {
     this.activatedRoute.params.subscribe((params) => {
       if (params['section'] && ActiveAboutPanel[params['section'].toUpperCase()]) {
         this.activePanel = ActiveAboutPanel[params['section'].toUpperCase()] as any as ActiveAboutPanel;
@@ -36,5 +65,31 @@ export class AboutPageComponent {
         this.activePanel = ActiveAboutPanel.ABOUT;
       }
     });
+  }
+
+  onUploadSelect(event: FileSelectEvent) {
+    if (event.files && event.files.length > 0) {
+      this.contributionForm.patchValue({ file: event.files[0] });
+    }
+  }
+
+  submitContributionForm() {
+    const renamedFile = new File([this.contributionForm.value.file!], this.contributionForm.value.email! + '_' + this.contributionForm.value.file!.name, {
+        type: this.contributionForm.value.file!.type,
+        lastModified: this.contributionForm.value.file!.lastModified,
+    });
+    this.fileService.uploadFileBucketNameUploadPost('oed-contributions', renamedFile).subscribe({
+      next: (response) => {
+        this.contributionFormSubmitted = true;
+      },
+      error: (error) => {
+        console.error('File upload error', error);
+      }
+    });
+  }
+
+  resetContributionForm() {
+    this.contributionForm.reset();
+    this.contributionFormSubmitted = false;
   }
 }
