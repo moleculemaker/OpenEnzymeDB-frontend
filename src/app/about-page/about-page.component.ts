@@ -59,8 +59,8 @@ export class AboutPageComponent {
 
   constructor(private fileService: FilesService) {
     this.activatedRoute.params.subscribe((params) => {
-      if (params['section'] && ActiveAboutPanel[params['section'].toUpperCase()]) {
-        this.activePanel = ActiveAboutPanel[params['section'].toUpperCase()] as any as ActiveAboutPanel;
+      if (params['section'] && ActiveAboutPanel[params['section'].replaceAll('-', '_').toUpperCase()]) {
+        this.activePanel = ActiveAboutPanel[params['section'].replaceAll('-', '_').toUpperCase()] as any as ActiveAboutPanel;
       } else {
         this.activePanel = ActiveAboutPanel.ABOUT;
       }
