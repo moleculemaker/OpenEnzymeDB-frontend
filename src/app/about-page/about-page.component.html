@@ -411,7 +411,7 @@
                     </h5>
                     <div class="bg-[#F3F5FB] p-5 mt-8">
                         <h2 class="font-semibold mt-0">Contribute Data</h2>
-                        <div *ngIf="!contributionFormSubmitted">
+                        <div *ngIf="contributionFormStatus === 'unsubmitted'">
                             <h6 class="mt-4 mb-6 leading-xl">
                                 Contribute your data to the Open Enzyme Database (OED) and help expand our community resource for enzymology, protein and metabolic engineering, and related fields.
                                 Submissions make valuable experimental results accessible for open science and will be reviewed by our team for inclusion.
@@ -463,7 +463,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div *ngIf="contributionFormSubmitted">
+                        <div *ngIf="contributionFormStatus === 'submitted'">
                             <div class="mt-4 mb-6 px-6 py-4 leading-xl text-[#1EA97C] bg-[#E4F8F0]" style="border-radius: 6px 0 0 6px; border-left: 7px solid #1EA97C;">
                                 Thank you for your submission! Your upload will be reviewed, and we may be in touch if further discussion is needed. If you would like to contribute additional data that
                                 does not match the template file format, please send us an email at <a class="text-[#0080FF] underline"
@@ -471,6 +471,15 @@
                             </div>
                             <div class="flex justify-center">
                                 <p-button size="large" label="Submit Another Dataset" (click)="resetContributionForm()" />
+                            </div>
+                        </div>
+                        <div *ngIf="contributionFormStatus === 'error'">
+                            <div class="mt-4 mb-6 px-6 py-4 leading-xl text-[#FF5757] bg-[#FFE7E6]" style="border-radius: 6px 0 0 6px; border-left: 7px solid #FF5757;">
+                                There was an unexpected error uploading your submission. Please ensure that all fields are filled out correctly and try again. If you continue to experience issues, please contact us at <a class="text-[#0080FF] underline"
+                                    href="mailto:oed-feedback@moleculemaker.org">oed-feedback&#64;moleculemaker.org</a>.
+                            </div>
+                            <div class="flex justify-center">
+                                <p-button size="large" label="Try Again" (click)="resetContributionForm()" />
                             </div>
                         </div>
                     </div>

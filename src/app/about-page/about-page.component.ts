@@ -55,7 +55,7 @@ export class AboutPageComponent {
     license: new FormControl<string | null>(null, Validators.required),
     rights: new FormControl<string | null>(null, Validators.required),
   });
-  contributionFormSubmitted = false;
+  contributionFormStatus: 'unsubmitted' | 'submitted' | 'error' = 'unsubmitted';
 
   constructor(private fileService: FilesService) {
     this.activatedRoute.params.subscribe((params) => {
@@ -80,16 +80,17 @@ export class AboutPageComponent {
     });
     this.fileService.uploadFileBucketNameUploadPost('oed-contributions', renamedFile).subscribe({
       next: (response) => {
-        this.contributionFormSubmitted = true;
+        this.contributionFormStatus = 'submitted';
       },
       error: (error) => {
         console.error('File upload error', error);
+        this.contributionFormStatus = 'error';
       }
     });
   }
 
   resetContributionForm() {
     this.contributionForm.reset();
-    this.contributionFormSubmitted = false;
+    this.contributionFormStatus = 'unsubmitted';
   }
 }
