@@ -1,7 +1,7 @@
 import csv
 import json
 
-CSV_FILE_PATH = '../assets/downloads/OpenEnzymeDatabase-20250916.csv'
+CSV_FILE_PATH = '../assets/downloads/OpenEnzymeDatabase-1.0.0.csv'
 
 def main():
     # Load the CSV file
