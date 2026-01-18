@@ -1,18 +1,13 @@
 ingress:
-  # early testing
-  hostname: openenzymedb.frontend.mmli2.ncsa.illinois.edu
-  
-  # MIGRATION: eventually enable prod redirect
-  #hostname: openenzymedb.platform.moleculemaker.org
-  #extraHosts:
-  #- openenzymedb.frontend.mmli2.ncsa.illinois.edu
+  hostname: openenzymedb.platform.moleculemaker.org
+  extraHosts:
+  - openenzymedb.frontend.mmli2.ncsa.illinois.edu
   tls: true
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
     kubernetes.io/tls-acme: "true"
     traefik.ingress.kubernetes.io/router.tls: "true"
-    # MIGRATION: eventually enable prod redirect
-    #traefik.ingress.kubernetes.io/router.middlewares: "openenzymedb-oed-cors-header@kubernetescrd,alphasynthesis-openenzymedb-prod-domain-redirect@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "openenzymedb-oed-cors-header@kubernetescrd,alphasynthesis-openenzymedb-prod-domain-redirect@kubernetescrd"
 
 controller:
   image: moleculemaker/openenzymedb-frontend:main
