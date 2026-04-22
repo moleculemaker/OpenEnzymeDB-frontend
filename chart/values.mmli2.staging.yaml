@@ -1,10 +1,13 @@
 ingress:
   hostname: frontend.staging.openenzymedb.mmli2.ncsa.illinois.edu
+  extraHosts:
+  - frontend.staging.openenzymedb.mmli1.ncsa.illinois.edu
   tls: true
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
     kubernetes.io/tls-acme: "true"
     traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: "staging-oed-staging-domain-redirect@kubernetescrd"
 
 controller:
   image: moleculemaker/openenzymedb-frontend:staging
@@ -24,3 +27,16 @@ config:
 
   molDBHostname: "https://postgrest.openenzymedb.mmli2.ncsa.illinois.edu"
   molDBBasePath: ""
+
+extraDeploy:
+# Redirect any users attempting to go to mmli1 and bring them to mmli2 instead
+- apiVersion: traefik.io/v1alpha1
+  kind: Middleware
+  metadata:
+    name: oed-staging-domain-redirect
+    namespace: staging
+  spec:
+    redirectRegex:
+      regex: "^https:\\/\\/frontend\\.staging\\.openenzymedb\\.mmli\\d\\.ncsa\\.illinois\\.edu(\\/.*)"
+      replacement: "https://frontend.staging.openenzymedb.mmli2.ncsa.illinois.edu${1}"
+      permanent: true
