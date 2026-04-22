@@ -35,7 +35,7 @@ extraDeploy:
   spec:
     redirectRegex:
       regex: "^https:\\/\\/openenzymedb\\.frontend\\.mmli\\d\\.ncsa\\.illinois\\.edu(\\/.*)"
-      replacement: "https://openenzymedb.platform.moleculemaker.org/${1}"
+      replacement: "https://openenzymedb.platform.moleculemaker.org${1}"
       permanent: true
 
 - apiVersion: bitnami.com/v1alpha1
