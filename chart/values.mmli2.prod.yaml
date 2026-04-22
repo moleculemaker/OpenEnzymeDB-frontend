@@ -2,6 +2,7 @@ ingress:
   hostname: openenzymedb.platform.moleculemaker.org
   extraHosts:
   - openenzymedb.frontend.mmli2.ncsa.illinois.edu
+  - openenzymedb.frontend.mmli1.ncsa.illinois.edu
   tls: true
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
@@ -33,7 +34,7 @@ extraDeploy:
     namespace: alphasynthesis
   spec:
     redirectRegex:
-      regex: "^https://openenzymedb.frontend.mmli2.ncsa.illinois.edu/(.*)"
+      regex: "^https:\\/\\/openenzymedb\\.frontend\\.mmli\\d\\.ncsa\\.illinois\\.edu(\\/.*)"
       replacement: "https://openenzymedb.platform.moleculemaker.org/${1}"
       permanent: true
 
