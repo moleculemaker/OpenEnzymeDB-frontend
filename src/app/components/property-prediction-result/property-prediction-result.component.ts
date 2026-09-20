@@ -97,6 +97,10 @@ export class PropertyPredictionResultComponent {
   results: any = null;
   columns = [];
   subscriptions: Subscription[] = [];
+  // <app-loading> reports 100 on every poll tick until showResults removes it,
+  // so a result fetch slower than a tick was issued again on each tick and its
+  // late callbacks rebuilt the results. Released on error so the next tick retries.
+  private resultRequested = false;
 
   constructor(
     private service: OpenEnzymeDBService,
@@ -122,45 +126,48 @@ export class PropertyPredictionResultComponent {
   }
 
   onProgressChange(value: number): void {
-    if (value === 100) {
-      this.subscriptions.push(
-        forkJoin([
-          this.service.getDLKcatResult(this.jobs.dlkcat.id),
-          this.service.getUnikpResult(this.jobs.unikp.id),
-          this.service.getCatpredResult(this.jobs.catpred.id),
-        ]).pipe(
-          map((data) => data as unknown as [DLKCatResult, UnikpResult, CatpredResult]),
-          map(([dlkcat, unikp, catpred]) => ([
-            {
-              algorithm: 'dlkcat',
-              values: {
-                kcat: dlkcat[0].kcat
-              }
-            },
-            {
-              algorithm: 'unikp',
-              values: {
-                kcat: unikp[0].kcat,
-                kcat_km: unikp[0].kcat_km,
-                km: unikp[0].km
-              }
-            },
-            {
-              algorithm: 'catpred',
-              values: {
-                kcat: catpred[0].kcat,
-                km: catpred[0].km,
-                ki: catpred[0].ki,
-              }
+    if (value !== 100 || this.resultRequested) return;
+    this.resultRequested = true;
+    this.subscriptions.push(
+      forkJoin([
+        this.service.getDLKcatResult(this.jobs.dlkcat.id),
+        this.service.getUnikpResult(this.jobs.unikp.id),
+        this.service.getCatpredResult(this.jobs.catpred.id),
+      ]).pipe(
+        map((data) => data as unknown as [DLKCatResult, UnikpResult, CatpredResult]),
+        map(([dlkcat, unikp, catpred]) => ([
+          {
+            algorithm: 'dlkcat',
+            values: {
+              kcat: dlkcat[0].kcat
             }
-          ])),
-          tap((data) => { console.log('result: ', data) }),
-        ).subscribe((data) => {
+          },
+          {
+            algorithm: 'unikp',
+            values: {
+              kcat: unikp[0].kcat,
+              kcat_km: unikp[0].kcat_km,
+              km: unikp[0].km
+            }
+          },
+          {
+            algorithm: 'catpred',
+            values: {
+              kcat: catpred[0].kcat,
+              km: catpred[0].km,
+              ki: catpred[0].ki,
+            }
+          }
+        ])),
+        tap((data) => { console.log('result: ', data) }),
+      ).subscribe({
+        next: (data) => {
           this.showResults = true;
           this.results = data;
-        })
-      );
-    }
+        },
+        error: () => { this.resultRequested = false; },
+      })
+    );
   }
 }
 
