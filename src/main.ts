@@ -53,7 +53,7 @@ bootstrapApplication(AppComponent, {
         importProvidersFrom(BrowserModule, AppRoutingModule, CardModule, ChipModule, ChartModule, FormsModule, MessagesModule, ButtonModule, InputTextareaModule, InputNumberModule, PanelModule, MultiSelectModule, ProgressBarModule, SelectButtonModule, SkeletonModule, ProgressSpinnerModule, StepsModule, SliderModule, DropdownModule, TableModule, InputTextModule, ListboxModule, OverlayPanelModule, SidebarModule, TabViewModule, TabMenuModule, RadioButtonModule, CheckboxModule, FileUploadModule, SplitButtonModule, PanelModule, MatomoModule.forRoot({
             siteId: 9,
             trackerUrl: 'https://matomo.mmli2.ncsa.illinois.edu/'
-        }), MatomoRouterModule, MenuModule, ApiModule.forRoot(() => new Configuration()), ReactiveFormsModule, DialogModule),
+        }), MatomoRouterModule.forRoot(), MenuModule, ApiModule.forRoot(() => new Configuration()), ReactiveFormsModule, DialogModule),
         EnvironmentService,
         {
             provide: APP_INITIALIZER,
