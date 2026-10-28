@@ -30,7 +30,7 @@ import { Configuration }                                     from '../configurat
 @Injectable({
   providedIn: 'root'
 })
-export class OEDService {
+export class OpenEnzymeDBService {
 
     protected basePath = 'http://localhost';
     public defaultHeaders = new HttpHeaders();

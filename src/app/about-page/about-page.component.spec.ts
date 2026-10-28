@@ -4,22 +4,22 @@ import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { AboutPageComponent } from './about-page.component';
-import { OEDService } from '../api/mmli-backend/v1';
+import { OpenEnzymeDBService } from '../api/mmli-backend/v1';
 
 describe('AboutPageComponent', () => {
   let component: AboutPageComponent;
   let fixture: ComponentFixture<AboutPageComponent>;
-  let oedService: jasmine.SpyObj<OEDService>;
+  let oedService: jasmine.SpyObj<OpenEnzymeDBService>;
 
   beforeEach(async () => {
-    oedService = jasmine.createSpyObj<OEDService>('OEDService', ['submitContributionOedContributionsPost']);
+    oedService = jasmine.createSpyObj<OpenEnzymeDBService>('OpenEnzymeDBService', ['submitContributionOedContributionsPost']);
 
     await TestBed.configureTestingModule({
       imports: [AboutPageComponent],
       providers: [
         provideRouter([]),
         provideNoopAnimations(),
-        { provide: OEDService, useValue: oedService },
+        { provide: OpenEnzymeDBService, useValue: oedService },
       ],
     })
     .compileComponents();
@@ -31,6 +31,39 @@ describe('AboutPageComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('file picker', () => {
+    const file = new File(['data'], 'kinetics.xlsx');
+
+    it('takes the file the picker accepted', () => {
+      component.onUploadSelect({ files: [file], currentFiles: [file] } as any);
+
+      expect(component.contributionForm.value.file).toBe(file);
+    });
+
+    it('clears the file when the picker rejects the selection', () => {
+      component.contributionForm.patchValue({ file });
+
+      // PrimeNG still lists a rejected (e.g. oversized) file in event.files, but not in currentFiles.
+      component.onUploadSelect({ files: [file], currentFiles: [] } as any);
+
+      expect(component.contributionForm.value.file).toBeNull();
+    });
+  });
+
+  describe('email', () => {
+    it('rejects a domain without a dot, which the backend rejects', () => {
+      component.contributionForm.controls.email.setValue('me@lab');
+
+      expect(component.contributionForm.controls.email.valid).toBeFalse();
+    });
+
+    it('accepts a normal address', () => {
+      component.contributionForm.controls.email.setValue('me@example.org');
+
+      expect(component.contributionForm.controls.email.valid).toBeTrue();
+    });
   });
 
   describe('contribution form', () => {
