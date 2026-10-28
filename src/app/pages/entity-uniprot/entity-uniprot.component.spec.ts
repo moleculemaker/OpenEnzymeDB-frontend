@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testProviders } from '~/app/testing/test-providers';
 
 import { EntityUniprotComponent } from './entity-uniprot.component';
 
@@ -8,7 +9,8 @@ describe('EntityUniprotComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityUniprotComponent]
+      imports: [EntityUniprotComponent],
+      providers: testProviders
     })
     .compileComponents();
 

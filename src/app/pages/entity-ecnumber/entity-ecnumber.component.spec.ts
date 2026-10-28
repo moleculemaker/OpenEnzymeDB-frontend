@@ -1,18 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testProviders } from '~/app/testing/test-providers';
 
-import { EntityEcnumberComponent } from './entity-ecnumber.component';
+import { EntityECNumberComponent } from './entity-ecnumber.component';
 
-describe('EntityEcnumberComponent', () => {
-  let component: EntityEcnumberComponent;
-  let fixture: ComponentFixture<EntityEcnumberComponent>;
+describe('EntityECNumberComponent', () => {
+  let component: EntityECNumberComponent;
+  let fixture: ComponentFixture<EntityECNumberComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityEcnumberComponent]
+      imports: [EntityECNumberComponent],
+      providers: testProviders
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EntityEcnumberComponent);
+    fixture = TestBed.createComponent(EntityECNumberComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

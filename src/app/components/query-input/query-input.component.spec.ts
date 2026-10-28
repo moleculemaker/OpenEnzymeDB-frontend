@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testProviders } from '~/app/testing/test-providers';
 
 import { QueryInputComponent } from './query-input.component';
 
@@ -8,7 +9,8 @@ describe('QueryInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QueryInputComponent]
+      imports: [QueryInputComponent],
+      providers: testProviders
     })
     .compileComponents();
 
