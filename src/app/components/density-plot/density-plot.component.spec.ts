@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testProviders } from '~/app/testing/test-providers';
 
 import { DensityPlotComponent } from './density-plot.component';
 
@@ -8,7 +9,8 @@ describe('DensityPlotComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [DensityPlotComponent]
+    imports: [DensityPlotComponent],
+    providers: testProviders
 })
     .compileComponents();
 

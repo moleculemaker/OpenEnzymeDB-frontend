@@ -14,6 +14,7 @@ describe('ExternalLinkComponent', () => {
 
     fixture = TestBed.createComponent(ExternalLinkComponent);
     component = fixture.componentInstance;
+    component.linkItem = { url: 'https://example.org', label: 'Example' };
     fixture.detectChanges();
   });
 

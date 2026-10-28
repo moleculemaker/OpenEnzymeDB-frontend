@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testProviders } from '~/app/testing/test-providers';
 
 import { JobTabPredictionComponent } from './job-tab-prediction.component';
 
@@ -8,7 +9,8 @@ describe('JobTabPredictionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [JobTabPredictionComponent]
+    imports: [JobTabPredictionComponent],
+    providers: testProviders
 })
     .compileComponents();
 

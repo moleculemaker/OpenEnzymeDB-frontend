@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testProviders } from '~/app/testing/test-providers';
 
 import { PropertyPredictionComponent } from './property-prediction.component';
 
@@ -8,7 +9,8 @@ describe('PropertyPredictionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PropertyPredictionComponent]
+      imports: [PropertyPredictionComponent],
+      providers: testProviders
     })
     .compileComponents();
 

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { testProviders } from '~/app/testing/test-providers';
 
 import { FontMatchComponent } from './font-match.component';
 
@@ -8,7 +9,8 @@ describe('FontMatchComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [FontMatchComponent]
+    imports: [FontMatchComponent],
+    providers: testProviders
 })
     .compileComponents();
 
