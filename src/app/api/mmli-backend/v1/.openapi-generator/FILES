@@ -8,6 +8,7 @@ api/files.service.ts
 api/jobs.service.ts
 api/molli.service.ts
 api/novostoic.service.ts
+api/oED.service.ts
 api/shared.service.ts
 api/somn.service.ts
 configuration.ts

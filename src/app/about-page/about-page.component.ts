@@ -9,7 +9,7 @@ import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 
-import { FilesService } from '../api/mmli-backend/v1';
+import { OEDService } from '../api/mmli-backend/v1';
 import { DataSnapshotComponent } from "../components/data-snapshot/data-snapshot.component";
 import { TutorialComponent } from "../components/tutorial/tutorial.component";
 
@@ -57,7 +57,7 @@ export class AboutPageComponent {
   });
   contributionFormStatus: 'unsubmitted' | 'submitted' | 'error' = 'unsubmitted';
 
-  constructor(private fileService: FilesService) {
+  constructor(private oedService: OEDService) {
     this.activatedRoute.params.subscribe((params) => {
       if (params['section'] && ActiveAboutPanel[params['section'].replaceAll('-', '_').toUpperCase()]) {
         this.activePanel = ActiveAboutPanel[params['section'].replaceAll('-', '_').toUpperCase()] as any as ActiveAboutPanel;
@@ -74,11 +74,9 @@ export class AboutPageComponent {
   }
 
   submitContributionForm() {
-    const renamedFile = new File([this.contributionForm.value.file!], this.contributionForm.value.email! + '_' + this.contributionForm.value.file!.name, {
-        type: this.contributionForm.value.file!.type,
-        lastModified: this.contributionForm.value.file!.lastModified,
-    });
-    this.fileService.uploadFileBucketNameUploadPost('oed-contributions', renamedFile).subscribe({
+    const { file, email, license, rights } = this.contributionForm.value;
+    // p-checkbox without [binary] holds an array of the checked values
+    this.oedService.submitContributionOedContributionsPost(file!, email!, !!license?.length, !!rights?.length).subscribe({
       next: (response) => {
         this.contributionFormStatus = 'submitted';
       },
