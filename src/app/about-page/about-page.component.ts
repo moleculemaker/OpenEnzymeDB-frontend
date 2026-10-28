@@ -9,7 +9,7 @@ import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 
-import { FilesService } from '../api/mmli-backend/v1';
+import { OpenEnzymeDBService } from '../api/mmli-backend/v1';
 import { DataSnapshotComponent } from "../components/data-snapshot/data-snapshot.component";
 import { TutorialComponent } from "../components/tutorial/tutorial.component";
 
@@ -50,14 +50,15 @@ export class AboutPageComponent {
   private activatedRoute = inject(ActivatedRoute);
 
   contributionForm = new FormGroup({
-    email: new FormControl<string | null>(null, [Validators.required, Validators.email]),
+    // Validators.email accepts a dotless domain like me@lab, which the backend's EmailStr rejects.
+    email: new FormControl<string | null>(null, [Validators.required, Validators.email, Validators.pattern(/@.+\..+$/)]),
     file: new FormControl<File | null>(null, Validators.required),
     license: new FormControl<string | null>(null, Validators.required),
     rights: new FormControl<string | null>(null, Validators.required),
   });
   contributionFormStatus: 'unsubmitted' | 'submitted' | 'error' = 'unsubmitted';
 
-  constructor(private fileService: FilesService) {
+  constructor(private oedService: OpenEnzymeDBService) {
     this.activatedRoute.params.subscribe((params) => {
       if (params['section'] && ActiveAboutPanel[params['section'].replaceAll('-', '_').toUpperCase()]) {
         this.activePanel = ActiveAboutPanel[params['section'].replaceAll('-', '_').toUpperCase()] as any as ActiveAboutPanel;
@@ -68,17 +69,14 @@ export class AboutPageComponent {
   }
 
   onUploadSelect(event: FileSelectEvent) {
-    if (event.files && event.files.length > 0) {
-      this.contributionForm.patchValue({ file: event.files[0] });
-    }
+    // event.files includes files that failed the picker's type/size checks; currentFiles does not.
+    this.contributionForm.patchValue({ file: event.currentFiles[0] ?? null });
   }
 
   submitContributionForm() {
-    const renamedFile = new File([this.contributionForm.value.file!], this.contributionForm.value.email! + '_' + this.contributionForm.value.file!.name, {
-        type: this.contributionForm.value.file!.type,
-        lastModified: this.contributionForm.value.file!.lastModified,
-    });
-    this.fileService.uploadFileBucketNameUploadPost('oed-contributions', renamedFile).subscribe({
+    const { file, email, license, rights } = this.contributionForm.value;
+    // p-checkbox without [binary] holds an array of the checked values
+    this.oedService.submitContributionOedContributionsPost(file!, email!, !!license?.length, !!rights?.length).subscribe({
       next: (response) => {
         this.contributionFormStatus = 'submitted';
       },
