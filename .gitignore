@@ -47,3 +47,5 @@ chart/secret.yaml
 chart/sealed-secret.yaml
 
 src/assets/__services__/
+# Claude Code worktrees
+.claude/worktrees/
